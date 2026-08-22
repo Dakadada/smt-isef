@@ -154,11 +154,21 @@ class CompressionParams:
 
     #: RNAplfold window/max_bp_span for the LOCAL fallback. Larger than
     #: smt.thermo.accessibility's defaults (80/40) because the readout
-    #: windows here (acceptor windows especially) can exceed 40 nt; NOT a
-    #: claim that 300 nt captures every real long-range interaction -- see
-    #: module docstring.
-    local_window_size: int = 400
-    local_max_bp_span: int = 300
+    #: windows here (acceptor windows especially) can exceed 40 nt. Sized by
+    #: direct measurement in this session, not guessed: RNA.pfl_fold_up on a
+    #: 13,648 nt random sequence (SMN2 intron 1's actual length) took 46.2 s
+    #: at window=400/span=300 but 7.8 s at window=150/span=100 -- a ~6x
+    #: speedup that is the difference between this validation finishing in
+    #: minutes vs the better part of an hour, given up to
+    #: 2 + 2*len(growth_checkpoints) calls per gap. NOT a claim that 100 nt
+    #: captures every real long-range interaction -- if anything a stronger
+    #: version of the module-docstring caveat (a genuinely long-range
+    #: interaction, like the one this project's own construct.py flags as a
+    #: TSL2/ISTL1 candidate in SMN2 intron 7, is invisible past this span in
+    #: the LOCAL path; intron 7 itself is short enough to be folded EXACTLY
+    #: instead, which is exactly why that matters least where it matters most).
+    local_window_size: int = 150
+    local_max_bp_span: int = 100
 
     #: Probability floor to avoid log(0) on numerically-zero P_unpaired.
     p_floor: float = 1e-12

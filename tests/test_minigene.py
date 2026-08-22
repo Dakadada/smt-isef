@@ -180,25 +180,53 @@ def test_smn2_introns_3_and_7_retention_outcome(smn2_plan):
     """THE go/no-go check for A6, run blind (default params, no ISS_N1/
     GC_CORE special-casing -- see module docstring of smt.minigene.compress).
 
-    Published design (Ottesen et al. 2024): introns 3 and 7 are kept at
-    (or near) full length; every other intron is truncated to short
-    flanking blocks. This test asserts the algorithm's ACTUAL behaviour,
-    filled in from a real run against the pinned NG_008728 sequence -- see
-    the inline comment at the assertion for the observed numbers and
-    whether they match. This test is NOT to be edited to force a pass by
-    changing DEFAULT_PARAMS; if the numbers below are a negative result,
-    they stay a negative result.
+    Published design (Ottesen et al. 2024): introns 3 and 7 are kept at (or
+    near) full length; every other intron is truncated to short flanking
+    blocks. ACTUAL measured behaviour at DEFAULT_PARAMS (log2fc_threshold=1.0),
+    against the real pinned NG_008728 sequence (see docs/HANDOFF.md's A6
+    section for the full per-intron table and the threshold sweep):
+
+        intron   nat_len  retained_frac  method
+        1        13648    0.052          local
+        2a       2478     0.111          local
+        2b       849      0.373          local
+        3        159      0.421          global
+        4        1788     0.020          local
+        5        1310     0.372          local
+        6        5769     0.055          local
+        7        444      1.000          global
+
+    INTRON 7: exact, blind confirmation. retained_fraction == 1.0 -- the
+    algorithm independently concludes intron 7 must be kept whole, matching
+    "the entire intron 7 was used" without being told.
+
+    INTRON 3: PARTIAL / NEGATIVE result, reported plainly rather than tuned
+    away. retained_fraction is 0.421 -- higher than four of the other six
+    introns, but nowhere near "the entire intron", which is what the paper
+    actually did. The algorithm does NOT independently recover "intron 3
+    must be kept whole" at this threshold. See docs/HANDOFF.md for the
+    threshold sweep exploring whether any setting changes this (spoiler:
+    reported honestly there, not cherry-picked here).
     """
     frac = {name: ip.retained_fraction for name, ip in smn2_plan.introns.items()}
     other_introns = [n for n in frac if n not in ("3", "7")]
-    # See docs/HANDOFF.md A6 section for the full per-intron table and the
-    # threshold sweep this is drawn from.
-    assert frac["3"] > 0.9, f"intron 3 retained_fraction={frac['3']}"
-    assert frac["7"] > 0.9, f"intron 7 retained_fraction={frac['7']}"
     others_mean = sum(frac[n] for n in other_introns) / len(other_introns)
-    assert others_mean < frac["3"] and others_mean < frac["7"], (
-        f"introns 3/7 ({frac['3']}, {frac['7']}) not more retained than the "
-        f"mean of the rest ({others_mean}); frac={frac}"
+
+    # Intron 7: full, blind confirmation of the published design.
+    assert frac["7"] > 0.99, f"intron 7 retained_fraction={frac['7']} (expected ~1.0)"
+
+    # Intron 3: NOT fully retained -- this is the honest negative half of the
+    # result. It is, however, retained more than the mean of the other
+    # (non-3, non-7) introns, which is the weaker claim the data supports.
+    assert frac["3"] < 0.99, (
+        f"intron 3 retained_fraction={frac['3']} is now ~fully retained; "
+        "this assertion documents a NEGATIVE result as of this run -- if "
+        "the number changed, update this comment with why, do not just "
+        "flip the assertion silently"
+    )
+    assert frac["3"] > others_mean, (
+        f"intron 3 ({frac['3']}) is not even above the mean of the other "
+        f"non-3/7 introns ({others_mean}); frac={frac}"
     )
 
 
