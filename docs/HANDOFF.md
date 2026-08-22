@@ -453,3 +453,64 @@ default 7-10 nt seed range, used as specified, has a real blind spot); (3)
 execute the GEO comparison protocol in docs/geo-validation.md once
 PMC8395096's supplementary tables and/or GSE307431's processed data are
 actually downloaded.
+
+## CORRECTION 05:20 — the sieve validation dataset was misidentified
+
+Earlier plan text and HANDOFF entries claimed PMC8395096 (Ottesen et al. 2021,
+Int J Mol Sci 22:8378) provides transcriptome-wide RNA-seq for calibrating A5,
+"available today". BOTH claims were wrong:
+  - PMC8395096 has NO GEO/SRA deposit. Its Data Availability statement puts the
+    data in Supplementary Tables S1-S17 only.
+  - PMC8395096 never mentions POLR2H anywhere.
+
+The POLR2H exon-2 off-target and the usable RNA-seq come from GSE307431
+(same lab, deposited 2026-01-06, no linked PMID yet). VERIFIED via NCBI eutils:
+20 samples, "Expression profiling by high throughput sequencing", titled
+"A therapeutic antisense oligonucleotide encompassing 2'-O-methoxyethyl
+modification triggers unique perturbation of the transcriptome". Its abstract
+states skipping of POLR2H exon 2 is triggered by direct annealing of F18MOE.
+
+Anywhere the plan or docs still cite PMC8395096 as the A5 calibration set,
+that is stale. Use GSE307431.
+
+## A5 BUILT — GENCODE v44, 20035 transcripts, but the seed stage MISSES POLR2H
+
+Built: sieve/transcriptome.py, scan.py, polarity.py, tests/test_sieve.py,
+slurm/sieve_array.sbatch, docs/geo-validation.md. Suite 101 passed, 1 skipped.
+
+Transcriptome: GENCODE release 44 (GRCh38.p14) basic, MD5-verified against
+GENCODE MD5SUMS. 3.0 G in .../transcriptome/. 20,035 canonical protein-coding
+transcripts, one per gene via Ensembl_canonical tag -- flagged in code as a
+tractability ASSUMPTION, not a measurement. Introns stored as 200 nt flanks
+around splice sites only -- also flagged as an assumption.
+Index sanity check that passed: SMN2 canonical has 9 exons, and its 8th intron
+(444 nt) matches this project's independently pinned intron 7 length and
+ISS-N1/GC_CORE positions exactly.
+
+STRONG RESULT: scanning nusinersen's 18-mer (seed_k=9, <=3 mismatches) over all
+20,035 transcripts yields 37 candidates across 34 genes in 2.9 s. SMN1/SMN2
+ranks #1, ddG_net = -22.85 kcal/mol, zero mismatches, on ISS-N1, and polarity
+assigns signed_effect = +16.37 -- the highest positive value in the entire
+table, meaning "promotes inclusion", matching nusinersen's real mechanism.
+Produced blind; there is no SMN special-case in the code.
+
+PROBLEM -- DO NOT CALL A5 VALIDATED YET: POLR2H is NOT among the 37. Its 4
+mismatches are distributed across both 9-mer tiles, so no 9-mer (nor even any
+7-mer) matches exactly. The two-tile seed design only guarantees detection at
+<=1 mismatch. Brute-force search without seed filtering finds the site at
+ddG_net = -17.11, which would rank ~9/38. A safety sieve that misses the
+field's canonical off-target does not yet function as a safety sieve.
+
+FIX REQUIRED before the sieve array is worth submitting: increase seed
+sensitivity. Options are spaced/gapped seeds, more tiles with smaller k, or a
+pigeonhole scheme sized for the intended mismatch budget (for 18 nt and <=4
+mismatches, 5 tiles of ~3-4 nt guarantees one exact tile). Whatever is chosen,
+state the guaranteed mismatch bound in the docstring, and re-run to confirm
+POLR2H appears.
+
+UNRESOLVED: the POLR2H window falls in exon 3 of the GENCODE canonical
+transcript, not exon 2 as the literature says. Could be transcript-isoform
+numbering, or a real discrepancy. Resolve before publishing anything about it.
+
+NOTE: a previous agent observed files changing under it -- that was the other
+agent working in the same repo concurrently, not corruption.
