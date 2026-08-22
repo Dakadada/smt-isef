@@ -206,3 +206,41 @@ back-prediction above is what justifies trusting it there.
 Outputs: .../boltz_out (single-seq, keep for comparison), .../boltz_out_msa.
 Rerun recipe: slurm/boltz_msa.sbatch <in_dir> <out_dir>, inputs must NOT
 contain `msa: empty`.
+
+## 04:30 — Opus code review COMPLETE, all checklist items pass
+
+  [1] c.840C>T at 32004 = T                      PASS
+      Independently confirmed: intron 7 opens GTAAGT (canonical 5'ss),
+      ISS_N1 = CCAGCATTATGAAAG, GC_CORE = CTGCCAGC. Coordinates sound.
+  [2] hard constraint reaches the ensemble       PASS
+      GC_CORE total pairing prob 1.4967 -> 0.0 when blocked; global bpp
+      matrix L1 change 20.73. The constraint is real, not silently dropped.
+  [3] dG_unfold positive and monotonic           PASS  0.91 -> 4.29 kcal/mol, L=4..20
+  [4] link.py refuses to run unfit               PASS  no defaults, fit provenance required
+  [5] single-shard smoke run                     PASS  97 s / 3 footprints (~32 s each)
+  [6] shard partition audit                      PASS  1065 total = union = unique, 10-11 per shard
+
+## A3 SWEEP ARRAY SUBMITTED — job 20961463, 400 shards, mit_normal
+1065 footprints (starts 32040..32110, lengths 6..20) x 5-span ladder x 2 PF
+= 10650 partition functions, ~9.5 core-hours. --requeue + --open-mode=append;
+each shard skips if its output exists and writes via .tmp rename, so preemption
+costs at most one shard. Output: /home/dashii/orcd/pool/smt-isef-data/sweep
+
+GRADING (do only after the array completes, and do it honestly):
+the published answer -- an 8-mer over the GC-rich core (intron 7 +7..+14) --
+is NOT used in scoring. Columns overlaps_gc_core / overlaps_iss_n1 are
+annotations for grading only. Gate passes if top-ranked footprints by delta_A
+concentrate on the GC core at short lengths, across the span ladder.
+
+## KNOWN LIMITATION found during smoke run — do not ignore when grading
+Footprint (32040, len 6) sits INSIDE exon 7 and scores fold_change 1218x.
+Structurally sensible: it blocks one arm of TSL2, freeing the other. But a real
+ASO there would occlude the exon 7 SRSF1 ESE and likely SUPPRESS inclusion.
+The accessibility model cannot see ESE disruption -- it measures structure only.
+Exonic footprints will therefore be systematically over-ranked. This is the
+same positional-polarity problem A5 must solve (intronic = silencer, exonic =
+enhancer). When grading A3, either restrict to intronic footprints or report
+exonic hits separately with this caveat stated.
+
+## GitHub
+https://github.com/Dakadada/smt-isef (private). Remote `origin`, branch main.

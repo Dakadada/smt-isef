@@ -2,10 +2,12 @@
 #SBATCH --job-name=aso-sweep
 #SBATCH --account=mit_general
 #SBATCH --partition=mit_normal
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=8G
-#SBATCH --time=02:00:00
-#SBATCH --array=0-99
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --time=00:30:00
+#SBATCH --array=0-399
+#SBATCH --requeue
+#SBATCH --open-mode=append
 #SBATCH --output=/home/dashii/smt-isef/slurm/logs/sweep-%A_%a.out
 #SBATCH --error=/home/dashii/smt-isef/slurm/logs/sweep-%A_%a.err
 
@@ -23,5 +25,5 @@ export PYTHONPATH=/home/dashii/smt-isef/src
 
 python -m smt.validate.length_sweep \
     --shard "${SLURM_ARRAY_TASK_ID}" \
-    --nshards "${SLURM_ARRAY_TASK_COUNT}" \
+    --nshards 400 \
     --out /home/dashii/orcd/pool/smt-isef-data/sweep
