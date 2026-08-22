@@ -358,3 +358,98 @@ stated rather than hidden.
 Also unwritten still: sieve/*, kinetics/*, wiring shadow.py into
 constrained.py's occlusion footprints (not requested by A4's scope, noted
 for whoever picks up A5/A6).
+
+## A5 TRANSCRIPTOME-WIDE SIEVE COMPLETE (sieve/transcriptome.py, scan.py, polarity.py)
+
+Data: GENCODE human release 44 (GRCh38.p14), "basic" GTF (29,570,410 bytes)
++ primary_assembly genome FASTA (844,691,642 bytes gz / 3,151,417,447 bytes
+decompressed), both MD5-verified against GENCODE's own MD5SUMS on fetch.
+Under /home/dashii/orcd/pool/smt-isef-data/transcriptome/. Indexed to
+~20,035 canonical (Ensembl_canonical), protein_coding transcripts --
+one/gene, on canonical chromosomes only (see transcriptome.py module
+docstring, "Scope decisions", for why: full comprehensive+all-isoform+
+full-intron coverage is not tractable here). Introns represented only within
+200 nt of each splice site (donor+acceptor flanks), not in full -- a
+disclosed tractability assumption, not a measurement.
+
+SANITY CHECK the index gives for free: SMN2's canonical transcript
+(ENST00000380743.9) has 9 exons, matching this project's own
+SMN2_EXONS numbering (1,2a,2b,3,4,5,6,7,8) exactly, and its 8th
+transcript-order intron (444 nt) is byte-for-byte the same intron 7 already
+pinned in smt.seq.reference/construct (same length, ISS-N1 and GC_CORE
+sequences fall at the same offsets). Independent confirmation the GENCODE
+coordinates and this project's RefSeqGene-based coordinates agree.
+
+Scan (nusinersen, TCACTTTCATAATGCTGG): stage-1 seed+extend (tiling 9-mers,
+<=3 mismatches) over all 20,035 transcripts took 2.9 s, 37 candidates in 34
+genes. Stage 2 (IntaRNA E_hybrid + RNAplfold dG_unfold) on all 37 took 15 s
+total. RESULT: SMN1 and SMN2 tie for RANK 1 by ddG_net (-22.85 kcal/mol
+each, 0 mismatches, exactly ISS-N1, intron 7 +10..+27) -- the sieve recovers
+its own intended on-target site as the single best transcriptome-wide hit,
+found blind (the scan has no special-casing of SMN1/SMN2). Polarity module
+gives SMN1/SMN2 the single most POSITIVE signed_effect in the whole run
+(+16.37, correctly predicting INCLUSION, matching nusinersen's real
+mechanism) -- also the top-ranked score overall, not just top of its
+category.
+
+POLR2H does NOT appear among the 37 stage-1 candidates. Diagnostic
+brute-force (no seed filter) found POLR2H's canonical mRNA has an 18-nt
+window at 4/18 mismatches (78% identity, genomic chr3:184364973-184364990);
+scored via the same stage-2 pipeline it gets ddG_net=-17.11, which would
+rank ~9th of 38 if included. WHY THE SEED STAGE MISSED IT (real, disclosed
+limitation, not a bug): the seed design's documented pigeonhole guarantee
+only covers <=1 mismatch; this candidate's 4 mismatches are spread so that
+NEITHER 9-mer tile is exact (nor would a 7-mer tile be -- the longest exact
+run in this alignment is 5 nt, verified by brute force). Also found: this
+diagnostic window sits in EXON 3 of GENCODE's canonical POLR2H transcript,
+not "exon 2" -- an open discrepancy with the literature's exon numbering
+(possibly a different reference transcript/isoform; not resolved here).
+
+GEO validation (full writeup: docs/geo-validation.md): PMC8395096 (Ottesen
+et al. 2021, Int J Mol Sci 22:8378, PMID 34445083) has NO GEO/SRA accession
+-- checked directly against the article's own Data Availability Statement,
+which states all data is in the article's supplementary files only (Tables
+S1-S17, itemized in the doc). POLR2H is not mentioned anywhere in that
+paper's text. The POLR2H exon-2/F18MOE claim traces instead to a newer,
+related GEO series, GSE307431 (deposited 2026-01-06, same lab, no PMID
+linked yet), whose abstract explicitly describes POLR2H exon 2 skipping via
+direct exonic annealing of an 18-mer MOE ASO. Comparison protocol (rank
+correlation + sign accuracy against PMC8395096's Tables S3-S6, POLR2H case
+study against GSE307431 once downloaded) is written up in
+docs/geo-validation.md but NOT executed -- no RNA-seq or supplementary PSI
+data was downloaded or used in polarity.py's scoring, per the "no
+experimental PSI data, no placeholder calibration" rule.
+
+tests/test_sieve.py: 24 tests, all passing, self-contained (synthetic
+Transcript objects, no dependency on the 3 GB downloaded index) --
+classification correctness (UTR/exonic/intronic/proximal, both strands),
+seed-stage recovery of a planted perfect match + the pigeonhole 1-mismatch
+guarantee, ddG_net = dG_hybrid + dG_unfold via the existing thermo modules
+(no reimplemented energies), the exonic/intronic sign flip at matched
+distance and ddG_net, and an exact shard-partition audit. Full suite: 101
+passed, 1 skipped (pre-existing, unrelated).
+
+slurm/sieve_array.sbatch written (200-way array, mit_general/mit_normal,
+--requeue + --open-mode=append, skip-if-exists + atomic .tmp rename per
+shard) but NOT submitted -- the direct single-process run above already
+covers the real candidate volume (37 total) faster than array overhead
+would; the array script is provided for reproducibility / larger future
+oligos or relaxed seed thresholds where candidate volume could grow.
+
+Environment oddity worth flagging: this session observed docs/HANDOFF.md and
+several src/smt files (steric/shadow.py, steric/parity.py, the A4 sections
+above) grow on disk during this session without this agent's own edits,
+apparently from a concurrent process. Not investigated further -- outside
+this task's scope -- but noted here since "why did HANDOFF.md change
+underneath me" is a fair question for whoever reads this next.
+
+## NEXT
+kinetics/* is the only unwritten lane left per the original plan. A5's own
+loose ends: (1) resolve the POLR2H exon-2-vs-exon-3 numbering discrepancy
+against the specific transcript GSE307431/the literature actually used; (2)
+decide whether to add a smaller/approximate seed pass specifically to widen
+sensitivity beyond the 1-mismatch guarantee (the POLR2H diagnostic shows the
+default 7-10 nt seed range, used as specified, has a real blind spot); (3)
+execute the GEO comparison protocol in docs/geo-validation.md once
+PMC8395096's supplementary tables and/or GSE307431's processed data are
+actually downloaded.
