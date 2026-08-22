@@ -1,0 +1,21 @@
+name: smt
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - viennarna>=2.6
+  - intarna>=3.3
+  - biopython
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - matplotlib
+  - freesasa
+  - pytest
+  - pyyaml
+  - tqdm
+  - pip
+  - pip:
+      - gemmi
