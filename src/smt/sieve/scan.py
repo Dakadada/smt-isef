@@ -100,7 +100,12 @@ SEED_K_MAX = 10
 #: generous upper bound (~20% of an 18-mer) so the THERMODYNAMIC stage -- not
 #: an arbitrary alignment cutoff -- makes the final call on marginal sites.
 #: This is a tractability knob, not a biological threshold.
-DEFAULT_MAX_MISMATCHES = 3
+#: Mismatch budget for stage 1. Set to 4, not 3, because POLR2H -- the field's
+#: canonical nusinersen off-target -- anneals with exactly 4 mismatches. A
+#: budget of 3 silently excludes the one off-target the sieve must find.
+#: Exhaustive scanning makes 4 affordable: ~1,007 sites transcriptome-wide
+#: versus 99 at a budget of 3, and stage 1 costs ~14 s either way.
+DEFAULT_MAX_MISMATCHES = 4
 
 #: Extra sequence context (nt) given to IntaRNA on each side of a stage-1
 #: candidate window, so it can explore nearby duplex registers rather than

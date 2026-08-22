@@ -36,6 +36,7 @@ export PYTHONPATH=/home/dashii/smt-isef/src
 python -m smt.sieve.scan \
     --shard "${SLURM_ARRAY_TASK_ID}" \
     --nshards 200 \
+    --max-mismatches 4 \
     --out /home/dashii/orcd/pool/smt-isef-data/sieve/scan
 
 # Once ALL 200 shards have completed (check with `ls .../sieve/scan | wc -l`),
