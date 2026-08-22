@@ -605,3 +605,44 @@ and is labelled explicitly as not a measurement, per the no-placeholder rule.
   A8 kinetics DONE three-hypothesis discriminator + required precision
 REMAINING: GEO validation of A5 against GSE307431. A6 minigene compression and
 A7 STMN2/UNC13A retarget are unstarted (both compressible per the plan).
+
+## GEO VALIDATION, STAGE 1 (counts proxy) — partial pass, one known case FAILS
+
+GSE307431 provides ONLY gene-level counts (GSE307431_Counts.csv.gz, 5.8 MB).
+No splicing tables. Design: GM03813 SMA patient cells, 20 samples, 3 reps,
+comparing untreated / scrambled / ISS-N1-targeting ASOs in OMe, MOE and PMO
+chemistries. F18MOE is nusinersen's chemistry; ScrMOE is its scrambled control.
+
+Gene counts can only test skipping that is NMD-coupled. This is a PROXY, and a
+weak one. Result, F18MOE vs ScrMOE, CPM-normalised, expressed genes only:
+
+  predicted SKIPPING   median log2FC -0.0417  (n=152)
+  predicted INCLUSION  median log2FC -0.0053  (n=191)
+  background           median log2FC -0.0015  (n=13374)
+  Mann-Whitney skip < background : p = 6.67e-05
+  Mann-Whitney skip < inclusion  : p = 3.31e-03
+
+AGGREGATE: the polarity sign carries real information. Genes predicted to be
+skipped are significantly down relative to both background and predicted-
+inclusion genes.
+
+BUT THE KNOWN CASE FAILS: POLR2H log2FC = +0.150 (slightly UP), against a
+predicted-skipping call of -10.38. SMN1 -0.171, SMN2 +0.060.
+
+DO NOT REPORT A5 AS VALIDATED ON POLR2H. It is not. Possible reasons, none
+resolved here:
+  - POLR2H exon 2 skipping may not be efficiently NMD-coupled, so gene-level
+    counts would not move even if the skipping is real
+  - the skipped isoform may be stabilised
+  - 3 replicates is low power for a single gene at these effect sizes
+Effect sizes throughout are tiny (-0.04 log2FC is a ~3% expression change), so
+the aggregate result is statistically significant but biologically small. State
+it that way; do not inflate it.
+
+## GEO VALIDATION, STAGE 2 (real splicing) — NOT STARTED, sized
+Raw reads: SRA study PRJNA1321660, 20 paired runs, ~3.1 GB per sample,
+~62 GB total. SCRATCH has ~884 GB free, so storage is not a constraint.
+Needs STAR (or similar) + rMATS to get per-exon PSI; neither is installed.
+This is the only way to test POLR2H exon 2 directly, and the only way to
+validate the sieve on SPLICING rather than on an NMD proxy.
+Run accessions are in the ENA filereport for PRJNA1321660.
