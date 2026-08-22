@@ -1,0 +1,173 @@
+Channels:
+ - conda-forge
+ - bioconda
+Platform: linux-64
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /home/dashii/orcd/pool/rna-env
+
+  added / updated specs:
+    - pigz
+    - python=3.11
+    - rmats=4.3.0
+    - samtools
+    - sra-tools=3.1.1
+    - star=2.7.11b
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    curl-8.21.0                |       ha042cf0_5         190 KB  conda-forge
+    htslib-1.23.1              |       h633afcb_0         1.1 MB  bioconda
+    krb5-1.22.2                |       hbc21106_2         1.3 MB  conda-forge
+    libcurl-8.21.0             |       ha042cf0_5         473 KB  conda-forge
+    libpsl-0.23.1              |       hd9e3e90_1          71 KB  conda-forge
+    libxml2-2.14.6             |       he237659_3          46 KB  conda-forge
+    libxml2-16-2.14.6          |       hca6bf5a_3         555 KB  conda-forge
+    ncbi-vdb-3.4.1             |       hd63eeec_0         8.8 MB  bioconda
+    numpy-1.26.4               |  py311h64a7726_0         7.7 MB  conda-forge
+    ossuuid-1.6.2              |    h5888daf_1001          53 KB  conda-forge
+    perl-alien-build-2.84      | pl5321h7b50bb2_1         195 KB  bioconda
+    perl-alien-build-plugin-download-gitlab-0.01| pl5321hdfd78af_0          12 KB  bioconda
+    perl-alien-libxml2-0.20    | pl5321hd2ab53c_0          14 KB  bioconda
+    perl-business-isbn-3.007   | pl5321hd8ed1ab_0          18 KB  conda-forge
+    perl-business-isbn-data-20210112.006| pl5321hd8ed1ab_0          21 KB  conda-forge
+    perl-capture-tiny-0.48     | pl5321ha770c72_1          16 KB  conda-forge
+    perl-carp-1.50             | pl5321hd8ed1ab_0          22 KB  conda-forge
+    perl-constant-1.33         | pl5321hd8ed1ab_0          15 KB  conda-forge
+    perl-exporter-5.74         | pl5321hd8ed1ab_0          19 KB  conda-forge
+    perl-extutils-makemaker-7.70| pl5321hd8ed1ab_0         154 KB  conda-forge
+    perl-ffi-checklib-0.28     | pl5321hdfd78af_0          16 KB  bioconda
+    perl-file-chdir-0.1011     | pl5321hd8ed1ab_0          17 KB  conda-forge
+    perl-file-path-2.18        | pl5321hd8ed1ab_0          22 KB  conda-forge
+    perl-file-temp-0.2304      | pl5321hd8ed1ab_0          31 KB  conda-forge
+    perl-file-which-1.24       | pl5321hd8ed1ab_0          17 KB  conda-forge
+    perl-importer-0.026        | pl5321hd8ed1ab_0          26 KB  conda-forge
+    perl-parent-0.243          | pl5321hd8ed1ab_0          14 KB  conda-forge
+    perl-path-tiny-0.150       | pl5321hd8ed1ab_0          45 KB  conda-forge
+    perl-pathtools-3.75        | pl5321hb9d3cd8_2          49 KB  conda-forge
+    perl-scope-guard-0.21      | pl5321hd8ed1ab_0          16 KB  conda-forge
+    perl-sub-info-0.002        | pl5321hd8ed1ab_0          19 KB  conda-forge
+    perl-term-table-0.028      | pl5321hdfd78af_0          24 KB  bioconda
+    perl-test-fatal-0.016      | pl5321ha770c72_0          19 KB  conda-forge
+    perl-test-warnings-0.031   | pl5321ha770c72_0          21 KB  conda-forge
+    perl-test2-suite-0.000163  | pl5321hdfd78af_0         208 KB  bioconda
+    perl-try-tiny-0.31         | pl5321ha770c72_0          17 KB  conda-forge
+    perl-uri-5.36              | pl5321ha770c72_0          79 KB  conda-forge
+    perl-xml-libxml-2.0210     | pl5321hd2ab53c_1         265 KB  bioconda
+    perl-xml-namespacesupport-1.12| pl5321hd8ed1ab_0          22 KB  conda-forge
+    perl-xml-sax-1.02          | pl5321hd8ed1ab_0          43 KB  conda-forge
+    perl-xml-sax-base-1.09     | pl5321hd8ed1ab_0          27 KB  conda-forge
+    pigz-2.8                   |       h421ea60_2          79 KB  conda-forge
+    rmats-4.3.0                |  py311hf2f0b74_5         630 KB  bioconda
+    samtools-1.23.1            |       ha83d96e_0         479 KB  bioconda
+    sra-tools-3.1.1            |       h4304569_2        57.9 MB  bioconda
+    star-2.7.11b               |       h5ca1c30_8         1.3 MB  bioconda
+    ------------------------------------------------------------
+                                           Total:        82.1 MB
+
+The following NEW packages will be INSTALLED:
+
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_10 
+  c-ares             conda-forge/linux-64::c-ares-1.34.8-hebe6cf0_2 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.7.22-hbd8a1cb_0 
+  curl               conda-forge/linux-64::curl-8.21.0-ha042cf0_5 
+  gsl                conda-forge/linux-64::gsl-2.7-he838d99_0 
+  htslib             bioconda/linux-64::htslib-1.23.1-h633afcb_0 
+  icu                conda-forge/linux-64::icu-78.3-py310h44b86e0_2 
+  keyutils           conda-forge/linux-64::keyutils-1.6.3-h7cc23a3_1 
+  krb5               conda-forge/linux-64::krb5-1.22.2-hbc21106_2 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.46.1-default_hbd61a6d_102 
+  libblas            conda-forge/linux-64::libblas-3.11.0-9_h4a7cf45_openblas 
+  libcblas           conda-forge/linux-64::libcblas-3.11.0-9_h0358290_openblas 
+  libcurl            conda-forge/linux-64::libcurl-8.21.0-ha042cf0_5 
+  libdeflate         conda-forge/linux-64::libdeflate-1.25-hd45a770_1 
+  libedit            conda-forge/linux-64::libedit-3.1.20250104-pl5321h373387f_1 
+  libev              conda-forge/linux-64::libev-4.33-h280c20c_3 
+  libexpat           conda-forge/linux-64::libexpat-2.8.1-hecca717_1 
+  libffi             conda-forge/linux-64::libffi-3.7.0-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-16.1.0-ha9f2e26_3 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-16.1.0-h69a702a_3 
+  libgfortran        conda-forge/linux-64::libgfortran-16.1.0-h69a702a_3 
+  libgfortran5       conda-forge/linux-64::libgfortran5-16.1.0-h79bb938_3 
+  libgomp            conda-forge/linux-64::libgomp-16.1.0-he0feb66_3 
+  libiconv           conda-forge/linux-64::libiconv-1.18-h0cb94f2_3 
+  liblapack          conda-forge/linux-64::liblapack-3.11.0-9_h47877c9_openblas 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_1 
+  libnghttp2         conda-forge/linux-64::libnghttp2-1.68.1-h74cf4be_1 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libopenblas        conda-forge/linux-64::libopenblas-0.3.34-pthreads_h94d23a6_0 
+  libpsl             conda-forge/linux-64::libpsl-0.23.1-hd9e3e90_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.4-h13e7031_1 
+  libssh2            conda-forge/linux-64::libssh2-1.11.1-h6154650_1 
+  libstdcxx          conda-forge/linux-64::libstdcxx-16.1.0-h934c35e_3 
+  libstdcxx-ng       conda-forge/linux-64::libstdcxx-ng-16.1.0-hdf11a46_3 
+  libuuid            conda-forge/linux-64::libuuid-2.42.2-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.38-h280c20c_0 
+  libxml2            conda-forge/linux-64::libxml2-2.14.6-he237659_3 
+  libxml2-16         conda-forge/linux-64::libxml2-16-2.14.6-hca6bf5a_3 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_3 
+  ncbi-vdb           bioconda/linux-64::ncbi-vdb-3.4.1-hd63eeec_0 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_1 
+  numpy              conda-forge/linux-64::numpy-1.26.4-py311h64a7726_0 
+  openssl            conda-forge/linux-64::openssl-3.6.3-h35e630c_1 
+  ossuuid            conda-forge/linux-64::ossuuid-1.6.2-h5888daf_1001 
+  packaging          conda-forge/noarch::packaging-26.3-pyhc364b38_0 
+  perl               conda-forge/linux-64::perl-5.32.1-7_hd590300_perl5 
+  perl-alien-build   bioconda/linux-64::perl-alien-build-2.84-pl5321h7b50bb2_1 
+  perl-alien-build-~ bioconda/noarch::perl-alien-build-plugin-download-gitlab-0.01-pl5321hdfd78af_0 
+  perl-alien-libxml2 bioconda/linux-64::perl-alien-libxml2-0.20-pl5321hd2ab53c_0 
+  perl-business-isbn conda-forge/noarch::perl-business-isbn-3.007-pl5321hd8ed1ab_0 
+  perl-business-isb~ conda-forge/noarch::perl-business-isbn-data-20210112.006-pl5321hd8ed1ab_0 
+  perl-capture-tiny  conda-forge/linux-64::perl-capture-tiny-0.48-pl5321ha770c72_1 
+  perl-carp          conda-forge/noarch::perl-carp-1.50-pl5321hd8ed1ab_0 
+  perl-constant      conda-forge/noarch::perl-constant-1.33-pl5321hd8ed1ab_0 
+  perl-exporter      conda-forge/noarch::perl-exporter-5.74-pl5321hd8ed1ab_0 
+  perl-extutils-mak~ conda-forge/noarch::perl-extutils-makemaker-7.70-pl5321hd8ed1ab_0 
+  perl-ffi-checklib  bioconda/noarch::perl-ffi-checklib-0.28-pl5321hdfd78af_0 
+  perl-file-chdir    conda-forge/noarch::perl-file-chdir-0.1011-pl5321hd8ed1ab_0 
+  perl-file-path     conda-forge/noarch::perl-file-path-2.18-pl5321hd8ed1ab_0 
+  perl-file-temp     conda-forge/noarch::perl-file-temp-0.2304-pl5321hd8ed1ab_0 
+  perl-file-which    conda-forge/noarch::perl-file-which-1.24-pl5321hd8ed1ab_0 
+  perl-importer      conda-forge/noarch::perl-importer-0.026-pl5321hd8ed1ab_0 
+  perl-parent        conda-forge/noarch::perl-parent-0.243-pl5321hd8ed1ab_0 
+  perl-path-tiny     conda-forge/noarch::perl-path-tiny-0.150-pl5321hd8ed1ab_0 
+  perl-pathtools     conda-forge/linux-64::perl-pathtools-3.75-pl5321hb9d3cd8_2 
+  perl-scope-guard   conda-forge/noarch::perl-scope-guard-0.21-pl5321hd8ed1ab_0 
+  perl-sub-info      conda-forge/noarch::perl-sub-info-0.002-pl5321hd8ed1ab_0 
+  perl-term-table    bioconda/noarch::perl-term-table-0.028-pl5321hdfd78af_0 
+  perl-test-fatal    conda-forge/linux-64::perl-test-fatal-0.016-pl5321ha770c72_0 
+  perl-test-warnings conda-forge/linux-64::perl-test-warnings-0.031-pl5321ha770c72_0 
+  perl-test2-suite   bioconda/noarch::perl-test2-suite-0.000163-pl5321hdfd78af_0 
+  perl-try-tiny      conda-forge/linux-64::perl-try-tiny-0.31-pl5321ha770c72_0 
+  perl-uri           conda-forge/linux-64::perl-uri-5.36-pl5321ha770c72_0 
+  perl-xml-libxml    bioconda/linux-64::perl-xml-libxml-2.0210-pl5321hd2ab53c_1 
+  perl-xml-namespac~ conda-forge/noarch::perl-xml-namespacesupport-1.12-pl5321hd8ed1ab_0 
+  perl-xml-sax       conda-forge/noarch::perl-xml-sax-1.02-pl5321hd8ed1ab_0 
+  perl-xml-sax-base  conda-forge/noarch::perl-xml-sax-base-1.09-pl5321hd8ed1ab_0 
+  pigz               conda-forge/linux-64::pigz-2.8-h421ea60_2 
+  pip                conda-forge/noarch::pip-26.2.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.11.16-h8ab3286_0_cpython 
+  python_abi         conda-forge/noarch::python_abi-3.11-8_cp311 
+  readline           conda-forge/linux-64::readline-8.3-hd6e31c0_1 
+  rmats              bioconda/linux-64::rmats-4.3.0-py311hf2f0b74_5 
+  samtools           bioconda/linux-64::samtools-1.23.1-ha83d96e_0 
+  setuptools         conda-forge/noarch::setuptools-84.0.0-pyh332efcf_0 
+  sra-tools          bioconda/linux-64::sra-tools-3.1.1-h4304569_2 
+  star               bioconda/linux-64::star-2.7.11b-h5ca1c30_8 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h1df4ec4_4 
+  tzdata             conda-forge/noarch::tzdata-2026c-h151e31d_0 
+  wheel              conda-forge/noarch::wheel-0.48.0-pyhd8ed1ab_0 
+  zlib               conda-forge/linux-64::zlib-1.3.2-h25fd6f3_3 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_7 
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
