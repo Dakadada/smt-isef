@@ -61,6 +61,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+
+import numpy as _np
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -187,15 +189,34 @@ def _find_all(haystack: str, needle: str) -> list[int]:
 def _scan_unit(
     unit_seq: str,
     target: str,
-    seeds: list[tuple[int, str]],
+    seeds: Optional[list[tuple[int, str]]],
     max_mismatches: int,
 ) -> list[tuple[int, int]]:
     """Return ``(window_start_0based, mismatches)`` for surviving windows.
 
-    Deduplicated across seeds that anchor the same window (a window can be
-    found by more than one seed when both happen to match).
+    ``seeds=None`` selects EXHAUSTIVE scanning: every window within
+    ``max_mismatches`` is returned, with no sensitivity gap. This is the
+    default for the sieve. A vectorised pass over the whole 140.6 Mnt
+    transcript set costs ~14 s single-core, so seeding buys no meaningful
+    speed while silently losing real hits: tiling seeds guarantee detection
+    only at <=1 mismatch, and POLR2H -- the canonical nusinersen off-target --
+    carries 4 mismatches split across both tiles and is missed entirely.
+    With ``seeds=None`` the guaranteed bound is exactly ``max_mismatches``.
+
+    With seeds supplied, windows are deduplicated across seeds that anchor the
+    same window (a window can be found by more than one seed).
     """
     n = len(target)
+    if seeds is None:
+        if len(unit_seq) < n:
+            return []
+        arr = _np.frombuffer(unit_seq.encode(), dtype=_np.uint8)
+        q = _np.frombuffer(target.encode(), dtype=_np.uint8)
+        mism = (_np.lib.stride_tricks.sliding_window_view(arr, n) != q).sum(1)
+        return [
+            (int(i), int(mism[i]))
+            for i in _np.flatnonzero(mism <= max_mismatches)
+        ]
     seen: dict[int, int] = {}
     for seed_off, seed_seq in seeds:
         for hit in _find_all(unit_seq, seed_seq):
@@ -215,11 +236,19 @@ def seed_scan_transcript(
     oligo: str,
     seed_k: Optional[int] = None,
     max_mismatches: int = DEFAULT_MAX_MISMATCHES,
+    exhaustive: bool = True,
 ) -> list[Candidate]:
-    """Stage 1 for one transcript, across its mRNA unit and all intron flanks."""
+    """Stage 1 for one transcript, across its mRNA unit and all intron flanks.
+
+    ``exhaustive=True`` (the default) disables seed filtering entirely; see
+    :func:`_scan_unit` for why that is both affordable and necessary.
+    """
     target = revcomp(oligo.upper().replace("U", "T"))
-    k = seed_k if seed_k is not None else default_seed_k(len(target))
-    seeds = tiling_seeds(target, k)
+    if exhaustive:
+        seeds = None
+    else:
+        k = seed_k if seed_k is not None else default_seed_k(len(target))
+        seeds = tiling_seeds(target, k)
     n = len(target)
     out: list[Candidate] = []
 
