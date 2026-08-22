@@ -104,3 +104,44 @@ existing output dir per input and skip. Do not use --override on preemptable.
 - Division of labor: Sonnet writes, Opus reviews. Do not have Opus write bulk
   code that a Sonnet agent could produce, and do not have a Sonnet agent
   approve its own physics.
+boltz resubmitted as 20956826 after installing cuequivariance-torch
+
+## RESOLVED 00:55 — sign inversion was a wrong-footprint artifact, NOT a bug
+
+Diagnostic: A_5ss baseline vs blocked, across max_bp_span ladder (0/50/100/
+150/300) and two window sizes (798 nt, 1048 nt). Estimator = exact Z-ratio.
+
+RESULT — blocking GC_CORE (intron 7 +7..+14, coords 32059..32066, the 3UP8
+target) INCREASES A_5ss at EVERY span and BOTH window sizes. Fold change
+consistently 6-7x. This is the correct mechanistic direction and it is robust.
+
+  span    A_base     A_GC      delta        fold
+  global  1.799e-05  1.141e-04  +9.607e-05   6.3x
+  50      4.601e-06  1.372e-05  +9.117e-06   3.0x
+  100     4.234e-05  3.001e-04  +2.577e-04   7.1x
+  150     1.175e-05  4.153e-05  +2.978e-05   3.5x
+  300     2.117e-05  1.292e-04  +1.080e-04   6.1x
+
+Blocking the FULL 15-nt ISS-N1 (32062..32076) is what inverts, and only at
+some spans (negative at global/100/300, positive at 50/150). Agent A tested
+this footprint and reported the inversion. It was testing the silencer, not
+the therapeutic target.
+
+INTERPRETATION: ISS-N1's 3' half (+15..+24) appears to participate in structure
+that helps keep the 5'ss accessible, so occluding it is counterproductive; the
+GC core is the sub-element whose occlusion frees the site. This is consistent
+with the published micro-walk showing an 8-mer at the GC core is potent. Treat
+as a model PREDICTION to state, not a fact to assert.
+
+CONSEQUENCE FOR A3: the falsification gate is passing on the footprint that
+matters. The sweep must score every tiling position and length, not just the
+annotated ISS-N1, and must report a max_bp_span LADDER. Never report a single
+span -- ISS-N1's sign flips with it.
+
+OPEN: span-dependence of the ISS-N1 result is not understood. Alternating sign
+between 50/150 and 100/300 suggests structural bistability or a numerical
+issue. Investigate before making any claim about full-length ISS-N1. The
+GC_CORE result does not depend on resolving this.
+
+Absolute A_5ss values are ~1e-5 because it is a JOINT probability over 9 nt.
+Small magnitude is expected; report fold change, not absolute.
