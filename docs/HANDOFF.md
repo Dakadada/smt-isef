@@ -646,3 +646,71 @@ Needs STAR (or similar) + rMATS to get per-exon PSI; neither is installed.
 This is the only way to test POLR2H exon 2 directly, and the only way to
 validate the sieve on SPLICING rather than on an NMD proxy.
 Run accessions are in the ENA filereport for PRJNA1321660.
+
+## A7 COMPLETE — cryptic exon retarget, and a PROJECT-WIDE SCOPE BOUNDARY
+
+Suite 138 passed, 1 skipped (was 123/1). Commit dfa8f2d. New files:
+src/smt/seq/targets.py, src/smt/thermo/occlusion.py,
+src/smt/validate/cryptic_sweep.py, slurm/cryptic_sweep.sbatch,
+tests/test_cryptic.py. cryptic_sweep NOT submitted (17,820 footprints x 5 spans).
+
+### THE SCOPE BOUNDARY — read this before claiming anything about ASO therapy
+`hc_add_up` forces a base UNPAIRED-AND-AVAILABLE. That correctly represents
+"this base can no longer participate in inhibitory structure" -- an INDIRECT,
+STRUCTURAL effect where the effector sits at site X and the readout is a
+DIFFERENT site Y. That is exactly the SMN2/ISS-N1 case, and it is why the A3
+gate passed.
+
+It does NOT represent "this base is physically occupied by an annealed ASO".
+Forcing an occupied site unpaired makes it read as trivially ACCESSIBLE --
+backwards for occlusion. So a footprint that overlaps its own readout window is
+REFUSED (a_5ss already raises; cryptic_sweep flags direct_overlap=1), not faked.
+
+CONSEQUENCE, state it openly: real cryptic-exon ASO therapy frequently works by
+DIRECTLY occupying the cryptic splice site. This framework cannot model that
+modality. It models indirect structural modulation only. This limitation
+applies to the WHOLE project, not just A7, and it is the honest answer to the
+concern raised early on that hc_add_up "frees bases instead of occupying them".
+The A3 result stands because SMN2's mechanism genuinely is indirect.
+
+### Coordinates pinned (no RefSeqGene exists for either gene -- verified, 0 hits)
+STMN2:  NC_000008.11:79,611,116-79,666,157, len 55042.
+        Cryptic exon 2a Interval(5707,5933) = chr8:79,616,822-79,617,048
+        (Melamed 2019, PMC6348009). HIGH confidence: 227 nt matches paper, AG
+        acceptor confirmed at 5705-5706, AUUAAA PAS at 5910.
+        TDP-43 GU-repeat site Interval(5759,5786) is NOT literature-pinned --
+        derived by GT-repeat scan, flagged UNVERIFIED-PRECISE in code.
+UNC13A: NC_000019.10:17,601,335-17,688,353, MINUS strand, len 87019,
+        NM_001080421.3 (44 exons, matches NCBI Gene).
+        CE-128 Interval(45813,45940), CE-178 Interval(45763,45940), shared
+        donor (Brown 2022, PMC8891019). HIGH: lengths match, GT donor and both
+        AG acceptors confirmed, sits between canonical exons 20 and 21.
+SNPs:   rs12608932 local 46474 T>G, rs12973192 local 45924 G>C. Positions HIGH
+        (dbSNP SPDI + direct base check after strand-complementing). WHICH
+        allele is "risk" is carried from paper notation only -- MEDIUM, not
+        independently re-derived.
+
+### Signed figure of merit
+FOM = direction.sign * delta_A; sign=+1 FREE (SMN2), -1 OCCLUDE (cryptic).
+Pure sign flip on the same physical quantity, same units. Zero new
+thermodynamics -- reuses a_5ss's ss5_feature parametrization unchanged.
+Regression-guarded against the SMN2 GC_CORE result.
+
+### Results, including the negative ones
+STMN2  best (5759-5778, len 20) over the TDP-43 GU-repeat region.
+       median FOM +5.54e-3, desired direction 5/5 spans. Independently lands on
+       the same region Baughn et al. 2023 mask therapeutically.
+UNC13A best (45987-46006, len 20), ~40 nt downstream of the shared donor.
+       median FOM +5.42e-2, desired 4/5 spans.
+       NEGATIVE RESULT: footprints immediately flanking the donor/acceptors came
+       back robustly WRONG-DIRECTION at 4-5/5 spans. Mirrors the SMN2 lesson
+       that the full silencer inverts while a specific sub-element works.
+rs12608932  fold ~1.000 at every span -- essentially no structural effect.
+       Consistent with a motif-disruption mechanism this purely structural model
+       cannot see. NOT evidence the SNP does nothing.
+rs12973192  span- and site-dependent, no clean sign. Against the two acceptors
+       at span=100 it gives 6.34x and 4.96x INCREASED accessibility, matching
+       the clinical risk-increases-inclusion direction -- but NOT consistently
+       across the ladder, and the donor readout decreases at 4/5 spans.
+       UNRESOLVED. Same class as the ISS-N1 span flip. Do not cherry-pick the
+       span that agrees with expectation.
