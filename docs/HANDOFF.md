@@ -92,3 +92,15 @@ existing output dir per input and skip. Do not use --override on preemptable.
   Prefer reviewing and fixing directly over resuming them blind.
 - GPU job 20956443: running on mit_normal_gpu, NOT preemptable, no requeue
   needed. If it fails, its inputs are regenerable from the CIFs.
+
+## HARD CONSTRAINT — agent usage (user directive, not negotiable)
+- MAXIMUM TWO subagents at any time. Never three. Not even briefly.
+- Subagents run on SONNET (`model: "sonnet"` on the Agent tool).
+- Opus (main session) REVIEWS the code afterward. Reviewing is the main
+  session's job and must not be delegated.
+- Caveat: the Agent tool exposes `model` but no reasoning-effort parameter.
+  Effort is inherited from the session / agent definition and cannot be set
+  per-call. Sonnet is guaranteed; "high effort" is not settable here.
+- Division of labor: Sonnet writes, Opus reviews. Do not have Opus write bulk
+  code that a Sonnet agent could produce, and do not have a Sonnet agent
+  approve its own physics.
