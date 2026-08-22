@@ -49,3 +49,46 @@ c.840C>T at 32004 (SMN2 has T).
 
 ## Not yet done
 - docs/lab-request.md written but NOT SENT. Longest-latency item in project.
+
+## Restore point
+Commit 345b89b — everything above is committed. Safe to hard-reset to it.
+
+## Autonomous operating rules (user asleep, two windows: 04:11 and 09:11 EDT)
+Budget is the scarce resource, cluster compute is not. Order of preference:
+1. Fix correctness problems FIRST. Nothing gets submitted broken. A 100-way
+   array of wrong physics is worse than no array — it looks like progress.
+2. Prefer cluster compute over agent tokens. One sbatch = hours of work for
+   ~zero budget. Spawning an agent = real budget.
+3. Commit after every working increment so any stop is resumable.
+4. When budget gets tight, stop spawning and just submit. Leave notes here.
+
+## Preemptable strategy — the right pattern
+Do NOT literally checkpoint every 5 minutes. For this workload the better
+answer is SMALL IDEMPOTENT WORK UNITS + skip-if-done, which makes preemption
+cost at most one unit and needs no checkpoint machinery at all.
+
+Rules for any preemptable submission:
+- `#SBATCH --requeue` so SLURM re-queues automatically on preemption.
+- `#SBATCH --open-mode=append` so requeued logs do not clobber the first run.
+- `#SBATCH --signal=B:USR1@120` plus a bash trap to flush partial output and
+  exit cleanly when preemption is 120 s away.
+- Every work unit writes to a UNIQUE output path, and the job SKIPS units whose
+  output already exists. This is what makes requeue free.
+- Write output atomically: write to `<path>.tmp` then `mv` into place, so a
+  kill mid-write never leaves a half-file that the skip-check believes is done.
+- Keep single units well under the preemption horizon. Aim for <15 min each.
+- Size arrays large and units small, rather than few units and long walltimes.
+
+Partition order: fill mit_normal / mit_normal_gpu first (6 h cap, not
+preempted), then overflow to mit_preemptable (48 h cap, preempted freely).
+Submit the same array to both and let skip-if-done deduplicate.
+
+For Boltz specifically: each input YAML is already a natural unit. Check for an
+existing output dir per input and skip. Do not use --override on preemptable.
+
+## Resumability status as of 00:37
+- Work on disk: YES, committed at 345b89b.
+- Stopped agents: resumable by message, but their code has a known sign bug.
+  Prefer reviewing and fixing directly over resuming them blind.
+- GPU job 20956443: running on mit_normal_gpu, NOT preemptable, no requeue
+  needed. If it fails, its inputs are regenerable from the CIFs.
