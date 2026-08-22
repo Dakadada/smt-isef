@@ -145,3 +145,33 @@ GC_CORE result does not depend on resolving this.
 
 Absolute A_5ss values are ~1e-5 because it is a JOINT probability over 9 nt.
 Small magnitude is expected; report fold change, not absolute.
+
+## 01:15 — Boltz back-prediction FAILED THE GATE (single-sequence mode)
+
+Job 20956826 COMPLETED in 8:33 on mit_normal_gpu. All 4 structures predicted.
+Pipeline works end to end. The SCIENCE does not pass.
+
+  PDB   conf    ptm   protein_RMSD(A)
+  6E9F  0.325  0.274   30.75
+  8FTI  0.344  0.306   41.42
+  9LZU  0.346  0.290   33.89
+  9M8Q  0.320  0.273   33.59
+
+30-41 A protein RMSD = wrong global fold placement, not a near miss. Boltz's own
+confidence (0.32-0.35) and pTM (0.27-0.31) agree the predictions are bad.
+RNA chains superpose at 0.7-4.8 A but over only 4-27 residues, which is too few
+to be meaningful.
+
+CAUSE: `msa: empty`. A ~900-residue Cas13 cannot be folded single-sequence.
+This was flagged as a caveat at submission and is now confirmed quantitatively.
+
+DO NOT report A4 structure validation as passing. It has not.
+
+NEXT STEP for A4: real MSAs required.
+  - Preferred: `boltz predict --use_msa_server` (ColabFold MMseqs2). Requires
+    outbound internet FROM THE COMPUTE NODE. Login node has internet (curl to
+    RCSB/NCBI works); compute nodes are UNTESTED. Test before relying on it.
+  - If compute nodes are air-gapped: generate MSAs on the login node, write
+    them alongside the YAML inputs, and run prediction offline on GPU.
+  - Do not use --override on any rerun; keep completed outputs for comparison.
+Re-run the RMSD comparison after MSAs and only then judge the gate.
