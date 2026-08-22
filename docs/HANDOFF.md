@@ -519,3 +519,46 @@ agent working in the same repo concurrently, not corruption.
 Plan at ~/.claude/plans/jiggly-hugging-biscuit.md now cites GSE307431 for A5
 validation. PMC8395096 appears there only inside the correction note.
 Sieve array 20963760 submitted, PENDING in queue. A8 kinetics agent dispatched.
+
+## A5 SIEVE COMPLETE — job 20964129, 200/200 shards, 0 failed
+
+741 scored sites across 705 genes. Mismatch distribution: 0mm=2, 2mm=7,
+3mm=90, 4mm=642.
+
+RANKING by ddG_net (stronger = more negative):
+  SMN2  rank 1/741   ddG -22.85  intron:8:donor  0 mm
+  SMN1  rank 1/741   ddG -22.85  intron:8:donor  0 mm   (tied, paralogues)
+  POLR2H rank 34/741 ddG -17.11  mrna            4 mm
+SMN1/SMN2 are the ONLY zero-mismatch sites in 140.6 Mnt. Nearest competitor is
+USP28 at -21.69 with 3 mismatches in mRNA.
+
+POSITIONAL POLARITY — the sieve's central claim, validated on both known cases
+blind (no gene is special-cased anywhere in the code):
+  SMN2   category=intronic_proximal  signed_effect=+16.37 -> predicts INCLUSION
+  POLR2H category=exonic_proximal    signed_effect=-10.38 -> predicts SKIPPING
+Both match the literature: nusinersen restores SMN2 exon 7 inclusion, and
+induces POLR2H exon skipping. Same oligo, opposite sign, decided by position.
+SMN2 is the single most positive of all 741 sites.
+
+BE PRECISE WHEN REPORTING THIS: POLR2H's SIGN is correct, but its magnitude is
+mid-pack -- the most negative site is GGA1 at -14.39, not POLR2H at -10.38. The
+validated claim is the DIRECTION of the polarity call, not a rank-1 skipping
+prediction. Do not overstate it.
+
+Category counts: intronic_core 242, three_utr 187, exonic_core 168,
+exonic_proximal 92, intronic_proximal 42, five_utr 10.
+Merged output: /home/dashii/orcd/pool/smt-isef-data/sieve/annotated.csv
+
+## TWO THRESHOLD BUGS CAUGHT IN THIS LANE — both silent, neither raised an error
+1. Seed heuristic guaranteed only <=1 mismatch; POLR2H (4 mm, split across both
+   tiles) was invisible. Fixed by exhaustive scanning (~14 s for 140.6 Mnt).
+2. DEFAULT_MAX_MISMATCHES was 3; POLR2H needs 4. First array returned a clean
+   99-row table with POLR2H simply absent. Fixed, budget now 4.
+Both would have produced publishable-looking output that quietly omitted the
+one off-target the sieve exists to find. Watch for this failure mode.
+
+## NEXT: GEO validation against GSE307431
+20 samples RNA-seq. Compare predicted signed_effect against measured splicing
+changes: rank correlation plus sign accuracy, POLR2H held out as case study.
+Not started. Downloading and aligning 20 RNA-seq samples is the largest compute
+job remaining -- size it before submitting.
