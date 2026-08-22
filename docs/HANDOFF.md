@@ -562,3 +562,46 @@ one off-target the sieve exists to find. Watch for this failure mode.
 changes: rank correlation plus sign accuracy, POLR2H held out as case study.
 Not started. Downloading and aligning 20 RNA-seq samples is the largest compute
 job remaining -- size it before submitting.
+
+## A8 COMPLETE — C2B34 kinetics, three-hypothesis discrimination
+
+The writing agent was killed mid-task by a session limit, AFTER writing all
+code. src/smt/kinetics/{alu,model,hypotheses}.py and tests/test_kinetics.py
+all survived; 22 tests pass. Opus wrote docs/c2b34-discriminating-experiment.md
+and committed. Nothing was lost.
+
+INVERTED REPEATS, real search on SMN2 (not asserted -- measured, with a null
+control). Top pairs flanking the C2B34 region:
+  rank  upstream       downstream     E(kcal/mol)  z_null  fwd  revcomp  inverted
+  0     9465-9744      23240-23516    -476.9       -52.6   18   209      True
+  1     16205-16491    23225-23516    -431.5       -33.9   14   184      True
+  2     13668-13944    23252-23523    -410.2       -35.7   15   170      True
+Upstream hits sit in intron 1 (5245..18892), downstream in intron 4
+(22925..24712) -- exactly the introns flanking exons 2a-4. The revcomp-vs-
+forward asymmetry (209 vs 18) is the inverted architecture backsplicing needs.
+z_null = -52.6 means this is far outside the null distribution, not just a
+large raw energy.
+
+SEPARABILITY POWER (6 doses x 8 timepoints, 200 reps):
+  sigma_rel   H1_feedback  H2_direct  H3_stability
+  0.02        1.000        1.000      0.995
+  0.05        1.000        0.935      0.935
+  0.10        1.000        0.800      0.780
+  0.20        1.000        0.620      0.655
+  0.40        0.970        0.620      0.580
+H1 is trivially separable at ANY realistic precision because of its lag.
+H2 vs H3 is the hard pair and needs sigma <= 5% for >90% power -- beyond gel
+densitometry, within ddPCR/qPCR range. This is the deliverable: not a claimed
+mechanism, but the experiment that decides between three, with its required
+precision.
+
+Rate constants are symbolic. illustrative_rates() raises if fields are omitted
+and is labelled explicitly as not a measurement, per the no-placeholder rule.
+
+## PHASE A STATUS — all four pillars have results
+  A3 gate    PASS  blind recovery of published GC-core 8-mer at 32059..32066
+  A4 parity  DONE  no ASO in 8-20 nt reaches steric parity with a dCas13 RNP
+  A5 sieve   DONE  SMN2 +16.37 inclusion / POLR2H -10.38 skipping, both blind
+  A8 kinetics DONE three-hypothesis discriminator + required precision
+REMAINING: GEO validation of A5 against GSE307431. A6 minigene compression and
+A7 STMN2/UNC13A retarget are unstarted (both compressible per the plan).
