@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4G
 #SBATCH --time=00:30:00
-#SBATCH --array=0-399
+#SBATCH --array=0-199
 #SBATCH --requeue
 #SBATCH --open-mode=append
 #SBATCH --output=/home/dashii/smt-isef/slurm/logs/sweep-%A_%a.out
@@ -25,5 +25,5 @@ export PYTHONPATH=/home/dashii/smt-isef/src
 
 python -m smt.validate.length_sweep \
     --shard "${SLURM_ARRAY_TASK_ID}" \
-    --nshards 400 \
+    --nshards 200 \
     --out /home/dashii/orcd/pool/smt-isef-data/sweep

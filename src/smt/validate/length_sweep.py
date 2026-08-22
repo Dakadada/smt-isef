@@ -23,7 +23,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from smt.seq.construct import compact_window, GC_CORE, ISS_N1
+from smt.seq.construct import compact_window, GC_CORE, ISS_N1, SS5_EXON7
 from smt.seq.reference import Interval
 from smt.thermo.constrained import a_5ss
 
@@ -57,13 +57,25 @@ class Footprint:
         return f"{self.start}_{self.length}"
 
 
+def _overlaps_readout(fp: "Footprint") -> bool:
+    """True if a footprint covers any of the 5'ss readout window.
+
+    Forcing the readout window itself unpaired makes A_5ss trivially 1, so such
+    a comparison carries no information. ``constrained.a_5ss`` rejects these
+    outright; filtering here keeps the sweep list -- and therefore the shard
+    partition -- limited to scorable work.
+    """
+    return fp.start <= SS5_EXON7.end and fp.interval.end >= SS5_EXON7.start
+
+
 def enumerate_footprints() -> list[Footprint]:
     """Full sweep, in a fixed deterministic order. Sharding partitions this."""
-    return [
+    candidates = (
         Footprint(s, L)
         for s in range(SCAN_START, SCAN_END + 1)
         for L in LENGTHS
-    ]
+    )
+    return [fp for fp in candidates if not _overlaps_readout(fp)]
 
 
 def shard_of(items: list[Footprint], shard: int, nshards: int) -> list[Footprint]:
