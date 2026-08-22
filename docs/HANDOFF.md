@@ -175,3 +175,34 @@ NEXT STEP for A4: real MSAs required.
     them alongside the YAML inputs, and run prediction offline on GPU.
   - Do not use --override on any rerun; keep completed outputs for comparison.
 Re-run the RMSD comparison after MSAs and only then judge the gate.
+
+## 01:35 — A4 GATE PASSES with real MSAs (job 20957171, 4:41 on mit_normal_gpu)
+
+Compute nodes DO have outbound internet (nettest: github 200, colabfold API
+reachable; its "/" returns 404 but endpoints are live). So --use_msa_server
+works from compute nodes. No login-node MSA pipeline needed.
+
+  PDB   family     single-seq  with-MSA   conf   ptm    nres
+  6E9F  Cas13d       30.75 A     4.63 A  0.855  0.944   864
+  9LZU  Cas13d       33.89 A     5.71 A  0.715  0.901   853
+  9M8Q  Cas13d       33.59 A     5.33 A  0.678  0.861   904
+  8FTI  Cas13bt3     41.42 A    23.82 A  0.710  0.693   737
+
+VERDICT: gate passes for the Cas13d subfamily (6E9F, 9LZU, 9M8Q) at 4.6-5.7 A
+over 850-900 residues. That is FOLD-LEVEL accuracy, not atomic. dCas13x/CasRx
+is Cas13d, so this is the relevant family. 8FTI is Cas13bt3, a different
+subfamily, and out of scope.
+
+WHY 5 A IS ACCEPTABLE HERE, stated explicitly so it is not overclaimed:
+the steric shadow uses a ~40 A probe (U1 snRNP sized). A 5 A coordinate error
+is ~8x smaller than the probe radius, so excluded-volume estimates are not
+sensitive to it. This argument does NOT license using these models for
+anything requiring atomic detail (contacts, H-bonds, base-specific readout).
+
+USAGE RULE: compute shadows from DEPOSITED structures wherever they exist.
+Boltz is only needed for the novel dCas13x-gRNA-SMN2 complex, and the
+back-prediction above is what justifies trusting it there.
+
+Outputs: .../boltz_out (single-seq, keep for comparison), .../boltz_out_msa.
+Rerun recipe: slurm/boltz_msa.sbatch <in_dir> <out_dir>, inputs must NOT
+contain `msa: empty`.
