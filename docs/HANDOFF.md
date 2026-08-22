@@ -514,3 +514,8 @@ numbering, or a real discrepancy. Resolve before publishing anything about it.
 
 NOTE: a previous agent observed files changing under it -- that was the other
 agent working in the same repo concurrently, not corruption.
+
+## 04:20 — plan file corrected, A8 dispatched
+Plan at ~/.claude/plans/jiggly-hugging-biscuit.md now cites GSE307431 for A5
+validation. PMC8395096 appears there only inside the correction note.
+Sieve array 20963760 submitted, PENDING in queue. A8 kinetics agent dispatched.
