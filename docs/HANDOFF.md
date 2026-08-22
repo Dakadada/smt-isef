@@ -826,3 +826,29 @@ set in targets.py covers only part of the locus, or the compression dropped
 blocks it should have kept. Investigate before using or reporting it.
 STMN2: 55042 nt -> 5126 nt (9.3%) -- plausible but unverified against any
 published design, since none exists for STMN2.
+
+## FULL SUITE VERIFIED — job 20974695: 162 passed, 1 skipped (13:00)
+Run on the cluster because tests/test_minigene.py exceeds interactive limits.
+The 1 skip is the pre-existing 9LZU strict-widening case (documented under A4).
+This supersedes the earlier "138 passed" figure, which predated A6.
+
+## PROJECT STATE — every planned workstream graded
+BLIND-VALIDATED AGAINST PUBLISHED RESULTS
+  A3  recovers the GC-core 8-mer at exactly 32059..32066
+  A6  recovers intron 7 as uniquely full-retention (1.000 of 8 introns)
+  A5  POLR2H predicted skipping blind -> measured dPSI -0.920, FDR 0
+  A5  MAP1S novel off-target predicted blind -> -0.879, FDR 0
+RESULTS, NOT VALIDATIONS
+  A4  no ASO in 8-20 nt reaches steric parity with a dCas13 RNP
+  A8  three-hypothesis discriminator; H1 separable at 40% error, H2 vs H3 <=5%
+FAILED / UNSUPPORTED -- these govern how the work may be described
+  A5 does NOT work transcriptome-wide: Spearman rho = 0.0025 vs measured dPSI.
+     "Universal safety sieve" is NOT supported.
+  The stage-1 counts-proxy aggregate (p=6.7e-05) did not replicate; superseded.
+  SMN2 on-target unmeasurable by short-read RNA-seq (89-99% multimapping).
+  Framework models INDIRECT structural effects only; direct-occupancy ASOs are
+     out of scope.
+  A6 intron 3 not recovered (0.421); UNC13A 743 nt output UNTRUSTED.
+OUTSTANDING, NOT BLOCKED BY ANYTHING COMPUTATIONAL
+  docs/lab-request.md still needs sending. Ask 1 (construct identity/sequence)
+  has the longest latency in the project and gates bench-matching, not physics.

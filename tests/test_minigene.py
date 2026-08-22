@@ -373,7 +373,17 @@ def test_junction_reference_span_matches_a_real_deletion(smn2_plan, smn2_constru
 
 
 def test_block_labels_identify_every_exon(smn2_plan, smn2_construct):
+    """Every exon must be traceable to SOME block's label -- but NOT
+    necessarily as a block of its own: a retained block is a maximal
+    contiguous run with no deletion inside it, so an exon immediately
+    followed by (say) its downstream intron's donor keep (no gap between
+    them -- both retained, nothing excised at the junction) collapses into
+    ONE block spanning both, labelled "exon<N>+intron<N>_donor". The real
+    invariant is "the exon's reference interval is contained in some block,
+    and that block's composite label mentions it", not block-per-exon."""
     bs = blocks(smn2_construct, smn2_plan)
-    labels = {b.label for b in bs}
-    for name in SMN2_EXONS:
-        assert f"exon{name}" in labels
+    for name, exon_iv in smn2_plan.exons.items():
+        owner = next((b for b in bs if b.ref.start <= exon_iv.start and exon_iv.end <= b.ref.end), None)
+        assert owner is not None, f"exon{name} {exon_iv} not contained in any retained block"
+        parts = owner.label.split("+")
+        assert f"exon{name}" in parts, f"exon{name} contained in block {owner.ref} labelled {owner.label!r}"

@@ -39,28 +39,43 @@ class Block:
     con: Interval  # construct space (contiguous by construction)
 
 
+def _named_features(plan: GenePlan) -> list[tuple[Interval, str]]:
+    """Every named sub-feature the GenePlan knows about, as (interval, name),
+    unsorted. A single retained BLOCK often spans several of these back to
+    back (e.g. promoter + exon1 + intron1's donor keep, all contiguous with
+    no deletion between them) -- ``_label_for`` composes a block's label from
+    whichever of these it fully contains, rather than requiring an exact
+    match against just one."""
+    feats: list[tuple[Interval, str]] = [(plan.upstream, "promoter")]
+    for name, exon_iv in plan.exons.items():
+        feats.append((exon_iv, f"exon{name}"))
+    for iname, ip in plan.introns.items():
+        feats.append((ip.donor.keep, f"intron{iname}_donor"))
+        feats.append((ip.acceptor.keep, f"intron{iname}_acceptor"))
+        for extra in ip.extra:
+            feats.append((extra.keep, extra.name))
+    return feats
+
+
 def _label_for(iv: Interval, plan: Optional[GenePlan]) -> str:
-    """Best-effort human label for a retained segment, using the GenePlan's
-    own exon/intron feature names where the segment matches one; falls back
-    to a generic "retained_<start>_<end>" label otherwise (e.g. for a segment
-    that straddles an exon and a donor/acceptor keep block, which is common
-    since exons and their flanking minimal blocks are contiguous)."""
+    """Human label for a retained segment: every named feature (promoter,
+    exon, donor/acceptor keep block, pinned extra anchor) fully CONTAINED in
+    ``iv``, joined "+" in 5'->3' order -- not an exact-match lookup, since a
+    contiguous run of features with no deletion between them (e.g. an exon
+    immediately followed by its downstream intron's donor block) collapses
+    into a single retained ``Block`` spanning all of them. Falls back to a
+    generic "retained_<start>_<end>" label when nothing is known to be inside
+    (e.g. plan is None, or a residual mid-intron sliver left by the growth
+    search that isn't itself a named feature)."""
     if plan is None:
         return f"retained_{iv.start}_{iv.end}"
-    for name, exon_iv in plan.exons.items():
-        if iv == exon_iv:
-            return f"exon{name}"
-    for iname, ip in plan.introns.items():
-        if iv == ip.donor.keep:
-            return f"intron{iname}_donor"
-        if iv == ip.acceptor.keep:
-            return f"intron{iname}_acceptor"
-        for extra in ip.extra:
-            if iv == extra.keep:
-                return extra.name
-    if iv == plan.upstream:
-        return "promoter_upstream"
-    return f"retained_{iv.start}_{iv.end}"
+    contained = [
+        (fi.start, name) for fi, name in _named_features(plan) if iv.start <= fi.start and fi.end <= iv.end
+    ]
+    if not contained:
+        return f"retained_{iv.start}_{iv.end}"
+    contained.sort()
+    return "+".join(name for _, name in contained)
 
 
 def blocks(construct: Construct, plan: Optional[GenePlan] = None) -> list[Block]:
