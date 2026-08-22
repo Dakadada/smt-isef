@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=star-aln
 #SBATCH --account=mit_general
-#SBATCH --partition=mit_normal
+#SBATCH --partition=mit_preemptable
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=48G
-#SBATCH --time=03:00:00
+#SBATCH --time=08:00:00
 #SBATCH --array=0-19
 #SBATCH --requeue
 #SBATCH --open-mode=append
