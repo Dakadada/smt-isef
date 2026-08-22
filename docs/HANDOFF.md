@@ -281,3 +281,80 @@ them. Any published version must state this.
 A5 sieve (transcriptome scan + positional polarity), then GEO validation
 against the published high-concentration ISS-N1 ASO RNA-seq (PMC8395096).
 Still unwritten: steric/shadow.py, steric/parity.py, sieve/*, kinetics/*.
+
+## A4 STERIC SHADOW + PARITY LANE COMPLETE (commit 4ec5341)
+
+structures.py and shadow.py were already on disk (agent-drafted, marked
+UNREVIEWED in the 345b89b commit). Reviewed both line by line: classification
+is residue-composition + base-pairing-geometry driven, not chain-ID
+special-cased, and correctly handles both deposited architectures (separate
+guide/target chains in 6E9F/9LZU/9M8Q; 8FTI's covalently fused
+crRNA-linker-target chain, split at the spacer-duplex apex). All four
+structures classify with guide+target confidently assigned, zero AMBIGUOUS
+flags. One depositor-metadata oddity worth flagging: 8FTI's protein entity is
+literally labelled "Integrase" in the mmCIF (`_entity.pdbx_description`),
+carrying catalytic-dead mutations R84A/H89A/R739A/H744A -- a Cas13bt3
+annotation quirk in the deposited file, not a bug in our classifier (which
+never reads entity names to decide role).
+
+Chain classification (guide / target / protein):
+  6E9F  protein A (864 aa) | guide B (52 nt) | target C (27 nt, footprint 7..26, 20 bp duplex)
+  8FTI  protein A (737 aa) | fused chain B (97 nt): guide=3' arm (66 nt) target=5' arm (-67..-37, 30 bp duplex, footprint -66..-37)
+  9LZU  protein A (853 aa) | guide C (51 nt) | target B (14 nt, ENTIRELY hybridized, footprint == full target, 13 bp duplex)
+  9M8Q  protein A (904 aa) | guide B (55 nt) | target C (25 nt of a 30-mer construct, footprint 3..26, 17 bp duplex)
+
+U1 snRNP probe radius: R = (3M/(4*pi*rho*N_A))^(1/3), M=250 kDa,
+rho=1.35 g/cm^3 (large-protein partial-specific-volume asymptote, Fischer/
+Polikarpov/Craievich 2004) -> R = 41.87 A (>= the "roughly 40 A" sanity
+target in the brief). Flagged as an upper bound: U1 snRNP is ~1/3 RNA
+(denser, ~1.7 g/cm^3) and is not spherical, so this likely over-estimates
+slightly.
+
+RNP vs bare-duplex shadow width at the U1 probe (threshold s(i)>=0.5,
+n_points=300):
+  PDB    rnp_occluded/target   duplex_occluded/target   wider by
+  6E9F        26 / 27                18 / 27              +8 nt
+  8FTI        31 / 31                19 / 31             +12 nt
+  9LZU        14 / 14                14 / 14               0 nt  (see below)
+  9M8Q        25 / 25                19 / 25              +6 nt
+
+Central claim (RNP shadow strictly wider than the bare guide:target duplex
+at large probe) HOLDS on 6E9F, 8FTI, 9M8Q. It does NOT distinguish on 9LZU,
+but this is a data-availability artifact, not a physics failure: 9LZU's
+crystallized target is exactly 14 nt and the hybridized footprint IS the
+entire resolved target (no flanking density at all survived deposition), so
+neither state has any flanking nucleotide on which to show an asymmetric
+extension -- both saturate to 14/14 because there is nothing left to
+saturate past. tests/test_steric.py encodes this honestly: the weak claim
+(RNP >= duplex) is asserted on all four; the strict widening claim is
+skipped on 9LZU with the reason stated, not loosened.
+
+ASO length reaching parity with the RNP (occluded-nt count, U1 probe, swept
+8-20 nt, capped by each structure's resolved duplex length):
+  6E9F: L=18 (best available; still short of parity, gap 18 nt)
+  8FTI: L=20 (best available; still short of parity, gap 23 nt)
+  9LZU: L=14 (max resolvable; gap 6 nt)
+  9M8Q: L=20 (best available; still short of parity, gap 16 nt)
+No ASO length in the 8-20 nt therapeutic window reaches full parity with the
+RNP shadow on any structure -- the sweep always bottoms out at the longest
+testable length, i.e. even a maximal-length ASO leaves a measurable gap.
+That gap, not a crossover point, is the headline number.
+
+Unexpected finding, NOT tuned away (see test_steric.py module docstring for
+the full derivation): per-nucleotide shadow s(i) is an area-weighted average
+over a residue's atoms, and while each individual ATOM's own accessible
+fraction is provably monotonic non-increasing in probe radius (proved from
+the exact hard-sphere legality condition), the residue-level weighted
+average is NOT guaranteed monotonic -- weights (each atom's own free-state
+exposure) shift with radius, a Simpson's-paradox-style reversal. Confirmed
+at up to 6000 points/atom (not quadrature noise): individual nucleotides in
+8FTI (both states) and the bare-duplex state generally (fewer atoms, less
+averaging) show local dips up to ~30% swept nucleotide-by-nucleotide across
+the probe ladder. Averaged over the WHOLE target strand this cancels and the
+mean is cleanly monotonic everywhere checked -- that mean is what
+test_steric.py asserts monotonicity on, with the per-nucleotide caveat
+stated rather than hidden.
+
+Also unwritten still: sieve/*, kinetics/*, wiring shadow.py into
+constrained.py's occlusion footprints (not requested by A4's scope, noted
+for whoever picks up A5/A6).
