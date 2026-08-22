@@ -714,3 +714,75 @@ rs12973192  span- and site-dependent, no clean sign. Against the two acceptors
        across the ladder, and the donor readout decreases at 4/5 spans.
        UNRESOLVED. Same class as the ISS-N1 span flip. Do not cherry-pick the
        span that agrees with expectation.
+
+## GEO STAGE 2 COMPLETE — rMATS. THE GLOBAL SIEVE FAILS VALIDATION.
+
+Pipeline: STAR index + 20/20 samples aligned on mit_preemptable, 0 failures.
+rMATS job 20973939 COMPLETED. 3x F18MOE (nusinersen chemistry) vs 3x ScrMOE
+(scrambled control), mapping resolved via GEO series matrix.
+Events: SE 36613, MXE 5276, A3SS 2753, A5SS 1627, RI 650.
+766 significant transcriptome-wide (FDR<0.05, |dPSI|>0.05).
+
+### THE HEADLINE POSITIVE: POLR2H confirmed at the exon level
+chr3:184,364,966-184,365,049  dPSI = -0.920  FDR = 0.0
+A 92% loss of inclusion. The sieve predicted POLR2H -> SKIPPING blind, and real
+splicing data confirms it emphatically.
+
+EXON 2 vs EXON 3 DISCREPANCY RESOLVED: that exon is exon_number 2 in five
+POLR2H transcripts (ENST00000429568/430783/438240/443489/452961) and exon 3 in
+ENST00000456318, which carries an extra upstream exon. Literature "exon 2" and
+GENCODE-canonical "exon 3" are THE SAME EXON. No conflict; close this question.
+
+THE COUNTS PROXY WAS WRONG, NOT THE PREDICTION. Gene-level counts gave POLR2H
++0.150 (wrong direction). Real splicing gives -0.920. Skipping here is not
+efficiently NMD-coupled, so counts could not see it.
+
+### THE GLOBAL RESULT IS NEGATIVE — do not overstate this project's sieve
+Predicted signed_effect vs measured dPSI, 426 genes with both:
+  Spearman rho = +0.0025, p = 0.96          <-- NO correlation whatsoever
+  skip vs inclusion   Mann-Whitney p = 0.70 <-- no separation
+  skip vs background  Mann-Whitney p = 0.41 <-- no separation
+  sign agreement among 30 significant events = 56.7%  <-- chance is 50%
+
+CORRECTION TO AN EARLIER ENTRY: the stage-1 counts-proxy result (predicted-
+skipping genes down vs background, p = 6.67e-05) DID NOT REPLICATE against real
+splicing. Treat that earlier aggregate finding as a false positive of a weak
+proxy. It is superseded by this measurement. Do not cite it as support.
+
+CONFOUND THAT EXPLAINS THE APPARENT WINS: almost all significant events in this
+dataset have NEGATIVE dPSI -- high-concentration nusinersen causes widespread
+skipping. So "predict skipping" is correct by base rate. This is exactly why
+sign agreement is only 56.7% despite four striking negative-prediction hits.
+Those hits cannot be presented as sieve-wide validation.
+
+### Individually validated strong exonic negative predictions
+  POLR2H   pred -10.38  measured -0.920  FDR 0.0        exonic_proximal
+  MAP1S    pred -14.32  measured -0.879  FDR 0.0        exonic_proximal  <-- NOVEL
+  ANKRD28  pred  -5.91  measured -0.619  FDR 0.0        exonic_proximal
+  CCSER2   pred -13.76  measured -0.236  FDR 6.4e-07    exonic_proximal
+MAP1S is a genuinely novel, blind, validated off-target prediction.
+
+### Inclusion-direction predictions FAIL outright
+  MYH15    pred +1.46  measured -0.667   intronic_core
+  KIAA2026 pred +8.62  measured -0.545   intronic_proximal
+  WDR70    pred +1.25  measured -0.434   intronic_core
+  TLE4     pred +2.59  measured -0.356   intronic_core
+The positive/inclusion arm of the polarity model has no support in this data.
+
+### SMN2 ON-TARGET IS NOT MEASURABLE BY THIS PIPELINE
+Zero SMN events in any rMATS category. Cause established, not guessed:
+  SMN2   157 unique / 1288 multimapped reads (89% multi)
+  SMN1    16 unique / 1123 multimapped (99% multi)
+  POLR2H 832 unique /    1 multimapped (0.1% multi)
+SMN1 and SMN2 are ~99.9% identical, so reads cannot be assigned uniquely and
+rMATS (which uses unique junction reads) has nothing to work with. This is a
+known short-read limitation at this locus, NOT a pipeline defect. Quantifying
+SMN2 exon 7 would need a paralog-aware method (targeted assembly, long reads,
+or SMN1/SMN2-discriminating junction counting).
+
+### HONEST SUMMARY FOR ANY WRITE-UP
+The sieve identifies specific strong exonic off-targets correctly -- POLR2H
+confirmed, MAP1S newly predicted and confirmed. It does NOT work as a
+transcriptome-wide signed predictor: rho = 0.0025 against measured dPSI. Report
+it as a candidate-generator for strong exonic hits, not as a validated
+genome-wide safety sieve. The "universal safety sieve" framing is NOT supported.

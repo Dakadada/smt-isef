@@ -108,7 +108,17 @@ def run_unc13a(out: Path) -> GenePlan:
     # entry (near keep.start) = the 178bp isoform's own acceptor; exit (near
     # keep.end) = the shared donor -- both pinned, unlike STMN2's exit side.
     extra = {"20": [(keep, T.UNC13A_CRYPTIC_ACCEPTOR_178, T.UNC13A_CRYPTIC_DONOR)]}
-    plan = compress_gene("UNC13A", seq, exon_order, exons, DEFAULT_PARAMS, extra_keep_by_intron=extra)
+    # keep_upstream_from=exon20.start: compress_gene's default (1) retains
+    # everything upstream of the first exon in exon_order as "promoter",
+    # which is correct for a whole-gene run (SMN2, STMN2) but WRONG here --
+    # UNC13A's reference sequence is the whole 87019 nt gene body, and exon
+    # 20 is nowhere near its start. Only exon 20 onward is pinned/modelled;
+    # the ~45 kb genuinely upstream of exon 20 (introns/exons 1-19) is out of
+    # scope, not a promoter, and must not be retained wholesale.
+    plan = compress_gene(
+        "UNC13A", seq, exon_order, exons, DEFAULT_PARAMS,
+        extra_keep_by_intron=extra, keep_upstream_from=exons["20"].start,
+    )
     _print_intron_table(plan)
     c = build_construct(
         plan,

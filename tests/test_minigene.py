@@ -316,7 +316,13 @@ def unc13a_plan():
     exons = {k: Interval(*T.UNC13A_EXONS[k]) for k in exon_order}
     keep = Interval(T.UNC13A_CRYPTIC_EXON_178.start, T.UNC13A_CRYPTIC_EXON_178.end)
     extra = {"20": [(keep, T.UNC13A_CRYPTIC_ACCEPTOR_178, T.UNC13A_CRYPTIC_DONOR)]}
-    return compress_gene("UNC13A", seq, exon_order, exons, DEFAULT_PARAMS, extra_keep_by_intron=extra)
+    # keep_upstream_from=exon20.start -- see smt.minigene.report.run_unc13a's
+    # comment: only exon 20 onward is pinned here, so nothing upstream of it
+    # should be retained as a fake "promoter".
+    return compress_gene(
+        "UNC13A", seq, exon_order, exons, DEFAULT_PARAMS,
+        extra_keep_by_intron=extra, keep_upstream_from=exons["20"].start,
+    )
 
 
 def test_unc13a_cryptic_exon_region_survives_compression(unc13a_plan):
