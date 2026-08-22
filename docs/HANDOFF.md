@@ -786,3 +786,43 @@ confirmed, MAP1S newly predicted and confirmed. It does NOT work as a
 transcriptome-wide signed predictor: rho = 0.0025 against measured dPSI. Report
 it as a candidate-generator for strong exonic hits, not as a validated
 genome-wide safety sieve. The "universal safety sieve" framing is NOT supported.
+
+## A6 COMPLETE — minigene compression. PARTIAL PASS on the blind test.
+
+Array 20974295, 3/3 genes, 0 failed. Outputs in .../smt-isef-data/minigene/
+(FASTA + blocks CSV + junctions CSV per gene).
+
+SMN2 per-intron retained fraction (algorithm was NOT told the published answer):
+  intron 1   13648 nt   0.052
+  intron 2a   2478 nt   0.111
+  intron 2b    849 nt   0.373
+  intron 3     159 nt   0.421
+  intron 4    1788 nt   0.020
+  intron 5    1310 nt   0.372
+  intron 6    5769 nt   0.055
+  intron 7     444 nt   1.000   <-- FULL, uniquely, recovered blind
+
+GRADE: PARTIAL PASS.
+  INTRON 7 RECOVERED. It is the only intron retained at 1.000, matching
+  Ottesen 2024's "the entire introns 3 and 7 were used". This is a real blind
+  hit against a published human design decision.
+  INTRON 3 NOT RECOVERED at 0.421 -- and barely above introns 2b (0.373) and
+  5 (0.372), so it is not even a weak signal.
+
+IMPORTANT CAVEAT THAT CUTS BOTH WAYS: intron 3 is only 159 nt. The published
+design's own "~150 nt flanking sequence around most exons" rule would cover
+nearly all of a 159 nt intron on its own, so "entire intron 3 was used" is close
+to trivially true and is a WEAK test. Intron 7 at 444 nt is the test that
+actually discriminates, and it passed. Do not present intron 3 as a failure of
+the physics, nor intron 7 as a two-for-two success. One meaningful test, passed.
+
+Compression: SMN2 natural transcribed unit 27927 nt -> 9279 nt (33.2%, ~3.0x
+shorter). Published claims 5-10x shorter, measured against the full gene
+including promoter, so these are not directly comparable figures.
+
+DO NOT TRUST THE UNC13A OUTPUT YET: 87019 nt -> 743 nt (0.85%), far more
+aggressive than SMN2 (33.2%) or STMN2 (5126 nt). Most likely the pinned exon
+set in targets.py covers only part of the locus, or the compression dropped
+blocks it should have kept. Investigate before using or reporting it.
+STMN2: 55042 nt -> 5126 nt (9.3%) -- plausible but unverified against any
+published design, since none exists for STMN2.
