@@ -244,3 +244,40 @@ exonic hits separately with this caveat stated.
 
 ## GitHub
 https://github.com/Dakadada/smt-isef (private). Remote `origin`, branch main.
+
+## A3 GATE PASSES — job 20962114, 200/200 shards, 0 failed
+
+795 footprints x 5-span ladder = 3975 rows. Graded on the 780 strictly
+intronic footprints (start > 32058); ranked by MEDIAN delta_A across the span
+ladder, which is robust to the ISS-N1 sign flips noted earlier.
+
+TOP INTRONIC FOOTPRINTS (median delta_A):
+  start  len   end     medDelta   GC  ISS
+  32059    9  32067   9.629e-05   1    1
+  32059    8  32066   9.607e-05   1    1   <-- EXACTLY GC_CORE (intron7 +7..+14)
+  32059    7  32065   9.320e-05   1    1
+  32060    8  32067   8.715e-05   1    1
+  32061    6  32066   8.447e-05   1    1
+  32090    8  32097   3.873e-05   0    0   <-- secondary site, NOT annotated
+
+GRADE: 18/20 of top-20 intronic overlap the GC core, against a base rate of
+0.154 across all intronic footprints. Top-20 lengths are 6-13, concentrated at
+6-9. The model recovered BOTH the position and the short-length regime of the
+published micro-walk result, blind -- overlaps_gc_core is an annotation column
+and never enters scoring.
+
+This is the go/no-go from the plan. It passes. Downstream workstreams (A4
+parity, A5 sieve, A7 cryptic exons, A8 kinetics) are now justified.
+
+NEW PREDICTION worth following up: footprint (32090, len 8) ranks 11th with no
+GC-core or ISS-N1 overlap. Either a real secondary accessibility site or an
+artifact of the compact window. Check it before claiming it.
+
+CAVEAT REPEATED: exonic footprints were excluded from grading because the
+accessibility model cannot see ESE disruption and systematically over-ranks
+them. Any published version must state this.
+
+## NEXT
+A5 sieve (transcriptome scan + positional polarity), then GEO validation
+against the published high-concentration ISS-N1 ASO RNA-seq (PMC8395096).
+Still unwritten: steric/shadow.py, steric/parity.py, sieve/*, kinetics/*.
