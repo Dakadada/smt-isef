@@ -97,27 +97,27 @@ def run_stmn2(out: Path) -> GenePlan:
 
 def run_unc13a(out: Path) -> GenePlan:
     print("=" * 78)
-    print("A6 APPLICATION: UNC13A -- PARTIAL. Only exons 20/21 and the intervening")
-    print("cryptic-exon region are pinned in smt.seq.targets (not the full 44-exon")
-    print("gene), so this compresses that segment only, not the 87019 nt locus.")
+    print("A6 APPLICATION: UNC13A (full 44-exon gene, both cryptic-exon isoforms")
+    print("retained as pinned regulatory anchors -- see smt.seq.targets)")
     print("=" * 78)
     seq = T.load_unc13a()
-    exon_order = ["20", "21"]
+    exon_order = list(T.UNC13A_EXON_ORDER)
     exons = {k: Interval(*T.UNC13A_EXONS[k]) for k in exon_order}
     keep = Interval(T.UNC13A_CRYPTIC_EXON_178.start, T.UNC13A_CRYPTIC_EXON_178.end)
     # entry (near keep.start) = the 178bp isoform's own acceptor; exit (near
     # keep.end) = the shared donor -- both pinned, unlike STMN2's exit side.
+    # The 128bp isoform is a strict subset of the 178bp interval, so pinning
+    # the superset protects both.
     extra = {"20": [(keep, T.UNC13A_CRYPTIC_ACCEPTOR_178, T.UNC13A_CRYPTIC_DONOR)]}
-    # keep_upstream_from=exon20.start: compress_gene's default (1) retains
-    # everything upstream of the first exon in exon_order as "promoter",
-    # which is correct for a whole-gene run (SMN2, STMN2) but WRONG here --
-    # UNC13A's reference sequence is the whole 87019 nt gene body, and exon
-    # 20 is nowhere near its start. Only exon 20 onward is pinned/modelled;
-    # the ~45 kb genuinely upstream of exon 20 (introns/exons 1-19) is out of
-    # scope, not a promoter, and must not be retained wholesale.
+    # keep_upstream_from now takes compress_gene's default: with exon 1
+    # present the sequence upstream of it really is promoter/5' flank, the
+    # same situation as SMN2 and STMN2. (Before the full exon table was
+    # pinned this had to be overridden to exon 20's start, because exons
+    # 1-19 were absent and the 45 kb ahead of exon 20 would have been
+    # retained wholesale as a fake "promoter".)
     plan = compress_gene(
         "UNC13A", seq, exon_order, exons, DEFAULT_PARAMS,
-        extra_keep_by_intron=extra, keep_upstream_from=exons["20"].start,
+        extra_keep_by_intron=extra,
     )
     _print_intron_table(plan)
     c = build_construct(
@@ -130,16 +130,11 @@ def run_unc13a(out: Path) -> GenePlan:
             "UNC13A_CRYPTIC_ACCEPTOR_178": T.UNC13A_CRYPTIC_ACCEPTOR_178,
         },
     )
-    segment_natural_len = exons["21"].end - exons["20"].start + 1
-    print(f"\ncompressed length {len(c)} nt vs natural pinned segment (exon20..exon21) "
-          f"{segment_natural_len} nt (ratio {len(c)/segment_natural_len:.4f})")
-    print(f"for context, full UNC13A gene body is {T.UNC13A_LENGTH} nt (out of scope here)")
+    print(f"\ncompressed length {len(c)} nt vs natural gene body {T.UNC13A_LENGTH} nt "
+          f"(ratio {len(c)/T.UNC13A_LENGTH:.4f})")
     paths = write_spec(c, out, plan)
     print(f"wrote {paths}")
     return plan
-
-
-GENE_RUNNERS = {"SMN2": run_smn2_validation, "STMN2": run_stmn2, "UNC13A": run_unc13a}
 
 
 def run_one_gene_idempotent(gene: str, out: Path) -> None:

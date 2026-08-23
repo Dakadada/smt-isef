@@ -311,18 +311,57 @@ def test_stmn2_compressed_shorter_than_natural_gene(stmn2_plan):
 
 @pytest.fixture(scope="module")
 def unc13a_plan():
+    """Whole-gene UNC13A compression, mirroring smt.minigene.report.run_unc13a.
+
+    This fixture used to pass exon_order=["20", "21"] because those were the
+    only two exons pinned in smt.seq.targets. That made the fixture agree with
+    the code while both were wrong about the gene, so the tests below could not
+    have caught the truncated output. It now runs the full 44-exon table.
+    """
     seq = T.load_unc13a()
-    exon_order = ["20", "21"]
+    exon_order = list(T.UNC13A_EXON_ORDER)
     exons = {k: Interval(*T.UNC13A_EXONS[k]) for k in exon_order}
     keep = Interval(T.UNC13A_CRYPTIC_EXON_178.start, T.UNC13A_CRYPTIC_EXON_178.end)
     extra = {"20": [(keep, T.UNC13A_CRYPTIC_ACCEPTOR_178, T.UNC13A_CRYPTIC_DONOR)]}
-    # keep_upstream_from=exon20.start -- see smt.minigene.report.run_unc13a's
-    # comment: only exon 20 onward is pinned here, so nothing upstream of it
-    # should be retained as a fake "promoter".
     return compress_gene(
         "UNC13A", seq, exon_order, exons, DEFAULT_PARAMS,
-        extra_keep_by_intron=extra, keep_upstream_from=exons["20"].start,
+        extra_keep_by_intron=extra,
     )
+
+
+def test_unc13a_exon_table_matches_genbank_record():
+    """REGRESSION GUARD for the truncated-input bug.
+
+    UNC13A_EXONS once held only exons 20 and 21 of 44. compress_gene spans
+    first-to-last exon it is given, so A6 emitted a 743 nt compression of a
+    1.5 kb window and reported it as the compressed 87 kb locus. Nothing
+    failed -- the code did exactly what it was told. This test re-derives the
+    table from the pinned GenBank feature table so a short table is an error,
+    not a quiet wrong answer.
+    """
+    from Bio import SeqIO
+
+    rec = SeqIO.read(str(T.UNC13A_GB), "genbank")
+    mrna = [
+        f for f in rec.features
+        if f.type == "mRNA"
+        and f.qualifiers.get("transcript_id", [""])[0] == T.UNC13A_CANONICAL_TRANSCRIPT
+    ]
+    assert len(mrna) == 1, f"expected exactly one {T.UNC13A_CANONICAL_TRANSCRIPT} mRNA"
+    from_gb = [(int(p.start) + 1, int(p.end)) for p in mrna[0].location.parts]
+    assert len(from_gb) == 44, "NCBI Gene reports exoncount=44 for gene ID 23025"
+    ours = [T.UNC13A_EXONS[k] for k in T.UNC13A_EXON_ORDER]
+    assert ours == from_gb
+    # the two originally-pinned values must survive the widening unchanged
+    assert T.UNC13A_EXONS["20"] == (T.UNC13A_EXON_20.start, T.UNC13A_EXON_20.end)
+    assert T.UNC13A_EXONS["21"] == (T.UNC13A_EXON_21.start, T.UNC13A_EXON_21.end)
+
+
+def test_unc13a_exons_ascending_and_disjoint():
+    ivs = [T.UNC13A_EXONS[k] for k in T.UNC13A_EXON_ORDER]
+    assert all(a <= b for a, b in ivs)
+    assert all(ivs[i][1] < ivs[i + 1][0] for i in range(len(ivs) - 1))
+    assert ivs[-1][1] <= T.UNC13A_LENGTH
 
 
 def test_unc13a_cryptic_exon_region_survives_compression(unc13a_plan):
@@ -343,11 +382,25 @@ def test_unc13a_canonical_exons_20_21_survive_compression(unc13a_plan):
         assert len(got) == e - s + 1
 
 
-def test_unc13a_segment_compressed_shorter_than_pinned_segment(unc13a_plan):
+def test_unc13a_compressed_shorter_than_whole_gene(unc13a_plan):
     c = build_construct(unc13a_plan)
-    s = T.UNC13A_EXONS["20"][0]
-    e = T.UNC13A_EXONS["21"][1]
-    assert len(c) < (e - s + 1)
+    assert len(c) < T.UNC13A_LENGTH
+
+
+def test_unc13a_compression_spans_the_whole_locus(unc13a_plan):
+    """The truncated table produced a construct covering only 45394..46961.
+
+    Assert the retained blocks actually reach both ends of the gene, so a
+    future truncation of the exon table cannot pass silently again.
+    """
+    c = build_construct(unc13a_plan)
+    first = T.UNC13A_EXONS[T.UNC13A_EXON_ORDER[0]]
+    last = T.UNC13A_EXONS[T.UNC13A_EXON_ORDER[-1]]
+    # exon 1 and exon 44 both survive compression -- exons are never deleted
+    assert len(c.map_interval(Interval(*first))) == first[1] - first[0] + 1
+    assert len(c.map_interval(Interval(*last))) == last[1] - last[0] + 1
+    # and the result is far longer than the old 743 nt window artifact
+    assert len(c) > 5_000
 
 
 # ---------------------------------------------------------------------------

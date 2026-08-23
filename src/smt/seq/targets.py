@@ -153,16 +153,79 @@ UNC13A_STRAND = 2  # efetch strand=2: returns revcomp, already 5'->3' local
 UNC13A_LENGTH = 87019
 UNC13A_GB = DATA / "UNC13A_NC_000019.10_17601335_17688353_revcomp.gb"
 
-# Local (gene 5'->3') 1-based inclusive exon coordinates for exons 20 and 21,
-# canonical/reference transcript NM_001080421.3 (44 exons -- matches NCBI
-# Gene's own genomicinfo.exoncount=44 for gene ID 23025 exactly, an
-# independent cross-check that this is the transcript the literature's "exon
-# 20/21" numbering refers to). Read directly out of this slice's own
-# GenBank feature table.
+# Local (gene 5'->3') 1-based inclusive exon coordinates for the canonical /
+# reference transcript NM_001080421.3, read directly out of this slice's own
+# GenBank feature table (the ``mRNA`` feature whose ``/transcript_id`` is
+# NM_001080421.3; its 44 join() parts are already in ascending local
+# coordinates because the slice was fetched with strand=2). The count, 44,
+# matches NCBI Gene's own genomicinfo.exoncount=44 for gene ID 23025 exactly
+# -- an independent cross-check that this is the transcript the literature's
+# "exon 20/21" numbering refers to.
+#
+# HISTORY -- why this used to be two entries. Only exons "20" and "21" were
+# pinned originally, because A7 (cryptic-exon retarget) needs nothing but the
+# pair that brackets the cryptic exon. That was correct for A7 and wrong for
+# A6: ``smt.minigene.compress.compress_gene`` spans first-to-last exon it is
+# given, so whole-gene compression silently produced a 743 nt compression of
+# the 1.5 kb window 45394..46961 rather than of the 87019 nt locus. The two
+# original values are reproduced here unchanged and still agree with the
+# GenBank table to the base -- the pins were right, the table was short.
 UNC13A_EXONS: dict[str, tuple[int, int]] = {
+    "1": (1, 176),
+    "2": (12313, 12342),
+    "3": (13598, 13697),
+    "4": (15859, 15976),
+    "5": (18678, 18801),
+    "6": (20164, 20237),
+    "7": (21650, 21704),
+    "8": (24787, 24822),
+    "9": (30085, 30292),
+    "10": (31956, 32471),
+    "11": (32972, 33080),
+    "12": (35677, 35723),
+    "13": (38767, 38845),
+    "14": (39010, 39015),
+    "15": (39371, 39442),
+    "16": (39704, 39923),
+    "17": (40862, 41089),
+    "18": (42243, 42384),
+    "19": (42511, 42680),
     "20": (45394, 45509),
     "21": (46798, 46961),
+    "22": (47693, 47843),
+    "23": (48446, 48514),
+    "24": (48829, 48918),
+    "25": (49137, 49271),
+    "26": (52197, 52330),
+    "27": (55161, 55246),
+    "28": (55446, 55572),
+    "29": (57604, 57700),
+    "30": (58066, 58209),
+    "31": (59031, 59114),
+    "32": (60414, 60491),
+    "33": (60757, 60845),
+    "34": (61569, 61721),
+    "35": (63402, 63525),
+    "36": (64807, 64812),
+    "37": (66484, 66522),
+    "38": (67632, 67661),
+    "39": (69392, 69448),
+    "40": (69853, 69933),
+    "41": (70505, 70652),
+    "42": (76499, 76591),
+    "43": (78255, 78414),
+    "44": (82000, 87018),
 }
+
+#: 5'->3' exon order, as key strings. Explicit rather than ``.keys()`` so
+#: nothing downstream depends on dict insertion order surviving an edit.
+UNC13A_EXON_ORDER: tuple[str, ...] = tuple(str(i) for i in range(1, 45))
+
+#: The pair bracketing the cryptic exon. A7 uses only these two; naming them
+#: keeps that lane independent of the full table above.
+UNC13A_EXON_20 = Interval(45394, 45509)
+UNC13A_EXON_21 = Interval(46798, 46961)
+
 UNC13A_CANONICAL_TRANSCRIPT = "NM_001080421.3"
 
 # Two alternative cryptic-exon isoforms, both between canonical exons 20 and

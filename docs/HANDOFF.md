@@ -820,10 +820,32 @@ Compression: SMN2 natural transcribed unit 27927 nt -> 9279 nt (33.2%, ~3.0x
 shorter). Published claims 5-10x shorter, measured against the full gene
 including promoter, so these are not directly comparable figures.
 
-DO NOT TRUST THE UNC13A OUTPUT YET: 87019 nt -> 743 nt (0.85%), far more
-aggressive than SMN2 (33.2%) or STMN2 (5126 nt). Most likely the pinned exon
-set in targets.py covers only part of the locus, or the compression dropped
-blocks it should have kept. Investigate before using or reporting it.
+UNC13A RESOLVED (2026-08-23) -- the 743 nt figure was a TRUNCATED INPUT, not a
+compression failure. First hypothesis in the old note was the right one.
+  ROOT CAUSE: UNC13A_EXONS in src/smt/seq/targets.py pinned only exons 20 and
+  21 of the transcript's 44 -- the pair bracketing the cryptic exon, which is
+  all A7 ever needed. compress_gene spans first-to-last exon it is handed, so
+  A6 emitted a correct compression of the 1.5 kb window 45394..46961 and it
+  was reported as the compressed 87 kb locus. Both pinned values were CORRECT
+  and match the GenBank table to the base; the table was just short.
+  NOTHING RAISED. report.run_unc13a even printed "PARTIAL ... not the full
+  44-exon gene" every run. Fifth entry in the silent-failure list: code that
+  states its own limitation is still a wrong number if the limitation is
+  printed rather than enforced. The test fixture passed exon_order=["20","21"]
+  too, so the tests agreed with the code while both were wrong about the gene.
+  FIX: all 44 exons of NM_001080421.3 pinned from the record's own mRNA
+  feature table (the same one exons 20/21 were read from), whole-gene run,
+  keep_upstream_from back to the default now that exon 1 exists.
+  GUARD: tests/test_minigene.py::test_unc13a_exon_table_matches_genbank_record
+  re-derives all 44 from the GenBank file, so a short table now fails loudly.
+  Plus a span test asserting the blocks reach both ends of the locus.
+  CORRECTED RESULT: 87019 nt -> 23544 nt (27.1%), 42 blocks spanning 1..87018.
+  Lands between STMN2 (9.3%) and SMN2 (33.2%), as expected for a gene with 44
+  exons to anchor. All 44 canonical exons and all five pinned cryptic features
+  (both isoforms, shared donor, both acceptors) verified fully retained.
+  Intron 20, which carries the cryptic exon, retains 0.359 with 2 deletions.
+  DO NOT read that as a blind hit -- several small introns retain 1.000 purely
+  because they are short, so intron-20 retention here discriminates nothing.
 STMN2: 55042 nt -> 5126 nt (9.3%) -- plausible but unverified against any
 published design, since none exists for STMN2.
 
@@ -848,7 +870,9 @@ FAILED / UNSUPPORTED -- these govern how the work may be described
   SMN2 on-target unmeasurable by short-read RNA-seq (89-99% multimapping).
   Framework models INDIRECT structural effects only; direct-occupancy ASOs are
      out of scope.
-  A6 intron 3 not recovered (0.421); UNC13A 743 nt output UNTRUSTED.
+  A6 intron 3 not recovered (0.421). UNC13A resolved: the 743 nt output was a
+     truncated exon table (2 of 44 pinned), now 23544 nt (27.1%) with a
+     GenBank-derived regression guard.
 OUTSTANDING, NOT BLOCKED BY ANYTHING COMPUTATIONAL
   docs/lab-request.md still needs sending. Ask 1 (construct identity/sequence)
   has the longest latency in the project and gates bench-matching, not physics.
