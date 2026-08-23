@@ -962,3 +962,55 @@ sample the exclusion arm remains unmeasurable by 100 nt reads.
 Code: `src/smt/rnaseq/{junction_psi,targets,report}.py`.
 Run: `PYTHONPATH=src python -m smt.rnaseq.report` (samtools comes from the
 absolute rna-env path, so either env works). Tests: 15 passed.
+
+
+## A7 COMPLETE — 800/800 shards, 0 failures. THE LOCUS SETS THE ANSWER.
+
+Job 21044969, 400 tasks x 2 shards. 89,100 rows = 17,820 footprints x 5 spans;
+4,140 full-ladder footprints per target; 6,300 direct_overlap rows carried with
+empty scores rather than dropped. Aggregate: `smt.validate.cryptic_report`,
+full output in `docs/a7-cryptic-sweep-results.txt`.
+
+A side benefit worth recording: the aggregator refuses a non-constant baseline
+per (target, span), and across all 800 shards it never fired. That is an
+independent confirmation that the hoisted baseline cache -- the 2x perf change
+that made this array affordable -- agreed in every one of 400 processes.
+
+### THE CEILING, which is the actual finding
+For OCCLUDE, `fom` is bounded above by the unoccluded baseline: occlusion
+cannot remove more accessibility than the site has. So every target carries a
+hard ceiling equal to its MINIMUM baseline over the span ladder.
+
+  target                best worst-span fom   ceiling     % of ceiling
+  STMN2_3SS                     6.702e-03    7.109e-03        94.3%
+  UNC13A_ACCEPTOR_128           9.511e-05    9.669e-05        98.4%
+  UNC13A_ACCEPTOR_178           2.152e-06    3.446e-06        62.4%
+  UNC13A_DONOR                  1.034e-08    1.899e-05         0.1%
+
+Three of four targets are AT or NEAR their ceiling. The 6.5e5x spread between
+STMN2 and UNC13A_DONOR is a spread in baseline accessibility, not in footprint
+quality. Do not report it as "the sweep found a good STMN2 ASO and bad UNC13A
+ASOs" -- the sweep found that STMN2's cryptic 3'SS is accessible at every span
+(baseline never below 7.109e-03) while UNC13A's cryptic donor is essentially
+inaccessible at span 0 (1.899e-05), leaving almost nothing to occlude.
+
+### The candidate
+STMN2_3SS is the only target with a substantial ladder-robust set: 735 of
+4,140 footprints (17.8%) keep the desired sign at ALL FIVE spans. The top
+ones form a tight cluster at start 5716-5717, length 6-10 -- consistent
+across neighbouring starts and lengths rather than a lone outlier, which is
+what a real signal looks like here.
+
+  start 5716, len 10:  fom @0 3.932e-02  @50 7.941e-03  @100 6.702e-03
+                           @150 1.298e-02  @300 1.683e-02
+
+UNC13A_ACCEPTOR_128 has only 17 of 4,140 ladder-robust (0.4%), and its best
+sits 73x below STMN2's ceiling.
+
+### THE HEADLINE CAVEAT — 87.0% OF FOOTPRINTS FLIP SIGN ACROSS THE LADDER
+Per target: STMN2 76.1%, ACCEPTOR_128 82.4%, DONOR 92.7%, ACCEPTOR_178 96.7%.
+This is not a footnote. At these loci the SIGN of the predicted effect is
+span-dependent for the large majority of footprints, exactly as recorded for
+ISS-N1 at SMN2. Every ranking in the report is on the WORST span, never the
+best -- ranking on the best span is cherry-picking one level down from
+choosing a span by hand. Any single-span A7 number is meaningless.
