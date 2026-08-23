@@ -73,7 +73,8 @@ class Footprint:
 def load(out_dir: Path, nshards: int = 800) -> tuple[list[Footprint], dict]:
     by_key: dict[tuple, dict] = defaultdict(dict)
     meta: dict[tuple, tuple] = {}
-    audit = {"shards_found": 0, "missing": [], "rows": 0, "direct_overlap": 0}
+    audit: dict = {"shards_found": 0, "missing": [], "rows": 0,
+                   "direct_overlap": 0, "baseline": {}}
     for shard in range(nshards):
         path = out_dir / f"cryptic_sweep_{shard:04d}_of_{nshards:04d}.csv"
         if not path.exists():
@@ -86,9 +87,17 @@ def load(out_dir: Path, nshards: int = 800) -> tuple[list[Footprint], dict]:
                 if row["direct_overlap"] == "1":
                     audit["direct_overlap"] += 1
                     continue
+                span = int(row["max_bp_span"])
+                base = float(row["A_baseline"])
+                prev = audit["baseline"].setdefault((row["target"], span), base)
+                if prev != base:
+                    raise ValueError(
+                        f"{row['target']}@{span}: baseline is not constant "
+                        f"({prev} vs {base}) -- the hoisted baseline cache is wrong"
+                    )
                 key = (row["target"], int(row["start"]), int(row["length"]))
                 meta[key] = (row["gene"], int(row["end"]))
-                by_key[key][int(row["max_bp_span"])] = (
+                by_key[key][span] = (
                     float(row["fom"]), float(row["fold_change"]) if row["fold_change"] != "inf" else float("inf")
                 )
     prints = [
@@ -126,6 +135,15 @@ def report(prints: list[Footprint], audit: dict, top: int = 10) -> None:
         flips = [p for p in group if not p.consistent]
         wrong = [p for p in group if p.consistent and p.signs == {-1}]
         print(f"\n### {target}  ({group[0].gene if group else '?'})")
+        ladder = {s_: audit["baseline"][(target, s_)] for s_ in SPANS
+                  if (target, s_) in audit["baseline"]}
+        if ladder:
+            print("  unoccluded baseline A_5ss: "
+                  + "  ".join(f"@{s_}={v:.3e}" for s_, v in ladder.items()))
+            print(f"  CEILING on fom = min baseline over the ladder = {min(ladder.values()):.3e}."
+                  "  Occlusion cannot remove more accessibility than exists, so a")
+            print("  target whose baseline is already ~0 at any span cannot yield a")
+            print("  ladder-robust effect no matter what footprint is placed on it.")
         print(f"  {len(group)} footprints with a full ladder: "
               f"{len(good)} desired at every span, {len(wrong)} wrong-signed at every span, "
               f"{len(flips)} SIGN-FLIPPING ({100*len(flips)/len(group):.1f}%)")
@@ -152,8 +170,14 @@ def report(prints: list[Footprint], audit: dict, top: int = 10) -> None:
                 if len(p.fom) == len(SPANS) and p.desired_everywhere]
         if good:
             best.append((target, max(good, key=lambda p: p.worst_fom)))
+    print(f"  {'target':<22} {'footprint':<12}{'worst-span fom':>16}{'ceiling':>12}{'% of ceiling':>14}")
     for target, p in sorted(best, key=lambda t: t[1].worst_fom, reverse=True):
-        print(f"  {target:<22} {p.start}+{p.length:<3} worst-span fom {p.worst_fom:.4e}")
+        ceiling = min(audit["baseline"][(target, s_)] for s_ in SPANS)
+        print(f"  {target:<22} {str(p.start)+'+'+str(p.length):<12}{p.worst_fom:>16.4e}"
+              f"{ceiling:>12.3e}{100*p.worst_fom/ceiling:>13.1f}%")
+    print("  A target where the best footprint already reaches most of its ceiling")
+    print("  is not limited by the search -- it is limited by how accessible the")
+    print("  site is to begin with. That is a property of the locus, not of A7.")
     if len(best) > 1:
         ratio = best[0][1].worst_fom / max(best[-1][1].worst_fom, 1e-300)
         strongest = max(best, key=lambda t: t[1].worst_fom)
