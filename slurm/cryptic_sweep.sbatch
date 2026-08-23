@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4G
 #SBATCH --time=00:45:00
-#SBATCH --array=0-799
+#SBATCH --array=0-799%100
 #SBATCH --requeue
 #SBATCH --open-mode=append
 #SBATCH --output=/home/dashii/smt-isef/slurm/logs/cryptic-sweep-%A_%a.out
@@ -36,6 +36,11 @@
 # build_baselines). Measured 40.7 s -> 20.4 s per footprint, a verified 1.99x,
 # with rows bit-identical to the uncached path (tests/test_cryptic.py).
 # Now ~8 min/shard (23 x 20.4 s + ~70 s of baselines) under a 45 min wall.
+#
+# %100 throttles the array to 100 concurrent tasks. The association limit is
+# 500, but mit_normal is a busy shared partition and 800 one-CPU tasks at once
+# is not a considerate footprint. At ~8 min/shard this still finishes the full
+# 800 in roughly an hour of wall clock, and short 1-CPU/4G jobs backfill well.
 #
 # --requeue + --open-mode=append: a preempted/killed shard is requeued and
 # its log is appended to, not clobbered. Each shard skips if its output file

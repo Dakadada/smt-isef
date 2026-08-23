@@ -215,7 +215,15 @@ def run_shard(shard: int, nshards: int, out_dir: Path) -> Path:
     baselines = build_baselines(constructs)
     print(f"  {len(baselines)} baselines precomputed", flush=True)
 
-    tmp = final.with_suffix(".csv.tmp")
+    # Unique per process, NOT a fixed "<shard>.csv.tmp". The plan allows
+    # overflowing this array onto a second partition, and skip-if-done is
+    # checked at start, so the same shard genuinely can be in flight twice.
+    # With a shared tmp path those two writers would interleave into one file
+    # and os.replace would publish the mixture -- a corrupt shard that looks
+    # complete. With a unique tmp path each writes its own and the last
+    # os.replace wins atomically, which is harmless: the shard is
+    # deterministic, so both would have written identical bytes.
+    tmp = final.with_suffix(f".csv.tmp.{os.getpid()}")
     with tmp.open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=FIELDS)
         w.writeheader()
