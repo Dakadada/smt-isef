@@ -867,12 +867,98 @@ FAILED / UNSUPPORTED -- these govern how the work may be described
   A5 does NOT work transcriptome-wide: Spearman rho = 0.0025 vs measured dPSI.
      "Universal safety sieve" is NOT supported.
   The stage-1 counts-proxy aggregate (p=6.7e-05) did not replicate; superseded.
-  SMN2 on-target unmeasurable by short-read RNA-seq (89-99% multimapping).
+  SMN2 on-target was called unmeasurable by short-read RNA-seq (89-99%
+     multimapping). THAT WAS AN rMATS LIMIT, NOT A DATA LIMIT -- see R3
+     below. Measured at dPSI +0.368. Do not repeat the old claim.
   Framework models INDIRECT structural effects only; direct-occupancy ASOs are
      out of scope.
   A6 intron 3 not recovered (0.421). UNC13A resolved: the 743 nt output was a
      truncated exon table (2 of 44 pinned), now 23544 nt (27.1%) with a
      GenBank-derived regression guard.
+BLIND-VALIDATED, ADDED BY R3
+  SMN2 exon 7 inclusion rises from 0.632 to 1.000 under F18MOE
+     (dPSI +0.368), with POLR2H reproducing rMATS's -0.920 as a control.
 OUTSTANDING, NOT BLOCKED BY ANYTHING COMPUTATIONAL
-  docs/lab-request.md still needs sending. Ask 1 (construct identity/sequence)
-  has the longest latency in the project and gates bench-matching, not physics.
+  docs/lab-request.md HAS BEEN SENT (2026-08-23). Phase B now waits on the
+  partner rather than on us. Nothing consumes PSI until real PSI arrives.
+
+
+## R3 — THE SMN2 ON-TARGET IS MEASURABLE AFTER ALL. dPSI = +0.368
+
+rMATS found ZERO SMN events, and this handoff recorded that as a hard limit of
+short-read data. It is not. It is a limit of rMATS, which counts UNIQUE
+junction reads; SMN1/SMN2 are ~99.9% identical, so 89% of SMN2 reads and 99%
+of SMN1 reads multimap and are discarded before any event is called. The one
+exon this entire project is about was the one exon the validation could not
+see. `smt.rnaseq` counts the same junctions with the same normalization and
+does not discard multimappers.
+
+### What the paralogs actually offer
+Derived by diffing the two loci in GRCh38 directly -- not from memory, not
+from a citation:
+
+    exon 6 (111 nt)   0 differences                       NO paralog information
+    exon 7 ( 54 nt)   1 difference at position 6   c.840C>T   SMN1 C / SMN2 T
+    exon 8 (577 nt)   1 difference at position 236 c.*239G>A  SMN1 G / SMN2 A
+
+The consequence is sharp: an exon 6->8 SKIPPING read contains no
+discriminating base at all. Exon 6 is identical and a 100 nt read cannot
+reach 236 nt into exon 8. The exclusion isoform is unassignable per-read IN
+PRINCIPLE, so the aligner's tie-break decides which locus it lands on.
+
+### THE TRAP, AND IT IS A GOOD ONE
+Observed in the data: every inclusion junction read landed at the SMN2 locus,
+and every 6->8 skipping read landed at SMN1. Counting the SMN2 locus alone
+therefore yields SJC=0 and PSI=1.000 in EVERY sample, treated and untreated
+alike -- a clean, publishable-looking, completely fabricated result. This is
+the same silent-failure class as the truncated UNC13A exon table. It is
+pinned by `tests/test_rnaseq.py::test_skipping_reads_land_at_smn1_and_
+inclusion_at_smn2`, which asserts the tie-break as a fact so it cannot
+silently stop being true.
+
+The loci MUST be pooled. Pooling is only legitimate if SMN1 is absent, so
+that is measured, never assumed.
+
+### SMN1 IS ABSENT — measured, all 20 samples, both loci
+Base at c.840, multimappers included:  C = 0   T = 1072   A = 1   G = 0
+GM03813 is SMN1-null, which is the expected SMA type I genotype and is what
+makes pooling valid. `smt.rnaseq.report.main` REFUSES to proceed if any C
+appears (`SMN1PresentError`) -- on a dataset carrying SMN1 the exclusion arm
+is genuinely unmeasurable and must be reported as such, not forced.
+
+### POSITIVE CONTROL — gates the SMN2 number
+POLR2H through the same counting code:  dPSI = -0.904   rMATS = -0.920
+Per sample PSI 0.145/0.063/0.066 vs rMATS 0.104/0.058/0.062. Counts run ~20%
+above rMATS because multimappers are included and no anchor filter is
+applied, so the tolerance is on PSI (0.05), not on counts. The SMN2 result is
+not printed at all unless this passes.
+
+### RESULT
+                    IJC   SJC     PSI
+    ScrMOE  ...699   84    24    0.694
+    ScrMOE  ...704   75    36    0.574
+    ScrMOE  ...715  104    40    0.627      mean 0.632
+    F18MOE  ...700  118     0    1.000      skipping <= 0.032 (Wilson 95%)
+    F18MOE  ...705  151     0    1.000      skipping <= 0.025
+    F18MOE  ...714   71     0    1.000      skipping <= 0.051
+
+    dPSI (F18MOE - ScrMOE) = +0.368
+
+F18MOE is nusinersen's chemistry targeting ISS-N1, and it drives SMN2 exon 7
+from 63% inclusion to no detectable skipping. That is this project's own
+on-target, measured in real patient-derived cells.
+
+READ THE 1.000 CORRECTLY. It is a boundary, not a measurement: it means zero
+skipping junction reads were observed, which is not the same as zero
+skipping. The Wilson upper bounds are printed beside it for exactly that
+reason. Depth is modest throughout (71-151 inclusion reads per sample); state
+it as "no detectable skipping", never as "100% inclusion".
+
+WHAT R3 IS NOT. It did not solve paralog discrimination. In this dataset the
+discrimination turned out to be unnecessary because SMN1 is deleted, and the
+c.840 machinery's real job was proving that premise. On an SMN1-carrying
+sample the exclusion arm remains unmeasurable by 100 nt reads.
+
+Code: `src/smt/rnaseq/{junction_psi,targets,report}.py`.
+Run: `PYTHONPATH=src python -m smt.rnaseq.report` (samtools comes from the
+absolute rna-env path, so either env works). Tests: 15 passed.
