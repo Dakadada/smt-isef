@@ -179,6 +179,7 @@ def score(
     construct: Optional[Construct] = None,
     estimator: Estimator | str = Estimator.ENSEMBLE,
     max_bp_span: int = 0,
+    baseline: Optional[A5ssResult] = None,
 ) -> SignedOcclusionResult:
     """Score one footprint against one named splice site, signed by direction.
 
@@ -187,8 +188,16 @@ def score(
     directions, and why a footprint overlapping ``site_feature`` is refused
     (the underlying ``ValueError`` from ``a_5ss`` propagates unchanged; this
     function does not catch or reinterpret it).
+
+    ``baseline`` is an optional precomputed unoccluded result, passed straight
+    through to ``occlusion_delta`` (which validates it). It exists so a sweep
+    over many footprints on one construct does not recompute the identical
+    baseline partition function per footprint -- that is 50% of the cost, not
+    a rounding error. See ``smt.validate.cryptic_sweep.build_baselines``.
     """
-    d = occlusion_delta(footprint, construct, estimator, site_feature, max_bp_span)
+    d = occlusion_delta(
+        footprint, construct, estimator, site_feature, max_bp_span, baseline=baseline
+    )
     return SignedOcclusionResult(Direction(direction), d)
 
 

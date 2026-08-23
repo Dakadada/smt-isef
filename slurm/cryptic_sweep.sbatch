@@ -4,7 +4,7 @@
 #SBATCH --partition=mit_normal
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4G
-#SBATCH --time=00:20:00
+#SBATCH --time=00:45:00
 #SBATCH --array=0-799
 #SBATCH --requeue
 #SBATCH --open-mode=append
@@ -17,11 +17,25 @@
 # max_bp_span ladder, exactly mirroring slurm/sweep_array.sbatch's SMN2 /
 # FREE-regime sweep (smt.validate.length_sweep) in structure.
 #
-# 17,820 footprints x 4 targets-worth already folded into that count x 5-span
-# ladder = 89,100 scored rows. Sized from a direct timing measurement: ~35 s
-# per footprint (5 spans x baseline+blocked constrained partition functions),
-# so 800 shards gives ~22 footprints/shard, ~13 min/shard -- comfortably
-# under the preemption-horizon guidance in docs/HANDOFF.md (<15 min/unit).
+# 17,820 footprints (4 targets x 4,455) x 5-span ladder = 89,100 scored rows.
+# 800 shards gives 22-23 footprints/shard.
+#
+# TIMING, re-measured 2026-08-23 before submission. The original note here
+# said ~35 s/footprint -> ~13 min/shard under a 20 min limit. Both halves of
+# that were a problem:
+#   * A smoke run of shard 0 did NOT finish in 10 min. Measured cost was
+#     35-41 s/footprint, so ~14 min/shard against a 20 min wall -- only ~40%
+#     headroom on a shared, variably-loaded node.
+#   * --requeue does NOT save a shard that hits its wall clock. It covers
+#     preemption; a TIMEOUT is a plain failure, leaves no output file, and the
+#     skip-if-done check then has nothing to skip. That is the A3 540-failed-
+#     task pattern (see docs/HANDOFF.md), which is why this is not left alone.
+# Fixed the cost rather than only the limit: the unoccluded baseline is a
+# function of (construct, span) alone, so it is now computed 20 times per
+# shard instead of once per footprint (smt.validate.cryptic_sweep.
+# build_baselines). Measured 40.7 s -> 20.4 s per footprint, a verified 1.99x,
+# with rows bit-identical to the uncached path (tests/test_cryptic.py).
+# Now ~8 min/shard (23 x 20.4 s + ~70 s of baselines) under a 45 min wall.
 #
 # --requeue + --open-mode=append: a preempted/killed shard is requeued and
 # its log is appended to, not clobbered. Each shard skips if its output file

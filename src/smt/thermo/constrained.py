@@ -238,10 +238,50 @@ def occlusion_delta(
     estimator: Estimator | str = Estimator.ENSEMBLE,
     ss5_feature: str = SS5_FEATURE,
     max_bp_span: int = 0,
+    baseline: Optional[A5ssResult] = None,
 ) -> OcclusionDelta:
-    """Primary output: A_5ss with and without the effector, and their delta."""
+    """Primary output: A_5ss with and without the effector, and their delta.
+
+    ``baseline`` optionally supplies an already-computed unoccluded result.
+    The baseline is a function of (construct, estimator, ss5_feature,
+    max_bp_span) ONLY -- the footprint does not enter it -- so in a sweep over
+    many footprints on one construct it is the identical number every time.
+    Measured, not assumed: the baseline pass costs 50.0-50.5% of the pair at
+    every span on the A7 constructs, so recomputing it per footprint doubles
+    the cost of a sweep. (An earlier docstring on ``scan_footprints`` called it
+    "cheap relative to the constrained pass"; that was wrong -- both passes are
+    the same O(n^3) partition function over the same sequence.)
+
+    A supplied baseline is VALIDATED, not trusted: passing one computed under
+    different settings is a silent wrong-answer bug of exactly the kind this
+    project keeps finding, so it raises instead.
+    """
     c = construct if construct is not None else compact_window()
-    base = a_5ss(c, None, estimator, ss5_feature, max_bp_span)
+    est = Estimator(estimator)
+    if baseline is None:
+        base = a_5ss(c, None, estimator, ss5_feature, max_bp_span)
+    else:
+        if baseline.footprint is not None:
+            raise ValueError("supplied baseline must be unoccluded (footprint is None)")
+        if baseline.construct != c.name:
+            raise ValueError(
+                f"baseline construct {baseline.construct!r} != {c.name!r}"
+            )
+        if baseline.estimator != est.value:
+            raise ValueError(
+                f"baseline estimator {baseline.estimator!r} != {est.value!r}"
+            )
+        if baseline.max_bp_span != max_bp_span:
+            raise ValueError(
+                f"baseline max_bp_span {baseline.max_bp_span} != {max_bp_span}"
+            )
+        # ss5_feature is not stored on A5ssResult; its resolved construct-space
+        # interval is, so compare that instead of the feature name.
+        if baseline.ss5 != c.feature(ss5_feature):
+            raise ValueError(
+                f"baseline ss5 {baseline.ss5} != feature {ss5_feature!r} {c.feature(ss5_feature)}"
+            )
+        base = baseline
     blocked = a_5ss(c, footprint, estimator, ss5_feature, max_bp_span)
     return OcclusionDelta(c.name, footprint, base, blocked)
 
@@ -255,8 +295,10 @@ def scan_footprints(
     """Run :func:`occlusion_delta` for several named footprints on one construct.
 
     Shares nothing between runs except the construct; each baseline is
-    recomputed, which is cheap relative to the constrained pass and keeps the
-    results independently reproducible.
+    recomputed, keeping the results independently reproducible. That costs
+    ~2x, since the baseline pass is ~50% of each pair -- callers sweeping many
+    footprints should hoist the baseline and pass it to ``occlusion_delta``
+    (see ``smt.validate.cryptic_sweep``) rather than use this helper.
     """
     c = construct if construct is not None else compact_window()
     return {

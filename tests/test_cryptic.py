@@ -236,3 +236,91 @@ def test_variant_effect_runs_and_returns_finite_numbers():
     import math
 
     assert math.isfinite(ve.delta_A)
+
+
+# ---------------------------------------------------------------------------
+# baseline cache (A7 sweep performance) -- correctness of the 2x speedup
+# ---------------------------------------------------------------------------
+
+
+def _first_scorable(target_key):
+    from smt.thermo.occlusion import overlaps
+
+    site = cs.TARGETS[target_key].site
+    return next(
+        f for f in cs.enumerate_footprints()
+        if f.target_key == target_key and not overlaps(f.interval, site)
+    )
+
+
+@pytest.fixture(scope="module")
+def sweep_constructs():
+    return {k: t.construct_fn() for k, t in cs.TARGETS.items()}
+
+
+def test_cached_baseline_gives_identical_rows(sweep_constructs):
+    """The cache must be a pure speedup, never a change in the numbers."""
+    baselines = cs.build_baselines(sweep_constructs, spans=(50,))
+    fp = _first_scorable("UNC13A_DONOR")
+    uncached = cs.score_footprint(fp, sweep_constructs, spans=(50,))
+    cached = cs.score_footprint(fp, sweep_constructs, spans=(50,), baselines=baselines)
+    assert uncached == cached
+
+
+def test_baseline_cache_covers_every_target_span_pair(sweep_constructs):
+    baselines = cs.build_baselines(sweep_constructs)
+    assert set(baselines) == {(k, s) for k in cs.TARGETS for s in cs.SPANS}
+    for (key, span), r in baselines.items():
+        assert r.footprint is None
+        assert r.max_bp_span == span
+
+
+def test_mismatched_span_baseline_is_rejected(sweep_constructs):
+    from smt.thermo.occlusion import Direction, score
+
+    baselines = cs.build_baselines(sweep_constructs, spans=(50, 300))
+    fp = _first_scorable("UNC13A_DONOR")
+    t = cs.TARGETS["UNC13A_DONOR"]
+    with pytest.raises(ValueError, match="max_bp_span"):
+        score(
+            fp.interval, Direction.OCCLUDE, t.site_feature,
+            sweep_constructs["UNC13A_DONOR"], max_bp_span=300,
+            baseline=baselines[("UNC13A_DONOR", 50)],
+        )
+
+
+def test_cross_feature_baseline_is_rejected(sweep_constructs):
+    """The three UNC13A targets SHARE one construct.
+
+    A construct-name check alone cannot tell them apart, so scoring the donor
+    against an acceptor's baseline would be a silent wrong answer. The ss5
+    interval check is what catches it -- guard that specifically.
+    """
+    from smt.thermo.occlusion import Direction, score
+
+    assert (
+        sweep_constructs["UNC13A_DONOR"].name
+        == sweep_constructs["UNC13A_ACCEPTOR_128"].name
+    ), "precondition: these two targets share a construct"
+    baselines = cs.build_baselines(sweep_constructs, spans=(50,))
+    fp = _first_scorable("UNC13A_DONOR")
+    with pytest.raises(ValueError, match="ss5"):
+        score(
+            fp.interval, Direction.OCCLUDE, "UNC13A_CRYPTIC_DONOR",
+            sweep_constructs["UNC13A_DONOR"], max_bp_span=50,
+            baseline=baselines[("UNC13A_ACCEPTOR_128", 50)],
+        )
+
+
+def test_occluded_result_rejected_as_baseline(sweep_constructs):
+    from smt.thermo.constrained import a_5ss
+    from smt.thermo.occlusion import Direction, score
+
+    fp = _first_scorable("UNC13A_DONOR")
+    c = sweep_constructs["UNC13A_DONOR"]
+    occluded = a_5ss(c, fp.interval, ss5_feature="UNC13A_CRYPTIC_DONOR", max_bp_span=50)
+    with pytest.raises(ValueError, match="unoccluded"):
+        score(
+            fp.interval, Direction.OCCLUDE, "UNC13A_CRYPTIC_DONOR", c,
+            max_bp_span=50, baseline=occluded,
+        )

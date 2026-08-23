@@ -36,6 +36,7 @@ from typing import Callable
 from smt.seq import targets as T
 from smt.seq.construct import Construct
 from smt.seq.reference import Interval
+from smt.thermo.constrained import A5ssResult, a_5ss
 from smt.thermo.occlusion import Direction, overlaps, score
 
 #: Effector lengths in nt. Same range as length_sweep.py's SMN2 sweep (6 is
@@ -128,7 +129,35 @@ FIELDS = [
 ]
 
 
-def score_footprint(fp: Footprint, constructs: dict[str, Construct], spans=SPANS) -> list[dict]:
+def build_baselines(
+    constructs: dict[str, Construct], spans=SPANS
+) -> dict[tuple[str, int], A5ssResult]:
+    """Precompute the unoccluded A_5ss for every (target, span) pair.
+
+    The baseline depends on (construct, estimator, site feature, span) and NOT
+    on the footprint, so across a sweep it is the same number every time. It is
+    also not cheap: measured on these constructs it is 50.0-50.5% of each
+    baseline+blocked pair at every span. Computing it once per (target, span)
+    -- 4 x 5 = 20 partition functions instead of 17820 x 5 = 89100 -- halves
+    the whole sweep. ``occlusion_delta`` validates what it is handed, so a
+    mismatched cache entry raises rather than silently scoring against the
+    wrong reference.
+    """
+    return {
+        (key, span): a_5ss(
+            constructs[key], None, ss5_feature=TARGETS[key].site_feature, max_bp_span=span
+        )
+        for key in TARGETS
+        for span in spans
+    }
+
+
+def score_footprint(
+    fp: Footprint,
+    constructs: dict[str, Construct],
+    spans=SPANS,
+    baselines: dict[tuple[str, int], A5ssResult] | None = None,
+) -> list[dict]:
     """Score one footprint across the span ladder against its own target.
 
     ``fom`` (see ``smt.thermo.occlusion``) is positive iff the footprint does
@@ -154,7 +183,11 @@ def score_footprint(fp: Footprint, constructs: dict[str, Construct], spans=SPANS
                 }
             )
             continue
-        r = score(fp.interval, Direction.OCCLUDE, target.site_feature, construct, max_bp_span=span)
+        r = score(
+            fp.interval, Direction.OCCLUDE, target.site_feature, construct,
+            max_bp_span=span,
+            baseline=None if baselines is None else baselines[(fp.target_key, span)],
+        )
         rows.append(
             {
                 "target": fp.target_key, "gene": target.gene, "site_feature": target.site_feature,
@@ -178,13 +211,16 @@ def run_shard(shard: int, nshards: int, out_dir: Path) -> Path:
     constructs = {key: target.construct_fn() for key, target in TARGETS.items()}
     items = shard_of(enumerate_footprints(), shard, nshards)
     print(f"shard {shard}/{nshards}: {len(items)} footprints x {len(SPANS)} spans")
+    # 20 partition functions up front, reused by every footprint in the shard.
+    baselines = build_baselines(constructs)
+    print(f"  {len(baselines)} baselines precomputed", flush=True)
 
     tmp = final.with_suffix(".csv.tmp")
     with tmp.open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=FIELDS)
         w.writeheader()
         for n, fp in enumerate(items, 1):
-            for row in score_footprint(fp, constructs):
+            for row in score_footprint(fp, constructs, baselines=baselines):
                 w.writerow(row)
             if n % 10 == 0:
                 fh.flush()
