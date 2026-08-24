@@ -1090,3 +1090,78 @@ MAY: a disciplined framework with four blind validations, one measured
 on-target, an explicit falsification gate, pre-registered predictions, and
 negative results that were sought rather than tolerated.
 MAY NOT: revolutionary, validated genome-wide, or "the sieve works."
+
+
+## LIVE STATE — read this first after any context compaction
+
+Everything above is settled history. This section is the only part that goes
+stale, and it exists so a compacted session can resume without re-deriving
+anything. Update it, do not append a second copy.
+
+### A5 POOLED — THE FIRST RESULT TO SURVIVE FULL CORRECTION
+rMATS re-run as **9 ISS-N1-targeting vs 11 controls** (was 3v3), output in
+`/home/dashii/orcd/scratch/smt-rna/rmats_pooled/out`. The validated 3v3 run in
+`rmats/out` is UNTOUCHED and must stay that way.
+
+Groups were assigned FROM THE DATA, not metadata: SMN2 exon 7 PSI separates all
+20 samples **9/11 with zero overlap** (nine at PSI 1.000, eleven at 0.450-0.787),
+matching the design's 9 targeting / 11 control samples, and the old
+series-matrix-derived F18MOE/ScrMOE triplets fall entirely inside the right
+groups. Using the on-target as a pharmacodynamic marker is not circular here
+because the test is on OFF-targets.
+
+  exonic_proximal, |dPSI| >= 0.2:  5/8 = 62.5% vs base rate 10.5%
+                                   fold 6.0, Fisher raw p = 0.0007035
+  corrected over ALL 36 tests spent on these samples: **p = 0.0253**
+
+WHY THE BASE RATE MOVED (55.4% -> 10.5%), since that would otherwise look like
+a rescue: pooling three chemistries adds between-chemistry variance, so pooled
+dPSI magnitudes shrink and far fewer genes clear a fixed threshold (47/409 vs
+344/621). Background gets cleaner and effects get smaller together. The
+threshold where enrichment appears therefore MOVED from 0.8 (3v3) to 0.2
+(pooled) -- coherent under that explanation, but NOT independent confirmation.
+
+**THIS IS A RE-ANALYSIS, NOT A REPLICATION.** Same samples, different grouping.
+`smt.sieve.enrichment --prior-tests N` now enforces adding previously spent
+tests to the Bonferroni denominator. Output: `docs/a5-enrichment-pooled.txt`.
+Claim allowed: "candidate generator for strong exonic off-targets, with
+corrected statistical support". Claim still FORBIDDEN: universal safety sieve.
+
+### S — ORTHOGONAL 3D VALIDATION (in flight)
+Tests `A_5ss` against Boltz-2, a learned potential with no `max_bp_span`
+concept. Code: `src/smt/structure/inputs.py`. Plan: rev 5 Part 2A.
+
+**TWO GATE DESIGNS WERE REJECTED BEFORE SPENDING GPU** -- both would have
+invalidated everything downstream:
+  1. TSL2/ISTL1 (what rev 5 originally proposed). `smt.seq.construct` carries
+     an explicit TODO(SHAPE): this project's TSL2/ISTL1 coordinates are DERIVED
+     FROM FOLDING, not literature. Gating Boltz on ViennaRNA's own output is
+     circular.
+  2. The Cas13 guide-RNA chains on disk -- PROTEIN-BOUND, so their deposited
+     fold is Cas13-induced; predicting them standalone asks Boltz to reproduce
+     a protein-imposed fold without the protein. Two are also 14/25 nt.
+Gate in use: deposited RNAs that fold unaided -- **1EHZ tRNA-Phe (76 nt),
+2KOC UUCG hairpin (14 nt), 1Y26 adenine riboswitch (71 nt)**.
+
+S1 inputs use **ONE WINDOW PER TARGET, not per oligo**. Per-oligo windows give
+a matched pair different RNA chains, so the window rather than the ASO could
+produce the difference -- silently destroying the within-pair design. 44 inputs
+(4 unbound + 40 oligos), windows 345-420 nt, in `boltz_s/s1_in`.
+
+**OPEN RISK:** 345-420 nt is large for Boltz RNA. If the gate passes but S1 is
+slow or OOMs, TRIM THE WINDOWS rather than let 40 GPU jobs fail.
+
+### Jobs and watchers at time of writing
+  21069469  Boltz S-gate -> boltz_s/gate_out          RUNNING
+  21066824  pooled rMATS                              COMPLETED (consumed)
+  21065504  full suite, 197 passed 1 skipped          COMPLETED
+Background shells: gate watcher, midnight alarm, 05:00 alarm.
+
+### Next actions, in order
+  1. Grade the S gate (base-pair recovery vs deposited). **A failed gate means
+     S1-S4 are reported ungated and no structural claim is made.**
+  2. If it passes -- submit S1 (44 inputs x 5 seeds), watch for OOM.
+  3. T4 Goldilocks: A3 shards at `smt-isef-data/sweep` already hold the whole
+     on-target axis; only the targeted off-target panel is new.
+  4. T5 Alu identity test with null control.
+  5. T8 Phase B prep (ingest schema, risdiplam structural half) -- touches no PSI.
