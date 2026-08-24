@@ -1,30 +1,79 @@
 ## P -- Alu identity of the C2B34 flanking inverted repeats
    (scanning flanks; ~3 min, per smt.kinetics.alu.scan_flanks)
 
-  hit 0 upstream   9465-9744 (280 nt)
+  ORIENTATION-AWARE. An inverted-repeat pair has one arm antisense by
+  construction, and three of six hallmarks are strand-specific, so each
+  arm is scored in BOTH orientations and so is every null draw.
+
+  hit 0 upstream   9465-9744 (280 nt) [revcomp]
     length_ok=True  A-box mm=3  B-box mm=2  spacing_ok=False
-    dimer identity 0.400   3' A-tail 0.200
-    score 4.000  vs null 3.527+/-0.763  z = +0.62  (A8 energy z was -52.6)
-  hit 0 downstream 23240-23516 (277 nt)
+    dimer identity 0.400   3' A-tail 0.550
+    score 4.350  vs null 3.726+/-0.693  z = +0.90  (A8 energy z was -52.6)
+  hit 0 downstream 23240-23516 (277 nt) [forward]
     length_ok=True  A-box mm=3  B-box mm=1  spacing_ok=False
     dimer identity 0.472   3' A-tail 0.525
-    score 4.469  vs null 3.463+/-0.903  z = +1.12  (A8 energy z was -52.6)
-  hit 1 upstream   16205-16491 (287 nt)
-    length_ok=True  A-box mm=None  B-box mm=2  spacing_ok=False
-    dimer identity 0.405   3' A-tail 0.200
-    score 3.010  vs null 3.380+/-0.686  z = -0.54  (A8 energy z was -52.6)
-  hit 1 downstream 23225-23516 (292 nt)
+    score 4.469  vs null 3.819+/-0.763  z = +0.85  (A8 energy z was -52.6)
+  hit 1 upstream   16205-16491 (287 nt) [revcomp]
+    length_ok=True  A-box mm=0  B-box mm=0  spacing_ok=True
+    dimer identity 0.397   3' A-tail 0.650
+    score 5.444  vs null 3.675+/-0.688  z = +2.57  (A8 energy z was -52.6)
+  hit 1 downstream 23225-23516 (292 nt) [forward]
     length_ok=True  A-box mm=1  B-box mm=1  spacing_ok=True
     dimer identity 0.459   3' A-tail 0.525
-    score 5.444  vs null 3.302+/-0.770  z = +2.78  (A8 energy z was -52.6)
-  hit 2 upstream   13668-13944 (277 nt)
-    length_ok=True  A-box mm=2  B-box mm=2  spacing_ok=False
-    dimer identity 0.418   3' A-tail 0.200
-    score 4.036  vs null 3.425+/-0.733  z = +0.84  (A8 energy z was -52.6)
-  hit 2 downstream 23252-23523 (272 nt)
+    score 5.444  vs null 3.729+/-0.710  z = +2.41  (A8 energy z was -52.6)
+  hit 2 upstream   13668-13944 (277 nt) [revcomp]
+    length_ok=True  A-box mm=2  B-box mm=1  spacing_ok=False
+    dimer identity 0.418   3' A-tail 0.600
+    score 4.436  vs null 3.768+/-0.709  z = +0.94  (A8 energy z was -52.6)
+  hit 2 downstream 23252-23523 (272 nt) [forward]
     length_ok=True  A-box mm=3  B-box mm=1  spacing_ok=False
     dimer identity 0.378   3' A-tail 0.625
-    score 4.381  vs null 3.473+/-0.687  z = +1.32  (A8 energy z was -52.6)
+    score 4.381  vs null 3.799+/-0.721  z = +0.81  (A8 energy z was -52.6)
 
-  A z near 0 means these are Alu-SCALE inverted repeats with the
-  subfamily UNRESOLVED -- still A8's finding, just not upgraded.
+### Verdict -- BOTH arms must be Alu, not one
+  Alu-mediated backsplicing requires an inverted Alu PAIR: a single
+  Alu arm juxtaposes nothing. Calling an arm Alu at z >= 2.58.
+    hit 0: upstream z=+0.90 [revcomp]  downstream z=+0.85 [forward]  ->  not a pair
+    hit 1: upstream z=+2.57 [revcomp]  downstream z=+2.41 [forward]  ->  not a pair
+    hit 2: upstream z=+0.94 [revcomp]  downstream z=+0.81 [forward]  ->  not a pair
+
+  NOT ESTABLISHED: no hit has both arms clearing the null.
+  Verdict stays the pre-declared fallback -- Alu-SCALE inverted
+  repeats, subfamily UNRESOLVED. Still A8's finding, not upgraded.
+
+### Exploratory follow-up, labeled as such
+The composite score above weights six hallmarks equally. The single most
+Alu-diagnostic component is the Pol III internal promoter: a PERFECT A-box
+(0 mismatches) AND a PERFECT B-box (0 mismatches) at canonical spacing. Those
+motifs and bounds were declared in the module before any run; what is post-hoc
+is looking at that triad on its own, so this is reported as EXPLORATORY and
+does not change the verdict.
+
+Frequency of the same perfect triad in 3000 null draws (composition-matched
+shuffles + random same-length intron windows), scored in both orientations:
+
+    hit 1 upstream   16205-16491   triad PRESENT    null 18/3000 = 0.006
+    hit 1 downstream 23225-23516   triad absent     null 18/3000 = 0.006
+    hit 0 upstream    9465-9744    triad absent     null 15/3000 = 0.005
+
+So one arm of hit 1 carries a perfect Pol III promoter that occurs in 0.6% of
+null sequence -- strong single-arm evidence. Its PARTNER does not (A-box mm=1,
+B-box mm=1, spacing OK). The both-arms requirement therefore still fails on the
+strictest diagnostic, which is why the verdict stands.
+
+### What changed from the first run, and why it matters
+The first run reported hit 1 upstream at z = -0.54, "indistinguishable from
+null", and concluded the pair was not Alu. That was a STRAND BUG: hallmarks()
+scanned one orientation only, while an inverted-repeat pair has one arm
+antisense by construction. Three of six hallmarks are strand-specific and a 3'
+poly-A tail reads as a 5' poly-T head when reversed, so the inverted arm was
+guaranteed to score near null regardless of what it was.
+
+Corrected, that arm scores z = +2.57 with a PERFECT A-box and B-box at correct
+spacing. The two arms of hit 1 are now symmetric (+2.57 / +2.41) rather than
+one being null -- which is what an inverted Alu pair should look like.
+
+Both still fall below the pre-declared calling threshold of z = 2.58. The
+threshold was NOT moved after seeing this. Verdict is unchanged in name and
+much better supported in substance: Alu-scale inverted repeats, subfamily
+unresolved, with hit 1 the strongest candidate by a clear margin.

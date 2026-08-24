@@ -137,13 +137,56 @@ def hallmarks(seq: str) -> Hallmarks:
     )
 
 
+def revcomp(seq: str) -> str:
+    return seq.upper().replace("U", "T").translate(
+        str.maketrans("ACGTN", "TGCAN"))[::-1]
+
+
+def best_orientation(seq: str) -> tuple[Hallmarks, str]:
+    """Hallmarks in whichever orientation scores higher, and which one that was.
+
+    THIS IS A CORRECTION TO THE FIRST VERSION OF P, and it matters.
+
+    An INVERTED repeat pair is, by definition, one arm plus the reverse
+    complement of the other -- that is what makes the two arms able to base
+    pair, and it is what `alu.scan_flanks` selected on (209 revcomp vs 18
+    forward matches). So exactly ONE of the two arms is antisense relative to
+    the element it derives from.
+
+    Three of the six hallmarks are strand-specific: the A-box and B-box are
+    motifs, their SPACING depends on A preceding B, and a 3' poly-A tail reads
+    as a 5' poly-T head when reversed. Only `length_ok` and `dimer` survive a
+    flip. Scoring both arms on the same strand therefore guarantees the
+    inverted one scores near null NO MATTER WHAT IT IS -- which is exactly the
+    pattern the first run reported (hit 1 upstream z = -0.54 against hit 1
+    downstream z = +2.78), and that verdict cannot be trusted.
+
+    Both orientations are scored and the better is taken. The null MUST be
+    computed the same way -- see `null_scores` -- because a maximum over two
+    draws beats a single draw on average, and comparing a max-of-2 observation
+    to a max-of-1 null would manufacture significance out of the fix itself.
+    """
+    fwd, rev = hallmarks(seq), hallmarks(revcomp(seq))
+    return (fwd, "forward") if fwd.score >= rev.score else (rev, "revcomp")
+
+
+def _null_one(seq: str) -> float:
+    """Null draw scored under the SAME max-over-orientations rule as the data."""
+    return best_orientation(seq)[0].score
+
+
 def null_scores(seq: str, full: str, trials: int, rng: random.Random) -> tuple[list, list]:
-    """Composition-matched shuffles, and random same-length intron windows."""
+    """Composition-matched shuffles, and random same-length intron windows.
+
+    Every draw is scored with `_null_one`, i.e. the same max-over-both-
+    orientations rule applied to the observation. Without that the fix to
+    `best_orientation` would inflate every z-score by construction.
+    """
     shuffled = []
     chars = list(seq)
     for _ in range(trials):
         rng.shuffle(chars)
-        shuffled.append(hallmarks("".join(chars)).score)
+        shuffled.append(_null_one("".join(chars)))
     windows = []
     for iv in (UPSTREAM_FLANK, DOWNSTREAM_FLANK):
         span = iv.end - iv.start + 1 - len(seq)
@@ -151,7 +194,7 @@ def null_scores(seq: str, full: str, trials: int, rng: random.Random) -> tuple[l
             continue
         for _ in range(trials):
             st = rng.randint(iv.start, iv.start + span)
-            windows.append(hallmarks(full[st - 1: st - 1 + len(seq)]).score)
+            windows.append(_null_one(full[st - 1: st - 1 + len(seq)]))
     return shuffled, windows
 
 
@@ -167,23 +210,50 @@ def main() -> None:
     hits = top_candidates(scan_flanks(full), args.top)
     rng = random.Random(IR_NULL_SEED)
 
+    print("  ORIENTATION-AWARE. An inverted-repeat pair has one arm antisense by")
+    print("  construction, and three of six hallmarks are strand-specific, so each")
+    print("  arm is scored in BOTH orientations and so is every null draw.\n")
+
+    #: z at which an arm is called Alu. Two-sided 0.01 under a normal null;
+    #: declared here rather than chosen after seeing the numbers.
+    Z_CALL = 2.58
+    per_hit: dict[int, dict[str, tuple[float, str]]] = {}
+
     for i, h in enumerate(hits):
         for side, iv in (("upstream", h.matched_upstream),
                          ("downstream", h.matched_downstream)):
             seq = full[iv.start - 1: iv.end]
-            hm = hallmarks(seq)
+            hm, orient = best_orientation(seq)
             sh, wi = null_scores(seq, full, args.trials, rng)
             pool = sh + wi
             mu, sd = statistics.mean(pool), statistics.pstdev(pool)
             z = (hm.score - mu) / sd if sd else float("nan")
-            print(f"  hit {i} {side:<10} {iv.start}-{iv.end} ({len(seq)} nt)")
+            per_hit.setdefault(i, {})[side] = (z, orient)
+            print(f"  hit {i} {side:<10} {iv.start}-{iv.end} ({len(seq)} nt) "
+                  f"[{orient}]")
             print(f"    length_ok={hm.length_ok}  A-box mm={hm.a_box_mm}  "
                   f"B-box mm={hm.b_box_mm}  spacing_ok={hm.spacing_ok}")
             print(f"    dimer identity {hm.dimer:.3f}   3' A-tail {hm.a_tail:.3f}")
             print(f"    score {hm.score:.3f}  vs null {mu:.3f}+/-{sd:.3f}  "
                   f"z = {z:+.2f}  (A8 energy z was -52.6)")
-    print("\n  A z near 0 means these are Alu-SCALE inverted repeats with the")
-    print("  subfamily UNRESOLVED -- still A8's finding, just not upgraded.")
+
+    print("\n### Verdict -- BOTH arms must be Alu, not one")
+    print("  Alu-mediated backsplicing requires an inverted Alu PAIR: a single")
+    print(f"  Alu arm juxtaposes nothing. Calling an arm Alu at z >= {Z_CALL}.")
+    established = False
+    for i, arms in sorted(per_hit.items()):
+        zs = {k: v[0] for k, v in arms.items()}
+        ok = all(z >= Z_CALL for z in zs.values()) and len(zs) == 2
+        established = established or ok
+        detail = "  ".join(f"{k} z={v:+.2f} [{arms[k][1]}]" for k, v in zs.items())
+        print(f"    hit {i}: {detail}  ->  {'ALU PAIR' if ok else 'not a pair'}")
+    if established:
+        print("\n  ESTABLISHED: at least one hit is an inverted Alu PAIR. The")
+        print("  primate-specificity mechanism for C2B34 backsplicing is supported.")
+    else:
+        print("\n  NOT ESTABLISHED: no hit has both arms clearing the null.")
+        print("  Verdict stays the pre-declared fallback -- Alu-SCALE inverted")
+        print("  repeats, subfamily UNRESOLVED. Still A8's finding, not upgraded.")
 
 
 if __name__ == "__main__":
