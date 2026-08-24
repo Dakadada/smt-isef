@@ -1,0 +1,23 @@
+## span robustness, n = 16560 full-ladder footprints
+
+### H-noise: does flipping concentrate among weak effects?
+           max |fom| bin      n  flip rate
+          [0e+00, 1e-04)      1       0.0%
+          [1e-04, 1e-03)   1440      96.7%
+          [1e-03, 1e-02)   3924      86.9%
+            [1e-02, inf)  11195      85.7%
+  H-noise is REFUTED if the rate is flat across bins. Read the column.
+
+### H-struct: are span-robust footprints positionally clustered?
+  Permutation test, 2000 draws, seed 0: the robust
+  set's mean pairwise start distance vs. equal-sized samples drawn
+  from the SAME target's scanned footprints. Lower == more clustered.
+  target                  robust     of  observed  null med        p
+  STMN2_3SS                  735   4140      78.5     102.6   0.0005
+  UNC13A_ACCEPTOR_128         17   4140      59.4     103.2   0.0010
+  UNC13A_ACCEPTOR_178        103   4140      45.4     102.6   0.0005
+  UNC13A_DONOR                97   4140      58.8     102.7   0.0005
+
+  Clustering does NOT rescue the 87%. It shows the robust minority
+  marks specific positions rather than being a random leftover, so
+  A7 claims are restricted to that minority and no further.
