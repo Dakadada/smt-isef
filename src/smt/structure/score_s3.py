@@ -204,6 +204,22 @@ def main() -> None:
               f"{min(ovl):.2f}-{max(ovl):.2f} "
               f"(median {sorted(ovl)[len(ovl)//2]:.2f})")
 
+    print("\n### SCOPE LIMIT OF THE GATE ITSELF -- read before believing the above")
+    print("  hnRNP A1's high-affinity site is a UAG motif, and BOTH gate RNAs are")
+    print("  UAG-rich (6DCL AGUAGAUUAGC, 8X0N UUAGGGUUAGGG -- two UAGs each).")
+    uag = [i for i in range(len(rna) - 2) if rna[i:i + 3] == "UAG"]
+    iss_seq = rna[iss.start - win.start: iss.end - win.start + 1]
+    print(f"  The SMN2 window contains {len(uag)} UAG motifs; ISS-N1 "
+          f"({iss_seq}) contains {'a' if 'UAG' in iss_seq else 'NO'} UAG.")
+    print("  So the gate established competence precisely where the motif is")
+    print("  present, and this target lies OUTSIDE that regime. A gate that only")
+    print("  proves competence on UAG substrates does not license a claim about a")
+    print("  UAG-free one. S3's central question is therefore UNRESOLVED, not")
+    print("  answered in the negative: the absence of predicted UP1 contact on")
+    print("  ISS-N1 is as consistent with the model being out of its depth as")
+    print("  with hnRNP A1 not binding there. It is NOT evidence against the")
+    print("  published hnRNP A1 / ISS-N1 interaction.")
+
     print("\n  INTERPRETATION LIMIT: the ternary system is a co-occupancy probe.")
     print("  Overlap between the UP1 interface and the ISS-N1 nucleotides that")
     print("  nusinersen occupies is a STERIC incompatibility argument -- the two")

@@ -1,0 +1,38 @@
+## S3 -- hnRNP A1 steric parity
+
+### GATE: deposited hnRNP A1 : RNA complexes, re-predicted
+     pdb  nt contacted  models  best F1   prec    rec  mean F1
+    6DCL             6       5    0.923  0.857  1.000    0.866
+    8X0N             8       5    0.857  1.000  0.750    0.321
+
+  worst best-F1 = 0.857  ->  GATE PASS   (pass 0.6, marginal 0.4)
+
+### SMN2: does the UP1 interface overlap the nusinersen footprint?
+  window Interval(start=207, end=323) (117 nt), ISS-N1 Interval(start=264, end=278), 5'ss Interval(start=252, end=260), UP1 182 aa
+
+  s3_rna_up1: 5 models
+    nucleotides contacted by protein: 9-11 (median 10)
+    fraction of ISS-N1 covered by UP1: 0.00-0.00 (median 0.00)
+
+  s3_rna_up1_aso: 5 models
+    nucleotides contacted by protein: 3-13 (median 6)
+    fraction of ISS-N1 covered by UP1: 0.00-0.13 (median 0.00)
+
+### SCOPE LIMIT OF THE GATE ITSELF -- read before believing the above
+  hnRNP A1's high-affinity site is a UAG motif, and BOTH gate RNAs are
+  UAG-rich (6DCL AGUAGAUUAGC, 8X0N UUAGGGUUAGGG -- two UAGs each).
+  The SMN2 window contains 0 UAG motifs; ISS-N1 (CCAGCAUUAUGAAAG) contains NO UAG.
+  So the gate established competence precisely where the motif is
+  present, and this target lies OUTSIDE that regime. A gate that only
+  proves competence on UAG substrates does not license a claim about a
+  UAG-free one. S3's central question is therefore UNRESOLVED, not
+  answered in the negative: the absence of predicted UP1 contact on
+  ISS-N1 is as consistent with the model being out of its depth as
+  with hnRNP A1 not binding there. It is NOT evidence against the
+  published hnRNP A1 / ISS-N1 interaction.
+
+  INTERPRETATION LIMIT: the ternary system is a co-occupancy probe.
+  Overlap between the UP1 interface and the ISS-N1 nucleotides that
+  nusinersen occupies is a STERIC incompatibility argument -- the two
+  cannot both be bound. It is not a competition assay and does not
+  say which one wins.
