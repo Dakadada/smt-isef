@@ -202,6 +202,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sieve", type=Path, default=SIEVE)
     ap.add_argument("--rmats", type=Path, default=RMATS_DIR)
+    ap.add_argument("--prior-tests", type=int, default=0,
+                    help="tests already run against the SAME samples in another "
+                         "grouping; added to the Bonferroni denominator. Two "
+                         "groupings of one dataset are NOT independent "
+                         "replication, and pretending otherwise is how a "
+                         "re-analysis manufactures significance.")
     args = ap.parse_args()
 
     predicted = load_predictions(args.sieve)
@@ -212,9 +218,16 @@ def main() -> None:
     analyse(load_measured(args.rmats, EVENT_TYPES), predicted,
             "ALL FIVE EVENT CLASSES -- what the sieve actually predicts", collect)
 
-    n = len(collect)
-    print(f"\n## MULTIPLE TESTING -- {n} tests were printed above, so every one "
-          f"of them is corrected")
+    n = len(collect) + args.prior_tests
+    if args.prior_tests:
+        print(f"\n## MULTIPLE TESTING -- {len(collect)} tests printed above, PLUS "
+              f"{args.prior_tests} already")
+        print("spent on the same samples under a different grouping. Two groupings")
+        print("of ONE dataset are not independent replication, so the denominator")
+        print(f"is {n}, not {len(collect)}.")
+    else:
+        print(f"\n## MULTIPLE TESTING -- {n} tests were printed above, so every one "
+              f"of them is corrected")
     print("Bonferroni over ALL tests in this report, including the ones that")
     print("did not support the hypothesis. Nothing is excluded from the count.")
     survivors = [c for c in collect if c[7] * n < 0.05]

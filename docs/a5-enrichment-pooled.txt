@@ -1,0 +1,70 @@
+genes carrying any sieve prediction: 705
+
+## SE ONLY -- the original analysis
+genes with a significant event (FDR<0.05): 324
+BASE RATE CONFOUND, stated first: 170/324 (52.5%) of significant events are NEGATIVE. 'Predict skipping' is right this often by chance alone.
+
+### |dPSI| >= 0.2   (39/324 genes, base rate 12.0%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_proximal            7      4    57.1%    11.0%    5.18   0.004855
+  intronic_core              5      0     0.0%    12.2%    0.00          1
+
+### |dPSI| >= 0.5   (1/324 genes, base rate 0.3%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_proximal            7      0     0.0%     0.3%    0.00          1
+  intronic_core              5      0     0.0%     0.3%    0.00          1
+
+### |dPSI| >= 0.8   (0/324 genes, base rate 0.0%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_proximal            7      0     0.0%     0.0%     inf          1
+  intronic_core              5      0     0.0%     0.0%     inf          1
+
+### Within exonic_proximal: does the RANK carry information? (n=7)
+  too few genes to rank. Report the n, not a p-value.
+
+## ALL FIVE EVENT CLASSES -- what the sieve actually predicts
+genes with a significant event (FDR<0.05): 409
+BASE RATE CONFOUND, stated first: 208/409 (50.9%) of significant events are NEGATIVE. 'Predict skipping' is right this often by chance alone.
+
+### |dPSI| >= 0.2   (47/409 genes, base rate 11.5%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_proximal            8      5    62.5%    10.5%    5.97  0.0007035
+  intronic_core              7      0     0.0%    11.7%    0.00          1
+
+### |dPSI| >= 0.5   (1/409 genes, base rate 0.2%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_proximal            8      0     0.0%     0.2%    0.00          1
+  intronic_core              7      0     0.0%     0.2%    0.00          1
+
+### |dPSI| >= 0.8   (0/409 genes, base rate 0.0%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_proximal            8      0     0.0%     0.0%     inf          1
+  intronic_core              7      0     0.0%     0.0%     inf          1
+
+### Within exonic_proximal: does the RANK carry information? (n=8)
+  median measured dPSI, most-negative-predicted half: -0.309
+  median measured dPSI, least-negative-predicted half: -0.144
+  If those are the same, only the CATEGORY LABEL is doing work and
+  the signed magnitude orders nothing. Say that plainly.
+
+## MULTIPLE TESTING -- 12 tests printed above, PLUS 24 already
+spent on the same samples under a different grouping. Two groupings
+of ONE dataset are not independent replication, so the denominator
+is 36, not 12.
+Bonferroni over ALL tests in this report, including the ones that
+did not support the hypothesis. Nothing is excluded from the count.
+  label                                          |dPSI|category                  raw p   corrected
+  ALL FIVE EVENT CLASSES -- what the sieve act      0.2exonic_proximal       0.0007035     0.02532
+  SE ONLY -- the original analysis                  0.2exonic_proximal        0.004855      0.1748
+  SE ONLY -- the original analysis                  0.2intronic_core                 1           1
+  SE ONLY -- the original analysis                  0.5exonic_proximal               1           1
+  SE ONLY -- the original analysis                  0.5intronic_core                 1           1
+  SE ONLY -- the original analysis                  0.8exonic_proximal               1           1
+
+## WHAT WOULD SETTLE IT -- power for the strongest signal seen
+  exonic_proximal at |dPSI|>=0.2: 5/8 = 62.5% vs base 10.5%  (fold 6.0)
+  If 62.5% is the TRUE rate, this clears alpha=0.0014 at n = 8 predicted genes with a
+  measurable event -- 1x the 8 available here. That is the experiment to ask for,
+  and it is an OPTIMISTIC floor: it assumes the observed rate is exactly right.
+
+  1 test(s) SURVIVE correction.
