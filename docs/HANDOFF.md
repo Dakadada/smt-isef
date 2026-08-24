@@ -1014,3 +1014,79 @@ span-dependent for the large majority of footprints, exactly as recorded for
 ISS-N1 at SMN2. Every ranking in the report is on the WORST span, never the
 best -- ranking on the best span is cherry-picking one level down from
 choosing a span by hand. Any single-span A7 number is meaningless.
+
+
+## DEFENSE ROUND — the three attacks, tested rather than disclaimed
+
+A reviewer asked whether this work is defensible and whether the results are
+revolutionary. Honest answer recorded here: the DISCIPLINE is unusually strong,
+the RESULTS are not revolutionary, and three specific attacks land. Each was
+then tested rather than argued with. Two of the three came back against the
+project's interest and are recorded that way.
+
+### Attack 1 — "your hits are selection from a large pool"
+Four validated predictions against rho = 0.0025 is what cherry-picking looks
+like. TESTED (`smt.sieve.enrichment`, `docs/a5-enrichment-test.txt`), with the
+null and thresholds declared before the numbers:
+
+  exonic_proximal, |dPSI| >= 0.8:  2/11 = 18.2% vs base rate 1.8%
+                                   fold 10.1x, Fisher raw p = 0.020
+  every other category/threshold:  no enrichment (fold 0.0-1.5)
+
+**NOTHING SURVIVES BONFERRONI over the 24 tests printed.** The four hits stay
+individually real; the sieve stays NOT validated as an enrichment. The base-rate
+confound is printed first, not buried: 55% of significant events are negative,
+so "predict skipping" is right that often by chance.
+
+THE NEGATIVE IS A SPECIFICATION. If 18.2% is the true rate, the test clears the
+corrected threshold at n = 14 predicted genes with a measurable event. Eleven
+exist. **The sieve hypothesis is three genes short of testable.** JCEC counts
+were checked and rejected (+2% genes, does not close a 3-gene gap); expanding
+SE-only to all five event classes did not change exonic_proximal's n at all.
+
+### Attack 2 — "87% sign-flipping means the observable is undefined"
+TESTED (`smt.validate.span_robustness`, `docs/a7-span-robustness.txt`).
+
+  H-noise: flipping is just noise about zero, so strong predictions are safe.
+    >>> REFUTED. Flip rate is 85.7% at |fom| >= 1e-2, 86.9% at 1e-3, 96.7% at
+    1e-4. Magnitude buys essentially nothing. THE PROBLEM IS REAL.
+
+  H-struct: the robust minority marks specific positions, not leftovers.
+    >>> SUPPORTED. Permutation test, 2000 draws, fixed seed: robust footprints
+    are positionally clustered at ALL four targets, p = 0.0005 at three of them
+    (0 of 2000 null draws as clustered).
+
+This does NOT rescue the 87%. It narrows scope: A7 claims are restricted to the
+span-robust 4-18%, and any single-span number remains meaningless.
+
+### Attack 3 — "nothing predicts PSI yet"
+True, and PSI-gated. Answered by PRE-REGISTRATION instead
+(`docs/preregistration.md`, committed 2026-08-23, before any PSI exists).
+
+P1 registers the project's OWN weakest point: if span robustness carries
+information, then among pairs matched on best-span |fom| and length -- which a
+single-span analysis ranks equally, so the naive analysis predicts no
+difference BY CONSTRUCTION -- the robust member must win. Only the ladder-based
+framework predicts a difference, which is what makes it a real test.
+
+Panel: `docs/prereg-panel.csv`, 20 pairs / 40 oligos, all four targets. ROBUST
+members >= 25 nt apart (independent positions); pair members >= 10 nt apart
+(distinguishable oligos). BOTH CONSTRAINTS EXIST BECAUSE THE FIRST DRAFT WAS
+PSEUDO-REPLICATED: ranking by worst-span fom put the same site at 7, 8, 9 and
+10 nt in the top four slots, so a "six pair" test was one site measured six
+times. Sixth silent-failure entry.
+
+POWER STATED AGAINST INTEREST, before measurement: only 4 of 20 pairs clear the
+pre-declared retention bar, and a sign test on 4 cannot reach p<0.05 even if
+every pair goes the predicted way (min p = 0.0625). Primary readout is therefore
+graded (Wilcoxon on effect size over all 20 pairs). If the lab can only return
+direction, P1 IS UNDERPOWERED and must be reported as such.
+
+P3 lists what would falsify the framework outright, fixed now so it cannot be
+renegotiated later.
+
+### HOW THIS PROJECT MAY AND MAY NOT BE DESCRIBED
+MAY: a disciplined framework with four blind validations, one measured
+on-target, an explicit falsification gate, pre-registered predictions, and
+negative results that were sought rather than tolerated.
+MAY NOT: revolutionary, validated genome-wide, or "the sieve works."
