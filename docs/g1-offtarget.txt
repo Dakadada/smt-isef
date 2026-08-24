@@ -1,0 +1,74 @@
+## G -- the Goldilocks trade-off, both axes
+
+### Feasibility pre-gate (applied before any off-target number was seen)
+  A_5ss scores the CONSEQUENCE of occluding a window, never whether an
+  oligo can occupy it. These top-ranked A3 footprints form NO duplex at
+  all against their own perfect complement, so their predicted
+  accessibility gain is unreachable by any real oligo:
+    len  6 @ 32044  aso UUAAUU       GC   0%  REJECTED
+    len  6 @ 32043  aso UAAUUU       GC   0%  REJECTED
+    len  7 @ 32043  aso UUAAUUU      GC   0%  REJECTED
+
+### Axis 1 -- transcriptome-wide uniqueness (exhaustive, no cutoff)
+   len               ASO    GC   exact sites   1 mismatch
+     6            CUGGCA   67%        59,859      829,744
+     7           CUGGCAG   71%        21,382      298,823
+     8          GCUGGCAG   75%         6,342       98,318
+     9         UGCUGGCAG   67%         1,642       29,786
+    10        AUAAUGCUGG   40%           130        4,438
+    11       AUAAUGCUGGC   45%            30        1,039
+    12      UAAUGCUGGCAG   50%            15          374
+    13     AUAAUGCUGGCAG   46%             3          106
+    14    CAUAAUGCUGGCAG   50%             2           23
+    15   GUUUUACAAAAGUAA   20%             2           29
+    18UCACUUUCAUAAUGCUGG   39%             2            0
+
+### Axis 2 -- thermodynamic affinity on the validated panel (kcal/mol)
+   len  on-target  best off      gene   MARGIN   POLR2H  mm
+     6      -7.62     -9.26     SGPL1    -1.64    -5.83   1
+     7     -10.19    -10.81     MKLN1    -0.62    -6.43   2
+     8     -15.06    -15.01     MKLN1     0.05    -6.62   3
+     9     -15.41    -14.99     MKLN1     0.42    -6.60   3
+    10     -10.33    -11.21     MAP1S    -0.88    -3.77   3
+    11     -13.51    -13.54       AGL    -0.03    -3.53   3
+    12     -16.54    -15.67    CAVIN2     0.87    -6.55   4
+    13     -17.62    -15.60    CAVIN2     2.02    -6.59   4
+    14     -20.24    -17.07   ANKRD28     3.16    -6.16   4
+    15     -12.65    -13.32      WNK2    -0.67    -5.18   5
+    18     -24.64    -17.49     MAP1S     7.15   -17.11   4
+  MARGIN = best off-target minus on-target; positive = intended duplex
+  is the stronger one. This is the specificity measure.
+
+### Is there a Goldilocks point?
+  best margin: +7.15 kcal/mol at length 18
+  margin monotonic in length: False
+  Best margin is at an ENDPOINT (length 18), so the scanned
+  range does not contain an interior optimum. The true optimum, if
+  any, lies outside 6-18 and this scan cannot locate it.
+
+### Friendly fire on POLR2H
+  POLR2H is the field's canonical nusinersen off-target and the A5
+  blind prediction (rMATS dPSI -0.920, FDR 0).
+    len  6: POLR2H   -5.83 vs on-target   -7.62  ->  SAFE
+    len  7: POLR2H   -6.43 vs on-target  -10.19  ->  SAFE
+    len  8: POLR2H   -6.62 vs on-target  -15.06  ->  SAFE
+    len  9: POLR2H   -6.60 vs on-target  -15.41  ->  SAFE
+    len 10: POLR2H   -3.77 vs on-target  -10.33  ->  SAFE
+    len 11: POLR2H   -3.53 vs on-target  -13.51  ->  SAFE
+    len 12: POLR2H   -6.55 vs on-target  -16.54  ->  SAFE
+    len 13: POLR2H   -6.59 vs on-target  -17.62  ->  SAFE
+    len 14: POLR2H   -6.16 vs on-target  -20.24  ->  SAFE
+    len 15: POLR2H   -5.18 vs on-target  -12.65  ->  SAFE
+    len 18: POLR2H  -17.11 vs on-target  -24.64  ->  SAFE
+
+### Caveats that travel with these numbers
+  - The off-target panel is 4 validated hits + 20 length-matched
+    controls, not the transcriptome. Axis 1 is transcriptome-wide;
+    axis 2 is not. A panel margin is not a transcriptome guarantee.
+  - Length 18 is nusinersen's published site, NOT a scan winner: no
+    18-mer has a span-robust footprint at all (see goldilocks). It is
+    a reference point, and a length-18 row is not evidence about what
+    an optimised 18-mer could do.
+  - Every feasible ASO from 6 to 14 nt lands on the GC core at
+    32059-32062, which is the site A3 recovered blind. The length axis
+    and the position axis are therefore NOT independent here.

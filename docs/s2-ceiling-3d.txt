@@ -1,0 +1,28 @@
+## S2 -- accessibility ceiling, checked against an orthogonal 3D model
+
+### The reference standard moves with span (reported, not hidden)
+    span  most accessible -> least accessible
+       0  STMN2_3SS > UNC13A_ACCEPTOR_128 > UNC13A_DONOR > UNC13A_ACCEPTOR_178
+      50  UNC13A_DONOR > STMN2_3SS > UNC13A_ACCEPTOR_178 > UNC13A_ACCEPTOR_128
+     100  UNC13A_DONOR > UNC13A_ACCEPTOR_178 > STMN2_3SS > UNC13A_ACCEPTOR_128
+     150  UNC13A_ACCEPTOR_178 > UNC13A_DONOR > STMN2_3SS > UNC13A_ACCEPTOR_128
+     300  STMN2_3SS > UNC13A_DONOR > UNC13A_ACCEPTOR_128 > UNC13A_ACCEPTOR_178
+   WORST  STMN2_3SS > UNC13A_ACCEPTOR_128 > UNC13A_DONOR > UNC13A_ACCEPTOR_178   <-- the reference used, per the standing worst-span rule
+
+### Measured
+  target                    A_5ss (worst span)  3D paired frac  seed spread   n
+  STMN2_3SS                          7.109e-03           0.533        0.183   5
+  UNC13A_ACCEPTOR_128                9.669e-05           0.489        0.099   5
+  UNC13A_DONOR                       1.899e-05           0.400        0.099   5
+  UNC13A_ACCEPTOR_178                3.446e-06           0.711        0.256   5
+
+### Result
+  Spearman rho = -0.200, one-sided exact p = 0.4583 (best attainable 0.0417)
+  predicted order (most exposed first): STMN2_3SS > UNC13A_ACCEPTOR_128 > UNC13A_DONOR > UNC13A_ACCEPTOR_178
+  observed 3D order  (least paired first): UNC13A_DONOR > UNC13A_ACCEPTOR_128 > STMN2_3SS > UNC13A_ACCEPTOR_178
+
+  INCONCLUSIVE: no clear agreement or disagreement at n = 4.
+
+  n = 4 targets. This is a direction check, not a powered test; a
+  perfect match could not have produced p < 0.042. Do not report the
+  p-value without the n.
