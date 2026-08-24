@@ -1,0 +1,27 @@
+## S1 -- splice-site occlusion in 3D. 44 predictions scored.
+
+  target                 pair   robust     flip     diff   spread  verdict
+  STMN2_3SS                 1    0.444    0.644   -0.200    0.222  UNRESOLVED (< seed spread)
+  STMN2_3SS                 2    0.600    0.622   -0.022    0.089  UNRESOLVED (< seed spread)
+  STMN2_3SS                 3    0.578    0.467   +0.111    0.237  UNRESOLVED (< seed spread)
+  STMN2_3SS                 4    0.356    0.600   -0.244    0.147  flip more occluded
+  STMN2_3SS                 5    0.600    0.467   +0.133    0.130  robust more occluded
+  STMN2_3SS                 6    0.511    0.644   -0.133    0.151  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_128       1    0.578    0.467   +0.111    0.293  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_128       2    0.467    0.533   -0.067    0.163  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_128       3    0.467    0.378   +0.089    0.133  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_128       4    0.444    0.489   -0.044    0.206  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_178       1    0.622    0.711   -0.089    0.151  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_178       2    0.311    0.756   -0.444    0.267  flip more occluded
+  UNC13A_ACCEPTOR_178       3    0.600    0.711   -0.111    0.269  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_178       4    0.578    0.533   +0.044    0.325  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_178       5    0.711    0.644   +0.067    0.333  UNRESOLVED (< seed spread)
+  UNC13A_ACCEPTOR_178       6    0.667    0.533   +0.133    0.233  UNRESOLVED (< seed spread)
+  UNC13A_DONOR              1    0.400    0.289   +0.111    0.239  UNRESOLVED (< seed spread)
+  UNC13A_DONOR              2    0.489    0.222   +0.267    0.157  robust more occluded
+  UNC13A_DONOR              3    0.267    0.444   -0.178    0.186  UNRESOLVED (< seed spread)
+  UNC13A_DONOR              4    0.356    0.400   -0.044    0.166  UNRESOLVED (< seed spread)
+
+  usable pairs 4, unresolved 16
+  FEWER THAN 6 USABLE PAIRS -- underpowered, per the decision rule
+  fixed in docs/preregistration.md. Report the count, claim nothing.
