@@ -1098,167 +1098,123 @@ Everything above is settled history. This section is the only part that goes
 stale, and it exists so a compacted session can resume without re-deriving
 anything. Update it, do not append a second copy.
 
-### A5 POOLED — THE FIRST RESULT TO SURVIVE FULL CORRECTION
-rMATS re-run as **9 ISS-N1-targeting vs 11 controls** (was 3v3), output in
-`/home/dashii/orcd/scratch/smt-rna/rmats_pooled/out`. The validated 3v3 run in
-`rmats/out` is UNTOUCHED and must stay that way.
+**Last updated 2026-08-24 evening. Head commit: see `git log -1`.**
+**Current task list lives in `docs/TODO.md` — that file is authoritative for
+what is open, conditional, declined, and blocked.**
 
-Groups were assigned FROM THE DATA, not metadata: SMN2 exon 7 PSI separates all
-20 samples **9/11 with zero overlap** (nine at PSI 1.000, eleven at 0.450-0.787),
-matching the design's 9 targeting / 11 control samples, and the old
-series-matrix-derived F18MOE/ScrMOE triplets fall entirely inside the right
-groups. Using the on-target as a pharmacodynamic marker is not circular here
-because the test is on OFF-targets.
+### WHERE THE PROJECT STANDS, IN ONE PARAGRAPH
+Four blind validations hold and are the spine: A3 recovers the published GC-core
+8-mer blind; A5 predicted POLR2H skipping blind (rMATS dPSI -0.920, FDR 0) and
+MAP1S novel (-0.879); A6 recovers intron 7 blind; R3 measures SMN2 dPSI +0.368.
+A5 pooled enrichment is the only result surviving full Bonferroni,
+**corrected p = 0.0253**. A7's accessibility ceiling is the most novel claim.
+Everything else this project has attempted is a null, a negative, or unresolved
+— all recorded, none buried. **No result yet shows the framework predicts a
+measurement the partner made; that is T9 and it is the arm that decides the
+project.**
 
-  exonic_proximal, |dPSI| >= 0.2:  5/8 = 62.5% vs base rate 10.5%
-                                   fold 6.0, Fisher raw p = 0.0007035
-  corrected over ALL 36 tests spent on these samples: **p = 0.0253**
+### WHAT RAN 2026-08-24 (all committed and pushed)
 
-WHY THE BASE RATE MOVED (55.4% -> 10.5%), since that would otherwise look like
-a rescue: pooling three chemistries adds between-chemistry variance, so pooled
-dPSI magnitudes shrink and far fewer genes clear a fixed threshold (47/409 vs
-344/621). Background gets cleaner and effects get smaller together. The
-threshold where enrichment appears therefore MOVED from 0.8 (3v3) to 0.2
-(pooled) -- coherent under that explanation, but NOT independent confirmation.
+**G1 — Goldilocks off-target axis. DONE (job 21131385, 11/11).**
+`smt.validate.goldilocks_offtarget` + `goldilocks_report`, output
+`docs/g1-offtarget.txt`, data `/home/dashii/orcd/pool/smt-isef-data/goldilocks_offtarget`.
+Two axes because a fixed absolute mismatch budget is NOT length-comparable:
+`scan.DEFAULT_MAX_MISMATCHES=4` is tuned for an 18-mer and slides the implied
+identity threshold from 33% to 80% across lengths.
+  - axis 1: exhaustive transcriptome mismatch histogram, no cutoff
+  - axis 2: IntaRNA + RNAplfold on 4 validated hits + 20 length-matched controls
+  - margin = ddG_net(best off-target) - ddG_net(on-target) = the specificity
+**RESULT: NO GOLDILOCKS POINT in 6-18.** Margin rises monotonically
+(-1.64 at 6, +0.87 at 12, +3.16 at 14, +7.15 at nusinersen 18). Pre-declared
+null, not re-binned. POLR2H safe by margin at every length BUT its absolute
+affinity rises with length (-3.53 at 11 to -17.11 at 18) — relative, not absolute.
 
-**THIS IS A RE-ANALYSIS, NOT A REPLICATION.** Same samples, different grouping.
-`smt.sieve.enrichment --prior-tests N` now enforces adding previously spent
-tests to the Bonferroni denominator. Output: `docs/a5-enrichment-pooled.txt`.
-Claim allowed: "candidate generator for strong exonic off-targets, with
-corrected statistical support". Claim still FORBIDDEN: universal safety sieve.
+**FEASIBILITY PRE-GATE — the most reusable finding of the day.**
+`A_5ss` scores the CONSEQUENCE of occluding a window and never asks whether an
+oligo can OCCUPY it. A3 top-ranked winners at lengths 6/7 are UUAAUU / UUAAUUU
+and form NO duplex against their own perfect complement. Measured to be
+COMPOSITION not length: 6-mer over the GC core binds -9.09 kcal/mol, 8-mer over
+the AU site binds nothing. Three footprints rejected; after gating every
+feasible ASO 6-14 nt lands on the GC core at 32059-32062, the site A3 found blind.
 
-### S — ORTHOGONAL 3D VALIDATION (in flight)
-Tests `A_5ss` against Boltz-2, a learned potential with no `max_bp_span`
-concept. Code: `src/smt/structure/inputs.py`. Plan: rev 5 Part 2A.
+**FREE VALIDATION (good poster line):** the nusinersen 18-mer has exactly TWO
+exact-match sites in all 140.6 Mnt of transcriptome — SMN2 and SMN1. Nothing
+else. Pinned as a test that re-derives it from the index. NOTE: this CONFIRMS an
+expectation rather than discovering something; its value is proving the pipeline.
 
-**TWO GATE DESIGNS WERE REJECTED BEFORE SPENDING GPU** -- both would have
-invalidated everything downstream:
-  1. TSL2/ISTL1 (what rev 5 originally proposed). `smt.seq.construct` carries
-     an explicit TODO(SHAPE): this project's TSL2/ISTL1 coordinates are DERIVED
-     FROM FOLDING, not literature. Gating Boltz on ViennaRNA's own output is
-     circular.
-  2. The Cas13 guide-RNA chains on disk -- PROTEIN-BOUND, so their deposited
-     fold is Cas13-induced; predicting them standalone asks Boltz to reproduce
-     a protein-imposed fold without the protein. Two are also 14/25 nt.
-Gate in use: deposited RNAs that fold unaided -- **1EHZ tRNA-Phe (76 nt),
-2KOC UUCG hairpin (14 nt), 1Y26 adenine riboswitch (71 nt)**.
+**S2 — ceiling in 3D. INCONCLUSIVE.** `smt.structure.score_s2`,
+`docs/s2-ceiling-3d.txt`. Spearman rho = -0.200, one-sided exact p = 0.4583,
+best attainable 0.0417 at n=4. NO NEW GPU — the four unbound predictions already
+existed as S1 controls. Two corrections recorded: the plan's expected order
+("UNC13A_DONOR most buried") is WRONG (ACCEPTOR_178 is, by worst-span rule), and
+the A_5ss baseline ordering is ITSELF span-dependent, so the reference wobbles.
 
-S1 inputs use **ONE WINDOW PER TARGET, not per oligo**. Per-oligo windows give
-a matched pair different RNA chains, so the window rather than the ASO could
-produce the difference -- silently destroying the within-pair design. 44 inputs
-(4 unbound + 40 oligos), windows 345-420 nt, in `boltz_s/s1_in`.
+**S3 — hnRNP A1. GATE PASSED, RESULT UNRESOLVED (job 21132766).**
+`smt.structure.s3_inputs` / `score_s3`, `docs/s3-hnrnpa1.txt`.
+Gate on deposited hnRNP A1:RNA X-ray complexes found by querying RCSB:
+6DCL best F1 0.923, 8X0N 0.857 → **PASS**. Two catches:
+  - 9VVA listed as a 26-mer but only THREE nt are MODELED — metadata describes
+    the construct, not what was resolved. Excluded by a MIN_GATE_NT guard.
+  - Gate first read MARGINAL (0.400) purely from a scoring bug: 6DCL's
+    asymmetric unit holds TWO copies, pooling them capped recall at 0.5.
+On SMN2: UP1 contacts 9-11 nt, ZERO in ISS-N1, median coverage 0.00 over 5 seeds.
+**Reported as UNRESOLVED, not negative** — both gate RNAs are UAG-rich and
+ISS-N1 has NO UAG, so the gate proved competence only where the motif exists and
+this target is outside that regime. NOT evidence against hnRNP A1/ISS-N1.
+Carried caveat: 8X0N mean F1 across seeds is 0.321 vs best 0.857 — high variance.
 
-**OPEN RISK:** 345-420 nt is large for Boltz RNA. If the gate passes but S1 is
-slow or OOMs, TRIM THE WINDOWS rather than let 40 GPU jobs fail.
+**P — CORRECTED. Strand bug found in my own earlier negative (job 21133145).**
+`smt.kinetics.alu_identity`, `docs/p-alu-identity.txt`.
+`hallmarks()` scanned ONE strand. An inverted-repeat pair has one arm antisense
+BY CONSTRUCTION; three of six hallmarks are strand-specific and a 3' poly-A tail
+reads as a 5' poly-T head reversed. The inverted arm was guaranteed to score null
+regardless of what it was — exactly the pattern the first run built its verdict on.
+Fixed by scoring both orientations, with the NULL computed under the same
+max-over-two rule (otherwise the fix manufactures significance).
+**hit 1 upstream: z = -0.54 → +2.57**, perfect A-box (mm=0) and B-box (mm=0) at
+canonical spacing. Arms now symmetric (+2.57 / +2.41).
+**VERDICT UNCHANGED: NOT ESTABLISHED** — both just under the pre-declared
+z >= 2.58. Threshold NOT moved after seeing data. Exploratory (labeled): the
+perfect promoter triad occurs in 18/3000 = 0.6% of null draws, but hit 1's
+PARTNER lacks it, so the both-arms requirement still fails.
 
-### S RESULTS — GATE PASSED, S1 IS NULL
-**S gate PASSED**, mean F1 0.971 / worst 0.939 on base-pair recovery vs
-deposited structures (1EHZ tRNA-Phe 20/20 pairs, 2KOC 5/5, 1Y26 23/26).
-Thresholds were declared in the module before grading. I had flagged Boltz
-RNA accuracy as this plan's weakest link and predicted the gate would break
-it; **that prediction was wrong**, recorded rather than quietly dropped.
+### THE FIVE USER-PROPOSED IDEAS — status
+1. **Goldilocks** — DONE. Answer is a null (no interior optimum).
+2. **Primate ghost code** — PARTIAL. Structure done (A8 + P). **GAP: nobody
+   modeled WHY the circles appear only WITH drug**, which is the half that was
+   actually asked for.
+3. **Risdiplam synergy** — **NOT DONE.** `risdiplam` appears in three docs and
+   ZERO lines of code. Quantitative synergy correctly parked behind PSI (B4),
+   but the STRUCTURAL half needs no PSI: does occluding ISS-N1 change
+   accessibility at the 5'SS risdiplam acts on? Pure `smt.thermo`. Cheap.
+4. **Universal Safety Sieve** — **REFUTED, DO NOT PITCH.** rho = +0.0025,
+   p = 0.96, sign agreement 56.7% vs 50% chance. Allowed claim: "candidate
+   generator for strong exonic off-targets."
+5. **Polymerase hot spots** — **NOT DONE**, and the original framing is wrong
+   (conflates replication fidelity with ASO hybridization). Salvageable version:
+   does nusinersen hybridize more promiscuously in repeat-rich transcripts?
+   No repeat-richness code exists anywhere. Cheap re-analysis of G1 data on disk.
 
-**S1 PRIMARY (pre-registered) = NULL.** 220 structures, 44 inputs x 5 samples.
-16 of 20 pairs UNRESOLVED; the 4 usable split 2-2. Under the pre-registered
-rule that is UNDERPOWERED and claims nothing. `docs/s1-primary-preregistered.txt`.
+### IMMEDIATE STATE
+- Cluster: idle except **job 21133941** (full pytest). Previous baseline
+  **197 passed / 1 skipped** was re-confirmed today but PREDATES the 7 new G1
+  tests; expect ~204.
+- G2 NOT triggered — it was conditional on G1 finding a trade-off; it did not.
+- S4 DELIBERATELY NOT RUN — ungateable at 280+292 nt, and P not established so
+  there is no mechanism for the figure to depict. Reasoning in `docs/TODO.md`.
+- **T9 (partner PSI) is the only blocked item and the only one that changes the
+  project's verdict.** Request sent 2026-08-23, not returned.
 
-**A flaw in my own criterion, recorded not silently fixed:** the pre-declared
-"pooled seed spread" used a PER-SAMPLE standard deviation to gate a
-DIFFERENCE OF MEANS. Wrong scale — it does not shrink as samples are added,
-so no amount of GPU could ever pass it. The criterion still stands as primary
-because it was pre-registered, and swapping it after seeing data is how a
-null becomes a finding.
-
-**S1 SECONDARY (post-hoc, standard-error criterion, clearly labelled):** at 5
-samples, 10/20 usable, 4/10 in the registered direction, p = 0.75, mean −0.067.
-
-**S1-DEEP (job 21073929, 1100 structures, 25 samples, criterion UNCHANGED —
-only n increased):**
-  pre-registered criterion:  1/20 usable  <- got WORSE with more data
-  standard-error criterion:  **16/20 usable, 10/16 in the registered
-                             direction, mean +0.0247, two-sided sign test
-                             p = 0.4545.** Adequately powered (>=12) and NULL.
-
-THE PRE-REGISTERED CRITERION GETTING WORSE WITH MORE DATA IS THE PROOF it was
-mis-scaled: averaging 25 samples tightens each mean while the per-sample SD it
-was compared against does not move, so pairs *left* the usable set as evidence
-accumulated. No criterion that behaves that way can ever be satisfied. This is
-recorded as a methodological error of mine, not smoothed over.
-
-**READ THE NULL PRECISELY.** 10/16 with mean +0.0247 is a NON-SIGNIFICANT LEAN
-in the registered direction — consistent with a small real effect OR with
-noise, and p = 0.45 distinguishes neither. Note the 5-sample estimate pointed
-the other way (−0.067); that sign flip between 5 and 25 samples is itself
-evidence the 5-sample numbers were noise.
-
-**S1 DOES NOT TRIGGER P3.** P3's falsification condition is about P1 — the
-WET-LAB test. S1 is a second model, not a measurement, so a model-vs-model
-null cannot falsify the framework on its own. What it does do is remove the
-orthogonal support this project hoped for and make the wet-lab P1 test
-DECISIVE rather than confirmatory.
-
-**WHAT THIS MEANS.** Boltz does NOT corroborate span-robustness. That is a
-real blow to A7's ranking rationale and must be stated, not buried. It raises
-the stakes on the wet-lab P1 test rather than lowering them. It does not yet
-meet P3's falsification bar, which requires >=12 usable pairs; 10 were
-resolvable. Job **21073929** re-runs the identical inputs at 25 samples
-(criterion UNCHANGED, only n up) to settle whether the null is definitive or
-merely underpowered. Direction so far suggests it will confirm the null.
-
-### QUEUED / DONE THIS ROUND
-  **G on-target axis DONE** (`docs/g-ontarget-axis.txt`). Needed no new compute
-  -- the A3 sweep already held it. Verification passed: the published 8-mer at
-  32059 ranks 4/8 among span-robust 8-mers through the new loader.
-  SCAN-EDGE ARTIFACT CAUGHT: every length 6-10 won at 32040, the FIRST scanned
-  position; dropping 3 edge positions cuts those by 2-3 orders of magnitude.
-  Both views printed, neither preferred. **Lengths 16-20 have ZERO span-robust
-  footprints and nusinersen is an 18-mer** -- read as consistent with long ASOs
-  acting by DIRECT occupancy (which this framework refuses to model), NOT as
-  evidence nusinersen should be shorter.
-  STILL OPEN: G1 off-target panel. Until it runs this is the on-target axis
-  ALONE and implies nothing about a trade-off.
-
-  **T8 Phase B prep DONE** (`docs/densitometry-spec.md`). Exact headers,
-  normalization order, and five rejection rules, written before any data. Key
-  calls: PSI from both bands in the SAME lane (no housekeeping normalization,
-  that would double-correct); no inter-gel rescaling (gel_id is a covariate);
-  saturated lanes excluded not corrected.
-
-  **P/Alu identity DONE — NOT ESTABLISHED** (`docs/p-alu-identity.txt`).
-  Four arms scored against composition-matched and random-intron-window nulls:
-    hit1 upstream   9465-9744   z = -0.54
-    hit1 downstream 23225-23516 z = **+2.78**  A-box mm1, B-box mm1, spacing OK,
-                                A-tail 0.525 -- genuinely Alu-like
-    hit2 upstream   13668-13944 z = +0.84
-    hit2 downstream 23252-23523 z = +1.32
-  ONE arm of four leans Alu-like. Bonferroni over 4 arms leaves it marginal at
-  best, and the null (n~90, composite discrete+continuous score) is not
-  reliably normal, so the z should not be read as a clean p.
-  **THE DECISIVE POINT: Alu-mediated backsplicing needs BOTH arms to be
-  inverted Alus.** Hit 1's upstream partner sits at z = -0.54, indistinguishable
-  from null. So even granting the downstream arm, hit 1 is NOT an inverted Alu
-  PAIR, and the primate-specificity mechanism is unsupported.
-  Verdict is exactly the fallback the module pre-declared: **Alu-scale inverted
-  repeats, subfamily unresolved.** A8's finding stands; it is not upgraded.
-  (superseded entry) job 21098901 -> `docs/p-alu-identity.txt`.
-  Database-free Alu hallmarks (A-box/B-box at canonical spacing, 3' A-tail,
-  dimeric arm self-similarity) with composition-matched and
-  random-intron-window nulls. Honest ceiling: weaker than RepeatMasker; a null
-  result means "Alu-scale inverted repeats, subfamily unresolved".
-
-### Jobs and watchers at time of writing
-  21073929  Boltz S1-deep, 25 samples -> boltz_s/s1_out25   RUNNING
-  21072203  Boltz S1, 5 samples, 220 structures        COMPLETED (graded)
-  21069469  Boltz S-gate -> boltz_s/gate_out           COMPLETED (PASSED)
-  21066824  pooled rMATS                              COMPLETED (consumed)
-  21065504  full suite, 197 passed 1 skipped          COMPLETED
-Background shells: gate watcher, midnight alarm, 05:00 alarm.
-
-### Next actions, in order
-  1. Grade the S gate (base-pair recovery vs deposited). **A failed gate means
-     S1-S4 are reported ungated and no structural claim is made.**
-  2. If it passes -- submit S1 (44 inputs x 5 seeds), watch for OOM.
-  3. T4 Goldilocks: A3 shards at `smt-isef-data/sweep` already hold the whole
-     on-target axis; only the targeted off-target panel is new.
-  4. T5 Alu identity test with null control.
-  5. T8 Phase B prep (ingest schema, risdiplam structural half) -- touches no PSI.
+### STANDING RULES THAT MUST SURVIVE ANY CONTEXT RESET
+- Nothing consumes PSI until real PSI exists. No synthetic calibration, no
+  placeholder link fit, no illustrative numbers.
+- Rank on the WORST span, never the best. A single-span result is not a result.
+- Fix physics before compute. Never submit an unreviewed array.
+- Small idempotent units, skip-if-done, atomic .tmp rename, --requeue.
+  MaxSubmitJobs=500 counts QUEUED tasks; `%N` throttles running only.
+  `--requeue` does NOT cover wall-clock TIMEOUT.
+- New modules get tests that RE-DERIVE ground truth from source (GenBank record,
+  sweep CSVs, transcriptome index) — never restate the module's own constants.
+- Negative results stay in the record. Commit after every working increment.
+- Max two subagents. Do not use workflows or deep research unless asked.
+- Shared HPC: never traverse /orcd broadly; read ~/orcd/.quota, never `du`.
