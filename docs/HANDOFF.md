@@ -1169,10 +1169,33 @@ so no amount of GPU could ever pass it. The criterion still stands as primary
 because it was pre-registered, and swapping it after seeing data is how a
 null becomes a finding.
 
-**S1 SECONDARY (post-hoc, standard-error criterion, clearly labelled):** 10 of
-20 pairs usable, **4/10 in the direction P1 registered, two-sided sign test
-p = 0.75, mean difference −0.067 (slightly the WRONG way).** Both criteria
-agree: no signal.
+**S1 SECONDARY (post-hoc, standard-error criterion, clearly labelled):** at 5
+samples, 10/20 usable, 4/10 in the registered direction, p = 0.75, mean −0.067.
+
+**S1-DEEP (job 21073929, 1100 structures, 25 samples, criterion UNCHANGED —
+only n increased):**
+  pre-registered criterion:  1/20 usable  <- got WORSE with more data
+  standard-error criterion:  **16/20 usable, 10/16 in the registered
+                             direction, mean +0.0247, two-sided sign test
+                             p = 0.4545.** Adequately powered (>=12) and NULL.
+
+THE PRE-REGISTERED CRITERION GETTING WORSE WITH MORE DATA IS THE PROOF it was
+mis-scaled: averaging 25 samples tightens each mean while the per-sample SD it
+was compared against does not move, so pairs *left* the usable set as evidence
+accumulated. No criterion that behaves that way can ever be satisfied. This is
+recorded as a methodological error of mine, not smoothed over.
+
+**READ THE NULL PRECISELY.** 10/16 with mean +0.0247 is a NON-SIGNIFICANT LEAN
+in the registered direction — consistent with a small real effect OR with
+noise, and p = 0.45 distinguishes neither. Note the 5-sample estimate pointed
+the other way (−0.067); that sign flip between 5 and 25 samples is itself
+evidence the 5-sample numbers were noise.
+
+**S1 DOES NOT TRIGGER P3.** P3's falsification condition is about P1 — the
+WET-LAB test. S1 is a second model, not a measurement, so a model-vs-model
+null cannot falsify the framework on its own. What it does do is remove the
+orthogonal support this project hoped for and make the wet-lab P1 test
+DECISIVE rather than confirmatory.
 
 **WHAT THIS MEANS.** Boltz does NOT corroborate span-robustness. That is a
 real blow to A7's ranking rationale and must be stated, not buried. It raises
