@@ -1224,7 +1224,23 @@ merely underpowered. Direction so far suggests it will confirm the null.
   that would double-correct); no inter-gel rescaling (gel_id is a covariate);
   saturated lanes excluded not corrected.
 
-  **P/Alu identity RUNNING**, job 21098901 -> `docs/p-alu-identity.txt`.
+  **P/Alu identity DONE — NOT ESTABLISHED** (`docs/p-alu-identity.txt`).
+  Four arms scored against composition-matched and random-intron-window nulls:
+    hit1 upstream   9465-9744   z = -0.54
+    hit1 downstream 23225-23516 z = **+2.78**  A-box mm1, B-box mm1, spacing OK,
+                                A-tail 0.525 -- genuinely Alu-like
+    hit2 upstream   13668-13944 z = +0.84
+    hit2 downstream 23252-23523 z = +1.32
+  ONE arm of four leans Alu-like. Bonferroni over 4 arms leaves it marginal at
+  best, and the null (n~90, composite discrete+continuous score) is not
+  reliably normal, so the z should not be read as a clean p.
+  **THE DECISIVE POINT: Alu-mediated backsplicing needs BOTH arms to be
+  inverted Alus.** Hit 1's upstream partner sits at z = -0.54, indistinguishable
+  from null. So even granting the downstream arm, hit 1 is NOT an inverted Alu
+  PAIR, and the primate-specificity mechanism is unsupported.
+  Verdict is exactly the fallback the module pre-declared: **Alu-scale inverted
+  repeats, subfamily unresolved.** A8's finding stands; it is not upgraded.
+  (superseded entry) job 21098901 -> `docs/p-alu-identity.txt`.
   Database-free Alu hallmarks (A-box/B-box at canonical spacing, 3' A-tail,
   dimeric arm self-similarity) with composition-matched and
   random-intron-window nulls. Honest ceiling: weaker than RepeatMasker; a null
