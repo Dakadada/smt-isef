@@ -1205,6 +1205,31 @@ resolvable. Job **21073929** re-runs the identical inputs at 25 samples
 (criterion UNCHANGED, only n up) to settle whether the null is definitive or
 merely underpowered. Direction so far suggests it will confirm the null.
 
+### QUEUED / DONE THIS ROUND
+  **G on-target axis DONE** (`docs/g-ontarget-axis.txt`). Needed no new compute
+  -- the A3 sweep already held it. Verification passed: the published 8-mer at
+  32059 ranks 4/8 among span-robust 8-mers through the new loader.
+  SCAN-EDGE ARTIFACT CAUGHT: every length 6-10 won at 32040, the FIRST scanned
+  position; dropping 3 edge positions cuts those by 2-3 orders of magnitude.
+  Both views printed, neither preferred. **Lengths 16-20 have ZERO span-robust
+  footprints and nusinersen is an 18-mer** -- read as consistent with long ASOs
+  acting by DIRECT occupancy (which this framework refuses to model), NOT as
+  evidence nusinersen should be shorter.
+  STILL OPEN: G1 off-target panel. Until it runs this is the on-target axis
+  ALONE and implies nothing about a trade-off.
+
+  **T8 Phase B prep DONE** (`docs/densitometry-spec.md`). Exact headers,
+  normalization order, and five rejection rules, written before any data. Key
+  calls: PSI from both bands in the SAME lane (no housekeeping normalization,
+  that would double-correct); no inter-gel rescaling (gel_id is a covariate);
+  saturated lanes excluded not corrected.
+
+  **P/Alu identity RUNNING**, job 21098901 -> `docs/p-alu-identity.txt`.
+  Database-free Alu hallmarks (A-box/B-box at canonical spacing, 3' A-tail,
+  dimeric arm self-similarity) with composition-matched and
+  random-intron-window nulls. Honest ceiling: weaker than RepeatMasker; a null
+  result means "Alu-scale inverted repeats, subfamily unresolved".
+
 ### Jobs and watchers at time of writing
   21073929  Boltz S1-deep, 25 samples -> boltz_s/s1_out25   RUNNING
   21072203  Boltz S1, 5 samples, 220 structures        COMPLETED (graded)
