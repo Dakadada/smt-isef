@@ -1,0 +1,85 @@
+genes carrying any sieve prediction: 705
+
+## SE ONLY -- the original analysis
+genes with a significant event (FDR<0.05): 534
+BASE RATE CONFOUND, stated first: 290/534 (54.3%) of significant events are NEGATIVE. 'Predict skipping' is right this often by chance alone.
+
+### |dPSI| >= 0.2   (289/534 genes, base rate 54.1%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               10      5    50.0%    54.2%    0.92          1
+  exonic_proximal           11      7    63.6%    53.9%    1.18       0.56
+  intronic_core              9      4    44.4%    54.3%    0.82     0.7386
+  three_utr                  6      1    16.7%    54.5%    0.31    0.09872
+
+### |dPSI| >= 0.5   (100/534 genes, base rate 18.7%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               10      3    30.0%    18.5%    1.62     0.4065
+  exonic_proximal           11      3    27.3%    18.5%    1.47     0.4397
+  intronic_core              9      2    22.2%    18.7%    1.19     0.6782
+  three_utr                  6      0     0.0%    18.9%    0.00     0.5995
+
+### |dPSI| >= 0.8   (12/534 genes, base rate 2.2%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               10      0     0.0%     2.3%    0.00          1
+  exonic_proximal           11      2    18.2%     1.9%    9.51    0.02277
+  intronic_core              9      1    11.1%     2.1%    5.30     0.1863
+  three_utr                  6      0     0.0%     2.3%    0.00          1
+
+### Within exonic_proximal: does the RANK carry information? (n=11)
+  median measured dPSI, most-negative-predicted half: -0.236
+  median measured dPSI, least-negative-predicted half: -0.083
+  If those are the same, only the CATEGORY LABEL is doing work and
+  the signed magnitude orders nothing. Say that plainly.
+
+## ALL FIVE EVENT CLASSES -- what the sieve actually predicts
+genes with a significant event (FDR<0.05): 621
+BASE RATE CONFOUND, stated first: 330/621 (53.1%) of significant events are NEGATIVE. 'Predict skipping' is right this often by chance alone.
+
+### |dPSI| >= 0.2   (344/621 genes, base rate 55.4%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               13      7    53.8%    55.4%    0.97          1
+  exonic_proximal           11      7    63.6%    55.2%    1.15     0.7622
+  intronic_core             12      7    58.3%    55.3%    1.05          1
+  three_utr                  6      1    16.7%    55.8%    0.30    0.09396
+
+### |dPSI| >= 0.5   (112/621 genes, base rate 18.0%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               13      3    23.1%    17.9%    1.29     0.7129
+  exonic_proximal           11      3    27.3%    17.9%    1.53     0.4271
+  intronic_core             12      2    16.7%    18.1%    0.92          1
+  three_utr                  6      0     0.0%    18.2%    0.00     0.5979
+
+### |dPSI| >= 0.8   (13/621 genes, base rate 2.1%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               13      0     0.0%     2.1%    0.00          1
+  exonic_proximal           11      2    18.2%     1.8%   10.08    0.02002
+  intronic_core             12      1     8.3%     2.0%    4.23      0.226
+  three_utr                  6      0     0.0%     2.1%    0.00          1
+
+### Within exonic_proximal: does the RANK carry information? (n=11)
+  median measured dPSI, most-negative-predicted half: -0.236
+  median measured dPSI, least-negative-predicted half: -0.083
+  If those are the same, only the CATEGORY LABEL is doing work and
+  the signed magnitude orders nothing. Say that plainly.
+
+## MULTIPLE TESTING -- 24 tests were printed above, so every one of them is corrected
+Bonferroni over ALL tests in this report, including the ones that
+did not support the hypothesis. Nothing is excluded from the count.
+  label                                          |dPSI|category                  raw p   corrected
+  ALL FIVE EVENT CLASSES -- what the sieve act      0.8exonic_proximal         0.02002      0.4805
+  SE ONLY -- the original analysis                  0.8exonic_proximal         0.02277      0.5466
+  ALL FIVE EVENT CLASSES -- what the sieve act      0.2three_utr               0.09396           1
+  SE ONLY -- the original analysis                  0.2three_utr               0.09872           1
+  SE ONLY -- the original analysis                  0.8intronic_core            0.1863           1
+  ALL FIVE EVENT CLASSES -- what the sieve act      0.8intronic_core             0.226           1
+
+## WHAT WOULD SETTLE IT -- power for the strongest signal seen
+  exonic_proximal at |dPSI|>=0.8: 2/11 = 18.2% vs base 1.8%  (fold 10.1)
+  If 18.2% is the TRUE rate, this clears alpha=0.0021 at n = 14 predicted genes with a
+  measurable event -- 1x the 11 available here. That is the experiment to ask for,
+  and it is an OPTIMISTIC floor: it assumes the observed rate is exactly right.
+
+  NOTHING SURVIVES Bonferroni correction over 24 tests.
+  That is the result. The four validated hits remain individually
+  real and individually striking, but they are NOT demonstrated
+  enrichment, and the sieve may not be described as validated.
