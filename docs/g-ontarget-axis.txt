@@ -1,0 +1,28 @@
+## G -- on-target axis from the A3 sweep. 795 footprints.
+
+   len   robust      best (all)      at    best (no edge)      at
+     6        9       7.819e-03   32040         2.372e-03   32044
+     7        8       7.857e-03   32040         2.444e-03   32043
+     8        8       7.909e-03   32040         9.117e-06   32059
+     9        7       2.061e-02   32040         9.122e-06   32059
+    10        6       2.286e-02   32040         9.700e-06   32062
+    11        4       1.007e-05   32061         1.007e-05   32061
+    12        4       1.151e-05   32059         1.151e-05   32059
+    13        2       1.230e-05   32059         1.230e-05   32059
+    14        2       1.004e-05   32059         1.004e-05   32059
+    15        1       7.451e-08   32083         7.451e-08   32083
+
+  LENGTHS WITH ZERO SPAN-ROBUST FOOTPRINTS: [16, 17, 18, 19, 20]
+  Nusinersen is an 18-mer. If 18 is in that list, the clinically
+  effective length has NO span-robust footprint in this scan --
+  consistent with long ASOs acting by DIRECT occupancy, which this
+  framework explicitly refuses to model. Report it that way, not
+  as evidence that nusinersen should be shorter.
+
+### VERIFICATION -- does this loader reproduce A3's blind answer?
+  the published 8-mer at 32059 ranks 4/8 among span-robust 8-mers.
+  PASS
+
+  Lengths are ranked on their WORST span. Off-target scoring (G1,
+  targeted panel) attaches to these winners; until it runs, this is
+  the on-target axis ALONE and implies nothing about a trade-off.
