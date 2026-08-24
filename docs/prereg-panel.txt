@@ -1,0 +1,122 @@
+
+## Pre-registered matched-pair panel -- STMN2_3SS
+construct STMN2_cryptic_u400_d200; 6 pairs matched on best-span |fom| to within 15% and on length exactly.
+ROBUST members are >= 25 nt apart, so the pairs are independent positions and not one site measured repeatedly.
+PREDICTION: within every pair, ROBUST suppresses the cryptic exon more
+than FLIP. A single-span analysis predicts no difference by construction.
+
+  pair  1 [PRIMARY]  robust worst/best = 17.04%
+     ROBUST  start 5716 len 10  best|fom| 3.932e-02  worst +6.702e-03  signs +++++  ASO 5'-GAAGGUCUUC-3'
+     FLIP    start 5791 len 10  best|fom| 3.927e-02  worst -3.927e-02  signs -+++-  ASO 5'-GUCUGUCUCU-3'
+
+  pair  2 [PRIMARY]  robust worst/best = 7.87%
+     ROBUST  start 5637 len 13  best|fom| 2.992e-02  worst +2.356e-03  signs +++++  ASO 5'-CAUAAUUCCCAGA-3'
+     FLIP    start 5835 len 13  best|fom| 2.992e-02  worst -2.992e-02  signs -+-+-  ASO 5'-AACUGUGCCACAA-3'
+
+  pair  3 [PRIMARY]  robust worst/best = 5.60%
+     ROBUST  start 5612 len  8  best|fom| 1.199e-02  worst +6.715e-04  signs +++++  ASO 5'-UAUAUGAG-3'
+     FLIP    start 5741 len  8  best|fom| 1.199e-02  worst -1.199e-02  signs -+---  ASO 5'-UUCUUAUU-3'
+
+  pair  4 [secondary]  robust worst/best = 0.79%
+     ROBUST  start 5787 len 20  best|fom| 3.729e-02  worst +2.964e-04  signs +++++  ASO 5'-CAGGCUGUCUGUCUCUCUCU-3'
+     FLIP    start 5726 len 20  best|fom| 3.733e-02  worst -1.368e-03  signs ++-++  ASO 5'-UUAUUUUCUACCUUUCUCUC-3'
+
+  pair  5 [secondary]  robust worst/best = 0.54%
+     ROBUST  start 5759 len 18  best|fom| 3.165e-02  worst +1.709e-04  signs +++++  ASO 5'-CGCACACAUGCUCACACA-3'
+     FLIP    start 5647 len 18  best|fom| 3.156e-02  worst -7.242e-03  signs ++--+  ASO 5'-UGAUGGGGCAGAACACAU-3'
+
+  pair  6 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 5818 len 14  best|fom| 3.536e-02  worst +8.800e-07  signs +++++  ASO 5'-GCAUUCACAUUCAU-3'
+     FLIP    start 5742 len 14  best|fom| 3.538e-02  worst -8.191e-04  signs ++-++  ASO 5'-AGCCAAAUUCUUAU-3'
+
+
+## Pre-registered matched-pair panel -- UNC13A_DONOR
+construct UNC13A_cryptic_u400_d200; 4 pairs matched on best-span |fom| to within 15% and on length exactly.
+ROBUST members are >= 25 nt apart, so the pairs are independent positions and not one site measured repeatedly.
+PREDICTION: within every pair, ROBUST suppresses the cryptic exon more
+than FLIP. A single-span analysis predicts no difference by construction.
+
+  pair  1 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 45835 len  8  best|fom| 4.517e-02  worst +1.034e-08  signs +++++  ASO 5'-AUAAGAGU-3'
+     FLIP    start 45962 len  8  best|fom| 4.510e-02  worst -4.510e-02  signs --++-  ASO 5'-CUCAUCCA-3'
+
+  pair  2 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 46024 len 11  best|fom| 2.227e-02  worst +9.404e-10  signs +++++  ASO 5'-CAAUCAUAUAU-3'
+     FLIP    start 46012 len 11  best|fom| 2.238e-02  worst -2.238e-02  signs +-++-  ASO 5'-CAUCCAUCUGU-3'
+
+  pair  3 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 45987 len  7  best|fom| 1.008e-01  worst +9.404e-10  signs +++++  ASO 5'-UCUAGCC-3'
+     FLIP    start 45927 len  7  best|fom| 1.002e-01  worst -1.002e-01  signs -+-++  ASO 5'-UCCAUCC-3'
+
+  pair  4 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 46051 len  9  best|fom| 2.514e-02  worst +9.404e-10  signs +++++  ASO 5'-CCAUACAUC-3'
+     FLIP    start 45865 len  9  best|fom| 2.533e-02  worst -1.850e-02  signs -+-++  ASO 5'-CAGCAUUUA-3'
+
+
+## Pre-registered matched-pair panel -- UNC13A_ACCEPTOR_128
+construct UNC13A_cryptic_u400_d200; 4 pairs matched on best-span |fom| to within 15% and on length exactly.
+ROBUST members are >= 25 nt apart, so the pairs are independent positions and not one site measured repeatedly.
+PREDICTION: within every pair, ROBUST suppresses the cryptic exon more
+than FLIP. A single-span analysis predicts no difference by construction.
+
+  pair  1 [PRIMARY]  robust worst/best = 4.70%
+     ROBUST  start 45816 len 10  best|fom| 2.023e-03  worst +9.511e-05  signs +++++  ASO 5'-GAAACCCAGG-3'
+     FLIP    start 45718 len 10  best|fom| 2.139e-03  worst -2.139e-03  signs --+-+  ASO 5'-AGAGUCAACC-3'
+
+  pair  2 [secondary]  robust worst/best = 0.37%
+     ROBUST  start 45875 len 16  best|fom| 8.782e-04  worst +3.231e-06  signs +++++  ASO 5'-AUCAUUCAUUCAUUCA-3'
+     FLIP    start 45675 len 16  best|fom| 8.760e-04  worst -3.958e-04  signs ---+-  ASO 5'-AGGUGACCCUGAAUCU-3'
+
+  pair  3 [secondary]  robust worst/best = 0.13%
+     ROBUST  start 45914 len  6  best|fom| 4.684e-04  worst +6.251e-07  signs +++++  ASO 5'-UAUCUA-3'
+     FLIP    start 45861 len  6  best|fom| 4.685e-04  worst -4.685e-04  signs +-+--  ASO 5'-UAUUCA-3'
+
+  pair  4 [secondary]  robust worst/best = 0.02%
+     ROBUST  start 45732 len  6  best|fom| 1.096e-03  worst +1.706e-07  signs +++++  ASO 5'-AUGAGU-3'
+     FLIP    start 45799 len  6  best|fom| 1.092e-03  worst -1.092e-03  signs --++-  ASO 5'-GACAUA-3'
+
+
+## Pre-registered matched-pair panel -- UNC13A_ACCEPTOR_178
+construct UNC13A_cryptic_u400_d200; 6 pairs matched on best-span |fom| to within 15% and on length exactly.
+ROBUST members are >= 25 nt apart, so the pairs are independent positions and not one site measured repeatedly.
+PREDICTION: within every pair, ROBUST suppresses the cryptic exon more
+than FLIP. A single-span analysis predicts no difference by construction.
+
+  pair  1 [secondary]  robust worst/best = 0.09%
+     ROBUST  start 45897 len 12  best|fom| 2.301e-03  worst +2.152e-06  signs +++++  ASO 5'-CACUCAUUCAUC-3'
+     FLIP    start 45666 len 12  best|fom| 2.421e-03  worst -5.684e-05  signs --+++  ASO 5'-UCUGGACUUUGA-3'
+
+  pair  2 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 45726 len 18  best|fom| 9.468e-02  worst +1.468e-06  signs +++++  ASO 5'-CUGAUGAUGAGUAGUGAG-3'
+     FLIP    start 45790 len 18  best|fom| 9.474e-02  worst -4.105e-03  signs --++-  ASO 5'-AGAGACAUACCCAGACAC-3'
+
+  pair  3 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 45785 len  8  best|fom| 9.591e-02  worst +8.971e-07  signs +++++  ASO 5'-CACAAACG-3'
+     FLIP    start 45745 len  8  best|fom| 9.582e-02  worst -3.954e-05  signs -+++-  ASO 5'-AGGAAGAA-3'
+
+  pair  4 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 45646 len 20  best|fom| 6.628e-03  worst +9.316e-08  signs +++++  ASO 5'-UGGAUAGGGAGGAGUUUUCC-3'
+     FLIP    start 45883 len 20  best|fom| 6.541e-03  worst -6.541e-03  signs -+-++  ASO 5'-UUCAUCUGUUCAAUCAUUCA-3'
+
+  pair  5 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 45695 len  7  best|fom| 1.726e-02  worst +3.545e-08  signs +++++  ASO 5'-CUUCCCA-3'
+     FLIP    start 45717 len  7  best|fom| 1.736e-02  worst -4.454e-05  signs +-++-  ASO 5'-UCAACCU-3'
+
+  pair  6 [secondary]  robust worst/best = 0.00%
+     ROBUST  start 45609 len 18  best|fom| 8.620e-02  worst +3.292e-08  signs +++++  ASO 5'-GCGGGCAGUCUCAGAGGG-3'
+     FLIP    start 45784 len 18  best|fom| 8.662e-02  worst -4.893e-02  signs --++-  ASO 5'-AUACCCAGACACAAACGG-3'
+
+
+## POWER, computed after the panel and before any measurement
+  PRIMARY pairs (worst span retains >= 1% of best): 4
+  SECONDARY pairs (sign-consistent but predicted effect ~0):    16
+  4 primary pairs is BELOW the 6-pair minimum declared in this
+  module's docstring. A one-sided sign test on 4 pairs cannot
+  reach p<0.05 even if EVERY pair goes the predicted way (min p = 0.0625).
+  STATE THAT UP FRONT. The panel needs either more targets that clear
+  the retention bar, or a graded readout (measure the SIZE of the
+  difference within each pair, not just its direction) -- a paired
+  Wilcoxon over all 20 pairs has real power where a sign test on 4
+  does not. Recommend the graded readout to the wet lab.
+
+  written: docs/prereg-panel.csv  (40 oligos)
