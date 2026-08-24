@@ -1151,8 +1151,41 @@ produce the difference -- silently destroying the within-pair design. 44 inputs
 **OPEN RISK:** 345-420 nt is large for Boltz RNA. If the gate passes but S1 is
 slow or OOMs, TRIM THE WINDOWS rather than let 40 GPU jobs fail.
 
+### S RESULTS — GATE PASSED, S1 IS NULL
+**S gate PASSED**, mean F1 0.971 / worst 0.939 on base-pair recovery vs
+deposited structures (1EHZ tRNA-Phe 20/20 pairs, 2KOC 5/5, 1Y26 23/26).
+Thresholds were declared in the module before grading. I had flagged Boltz
+RNA accuracy as this plan's weakest link and predicted the gate would break
+it; **that prediction was wrong**, recorded rather than quietly dropped.
+
+**S1 PRIMARY (pre-registered) = NULL.** 220 structures, 44 inputs x 5 samples.
+16 of 20 pairs UNRESOLVED; the 4 usable split 2-2. Under the pre-registered
+rule that is UNDERPOWERED and claims nothing. `docs/s1-primary-preregistered.txt`.
+
+**A flaw in my own criterion, recorded not silently fixed:** the pre-declared
+"pooled seed spread" used a PER-SAMPLE standard deviation to gate a
+DIFFERENCE OF MEANS. Wrong scale — it does not shrink as samples are added,
+so no amount of GPU could ever pass it. The criterion still stands as primary
+because it was pre-registered, and swapping it after seeing data is how a
+null becomes a finding.
+
+**S1 SECONDARY (post-hoc, standard-error criterion, clearly labelled):** 10 of
+20 pairs usable, **4/10 in the direction P1 registered, two-sided sign test
+p = 0.75, mean difference −0.067 (slightly the WRONG way).** Both criteria
+agree: no signal.
+
+**WHAT THIS MEANS.** Boltz does NOT corroborate span-robustness. That is a
+real blow to A7's ranking rationale and must be stated, not buried. It raises
+the stakes on the wet-lab P1 test rather than lowering them. It does not yet
+meet P3's falsification bar, which requires >=12 usable pairs; 10 were
+resolvable. Job **21073929** re-runs the identical inputs at 25 samples
+(criterion UNCHANGED, only n up) to settle whether the null is definitive or
+merely underpowered. Direction so far suggests it will confirm the null.
+
 ### Jobs and watchers at time of writing
-  21069469  Boltz S-gate -> boltz_s/gate_out          RUNNING
+  21073929  Boltz S1-deep, 25 samples -> boltz_s/s1_out25   RUNNING
+  21072203  Boltz S1, 5 samples, 220 structures        COMPLETED (graded)
+  21069469  Boltz S-gate -> boltz_s/gate_out           COMPLETED (PASSED)
   21066824  pooled rMATS                              COMPLETED (consumed)
   21065504  full suite, 197 passed 1 skipped          COMPLETED
 Background shells: gate watcher, midnight alarm, 05:00 alarm.
