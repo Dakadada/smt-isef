@@ -1092,13 +1092,79 @@ negative results that were sought rather than tolerated.
 MAY NOT: revolutionary, validated genome-wide, or "the sieve works."
 
 
+## C4 — CO-TRANSCRIPTIONAL RESCUE OF THE SPAN PROBLEM. PRE-DECLARED GATE, FAILED.
+
+`smt.validate.causal_gate`, `docs/c4-causal-gate.txt`, `tests/test_causal_gate.py`
+(8 passed). Cost: the A3 sweep already on disk plus ~7 partition functions.
+
+### The proposal
+87% span sign-flipping is the project's biggest wound (A7, and Attack 2 refuted
+the hope that magnitude rescues it). Proposed fix: `max_bp_span` is an ISOTROPIC
+band -- it limits reach 5' and 3' equally -- but a nascent transcript is CAUSAL.
+When Pol II is at L, sequence 3' of L does not exist. Replace the span cap with
+a prefix cut at L and the observable becomes well-defined and physically
+parameterised (L in nt transcribed, convertible to seconds at Pol II rate).
+`constrained.py:111-115` motivates the span ladder in exactly these words, so
+the ladder was always a STAND-IN for a process never modelled. A second arm
+(kinwalker / Kinfold, both already installed and never used) would have derived
+L from transcription rate instead of fitting it, making the prediction
+parameter-free.
+
+### Gate declared BEFORE running, and it failed on both tests
+TEST 1 -- flips must sit where downstream reachability first admits a partner.
+Reachability is monotone in span; `max_bp_span=0` is UNLIMITED so the widening
+order is 50 -> 100 -> 150 -> 300 -> inf. Over 795 full-ladder footprints:
+
+     50 -> 100   498  62.6%      150 -> 300   270  34.0%
+    100 -> 150   260  32.7%      300 -> inf    10   1.3%
+
+ISTL1's distal arm (ref ~32496, +438 nt from the readout) is reachable ONLY at
+300 -> inf. That step carries 1.3% of flips. The proposed mechanism puts them
+in the wrong place.
+
+TEST 2 -- the readout must actually have downstream partners to remove.
+Share of exon 7 5'ss pairing that is UPSTREAM: 99.7 / 98.1 / 98.2 / 98.3 / 98.0%
+at span 50 / 100 / 150 / 300 / inf. Dominant partners are 10-20 nt upstream,
+inside exon 7 (ref 32030-32042, p ~ 0.99 at -10..-12) -- a local intra-exonic
+hairpin. Largest single downstream partner: ref 32346, +296 nt, 0.2%.
+
+### Why this is fatal rather than a tuning problem
+A prefix cut at any L past the readout removes at most ~2% of its pairing.
+THERE IS NOTHING DOWNSTREAM TO REMOVE. The structure occluding the exon 7 5'ss
+is upstream and already exists the moment exon 7 is transcribed, so
+co-transcriptional folding cannot change it. Arm K, whose only purpose was to
+make the L parameter-free, had nothing left to parameterise and was not run.
+NOT a positional artifact: the readout sits at construct 252 of 798, with MORE
+sequence downstream (538 nt) than upstream (251 nt).
+
+### What this does NOT license
+It does not explain the 87%. The flips are real and still unexplained; only one
+candidate explanation is now eliminated. Single-span numbers remain meaningless
+and worst-span ranking stands.
+
+### NEW LEAD, found after the gate failed, deliberately NOT pursued
+At span=inf, ISS_N1 is 77.0% DOWNSTREAM-paired while GC_CORE is 76.3% UPSTREAM-
+paired. That asymmetry is a plausible mechanism for the project's oldest open
+question -- why full-length ISS-N1 occlusion inverts while the GC-core 8-mer
+does not (see "RESOLVED 00:55" and its OPEN note above). It was discovered by
+this gate and is NOT tested here: swapping a fresh hypothesis in to rescue a
+refuted arm is how a gate stops being a gate. It gets its own pre-registration
+or it does not get run.
+
+### Process note worth keeping
+The gate was designed to be cheap enough to kill its own arm, and it did so in
+about fifteen minutes for the price of data already on disk. The mechanism
+proposed in the plan (ISTL1 reaching back) was wrong, and was refuted by the
+first table computed. Seventh entry in the silent-failure list only in the sense
+that it never became one -- it was caught before any array was submitted.
+
 ## LIVE STATE — read this first after any context compaction
 
 Everything above is settled history. This section is the only part that goes
 stale, and it exists so a compacted session can resume without re-deriving
 anything. Update it, do not append a second copy.
 
-**Last updated 2026-08-24 evening. Head commit: see `git log -1`.**
+**Last updated 2026-08-24 late. Head commit: see `git log -1`.**
 **Current task list lives in `docs/TODO.md` — that file is authoritative for
 what is open, conditional, declined, and blocked.**
 
@@ -1196,9 +1262,13 @@ PARTNER lacks it, so the both-arms requirement still fails.
    No repeat-richness code exists anywhere. Cheap re-analysis of G1 data on disk.
 
 ### IMMEDIATE STATE
-- Cluster: idle except **job 21133941** (full pytest). Previous baseline
-  **197 passed / 1 skipped** was re-confirmed today but PREDATES the 7 new G1
-  tests; expect ~204.
+- Cluster: idle. Full pytest baseline 204 passed / 1 skipped, plus 8 new
+  `tests/test_causal_gate.py` -> expect 212.
+- **C4 co-transcriptional rescue: GATE FAILED, arms C and K dead.** See the C4
+  section above. The 87% span problem remains unexplained; one candidate
+  explanation is now eliminated and recorded.
+- **Live lead, NOT started, needs pre-registration first:** the
+  ISS_N1-downstream / GC_CORE-upstream pairing asymmetry from C4.
 - G2 NOT triggered — it was conditional on G1 finding a trade-off; it did not.
 - S4 DELIBERATELY NOT RUN — ungateable at 280+292 nt, and P not established so
   there is no mechanism for the figure to depict. Reasoning in `docs/TODO.md`.

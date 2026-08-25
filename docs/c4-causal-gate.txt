@@ -1,0 +1,48 @@
+## C4 -- is span-driven sign flipping caused by downstream reach?
+## PRE-DECLARED GATE. Both tests below had to pass for arms C and K
+## to proceed. Read the verdict at the bottom.
+
+### TEST 1 -- flips by widening step (n = 795 full-ladder footprints)
+  overall flip rate 70.8%
+  max_bp_span = 0 is UNLIMITED and therefore sorts LAST.
+
+            step   flips    share
+       50 -> 100     498    62.6%
+      100 -> 150     260    32.7%
+      150 -> 300     270    34.0%
+      300 -> inf      10     1.3%
+
+  ISTL1's distal arm is +438 nt from the readout and is reachable
+  ONLY at the 300 -> inf step. Read that row.
+
+### TEST 2 -- readout partner distances (construct 252-260 of 798)
+    span    total      <50   50-100  100-150  150-300     >300  upstream
+      50    6.186     0.3%     0.0%     0.0%     0.0%     0.0%     99.7%
+     100    6.258     1.1%     0.7%     0.0%     0.0%     0.0%     98.1%
+     150    6.051     0.9%     0.3%     0.6%     0.0%     0.0%     98.2%
+     300    6.052     1.1%     0.1%     0.0%     0.6%     0.0%     98.3%
+     inf    6.023     1.0%     0.1%     0.0%     0.8%     0.2%     98.0%
+
+  dominant partners at span = inf:
+    construct 242  ref 32040    -10 nt  p=0.9970
+    construct 241  ref 32039    -11 nt  p=0.9968
+    construct 240  ref 32038    -12 nt  p=0.9906
+    construct 239  ref 32037    -13 nt  p=0.9460
+    construct 238  ref 32036    -14 nt  p=0.7871
+    construct 237  ref 32035    -15 nt  p=0.3675
+    construct 236  ref 32034    -16 nt  p=0.3430
+    construct 233  ref 32031    -19 nt  p=0.1365
+    construct 234  ref 32032    -18 nt  p=0.1336
+    construct 232  ref 32030    -20 nt  p=0.1148
+    construct 235  ref 32033    -17 nt  p=0.0845
+    construct 548  ref 32346   +296 nt  p=0.0131
+
+### Recorded, NOT pursued -- footprint-site pairing polarity
+  GC_CORE  ref 32059-32066  total   3.697  upstream  76.3%  downstream  23.7%
+  ISS_N1   ref 32062-32076  total  11.717  upstream  23.0%  downstream  77.0%
+  A NEW hypothesis found after this gate failed. Not tested here.
+
+### VERDICT: C4 FAILS. Arms C and K do not proceed.
+  Flips are not where downstream reachability predicts, and the
+  readout has almost no downstream partners to remove. A prefix cut
+  cannot fix an observable held by UPSTREAM structure.
