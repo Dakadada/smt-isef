@@ -153,3 +153,116 @@ def validate_ligand() -> dict:
             "mw": mw, "inchikey": key,
             "heavy_atoms": mol.GetNumHeavyAtoms(),
             "rings": rdMolDescriptors.CalcNumRings(mol)}
+
+
+# --------------------------------------------------------------------------
+# Held-out gate: deposited RNA : small-molecule complexes.
+# --------------------------------------------------------------------------
+
+S5_DIR = Path("/home/dashii/orcd/pool/smt-isef-data/boltz_s5")
+
+#: Found by QUERYING RCSB (protein-free RNA, non-polymer entity, <2.5 A,
+#: >20 residues; 510 hits), not recalled. The top 40 by resolution were
+#: screened for SMN / risdiplam / branaplam / "spinal muscular" in the title:
+#: NONE were present, so the held-out exclusion is verifiable rather than
+#: delicate.
+#:
+#: WHY EXCLUSION MATTERS. Campagne et al. 2019 deposited SMN-C5 bound to the
+#: U1:SMN2 5'ss duplex and Boltz-2 trained on the PDB. Gating on that entry and
+#: then predicting it would be a memorisation test, not a gate -- the S3 lesson
+#: inverted.
+#:
+#: ligand character is recorded because it is NOT uniform, and the report must
+#: say so rather than averaging over it:
+#:   W53  430 Da  synthetic diamino-quinoline -- the closest analogue to
+#:                risdiplam (401 Da heteroaromatic) and the most informative
+#:   V8A  805 Da  large synthetic polyamide
+#:   BTN  244 Da  biotin; a genuine specific small-molecule:RNA recognition
+#:   HYJ  364 Da  a GMP DERIVATIVE, i.e. a nucleotide, not a drug-like
+#:                molecule. Kept as a placement test, but it is the weakest
+#:                evidence here for the drug-like regime S5 cares about.
+GATE_SYSTEMS = {
+    "8QMH": ("W53", "c1cc(nc2c1ccc(n2)N)CC(Cc3ccc4ccc(nc4n3)N)C(=O)NCCCN"),
+    "6XRQ": ("V8A", "c1c2c3c4c(cc(c3C(=O)N(C2=O)CCCN5CCOCC5)NCCCN6CCOCC6)"
+                    "C(=O)N(C(=O)c4c1NCCCN7CCOCC7)CCCN8CCOCC8"),
+    "1F27": ("BTN", "C1[C@H]2[C@@H]([C@@H](S1)CCCCC(=O)O)NC(=O)N2"),
+    "7QSH": ("HYJ", "c1nc2c(n1[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)O)O)O)"
+                    "N=C(NC2=O)O"),
+}
+
+#: Minimum MODELED nucleotides for a gate complex to test anything -- the 9VVA
+#: lesson from S3, where deposition metadata described a 26-mer but only three
+#: nucleotides were resolved. Checked on coordinates, never on metadata.
+#:
+#: APPLIED TO THE COMPLEX TOTAL, NOT PER CHAIN, and the unit differs from S3's
+#: deliberately. S3 gated a protein:RNA INTERFACE, which lives on one RNA, so
+#: a per-chain minimum was the right unit there. A ligand POSE needs enough
+#: modelled RNA to define a binding SITE, which several short chains can do
+#: jointly: 8QMH is four 6-nt G2C4 strands totalling 24 nt and hosting a
+#: measurable ligand site. Rejecting it per-chain would discard the closest
+#: analogue to risdiplam for a reason that does not apply to this question.
+#: Per-chain composition is still reported so a 4x6 assembly is never
+#: presented as a 24-mer.
+MIN_GATE_NT = 8
+
+
+def rna_chains_from_cif(cif: Path) -> dict[str, str]:
+    """Chain id -> RNA sequence, read from MODELLED residues only."""
+    import gemmi
+
+    st = gemmi.read_structure(str(cif))
+    st.setup_entities()
+    out: dict[str, str] = {}
+    for chain in st[0]:
+        poly = chain.get_polymer()
+        if len(poly) == 0:
+            continue
+        seq = ""
+        for res in poly:
+            info = gemmi.find_tabulated_residue(res.name.strip())
+            code = (info.one_letter_code.upper().strip() if info else "")
+            seq += {"T": "U"}.get(code, code) or "N"
+        out[chain.name] = seq
+    return out
+
+
+def write_ligand_yaml(path: Path, rna: list[tuple[str, str]], smiles: str,
+                      ligand_id: str = "L") -> None:
+    """Boltz input: one or more RNA chains plus one SMILES ligand.
+
+    ``smt.structure.inputs.write_yaml`` cannot express a ligand, which is why
+    this exists rather than being folded into it. No ``msa: empty`` -- A4
+    established that single-sequence mode fails the gate outright.
+    """
+    lines = ["version: 1", "sequences:"]
+    for cid, seq in rna:
+        lines += [f"  - rna:", f"      id: {cid}", f"      sequence: {seq}"]
+    lines += ["  - ligand:", f"      id: {ligand_id}", f"      smiles: '{smiles}'"]
+    path.write_text("\n".join(lines) + "\n")
+
+
+def gate_inputs(out_dir: Path, cif_dir: Path | None = None) -> int:
+    """Emit one Boltz YAML per held-out gate complex. Returns the count."""
+    from smt.structure.inputs import PDB_DIR
+
+    cif_dir = PDB_DIR if cif_dir is None else cif_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for pid, (lig, smiles) in sorted(GATE_SYSTEMS.items()):
+        cif = cif_dir / f"{pid}.cif"
+        if not cif.exists():
+            raise FileNotFoundError(f"{cif} missing; fetch from RCSB first")
+        chains = rna_chains_from_cif(cif)
+        rna = [(cid, seq) for cid, seq in sorted(chains.items())]
+        total = sum(len(s) for _, s in rna)
+        if total < MIN_GATE_NT:
+            raise ValueError(
+                f"{pid}: only {total} modelled nt across {len(rna)} chain(s); "
+                f"below MIN_GATE_NT={MIN_GATE_NT}. Metadata may claim more -- "
+                "the 9VVA lesson. Excluded rather than graded.")
+        write_ligand_yaml(out_dir / f"s5gate_{pid}.yaml", rna, smiles)
+        sizes = "+".join(str(len(s)) for _, s in rna)
+        print(f"  gate {pid}: {len(rna)} chain(s) [{sizes}] = {total} nt, "
+              f"ligand {lig}")
+        n += 1
+    return n
