@@ -72,3 +72,48 @@
   - Every feasible ASO from 6 to 14 nt lands on the GC core at
     32059-32062, which is the site A3 recovered blind. The length axis
     and the position axis are therefore NOT independent here.
+
+================================================================================
+## CORRECTION 2026-08-25 -- G1 RANKED ON THE WRONG AXIS
+================================================================================
+
+G1 concluded "NO GOLDILOCKS POINT in 6-18" because the MARGIN
+(best off-target minus on-target) rises monotonically with length. That
+conclusion is about RELATIVE specificity and it is not the quantity that
+governs off-target burden at a therapeutic dose.
+
+Checked against the published literature on this exact drug and dataset
+(Ottesen et al., NAR Molecular Medicine 2026, the paper behind GSE307431):
+"Shorter ASOs tend to have FEWER hybridization-dependent off-target effects
+than longer ASOs sharing the same target due to low tolerance for mismatch
+base pairing", and MOE off-target skipping is "mainly due to tolerance for
+mismatch base pairing with ISS-N1-like motifs".
+
+MECHANISM WE MISSED: a longer ASO can afford more mismatches and still form a
+stable duplex. An 18-mer with 4 mismatches retains 14 matched bases; a 10-mer
+with 4 mismatches retains 6 and does not bind.
+
+OUR OWN AXIS-2 TABLE SHOWS IT, in a column the original analysis read past:
+
+  Spearman(length, ABSOLUTE best off-target affinity) = -0.700  p = 0.0165
+  Spearman(length, relative MARGIN)                   = +0.618  p = 0.0426
+
+Both significant, OPPOSITE directions, same eleven rows. Best off-target
+binding strengthens from -9.26 kcal/mol at 6 nt to -17.49 at 18 nt (-8.23).
+POLR2H specifically goes -5.83 -> -17.11 (-11.28).
+
+AXIS 1 HAS THE SAME BLIND SPOT. It counted EXACT and 1-MISMATCH sites, where
+the 18-mer scores perfectly (2 exact, 0 one-mismatch). POLR2H -- the validated
+off-target, confirmed at dPSI -0.920 -- is a FOUR-MISMATCH site. The uniqueness
+axis never searched the mismatch depth where the real off-targets live.
+
+WHAT STANDS: the 18-mer is the most UNIQUE length at exact match, and it has
+the best RELATIVE margin. Both are true and neither predicts off-target burden.
+
+WHAT DOES NOT STAND: "no Goldilocks point" as a statement about ASO safety, and
+any use of G1 to argue that shortening carries no specificity benefit. On the
+absolute axis, shortening looks BETTER, which is what the literature reports.
+
+CONSEQUENCE FOR ARM W: F14 and F10 are predicted to carry LOWER off-target
+burden than F18, and that prediction is NOT testable by western blot --
+off-targets are in other genes, absent from the construct. It needs RNA-seq.
