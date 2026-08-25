@@ -158,7 +158,27 @@ def test_all_three_criteria_are_required():
     assert "fold" in g.verdict
 
 
-def test_different_ligands_are_never_paired(tmp_path):
+def test_ligand_identity_is_name_independent(tmp_path):
+    """Boltz emits "LIG1"; deposited files use the chem-comp id. Matching on
+    name would refuse every real comparison, so identity is by COMPOSITION."""
+    st = gemmi.read_structure(str(SAM))
+    st.setup_entities()
+    names = {r.name for r in ligand_residues(SAM)}
+    for chain in st[0]:
+        for res in chain:
+            if res.name in names:
+                res.name = "LIG1"
+    st.setup_entities()
+    renamed = tmp_path / "renamed.cif"
+    renamed.write_text(st.make_mmcif_document().as_string())
+
+    assert [r.name for r in ligand_residues(renamed)] == ["LIG1"]
+    g = grade_pose(SAM, renamed, bp_f1=1.0)
+    assert g.contact_f1 == pytest.approx(1.0)
+    assert g.ligand_rmsd == pytest.approx(0.0, abs=1e-6)
+
+
+def test_a_different_molecule_is_refused(tmp_path):
     """7QSH carries a uridine AND its real ligand. Comparing one against the
     other is meaningless, not merely noisy, so it must be refused."""
     st = gemmi.read_structure(str(SAM))
@@ -167,14 +187,27 @@ def test_different_ligands_are_never_paired(tmp_path):
     for chain in st[0]:
         for res in chain:
             if res.name in names:
-                res.name = "XXX"
+                for _ in range(4):          # change the composition
+                    del res[len(res) - 1]
     st.setup_entities()
-    renamed = tmp_path / "renamed.cif"
-    renamed.write_text(st.make_mmcif_document().as_string())
+    truncated = tmp_path / "truncated.cif"
+    truncated.write_text(st.make_mmcif_document().as_string())
 
-    assert [r.name for r in ligand_residues(renamed)] == ["XXX"]
     with pytest.raises(CompositionMismatch):
-        grade_pose(SAM, renamed, bp_f1=1.0)
+        grade_pose(SAM, truncated, bp_f1=1.0)
+
+
+def test_alternate_conformations_are_not_double_counted():
+    """8QMH's W53 reads 39 heavy atoms with altlocs summed, 32 without --
+    and 32 is what its SMILES says. Counting one physical thing twice is the
+    6DCL bug in a new costume."""
+    w53 = PDB / "8QMH.cif"
+    if not w53.exists():
+        pytest.skip("8QMH not on disk")
+    ligs = ligand_residues(w53)
+    assert len(ligs) == 1
+    heavy = sum(1 for a in ligs[0] if a.element != gemmi.Element("H"))
+    assert heavy == 32, f"expected the SMILES composition, got {heavy}"
 
 
 def test_crystallisation_additives_are_not_ligands():

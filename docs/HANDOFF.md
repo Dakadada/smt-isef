@@ -1236,6 +1236,77 @@ in direction, at much smaller magnitude. "Candidate generator for strong exonic
 off-targets" is now supported only by that, and "universal safety sieve"
 remains refuted and is not re-tested here.
 
+## S5 — RISDIPLAM 3D. GATE MARGINAL OVERALL, BUT **UNGATED IN THE REGIME S5 NEEDS**.
+
+`smt.structure.s5_inputs` / `pose` / `score_s5`, `docs/s5-gate.txt`,
+`slurm/boltz_s5.sbatch`. Job 21158573, 4/4 predicted, 0 failed, 33 s on an
+L40S. Tests: 12 (`test_s5_inputs`) + 13 (`test_pose`).
+
+### Result
+  PDB   lig   bp F1   contactF1   RMSD    verdict
+  1F27  BTN   0.957     0.875     1.38 A  PASS
+  7QSH  HYJ   1.000     1.000     1.67 A  PASS
+  6XRQ  V8A     n/a     0.667     7.33 A  FAIL   (fold untestable: 0 WC pairs)
+  8QMH  W53   1.000     0.000    15.35 A  FAIL
+
+**MARGINAL, 2/4 — but 0/2 in the drug-like regime.** The two passes are a
+VITAMIN (biotin) and a NUCLEOTIDE (GMP derivative): chemistries with strong
+specific H-bonding and abundant training data. Both SYNTHETIC drug-like
+ligands fail, and **W53 — the closest analogue to risdiplam by mass (430 vs
+401 Da) and chemistry (synthetic heteroaromatic) — is the worst system here:
+bp F1 1.000 with the ligand 15.35 A from its site.**
+
+That stratification is not post-hoc: `DRUG_LIKE` and the per-ligand character
+notes were written into the module WITH the systems, before grading, precisely
+because "2/4" means different things depending on which two.
+
+### CONSEQUENCE, pre-committed and honoured
+**The SMN2 / SMN1 / consensus predictions were NOT run.** The gate passes only
+outside the chemistry S5 needs, so a target number would have no support. S5
+is reported UNGATED and makes no structural claim about risdiplam — as S4 was
+declined and S3 reported UNRESOLVED. This was the declared likely outcome.
+
+### THE POSE GRADER EARNED ITS EXISTENCE ON ITS FIRST USE
+`gate.py` alone grades base pairs. On 8QMH that gives **F1 = 1.000**. The old
+gate would have PASSED a structure with the ligand 15 A away. Three metrics
+(fold / pose / placement), all required, all declared before the predictions
+existed, are what caught it.
+
+### FOUR GRADER DEFECTS FOUND WHILE BUILDING THE GATE, none by running it
+1. **Different molecules paired as copies.** 7QSH carries a uridine AND its
+   real ligand; the first per-copy logic compared one against the other.
+2. **Size guard never fired.** `not res.het_flag == "H" and len(res) < 5` let
+   1J8G's eight strontium ions through as "ligands". Replaced with a
+   heavy-atom floor, which catches the next unlisted ion too.
+3. **ALTERNATE CONFORMATIONS DOUBLE-COUNTED** — the 6DCL bug in a new costume.
+   8QMH's W53 read 39 heavy atoms against a 32-atom SMILES, and both 7QSH
+   ligands read exactly 2x their formula. Stripping altlocs makes W53 read
+   exactly 32, matching its chem-comp definition. Left unfixed this corrupts
+   every contact count and RMSD.
+4. **Ligand identity by NAME refused every real comparison.** Boltz emits
+   `LIG1`; deposited files use the chem-comp id. Identity is now the C/N/P/S
+   skeleton with oxygen allowed +/-1 (7QSH's HYJ is O8 in coordinates vs O9 in
+   the chem-comp definition -- protonation, not a different molecule). Atom
+   NAMES also differ entirely between the two sources, so RMSD uses optimal
+   same-element assignment; that is a LOWER bound, so a FAIL is decisive while
+   a PASS is the weaker direction. Stated in the module.
+
+### TWO GUARDS ADDED, each with a stated reason
+- `MIN_GATE_NT` applied to the COMPLEX TOTAL, not per chain. S3 gated a
+  protein:RNA interface (one RNA, per-chain right); a ligand POSE needs a
+  binding SITE, which several short chains supply jointly. 8QMH is four 6-nt
+  G2C4 strands = 24 nt hosting a real site.
+- `MIN_REF_PAIRS = 4`: a deposited structure with no WC pairs cannot test
+  base-pair RECOVERY. 6XRQ is a CGG-repeat RNA with ZERO geometric WC pairs,
+  so its fold criterion is UNDEFINED rather than failed; pose metrics still
+  count. Same discipline as the 9VVA exclusion.
+
+### CONTAMINATION LIMIT, unchanged
+Boltz-2 trained on the PDB, so these four are plausibly in training. Excluding
+the risdiplam/SMN-C5/branaplam class removes memorisation for the TARGET, not
+for the GATE. **A pass here would have been weak evidence; the FAIL is the
+stronger signal, and it is the one we got.**
+
 ## LIVE STATE — read this first after any context compaction
 
 Everything above is settled history. This section is the only part that goes
@@ -1350,8 +1421,11 @@ PARTNER lacks it, so the both-arms requirement still fails.
   clean null. See the Arm V section above.
 - **Live lead, NOT started, needs pre-registration first:** the
   ISS_N1-downstream / GC_CORE-upstream pairing asymmetry from C4.
-- **Remaining this cycle:** S5 risdiplam 3D (user decision, off critical path),
-  then R1 / R1b as written in the vast-herding-goose plan.
+- **S5 DONE: gate MARGINAL overall, 0/2 in the drug-like regime. UNGATED for
+  risdiplam; SMN2 predictions deliberately NOT run.** See the S5 section above.
+- **Remaining this cycle:** R1 / R1b as written in the vast-herding-goose plan.
+- Full suite **219 passed / 1 skipped** (job 21157979) BEFORE the 25 S5 tests;
+  a run covering everything is still owed.
 - G2 NOT triggered — it was conditional on G1 finding a trade-off; it did not.
 - S4 DELIBERATELY NOT RUN — ungateable at 280+292 nt, and P not established so
   there is no mechanism for the figure to depict. Reasoning in `docs/TODO.md`.

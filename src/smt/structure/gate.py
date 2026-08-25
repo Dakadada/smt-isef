@@ -49,15 +49,22 @@ def _atom(res, *names):
     return None
 
 
-def base_pairs(path: Path) -> set[tuple[int, int]]:
-    """Geometric Watson-Crick/wobble pairs as 0-based index pairs in the polymer."""
+def base_pairs(path: Path, all_chains: bool = False) -> set[tuple[int, int]]:
+    """Geometric Watson-Crick/wobble pairs as 0-based index pairs in the polymer.
+
+    ``all_chains`` is OPT-IN so the S1/S3 single-chain behaviour is byte-for-byte
+    unchanged. S5's gate complexes are multi-chain duplexes and assemblies
+    (8QMH is four 6-nt strands), where stopping at the first chain would score
+    an inter-chain duplex as having no pairs at all.
+    """
     st = gemmi.read_structure(str(path))
     st.setup_entities()
     residues = []
     for chain in st[0]:
         for res in chain.get_polymer():
             residues.append(res)
-        break                      # single-chain gate targets only
+        if not all_chains:
+            break                  # single-chain gate targets only
     pairs: set[tuple[int, int]] = set()
     for i in range(len(residues)):
         ci = _code(residues[i])
@@ -75,8 +82,9 @@ def base_pairs(path: Path) -> set[tuple[int, int]]:
     return pairs
 
 
-def grade(deposited: Path, predicted: Path) -> dict:
-    ref, pred = base_pairs(deposited), base_pairs(predicted)
+def grade(deposited: Path, predicted: Path, all_chains: bool = False) -> dict:
+    ref = base_pairs(deposited, all_chains)
+    pred = base_pairs(predicted, all_chains)
     tp = len(ref & pred)
     prec = tp / len(pred) if pred else 0.0
     rec = tp / len(ref) if ref else float("nan")

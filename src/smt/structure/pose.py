@@ -40,6 +40,7 @@ TWO HONEST LIMITS, stated here rather than appended to the report later.
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -70,6 +71,48 @@ _NOT_LIGAND = {"HOH", "WAT", "DOD", "MG", "NA", "K", "CL", "ZN", "CA",
                # component -- 1J8G, 5V1L and 7EDT are held together by
                # spermine and would otherwise look like ligand complexes.
                "SPM", "SPD", "NCO", "IRI", "OS", "ACT", "MPD", "PEG", "TRS"}
+
+
+def _read(path: Path) -> gemmi.Structure:
+    """Read a structure with ALTERNATE CONFORMATIONS REMOVED.
+
+    Without this, a residue modelled in two conformations contributes both to
+    every count: 8QMH's W53 read as 39 heavy atoms against a 32-atom SMILES and
+    7QSH's ligands read as exactly 2x their formula. That is the 6DCL bug in a
+    new costume -- counting one physical thing twice -- and it silently
+    corrupts contacts, composition checks and RMSD alike.
+    """
+    st = gemmi.read_structure(str(path))
+    st.setup_entities()
+    st.remove_alternative_conformations()
+    return st
+
+
+#: Oxygen count may differ by this much between a deposited model and the
+#: chemical-component definition. Crystallographic models routinely omit or add
+#: an oxygen through protonation state, a modelled water of hydration, or an
+#: unresolved hydroxyl: 7QSH's HYJ is C10 N4 O8 P1 in the coordinates against
+#: C10 N4 O9 P1 in the chem-comp SMILES. The C/N/P/S SKELETON is the identity;
+#: refusing over one oxygen would discard a valid system for a naming-level
+#: difference, which is the same false-negative class as the LIG1 refusal.
+_OXYGEN_SLACK = 1
+
+
+def _composition(res) -> tuple:
+    """Heavy-atom element multiset -- a name-independent molecular identity."""
+    c = Counter(a.element.name for a in res if a.element != gemmi.Element("H"))
+    return tuple(sorted(c.items()))
+
+
+def _same_molecule(a: tuple, b: tuple) -> bool:
+    """Identity by C/N/P/S skeleton, with oxygen allowed +/- _OXYGEN_SLACK."""
+    da, db = dict(a), dict(b)
+    for el in set(da) | set(db):
+        if el == "O":
+            continue
+        if da.get(el, 0) != db.get(el, 0):
+            return False
+    return abs(da.get("O", 0) - db.get("O", 0)) <= _OXYGEN_SLACK
 
 
 class CompositionMismatch(RuntimeError):
@@ -123,8 +166,7 @@ def _chain_counts(st: gemmi.Structure) -> list[int]:
 def ligand_residues(path: Path, exclude: set[str] | None = None) -> list:
     """Non-polymer, non-solvent residues -- the ligand(s)."""
     exclude = _NOT_LIGAND if exclude is None else exclude
-    st = gemmi.read_structure(str(path))
-    st.setup_entities()
+    st = _read(path)
     out = []
     for chain in st[0]:
         poly = {r.seqid.num for r in chain.get_polymer()}
@@ -150,8 +192,7 @@ def ligand_contacts(path: Path, cutoff: float = CONTACT_CUTOFF,
     Indices are positions in polymer order across chains -- see the module
     docstring on why author numbering is not used.
     """
-    st = gemmi.read_structure(str(path))
-    st.setup_entities()
+    st = _read(path)
     residues = _polymer_residues(st)
     ligands = ligand_residues(path)
     if copy is not None:
@@ -175,8 +216,8 @@ def ligand_contacts(path: Path, cutoff: float = CONTACT_CUTOFF,
 
 def check_composition(deposited: Path, predicted: Path) -> None:
     """Refuse to grade structures whose polymers do not correspond."""
-    a = _chain_counts(gemmi.read_structure(str(deposited)))
-    b = _chain_counts(gemmi.read_structure(str(predicted)))
+    a = _chain_counts(_read(deposited))
+    b = _chain_counts(_read(predicted))
     if a != b:
         raise CompositionMismatch(
             f"per-chain polymer residue counts differ: {a} vs {b}. "
@@ -190,10 +231,8 @@ def ligand_rmsd(deposited: Path, predicted: Path) -> tuple[float, int]:
     Returns ``(rmsd, n_atoms_matched)``. Upper bound only -- atoms are matched
     by name, so a symmetry-equivalent relabelling reads as displacement.
     """
-    dep = gemmi.read_structure(str(deposited))
-    pred = gemmi.read_structure(str(predicted))
-    dep.setup_entities()
-    pred.setup_entities()
+    dep = _read(deposited)
+    pred = _read(predicted)
 
     dep_res, pred_res = _polymer_residues(dep), _polymer_residues(pred)
     if len(dep_res) != len(pred_res):
@@ -211,34 +250,67 @@ def ligand_rmsd(deposited: Path, predicted: Path) -> tuple[float, int]:
 
     sup = gemmi.superpose_positions(ref_pos, mov_pos)
 
-    def atoms_of(res):
-        return {a.name: a.pos for a in res if a.element != gemmi.Element("H")}
+    def heavy(res):
+        return [a for a in res if a.element != gemmi.Element("H")]
 
-    dep_copies = [atoms_of(r) for r in ligand_residues(deposited)]
-    pred_copies = [atoms_of(r) for r in ligand_residues(predicted)]
-    if not dep_copies or not pred_copies:
+    dep_ligs = ligand_residues(deposited)
+    pred_ligs = ligand_residues(predicted)
+    if not dep_ligs or not pred_ligs:
         return float("inf"), 0
 
-    # PER COPY, never pooled. Best pairing wins; see the module docstring.
-    dep_names = [r.name.strip().upper() for r in ligand_residues(deposited)]
-    pred_names = [r.name.strip().upper() for r in ligand_residues(predicted)]
-
+    # PER COPY, never pooled, and paired by COMPOSITION rather than name --
+    # Boltz emits "LIG1" while deposited files use the PDB chem-comp id, so a
+    # name check would refuse every real comparison.
     best, best_n = float("inf"), 0
-    for di, dep_lig in enumerate(dep_copies):
-        for pi, pred_lig in enumerate(pred_copies):
-            if dep_names[di] != pred_names[pi]:
+    for dres in dep_ligs:
+        for pres in pred_ligs:
+            if not _same_molecule(_composition(dres), _composition(pres)):
                 continue
-            shared = sorted(set(dep_lig) & set(pred_lig))
-            if not shared:
-                continue
-            total = 0.0
-            for name in shared:
-                moved = gemmi.Position(sup.transform.apply(pred_lig[name]))
-                total += dep_lig[name].dist(moved) ** 2
-            rmsd = (total / len(shared)) ** 0.5
+            da, pa = heavy(dres), heavy(pres)
+            moved = [gemmi.Position(sup.transform.apply(a.pos)) for a in pa]
+            rmsd = _assigned_rmsd(da, moved)
             if rmsd < best:
-                best, best_n = rmsd, len(shared)
+                best, best_n = rmsd, len(da)
     return best, best_n
+
+
+def _assigned_rmsd(ref_atoms, moved_positions) -> float:
+    """RMSD under the optimal SAME-ELEMENT atom assignment.
+
+    Atom NAMES cannot be used: deposited files use PDB nomenclature (C11, O12)
+    and Boltz emits its own (C29, C32), so a name match finds nothing. Instead
+    each predicted atom is matched to a deposited atom of the same element by
+    optimal assignment.
+
+    THIS IS A LOWER BOUND -- it ignores connectivity, so it can pair atoms that
+    are chemically distinct. A FAIL on this metric is therefore DECISIVE (the
+    pose is wrong even under the most generous correspondence), while a PASS is
+    the weaker direction and must be read as such. The report says so.
+    """
+    from scipy.optimize import linear_sum_assignment
+
+    ref_el = [a.element.name for a in ref_atoms]
+    mov_el = [p[1] for p in moved_positions] if moved_positions and isinstance(
+        moved_positions[0], tuple) else None
+    if mov_el is not None:
+        raise TypeError("moved_positions must be gemmi.Position")
+
+    n, m = len(ref_atoms), len(moved_positions)
+    if n == 0 or m == 0:
+        return float("inf")
+    size = max(n, m)
+    BIG = 1e6
+    cost = [[BIG] * size for _ in range(size)]
+    for i, a in enumerate(ref_atoms):
+        for j, p in enumerate(moved_positions):
+            cost[i][j] = a.pos.dist(p) ** 2
+    rows, cols = linear_sum_assignment(cost)
+    total, used = 0.0, 0
+    for i, j in zip(rows, cols):
+        if i < n and j < m:
+            total += cost[i][j]
+            used += 1
+    return (total / used) ** 0.5 if used else float("inf")
 
 
 def grade_pose(deposited: Path, predicted: Path, bp_f1: float) -> PoseGrade:
@@ -253,21 +325,22 @@ def grade_pose(deposited: Path, predicted: Path, bp_f1: float) -> PoseGrade:
             "pose grading is meaningless without one")
 
     # PER COPY, never pooled -- the 6DCL lesson. Best pairing wins.
-    # Copies are paired only when they are the SAME molecule: 7QSH carries a
-    # uridine AND its real ligand, and comparing one against the other is
-    # meaningless rather than merely noisy.
-    dep_names = [r.name.strip().upper() for r in ligand_residues(deposited)]
-    pred_names = [r.name.strip().upper() for r in ligand_residues(predicted)]
-    if not set(dep_names) & set(pred_names):
+    # Copies are paired only when they are the SAME MOLECULE BY COMPOSITION:
+    # 7QSH carries a uridine AND its real ligand, and comparing one against the
+    # other is meaningless rather than merely noisy. Composition rather than
+    # name, because Boltz emits "LIG1" and deposited files use chem-comp ids.
+    dep_comp = [_composition(r) for r in ligand_residues(deposited)]
+    pred_comp = [_composition(r) for r in ligand_residues(predicted)]
+    if not any(_same_molecule(a, b) for a in dep_comp for b in pred_comp):
         raise CompositionMismatch(
-            f"no shared ligand between structures: {sorted(set(dep_names))} "
-            f"vs {sorted(set(pred_names))}")
+            "no ligand of matching composition between structures: "
+            f"{dep_comp} vs {pred_comp}")
 
     best = None
     for i in range(n_dep):
         ref = ligand_contacts(deposited, copy=i)
         for j in range(n_pred):
-            if dep_names[i] != pred_names[j]:
+            if not _same_molecule(dep_comp[i], pred_comp[j]):
                 continue
             pred = ligand_contacts(predicted, copy=j)
             tp = len(ref & pred)

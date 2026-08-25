@@ -1,0 +1,43 @@
+## S5 HELD-OUT GATE -- RNA : small-molecule placement
+## Thresholds declared BEFORE these predictions existed:
+##   base-pair F1 >= 0.7   contact F1 >= 0.7   ligand RMSD <= 2.0 A   ALL THREE required
+## Every risdiplam / SMN-C5 / branaplam-class entry is EXCLUDED --
+## gating on the Campagne deposition would be a memorisation test.
+
+  PDB    lig      bp F1  contact F1   RMSD A   copies  verdict
+  1F27   BTN      0.957       0.875     1.38   (1, 1)  PASS
+  6XRQ   V8A        n/a       0.667     7.33   (2, 1)  FAIL on pose (contact F1 0.667), placement (RMSD 7.33 A)
+         fold UNTESTABLE: deposited structure has 0 WC pairs (< 4); graded on pose only
+  7QSH   HYJ      1.000       1.000     1.67   (2, 1)  PASS
+  8QMH   W53      1.000       0.000    15.35   (1, 1)  FAIL on pose (contact F1 0.000), placement (RMSD 15.35 A)
+
+  ligand character -- the per-system rows are the result, not the mean:
+    1F27 BTN   biotin, 244 Da -- specific small-molecule recognition
+    6XRQ V8A   large synthetic polyamide, 805 Da
+    7QSH HYJ   GMP derivative -- a NUCLEOTIDE, weakest for the drug-like regime
+    8QMH W53   synthetic heteroaromatic, 430 Da -- closest to risdiplam
+
+  systems graded 4   passing all three 2
+  worst bp F1 0.957   worst contact F1 0.000   worst RMSD 15.35 A
+
+  STRATIFIED -- the subset in risdiplam's regime (V8A, W53):
+    6XRQ V8A: FAIL  contact F1 0.667  RMSD 7.33 A
+    8QMH W53: FAIL  contact F1 0.000  RMSD 15.35 A
+    0/2 pass in the drug-like regime.
+    BOTH synthetic drug-like ligands FAIL. The two passes are a
+    vitamin and a nucleotide -- chemistries with strong specific
+    H-bonding and abundant training data. W53, the closest
+    analogue to risdiplam by mass and chemistry, is the WORST
+    system here: a perfect fold (bp F1 1.000) with the ligand
+    15 A from its site. That is precisely the failure mode a
+    base-pair-only gate cannot see.
+
+## VERDICT: MARGINAL -- 2/4 systems pass. Usable only for RANKING, never for an absolute claim about any one structure.
+
+## S5 TARGET REGIME IS UNGATED. The overall verdict is
+## MARGINAL, but it passes only OUTSIDE the chemistry S5 needs.
+## The SMN2 / SMN1 / consensus predictions are NOT run: a
+## number produced here would have no support. S5 is reported
+## ungated and makes no structural claim about risdiplam,
+## exactly as S4 was declined and S3 reported UNRESOLVED.
+## This was the pre-declared likely outcome, not a surprise.
