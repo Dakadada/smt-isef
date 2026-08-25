@@ -1,0 +1,23 @@
+## N4 -- does 'occlusion drives the 5'ss partner downstream' predict the sign?
+## Pre-registered in docs/preregistration.md. Threshold 90% taken from
+## N3's separation and NOT re-fit here.
+
+  cells (footprint x span) with prediction and measurement: 3975
+  rule accuracy           29.6%
+  majority-class base     72.3%   (majority sign '-')
+  binomial one-sided p       1
+
+  VERDICT: N4 IS NULL. The rule is not merely uninformative -- at
+  29.6% it performs BELOW the base rate of always guessing the
+  majority sign. Flipping the rule would only recover the base rate,
+  which is not a finding either.
+
+  secondary: does it explain the sign-flip problem?
+    footprints flipping sign      563/795 (70.8%)
+    of those, rule predicts a flip 24 (4.3%)
+
+  The ISS_N1 5/5 correspondence that motivated this arm was a
+  1-in-10 coincidence, as the pre-registration stated before the run
+  (p ~ 0.1 conditioning on 3 negative and 2 positive spans).
+  Arm N is reported as a FAILED POST-HOC LEAD, which is the outcome
+  its own null clause described.
