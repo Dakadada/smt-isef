@@ -1,0 +1,31 @@
+## ARM N -- does ISS-N1 occlusion free the 5'ss, or swap its jailer?
+## POST-HOC hypothesis, run by explicit user override of the
+## stopping rule. Pre-registered before these numbers.
+
+    span    baseline total    dn%   GC_CORE total    dn%    ISS_N1 total    dn%
+      50             6.186   0.3%           6.804   0.4%           7.107  14.7%
+     100             6.258   1.9%           6.160   1.0%           8.233  95.1%
+     150             6.051   1.8%           5.563   0.8%           6.794  49.6%
+     300             6.052   1.7%           6.401   0.5%           8.265  96.9%
+     inf             6.023   2.0%           6.432   0.5%           8.258  96.5%
+
+### N1 -- ISS_N1: redistribution or freeing?
+    span  total retained   dn share shift
+      50          114.9%           +14.4pp
+     100          131.6%           +93.2pp
+     150          112.3%           +47.8pp
+     300          136.6%           +95.2pp
+     inf          137.1%           +94.5pp
+
+  worst span: total retained 112.3% (N1 needs >= 50%), downstream shift +14.4pp (N1 needs >= +20pp)
+  N1: NULL
+
+### N2 -- GC_CORE: does total pairing actually DROP?
+      50      +0.618
+     100      -0.098
+     150      -0.489
+     300      +0.349
+     inf      +0.409
+
+  worst-span change +0.618 (N2 needs < 0)
+  N2: NULL

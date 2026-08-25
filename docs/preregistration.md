@@ -278,3 +278,95 @@ framework applies -- which was the whole point of asking.
   before this prediction and for a different purpose.
 - BPPM is exact for per-base and per-pair probabilities; no independence
   approximation enters M1 or M2.
+
+---
+
+# Arm N — the ISS-N1 partner swap. Post-hoc lead, run by explicit user override.
+
+**Committed 2026-08-25, before any number in this arm.** Provenance stated
+plainly: this hypothesis was found AFTER Arm M's M1/M2 came back null, i.e. it
+is post-hoc, and the standing stopping rule said Arms U and E would not run as
+consolation. The user has explicitly overridden that rule for this arm. The
+override is recorded, not hidden, and the post-hoc origin is a permanent
+caveat on whatever this produces.
+
+## The observation that prompted it (Arm M, docs/m-mechanism.txt)
+Occluding ISS_N1 nearly ABOLISHES pairing between the exon 7 5'ss and its
+dominant upstream partner block 32030-32042: 6.12 -> 0.29 at spans 100/300/inf.
+GC_CORE, the footprint that actually works, barely touches it (dP +0.61 worst
+span). C4 separately established that the partner block accounts for
+essentially ALL of the 5'ss's pairing (6.17 of 6.19 at span 50).
+
+## The paradox this must explain
+If ISS_N1 occlusion destroys the structure sequestering the 5'ss, `A_5ss`
+should ROCKET. It does not -- it is the footprint whose sign INVERTS across the
+span ladder (docs/HANDOFF.md, "RESOLVED 00:55", still open since). So the
+pairing cannot simply be disappearing.
+
+## N1 (primary) — the swap
+> Under ISS_N1 occlusion the 5'ss's TOTAL pairing (summed over every partner)
+> stays high while its DISTRIBUTION shifts from upstream to downstream. The
+> 5'ss does not become free; it exchanges one sequestering partner for another.
+> Declared: total pairing retains >= 50% of baseline, AND the downstream share
+> rises by >= 20 percentage points, at the worst span.
+
+**Null:** total pairing falls with the partner block (the site really is
+freed), in which case the inversion has some other cause entirely and this
+hypothesis is wrong.
+
+## N2 (the contrast that would explain A3) — GC_CORE genuinely frees
+> Under GC_CORE occlusion the 5'ss's TOTAL pairing DECREASES relative to
+> baseline, rather than redistributing. That is what "freeing a splice site"
+> should look like, and it would be the mechanism A3 has lacked.
+
+**Null:** GC_CORE also redistributes, or does not lower total pairing. Then
+neither footprint has a clean freeing mechanism and A3 remains unexplained.
+
+## N3 — the span-dependence, which is the project's oldest open question
+> The span at which ISS_N1's `delta_A` sign flips coincides with the span at
+> which the NEW downstream partner first becomes reachable. Concretely: the
+> downstream share under ISS_N1 occlusion changes most between the same span
+> steps where the recorded sign flips occur.
+
+**Null:** no correspondence. The span-dependence then remains unexplained,
+which is where it has been since day one and would stay.
+
+## Declared before running
+- Reported at the **worst span** over (50,100,150,300,0), with the full ladder
+  printed so the reader can see the flips rather than take a summary.
+- "Upstream"/"downstream" are relative to the 5'ss readout start, using the
+  same convention as `smt.validate.causal_gate.partner_profile`, which was
+  written for C4 before this arm existed.
+- BPPM is exact for per-pair probabilities; no independence approximation.
+
+## N4 — the generalisation, registered before the array is submitted
+
+N1 and N2 are NULL by their declared worst-span thresholds and stay that way.
+N3 is 5/5 on ISS_N1, which is **suggestive and underpowered**: conditioning on
+3 negative and 2 positive spans, a perfect match arises by chance with
+p = 1/C(5,2) = 0.1. One footprint is not a result.
+
+The mechanism it suggests is specific and generalisable, so it is testable:
+
+> **N4.** Across ALL intronic A3 footprints, the sign of `delta_A` at a given
+> span is predicted by whether occluding that footprint drives the 5'ss's
+> pairing DOWNSTREAM. Declared rule, fixed now and not tuned afterwards:
+> downstream share >= 90% predicts `delta_A < 0`; downstream share < 90%
+> predicts `delta_A > 0`. The 90% threshold is taken from N3's observed
+> separation (95-97% vs 15-50%) and is **not** re-fit on the full set.
+
+**Primary statistic:** accuracy of that rule over all (footprint, span) cells
+with a full ladder, versus the base rate of the majority sign. Reported with a
+binomial test against the majority-class rate, one-sided, alpha = 0.05.
+
+**Secondary:** does the rule explain the 87% SIGN-FLIP? A footprint flips iff
+its downstream share crosses 90% somewhere on the ladder. Reported as the
+fraction of flipping footprints whose flips are accounted for.
+
+**Null:** accuracy indistinguishable from the majority-class base rate. Then
+the ISS_N1 correspondence was a 1-in-10 coincidence, the span-dependence stays
+unexplained, and this arm is reported as a failed post-hoc lead.
+
+**Provenance, permanent:** Arm N is post-hoc and ran only by explicit user
+override of the stopping rule. N4 is pre-registered, but it tests a hypothesis
+that was generated from data, and no amount of later confirmation changes that.
