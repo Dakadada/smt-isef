@@ -228,3 +228,53 @@ convenience.
   strong exonic off-targets, replicated in an independent experiment.**
 - These are published summary tables, not raw reads. No re-alignment was done
   and the authors' event calling is taken as given, including their FDR.
+
+---
+
+# Arm M — the mechanism of A3, registered before any BPPM diff is computed
+
+**Committed 2026-08-25.** A3 recovered the GC-core 8-mer blind and has never
+been explained. C4 made the gap sharp: the exon 7 5'ss is held by a LOCAL
+UPSTREAM hairpin (dominant partners ref 32030-32042, p ~ 0.99 at -10..-12,
+inside exon 7), while GC_CORE sits 8 nt DOWNSTREAM and does not touch that
+hairpin -- yet occluding it raises A_5ss 6-7x.
+
+## M1 (primary) — the competition mechanism
+
+> Occluding GC_CORE **lowers** the pairing probability between the 5'ss
+> (32050-32058) and its dominant upstream partner block (32030-32042), because
+> GC_CORE's own partners overlap that block and releasing them lets the block
+> re-pair elsewhere. Declared direction: `P(5'ss : 32030-32042)` DECREASES
+> under GC_CORE occlusion, at the worst span.
+
+**Null:** the 5'ss-partner pairing is unchanged (|dP| < 0.05 at worst span).
+Then the GC-core effect is not partner competition, A3 remains an empirical hit
+with no mechanism, and the write-up says so. **Per the standing stopping rule,
+Arms U and E do not then run.**
+
+## M2 — the ISS-N1 contrast, which is the same question inverted
+
+C4 measured ISS_N1 as 77.0% DOWNSTREAM-paired and GC_CORE as 76.3% UPSTREAM-
+paired.
+
+> Predicted: occluding full-length ISS_N1 does NOT produce the same decrease at
+> `P(5'ss : 32030-32042)`, because its partners are downstream and do not
+> compete for that block. This is the candidate explanation for the project's
+> oldest open question -- why the full silencer inverts while the 8-mer works.
+
+## M3 — the generalisation test that makes M1 useful rather than anecdotal
+
+> Across all 780 intronic A3 footprints, the ones whose own partner set
+> overlaps 32030-32042 are enriched among the span-robust top ranks relative to
+> those whose partners do not. One-sided, alpha = 0.05.
+
+**Null:** partner overlap does not predict rank. Then M1, even if true for
+GC_CORE specifically, does not generalise and gives no map of where the
+framework applies -- which was the whole point of asking.
+
+## Declared before running
+- Ranking and all reported dP are at the **worst span** over (50,100,150,300,0).
+- The partner block 32030-32042 is taken from C4's measurement, which was made
+  before this prediction and for a different purpose.
+- BPPM is exact for per-base and per-pair probabilities; no independence
+  approximation enters M1 or M2.

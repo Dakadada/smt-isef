@@ -1,0 +1,16 @@
+## ARM M -- the mechanism of A3, pre-registered before these numbers
+## readout 32050-32058, partner block 32030-32042 (from C4)
+
+### M1/M2 -- P(5'ss : partner block) under each occlusion
+    span   baseline    GC_CORE       dP     ISS_N1       dP
+      50     6.1651     6.7731  +0.6080     6.0585  -0.1066
+     100     6.1222     6.0082  -0.1139     0.4003  -5.7218
+     150     5.9093     5.3556  -0.5538     3.3303  -2.5790
+     300     5.9425     6.3427  +0.4003     0.2533  -5.6892
+     inf     5.8982     6.3734  +0.4751     0.2875  -5.6108
+
+  worst-span dP, GC_CORE: +0.6080   ISS_N1: -0.1066
+  M1 predicted GC_CORE dP < 0 at the worst span.
+  M1: NULL -- see the stopping rule
+  M2 predicted ISS_N1 does NOT show the same decrease.
+  M2: NOT SUPPORTED
