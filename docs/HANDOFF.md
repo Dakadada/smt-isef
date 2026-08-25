@@ -1423,7 +1423,29 @@ PARTNER lacks it, so the both-arms requirement still fails.
   ISS_N1-downstream / GC_CORE-upstream pairing asymmetry from C4.
 - **S5 DONE: gate MARGINAL overall, 0/2 in the drug-like regime. UNGATED for
   risdiplam; SMN2 predictions deliberately NOT run.** See the S5 section above.
+- **QUEUED FOR THE 01:00 WATCH (task list, in priority order):**
+  1. **Finish `docs/null-postmortem.md`** -- the "Still to do" section. Compute
+     N4's CONFUSION MATRIX first (29.6% is suspiciously close to the 27.7%
+     minority-class rate, so the rule may be a near-constant "+" predictor
+     rather than anti-correlated -- do not claim anti-correlation before this).
+     Then add S1 (p=0.4545), P (z=+2.57/+2.41 vs threshold 2.58 -- a POWER
+     question, not a verdict) and A6 intron 3 to the power table.
+  2. **Grade S5-SMN2** -- 3/3 predictions on disk at
+     `.../boltz_s5/smn2_out/...`. Output `docs/s5-smn2-ungated.txt`, UNGATED in
+     the filename and first line, excluded as evidence. The one legitimate
+     read: does the risdiplam pose land near the -1A (32052)? A miss is a
+     recordable self-consistency failure; a hit proves nothing.
+  3. **Re-examine V1** -- it is an INVALID replication design (base rate 55.8%
+     caps fold at 1.79x against a 5.97x target). Either rebuild it against a
+     full measured background, or state plainly that the enrichment has been
+     tested exactly once.
+  4. Claim 1 remains BLOCKED: Seddighi PMC11325748 is NOT open access, so the
+     233-gene cryptic exon catalog is unfetchable by that route. Needs a
+     different source before any 233-locus sweep is designed.
 - **Remaining this cycle:** R1 / R1b as written in the vast-herding-goose plan.
+- **Arm W is the live prospective test** -- the lab's four real ASOs are scored
+  and pre-registered (W1: 3UP8 > F10; NO prediction for F18/F14). Nothing
+  further to compute there until blots exist.
 - Full suite **219 passed / 1 skipped** (job 21157979) BEFORE the 25 S5 tests;
   a run covering everything is still owed.
 - G2 NOT triggered — it was conditional on G1 finding a trade-off; it did not.
