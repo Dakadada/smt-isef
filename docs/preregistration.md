@@ -370,3 +370,74 @@ unexplained, and this arm is reported as a failed post-hoc lead.
 **Provenance, permanent:** Arm N is post-hoc and ran only by explicit user
 override of the stopping rule. N4 is pre-registered, but it tests a hypothesis
 that was generated from data, and no amount of later confirmation changes that.
+
+---
+
+# Arm W — the lab's actual four ASOs, scored before any western blot exists
+
+**Committed 2026-08-25**, from sequences supplied by the collaborating lab.
+Decoded from their 3'->5' notation and located against pinned NG_008728:
+
+    F18   5'-UCACUUUCAUAAUGCUGG-3'  target 32062-32079   = nusinersen exactly
+    F14   5'-UUUCAUAAUGCUGG-3'      target 32062-32075   = F18 minus 4 nt at its 5' end
+    F10   5'-AUAAUGCUGG-3'          target 32062-32071   = F18 minus 8 nt
+    3UP8  5'-GCUGGCAG-3'            target 32059-32066   = the GC-core 8-mer
+
+F18/F14/F10 are 3'-ANCHORED NESTED TRUNCATIONS -- they share a target 5' end at
+32062 and shorten the 3' end. They are NOT "chopped from both sides", and the
+14-mer is not centred on nusinersen. 3UP8 is a DIFFERENT SITE: the GC core that
+A3 recovered blind and that this project's SMN2 panel ranks in its top 12.
+
+## Scored on the existing A3 sweep and G1 machinery
+
+    ASO   ddG_net   median dA    signs across (50,100,150,300,inf)
+    3UP8   -15.06   +9.61e-05    +++++     span-robust
+    F10    -10.33   +2.91e-05    +++++     span-robust
+    F14    -16.33   -1.50e-05    +-+--     NOT span-robust
+    F18    -24.64   -1.59e-05    +-+--     NOT span-robust
+
+## W1 (the only claim made) — the span-robust pair
+
+> **3UP8 increases SMN protein more than F10** on western blot, both relative
+> to a scrambled control on the same gel.
+
+These are the only two ASOs in the panel whose predicted sign holds at every
+span. A7's discipline restricts claims to the span-robust subset and that is
+applied here rather than waived because the panel is small.
+
+**Null:** F10 >= 3UP8. Then the ranking within the span-robust subset carries
+no information either, and the accessibility observable fails on the one
+experiment it was designed for.
+
+## W2 — NO PREDICTION IS MADE FOR F18 OR F14, and that is stated as a limit
+
+The framework assigns F18 -- **nusinersen, an approved drug of established
+clinical efficacy** -- a NEGATIVE median delta_A. It would, read naively,
+predict the drug does not work. It is not read naively: F18 and F14 both flip
+sign across the span ladder (+-+--), so under the project's own rule they make
+no prediction at all.
+
+**This is the ISS-N1 inversion (docs/HANDOFF.md, "RESOLVED 00:55", OPEN since)
+appearing on the lab's real panel, and it is declared BEFORE the blots.**
+Recording it now means the framework cannot later claim credit for whatever
+F18 does.
+
+**What the blots will settle either way:**
+- If F18 beats 3UP8 and F10, the framework's handling of full-length ISS-N1
+  occlusion is wrong, and the size of the miss is measured rather than argued.
+- If 3UP8 is competitive with F18, the GC-core 8-mer -- found blind by A3 --
+  matches an approved drug at less than half its length, which is a result.
+
+## W3 — what a western blot cannot settle, fixed now
+
+Off-target burden is NOT testable on this panel: off-targets are in other
+genes, absent from the readout. That needs RNA-seq. So the length question
+(G1: specificity rises monotonically, no interior optimum) is only half
+answerable here -- the blots test on-target efficacy across F18/F14/F10 and say
+nothing about the specificity cost of shortening.
+
+Also: SMN-delta-7 protein is rapidly degraded, so protein is a NONLINEAR,
+AMPLIFYING readout of exon 7 inclusion. It is more sensitive for detecting that
+an ASO works than PSI is, and it is NOT a linear PSI proxy. `smt.thermo.link`
+must gain a second stage (A_5ss -> PSI -> protein) before any western is used
+to fit it.
