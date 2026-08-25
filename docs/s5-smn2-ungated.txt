@@ -1,0 +1,19 @@
+## S5 SMN2 -- UNGATED. THIS MAKES NO CLAIM.
+## The held-out gate FAILED 0/2 in the drug-like regime. W53, the closest
+## analogue to risdiplam, was the WORST system: 15.35 A, contact F1 0.000
+## with a perfect fold. A model that cannot place drug-like ligands on RNA
+## produces an illustration here, not a measurement. Excluded as evidence.
+
+## The ONE legitimate read: does the predicted pose land near the bulged
+## -1A? A miss is a recordable self-consistency failure. A hit proves nothing.
+
+  CONSENSUS_5ss              nearest pre-mRNA residue #6 at 2.52 A; contacts 3/21
+                             distance to the -1A (residue #9, G): 9.22 A
+  SMN2_SMN1_5ss              nearest pre-mRNA residue #7 at 1.69 A; contacts 4/21
+                             distance to the -1A (residue #9, A): 7.26 A
+  SMN2_noBulge_A32052C       nearest pre-mRNA residue #7 at 1.62 A; contacts 4/21
+                             distance to the -1A (residue #9, C): 6.90 A
+
+## READ: risdiplam stacks on the bulged -1A. A pose tens of angstroms away
+## is inconsistent with the mechanism S5 was built to probe -- which is
+## what the failed gate already predicted would happen.

@@ -21,3 +21,34 @@
   (p ~ 0.1 conditioning on 3 negative and 2 positive spans).
   Arm N is reported as a FAILED POST-HOC LEAD, which is the outcome
   its own null clause described.
+
+================================================================================
+## CONFUSION MATRIX -- required before any anti-correlation claim, now computed
+================================================================================
+
+                 actual +   actual -   row total
+  predict +          1100       2798        3898
+  predict -             0         77          77
+         total       1100       2875        3975
+
+The rule predicts '+' for 98.1% of cells. It is a NEAR-CONSTANT PREDICTOR, and
+that is why its accuracy (29.6%) simply tracks the '+' rate (27.7%). The
+suspicion recorded in docs/null-postmortem.md was correct: it is NOT
+anti-correlated, it just almost never fires.
+
+BUT WHEN IT FIRES IT IS NEVER WRONG: 77/77, zero false negatives.
+Fisher exact on the 2x2: odds ratio infinite, p = 1.76e-11.
+
+HONEST READING, primary and secondary kept separate:
+  PRIMARY (pre-registered): accuracy vs majority-class base rate -- NULL.
+  SECONDARY: a downstream share >= 90% is a SUFFICIENT condition for a
+    negative sign, on the pre-declared threshold, never violated in 3975 cells.
+
+So the Arm N mechanism is REAL BUT NARROW. Driving the 5'ss's partner
+downstream does force a negative sign -- it just happens in only 1.9% of cells
+(77/3975), so it explains essentially none of the 87% sign-flip problem. The
+hypothesis was right about direction and wrong about scope.
+
+This does NOT rescue Arm N. The arm was proposed to explain the span-dependence
+and it explains 4.3% of flipping footprints. It is still a failed post-hoc
+lead; it is now a failed post-hoc lead with a narrow true core.
