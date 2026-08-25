@@ -1,0 +1,104 @@
+## Arm V -- independent replication (Ottesen 2021, PMC8395096)
+## Pre-registered in docs/preregistration.md BEFORE any number here.
+
+SIGN CONVENTION re-verified on load: published dPSI is control - treated for 100.0% of 4300 rows.
+All dPSI below are PROJECT convention (treated - control):
+negative = the ASO REDUCED inclusion.
+
+sieve-predicted genes: 705
+genes measured here (both doses): 2644
+OVERLAP: 123
+
+## V1 -- does the tail enrichment REPLICATE?
+genes with a measurable event, both doses: 2644
+BASE RATE CONFOUND, stated first: 1011/2644 (38.2%) of events are NEGATIVE (ASO reduced inclusion). 'Predict skipping' is right this often by chance alone.
+
+### |dPSI| >= 0.2   (1476/2644 genes, base rate 55.8%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               29     15    51.7%    55.9%    0.93     0.7088
+  exonic_proximal           18      9    50.0%    55.9%    0.90     0.6409
+  intronic_core             46     26    56.5%    55.8%    1.01          1
+  intronic_proximal          5      2    40.0%    55.9%    0.72     0.6602
+  three_utr                 32     20    62.5%    55.7%    1.12     0.4791
+
+### |dPSI| >= 0.5   (136/2644 genes, base rate 5.1%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               29      2     6.9%     5.1%    1.35      0.659
+  exonic_proximal           18      0     0.0%     5.2%    0.00          1
+  intronic_core             46      4     8.7%     5.1%    1.71     0.2956
+  intronic_proximal          5      0     0.0%     5.2%    0.00          1
+  three_utr                 32      1     3.1%     5.2%    0.60          1
+
+### |dPSI| >= 0.8   (2/2644 genes, base rate 0.1%)
+  category              n meas  n hit     rate     base    fold      raw p
+  exonic_core               29      0     0.0%     0.1%    0.00          1
+  exonic_proximal           18      0     0.0%     0.1%    0.00          1
+  intronic_core             46      0     0.0%     0.1%    0.00          1
+  intronic_proximal          5      0     0.0%     0.1%    0.00          1
+  three_utr                 32      0     0.0%     0.1%    0.00          1
+
+## V2 -- is dose sensitivity ordered by predicted affinity?
+  The base-rate confound cannot manufacture this: chance does not
+  produce a dose response ordered by predicted binding energy.
+
+  events excluded by the pre-declared |dPSI_HiA| >= 0.1 floor: 0
+  set                        n      rho   one-sided p
+  all sieve genes          123   -0.007        0.4701
+  exonic_proximal only      18    0.020        0.5308
+
+  Pre-declared direction: rho < 0. A POSITIVE rho is not a
+  result in the other direction -- it is the null with a sign.
+
+## V3 -- do the four GSE307431 hits replicate in DIRECTION?
+  DESCRIPTIVE ONLY. n <= 4; a sign test on 4 cannot reach p<0.05
+  even if all agree (min p = 0.0625). No p-value is computed and
+  this test is NOT in the Bonferroni denominator.
+
+  gene         GSE307431   Ottesen HiA   Ottesen LoA   agrees
+  POLR2H          -0.920        -0.110        +0.004      yes
+  MAP1S           -0.879        -0.189        -0.008      yes
+  ANKRD28         -0.619        absent             -        -
+  CCSER2          -0.236        absent             -        -
+
+  2/2 present hits agree in direction.
+
+## MULTIPLE TESTING -- 17 tests printed above.
+Bonferroni over ALL of them, including those that did not support
+the hypothesis. Nothing is excluded from the count.
+  test                              category                  raw p   corrected
+  |dPSI|>=0.5                       intronic_core            0.2956           1
+  V2 all sieve genes                -                        0.4701           1
+  |dPSI|>=0.2                       three_utr                0.4791           1
+  V2 exonic_proximal only           -                        0.5308           1
+  |dPSI|>=0.2                       exonic_proximal          0.6409           1
+  |dPSI|>=0.5                       exonic_core               0.659           1
+  |dPSI|>=0.2                       intronic_proximal        0.6602           1
+  |dPSI|>=0.2                       exonic_core              0.7088           1
+  |dPSI|>=0.2                       intronic_core                 1           1
+  |dPSI|>=0.8                       exonic_core                   1           1
+  |dPSI|>=0.5                       exonic_proximal               1           1
+  |dPSI|>=0.5                       intronic_proximal             1           1
+  |dPSI|>=0.5                       three_utr                     1           1
+  |dPSI|>=0.8                       exonic_proximal               1           1
+  |dPSI|>=0.8                       intronic_core                 1           1
+  |dPSI|>=0.8                       intronic_proximal             1           1
+  |dPSI|>=0.8                       three_utr                     1           1
+
+## VERDICT: 0 of 17 tests survive Bonferroni.
+  The tail enrichment does NOT replicate and dose sensitivity is
+  NOT affinity-ordered. Report as such -- this was a declared
+  possible outcome, not a failure to be re-analysed.
+
+## POST-HOC INTERPRETATION -- declared as post-hoc, changes nothing above
+  V1's background base rate at |dPSI| >= 0.2 is 55.8% here, versus 11.5% on GSE307431.
+  CAUSE: Ottesen's supplementary tables are already filtered to
+  events the authors called notable, so small-effect events are
+  absent and the background is itself enriched for large effects.
+  CONSEQUENCE: 'enrichment above background' has little room to
+  register when background is already the majority. V1 was a
+  WEAKER test than intended, and its null is correspondingly weaker
+  evidence than a null on a full measured background would be.
+  V2 IS NOT AFFECTED -- the dose-retention correlation never touches
+  background composition. It is the cleaner negative of the two, and
+  it is the one with a real n (123).
+  This does NOT rescue V1: the observed fold is 0.90, BELOW 1.

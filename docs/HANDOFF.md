@@ -1158,6 +1158,84 @@ proposed in the plan (ISTL1 reaching back) was wrong, and was refuted by the
 first table computed. Seventh entry in the silent-failure list only in the sense
 that it never became one -- it was caught before any array was submitted.
 
+## ARM V — INDEPENDENT REPLICATION (Ottesen 2021). THE SIEVE DOES NOT REPLICATE.
+
+`smt.sieve.ottesen`, `smt.validate.replication`, `docs/v-replication.txt`,
+`tests/test_replication.py` (7 passed). Pre-registered in
+`docs/preregistration.md` and committed at 07bba4e BEFORE any number was
+computed. CPU-only, no cluster.
+
+### Why this dataset
+Every sieve grade this project ever produced came from GSE307431 alone --
+`a5-enrichment-pooled.txt` had to write "two groupings of ONE dataset are not
+independent replication, so the denominator is 36, not 12."
+`docs/geo-validation.md` catalogued Ottesen 2021 (PMC8395096) in detail and
+explicitly did NOT download it. This is that download: a different experiment
+(dose series, not chemistry series) in the SAME cell line (GM03813).
+Fetched via the Europe PMC REST endpoint -- PMC's own path serves a JS
+interstitial and NCBI's OA package path 404s. Pinned by sha256, both layers.
+
+### THE GAP ATTACK 1 SPECIFIED IS CLOSED
+Attack 1: *"the test clears the corrected threshold at n = 14 predicted genes
+with a measurable event. Eleven exist."* Here: 4,183 events carrying BOTH doses
+across 2,644 genes, **123 sieve genes measurable, exonic_proximal n = 18.**
+The threshold was declared before this dataset was opened and was NOT moved.
+
+### SIGN CONVENTION TRAP -- caught before it could bite
+Published `∆PSI` is **control - treated**, inverted relative to R3 and rMATS.
+Verified over all 4,300 rows: `control - treated` reproduces the column 100%
+within 1e-3 (max residual 3e-4, pure rounding); `treated - control` matches 0%
+with median residual 0.396. Confirmed semantically too -- negative published
+∆PSI in the exon-INCLUSION sheet means inclusion ROSE. `verify_sign_convention`
+re-derives this on EVERY load and raises rather than returning mis-signed data;
+the failure path is exercised in tests on a deliberately mis-signed workbook.
+Unflipped, this would have inverted every sign conclusion while still producing
+plausible numbers -- the same class as P's single-strand scan and R3's
+SMN1/SMN2 tie-break.
+
+### RESULTS -- 0 of 17 tests survive Bonferroni
+**V1, tail enrichment: DOES NOT REPLICATE.** exonic_proximal at |dPSI| >= 0.2
+gives fold **0.90 -- BELOW base rate** (9/18 vs 55.9%), against 5.97x on
+GSE307431. Zero hits at 0.5 and at 0.8.
+
+**V2, dose sensitivity vs predicted affinity: CLEAN NULL.** Spearman rho of
+`ddG_net` against retention ratio dPSI_LoA/dPSI_HiA: **-0.007 (n = 123, p =
+0.47)** over all sieve genes and **+0.020 (n = 18, p = 0.53)** for
+exonic_proximal. Pre-declared direction was rho < 0. Zero events were lost to
+the pre-declared |dPSI_HiA| >= 0.1 floor.
+
+**V3, the four validated hits: 2/2 present agree in DIRECTION** -- POLR2H
+-0.110 and MAP1S -0.189 (both negative, as on GSE307431). ANKRD28 and CCSER2
+are absent from this dataset. Magnitudes are ~8x smaller here (-0.110 vs
+-0.920). Descriptive only, n <= 4, no p-value, not in the denominator.
+
+### THE ONE THING V2 BUYS THAT NOTHING ELSE DID
+The base-rate confound has hollowed out every previous sieve result: ~55% of
+significant events are negative, so "predict skipping" wins that often by
+chance. **A dose contrast is immune to it -- chance does not produce
+affinity-ordered dose sensitivity** -- and the authors held total oligo load at
+100 nM in both arms (5 nM Anti-N1 + 95 nM non-targeting 10mer), so the contrast
+is purely sequence-dependent. V2 is therefore the cleanest test the sieve has
+ever been given, with a real n of 123. **It is a null.** The hybridization
+affinity model does not predict dose response.
+
+### POST-HOC, declared as post-hoc, and it cuts against V1
+V1's background base rate at |dPSI| >= 0.2 is **55.8%** here vs 11.5% on
+GSE307431, because Ottesen's supplementary tables are already filtered to
+events the authors called notable. Enrichment above background has little room
+to register when background is already the majority, so **V1 was a weaker test
+than intended and its null is correspondingly weaker evidence.** This does NOT
+rescue V1 (observed fold 0.90, below 1), and **V2 is unaffected** -- the
+retention correlation never touches background composition.
+
+### HOW THIS MAY BE DESCRIBED
+The sieve's tail enrichment does not replicate in an independent experiment,
+and its affinity model does not predict dose response. What survives is
+narrower than before: two of two testable individually-validated hits reproduce
+in direction, at much smaller magnitude. "Candidate generator for strong exonic
+off-targets" is now supported only by that, and "universal safety sieve"
+remains refuted and is not re-tested here.
+
 ## LIVE STATE — read this first after any context compaction
 
 Everything above is settled history. This section is the only part that goes
@@ -1267,8 +1345,13 @@ PARTNER lacks it, so the both-arms requirement still fails.
 - **C4 co-transcriptional rescue: GATE FAILED, arms C and K dead.** See the C4
   section above. The 87% span problem remains unexplained; one candidate
   explanation is now eliminated and recorded.
+- **Arm V DONE: the sieve does NOT replicate.** 0/17 survive Bonferroni; V2's
+  dose test (the one the base-rate confound cannot manufacture, n = 123) is a
+  clean null. See the Arm V section above.
 - **Live lead, NOT started, needs pre-registration first:** the
   ISS_N1-downstream / GC_CORE-upstream pairing asymmetry from C4.
+- **Remaining this cycle:** S5 risdiplam 3D (user decision, off critical path),
+  then R1 / R1b as written in the vast-herding-goose plan.
 - G2 NOT triggered — it was conditional on G1 finding a trade-off; it did not.
 - S4 DELIBERATELY NOT RUN — ungateable at 280+292 nt, and P not established so
   there is no mechanism for the figure to depict. Reasoning in `docs/TODO.md`.
