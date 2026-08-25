@@ -107,3 +107,124 @@ These are already established and must survive into any write-up:
 - A6 recovered intron 7 blind (1.000) but **not** intron 3 (0.421) — 1 of 2.
 - R3's SMN2 dPSI +0.368 recovers a fact already known from nusinersen's
   approval. It validates the pipeline; it is not a discovery.
+
+---
+
+# Arm V — independent replication + dose axis (Ottesen 2021)
+
+**Committed 2026-08-24, before any enrichment, correlation, or sign-agreement
+number was computed on this dataset.** Only DESIGN facts were established first
+(n per category, event counts, the ∆PSI sign convention, the control design);
+no relationship between predicted and measured effects has been evaluated.
+
+## The dataset, and why it is genuine replication
+
+Ottesen, Luo, Singh & Singh 2021, *IJMS* 22(16):8378 (PMC8395096), CC BY.
+Supplementary tables fetched via the Europe PMC REST endpoint (PMC's own
+download path serves a JS interstitial and the NCBI OA package path returns
+404). Pinned: `PMC8395096_supplementary.zip`, 4,904,378 bytes, sha256
+`3fc782cb933efac189167efa3c4379763ce8dc0c681bdf5bfb63aca0a2ffc2a0`; inner
+`ijms-22-08378-s001.zip` sha256
+`a66a01532be2b09f3804ad69f4d22b9ed2ecf87af606140b724e2514897130b3`.
+
+Every sieve grade this project has ever produced came from GSE307431 alone,
+which is why `docs/a5-enrichment-pooled.txt` had to write "two groupings of ONE
+dataset are not independent replication, so the denominator is 36, not 12."
+This is a **different experiment** — different ASO doses, different design —
+in the **same cell line** (GM03813, the SMN1-null line R3 already characterised).
+
+**Design facts, established before any prediction was scored:**
+- 4,300 EIN + ESK event rows; **4,183 carry both doses**; 2,644 unique genes.
+- **123 sieve-predicted genes have a measurable event**, of which
+  **exonic_proximal = 18** (also intronic_core 46, three_utr 33, exonic_core 31,
+  intronic_proximal 5).
+- Attack 1 specified the gate: *"the test clears the corrected threshold at
+  n = 14 predicted genes with a measurable event. Eleven exist."* **n = 18.
+  The hypothesis is testable for the first time.** The threshold was declared
+  before this dataset was opened and is NOT moved here.
+- Control design: `10mer` is a **non-targeting control ASO** with no effect on
+  SMN2 exon 7 splicing. LoA (5 nM Anti-N1) was **topped up to 100 nM total
+  oligo with the 10mer**, so sequence-independent oligo load is held constant
+  across doses. The dose contrast is purely sequence-dependent. This is the
+  authors' design, not an assumption of ours.
+
+## SIGN CONVENTION — verified arithmetically, and it is INVERTED
+
+The published ∆PSI is **control − treated**, the opposite of this project's
+convention everywhere else (R3 uses `dPSI = F18MOE − ScrMOE`; rMATS uses
+treated − control). Checked on all 4,286 rows carrying the three columns:
+
+    dPSI == control - treated :  100.0% within 1e-3 (max residual 0.0003 = rounding)
+    dPSI == treated - control :    0.0% within 5e-3 (median residual 0.396)
+
+Independently confirmed semantically: in the exon-INCLUSION sheet a negative
+∆PSI means treated PSI exceeded control PSI, i.e. inclusion rose — which is what
+that sheet is supposed to contain.
+
+**All V analyses therefore use `dPSI_project = −(published ∆PSI)`.** Comparing
+signed predictions to the published column unflipped would invert every sign
+conclusion silently — the same class as P's strand bug and R3's SMN1/SMN2
+tie-break. A test asserts the convention so it cannot quietly stop being true.
+
+## V1 (primary) — does the tail enrichment replicate?
+
+Mirrors `smt.sieve.enrichment` exactly: the same categories, the same |dPSI|
+thresholds (0.2 / 0.5 / 0.8), one-sided Fisher, **base rate printed first**,
+**Bonferroni over every test printed including those that do not support the
+hypothesis**.
+
+> **Primary cell:** `exonic_proximal` at |dPSI| >= 0.2 — the cell that gave
+> 5.97x, raw p = 0.0007, corrected p = 0.0253 on GSE307431. Predicted to
+> replicate: enrichment above base rate, surviving Bonferroni at alpha = 0.05.
+
+**Null:** nothing survives correction. Then the tail enrichment does not
+replicate in an independent experiment, the GSE307431 result is a
+single-dataset artifact, and the sieve's candidate-generator claim is weakened
+rather than supported. **This is a real risk and the null is publishable.**
+
+## V2 (the new statistic) — is dose sensitivity affinity-ordered?
+
+The base-rate confound that hollowed out every previous sieve result — ~55% of
+significant events are negative, so "predict skipping" wins that often by
+chance — **does not apply to a dose contrast. Chance does not produce
+affinity-ordered dose sensitivity.**
+
+> Among sieve-predicted genes with an event at `|dPSI_HiA| >= 0.1` (so the
+> ratio is defined), the dose-retention ratio `r = dPSI_LoA / dPSI_HiA` is
+> **negatively rank-correlated with `ddG_net`** — tighter predicted binding
+> (more negative `ddG_net`) retains more of its effect at 5 nM.
+> Spearman, one-sided, alpha = 0.05.
+
+**Null:** rho indistinguishable from 0. Dose sensitivity carries no information
+about predicted affinity, and the hybridization model behind the sieve is not
+doing the work its name claims.
+
+Stated against interest: `r` is a ratio of two noisy quantities and is
+heavy-tailed. The `|dPSI_HiA| >= 0.1` floor is declared **now**, not after
+seeing the spread, and the count of events excluded by it is reported.
+
+## V3 — do the four individually-validated hits replicate?
+
+The one surviving claim from GSE307431 is that four strong exonic predictions
+were individually confirmed (POLR2H −0.920, MAP1S −0.879, ANKRD28 −0.619,
+CCSER2 −0.236). That claim is directly testable here.
+
+> Predicted: of the four, those present in this dataset show `dPSI_project`
+> in the **same direction** as in GSE307431.
+
+**Null / limits stated up front:** n = 4 at most, and fewer if some are absent.
+A sign test on 4 cannot reach p < 0.05 even if all four agree (min p = 0.0625).
+**V3 is therefore reported as a descriptive replication check, never as a
+significance claim**, and its absence from the multiple-testing denominator is
+because no p-value is computed for it — not because it was excluded for
+convenience.
+
+## What Arm V may NOT be used to claim
+
+- It cannot rehabilitate "universal safety sieve." The standing negative
+  (rho = 0.0025 transcriptome-wide) is not up for renegotiation and is not
+  re-tested here.
+- The best available outcome is: **a dose-validated candidate generator for
+  strong exonic off-targets, replicated in an independent experiment.**
+- These are published summary tables, not raw reads. No re-alignment was done
+  and the authors' event calling is taken as given, including their FDR.
