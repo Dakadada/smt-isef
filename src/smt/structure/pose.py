@@ -55,9 +55,21 @@ CONTACT_CUTOFF = 4.5
 PASS_CONTACT_F1 = 0.70
 PASS_LIGAND_RMSD = 2.0
 
+#: Minimum heavy atoms for a non-polymer residue to be a candidate ligand.
+#: Enumerating every ion in the periodic table is the wrong guard -- 1J8G
+#: carries eight strontium ions that an explicit name list missed. A drug-like
+#: ligand has tens of heavy atoms (biotin 16, TPP 26, SAM 27, risdiplam 30),
+#: so a floor catches the next unlisted ion too.
+MIN_LIGAND_ATOMS = 10
+
 #: Residue names that are solvent/ions, never the ligand of interest.
 _NOT_LIGAND = {"HOH", "WAT", "DOD", "MG", "NA", "K", "CL", "ZN", "CA",
-               "MN", "SO4", "PO4", "GOL", "EDO", "IOD", "BR"}
+               "MN", "SO4", "PO4", "GOL", "EDO", "IOD", "BR",
+               # Crystallisation additives, not specific binders. Counting
+               # these as "the ligand" would grade the pose of a buffer
+               # component -- 1J8G, 5V1L and 7EDT are held together by
+               # spermine and would otherwise look like ligand complexes.
+               "SPM", "SPD", "NCO", "IRI", "OS", "ACT", "MPD", "PEG", "TRS"}
 
 
 class CompositionMismatch(RuntimeError):
@@ -120,7 +132,8 @@ def ligand_residues(path: Path, exclude: set[str] | None = None) -> list:
             name = res.name.strip().upper()
             if res.seqid.num in poly or name in exclude:
                 continue
-            if not res.het_flag == "H" and len(res) < 5:
+            heavy = sum(1 for a in res if a.element != gemmi.Element("H"))
+            if heavy < MIN_LIGAND_ATOMS:
                 continue
             out.append(res)
     return out
@@ -207,9 +220,14 @@ def ligand_rmsd(deposited: Path, predicted: Path) -> tuple[float, int]:
         return float("inf"), 0
 
     # PER COPY, never pooled. Best pairing wins; see the module docstring.
+    dep_names = [r.name.strip().upper() for r in ligand_residues(deposited)]
+    pred_names = [r.name.strip().upper() for r in ligand_residues(predicted)]
+
     best, best_n = float("inf"), 0
-    for dep_lig in dep_copies:
-        for pred_lig in pred_copies:
+    for di, dep_lig in enumerate(dep_copies):
+        for pi, pred_lig in enumerate(pred_copies):
+            if dep_names[di] != pred_names[pi]:
+                continue
             shared = sorted(set(dep_lig) & set(pred_lig))
             if not shared:
                 continue
@@ -235,10 +253,22 @@ def grade_pose(deposited: Path, predicted: Path, bp_f1: float) -> PoseGrade:
             "pose grading is meaningless without one")
 
     # PER COPY, never pooled -- the 6DCL lesson. Best pairing wins.
+    # Copies are paired only when they are the SAME molecule: 7QSH carries a
+    # uridine AND its real ligand, and comparing one against the other is
+    # meaningless rather than merely noisy.
+    dep_names = [r.name.strip().upper() for r in ligand_residues(deposited)]
+    pred_names = [r.name.strip().upper() for r in ligand_residues(predicted)]
+    if not set(dep_names) & set(pred_names):
+        raise CompositionMismatch(
+            f"no shared ligand between structures: {sorted(set(dep_names))} "
+            f"vs {sorted(set(pred_names))}")
+
     best = None
     for i in range(n_dep):
         ref = ligand_contacts(deposited, copy=i)
         for j in range(n_pred):
+            if dep_names[i] != pred_names[j]:
+                continue
             pred = ligand_contacts(predicted, copy=j)
             tp = len(ref & pred)
             prec = tp / len(pred) if pred else 0.0

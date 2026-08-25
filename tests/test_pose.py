@@ -156,3 +156,30 @@ def test_all_three_criteria_are_required():
     assert g.contact_f1 == pytest.approx(1.0)
     assert not g.passed
     assert "fold" in g.verdict
+
+
+def test_different_ligands_are_never_paired(tmp_path):
+    """7QSH carries a uridine AND its real ligand. Comparing one against the
+    other is meaningless, not merely noisy, so it must be refused."""
+    st = gemmi.read_structure(str(SAM))
+    st.setup_entities()
+    names = {r.name for r in ligand_residues(SAM)}
+    for chain in st[0]:
+        for res in chain:
+            if res.name in names:
+                res.name = "XXX"
+    st.setup_entities()
+    renamed = tmp_path / "renamed.cif"
+    renamed.write_text(st.make_mmcif_document().as_string())
+
+    assert [r.name for r in ligand_residues(renamed)] == ["XXX"]
+    with pytest.raises(CompositionMismatch):
+        grade_pose(SAM, renamed, bp_f1=1.0)
+
+
+def test_crystallisation_additives_are_not_ligands():
+    """1J8G is held together by spermine; it must not read as a complex."""
+    spm = PDB / "1J8G.cif"
+    if not spm.exists():
+        pytest.skip("1J8G not on disk")
+    assert ligand_residues(spm) == []
