@@ -205,6 +205,19 @@ def feasible(w: Winner) -> Optional[tuple[float, float]]:
     on the A3 ranking -- declared here, before any off-target number is looked
     at -- rather than as a post-hoc filter on results that came out wrong.
     """
+    # A MISSING BINARY MUST NOT LOOK LIKE AN INFEASIBLE OLIGO. Without this
+    # guard, IntaRNA absent from PATH makes every candidate return None, i.e.
+    # "forms no duplex" -- and a panel built on that would tell a wet lab that
+    # nothing works. Caught in exactly that way while building smn2_panel:
+    # UGGCAG was reported REJECTED when it in fact binds at -9.09 kcal/mol,
+    # the value this module's own docstring records.
+    import shutil
+    if shutil.which("IntaRNA") is None:
+        raise RuntimeError(
+            "IntaRNA not on PATH. feasible() returns None for 'no duplex', so a "
+            "missing binary would silently reject every oligo. Activate the "
+            "environment (its bin holds IntaRNA) before scoring feasibility.")
+
     c = compact_window(intron6_tail=INTRON6_TAIL)
     seq = c.sequence
     if not seq:

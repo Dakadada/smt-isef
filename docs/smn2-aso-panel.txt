@@ -1,0 +1,25 @@
+## SMN2 ASO PANEL -- a PREDICTION, emitted before any western blot
+## Ranked on the WORST span. Feasibility is a declared PRE-GATE,
+## not a filter applied after results came out wrong.
+
+    #   start  len   worst fom   dGhyb   dGunf    GC  ASO 5'->3'
+    1   32059   13   1.230e-05  -21.17    3.55  0.46  AUAAUGCUGGCAG
+    2   32059   12   1.151e-05  -19.99    3.45  0.50  UAAUGCUGGCAG
+    3   32060   12   1.063e-05  -18.38    3.40  0.42  AUAAUGCUGGCA
+    4   32061   11   1.007e-05  -16.78    3.27  0.46  AUAAUGCUGGC
+    5   32059   14   1.004e-05  -24.19    3.95  0.50  CAUAAUGCUGGCAG
+    6   32060   11   9.935e-06  -17.34    3.31  0.46  UAAUGCUGGCA
+    7   32059   11   9.820e-06  -18.77    2.76  0.55  AAUGCUGGCAG
+    8   32062   10   9.700e-06  -13.60    3.27  0.40  AUAAUGCUGG
+    9   32061   10   9.398e-06  -15.69    3.19  0.50  UAAUGCUGGC
+   10   32059   10   9.218e-06  -17.28    1.45  0.60  AUGCUGGCAG
+   11   32059    9   9.122e-06  -16.50    1.09  0.67  UGCUGGCAG
+   12   32059    8   9.117e-06  -16.16    1.10  0.75  GCUGGCAG
+
+  Positive control to include on every gel: nusinersen 18-mer at 32062, the site whose answer is already known.
+  Length series over the top site: (10, 12, 14, 16, 18) -- G1 predicts
+  specificity rises monotonically with length and found NO interior
+  optimum, so a 14-mer should work on-target but be less specific.
+  A western blot tests the FIRST half of that and not the second.
+
+  wrote docs/smn2-aso-panel.csv (12 candidates, 0 rejected)
