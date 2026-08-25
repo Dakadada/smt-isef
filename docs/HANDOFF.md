@@ -1442,6 +1442,24 @@ PARTNER lacks it, so the both-arms requirement still fails.
   4. Claim 1 remains BLOCKED: Seddighi PMC11325748 is NOT open access, so the
      233-gene cryptic exon catalog is unfetchable by that route. Needs a
      different source before any 233-locus sweep is designed.
+  5. **Optional, cheap, high yield:** re-run G1 axis 1 at mismatch depths 2-5
+     across lengths. Axis 1 stopped at 1 mismatch, where the 18-mer scores
+     perfectly; POLR2H, the validated off-target, sits at FOUR. This is the
+     version of the length question that maps onto real off-target risk.
+
+### HELD, NOT QUEUED -- exploratory search for a revolutionary angle
+A broad subagent sweep for new high-value directions was proposed and
+**deliberately deferred by the user**: the project is currently waiting on data
+(wet-lab westerns for Arm W, Phase B PSI, and an accessible cryptic-exon
+catalog), and generating more directions before that data lands would add
+candidates faster than they can be tested. Revisit once blots or PSI arrive.
+**Do not spawn this without an explicit go-ahead.**
+
+### STANDING: no revolutionary result exists
+Four blind validations hold; everything else is a null, a negative, or
+unresolved. The charter's "MAY NOT: revolutionary" still binds. The honest
+position is that this is a disciplined framework with real validations and no
+discovery, and the arm that would change that is T9.
 - **Remaining this cycle:** R1 / R1b as written in the vast-herding-goose plan.
 - **Arm W is the live prospective test** -- the lab's four real ASOs are scored
   and pre-registered (W1: 3UP8 > F10; NO prediction for F18/F14). Nothing
