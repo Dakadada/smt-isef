@@ -51,6 +51,51 @@ close to the MINORITY class rate (27.7%), which suggests it is behaving as a
 near-constant "+" predictor rather than being anti-correlated. **The confusion
 matrix must be computed before any claim about anti-correlation is made.**
 
+## Completed 2026-08-25 — the three remaining nulls, plus two audit findings
+
+### S1 — genuinely null, adequately powered
+Sign test 10/16, p = 0.2272; it would have needed 12/16 (75%) to reach p<0.05.
+Powered for a large effect and did not see one. **DECISIVE for a large effect,
+silent about a small one.**
+
+### P — NOT a power failure. A strict self-imposed threshold.
+    hit 1 upstream  z = +2.57   one-sided p = 0.0051
+    hit 1 partner   z = +2.41   one-sided p = 0.0080
+    pre-declared threshold z >= 2.58  =  p <= 0.0049
+At a conventional alpha = 0.05 (z >= 1.645) **both arms clear it easily**. The
+"NOT ESTABLISHED" verdict is an artifact of a threshold set roughly ten times
+stricter than convention. The threshold was declared in advance and is NOT
+being moved — but any citation of this null must say that the bar was 0.005,
+not 0.05, or it misrepresents the evidence.
+
+### A6 — a real confound found, and the hit survives it
+The intron-length confound was never quantified. It is real:
+**Spearman(intron length, retention) = -0.833, p = 0.0102** — shorter introns
+are retained more.
+
+But intron 7 beats the trend decisively. Intron 3 is the SHORTEST (159 nt) and
+retains 0.421; intron 7 is **2.8x longer** (444 nt) and retains 1.000. A
+length-only model fit on the other seven introns predicts intron 7 = 0.274;
+observed 1.000, **residual +0.726**. The blind hit stands, now quantified
+rather than asserted. Intron 3 remains a weak test for the reason already in
+the record.
+
+### AUDIT FINDING — a bounded scan reported as universal
+"The nusinersen 18-mer has exactly two exact-match sites in 140.6 Mnt" is
+**arithmetically correct** (72,863,420 nt mRNA + 67,709,953 nt intron flanks =
+140,573,373). But the index covers only **3.8% of annotated intronic space** —
+~1.71 Gnt of intron interior was never searched, and `transcriptome.py`'s own
+docstring declares that assumption. An ASO acts on pre-mRNA, so the uniqueness
+claim is bounded by the index and is not a pre-mRNA-wide statement.
+
+It is also a NEAR-MATCH claim: axis 1 counted exact and 1-mismatch sites, while
+POLR2H — the validated off-target at dPSI -0.920 — sits at **four** mismatches.
+
+### AUDIT FINDING — a published figure that was an estimate
+The run-log artifact carried "~120k partition functions". The record supports
+~105k (A3 10,650 + A7 89,100 rows, 6,300 of which carried empty scores, +
+N4 5,325 + smaller arms). Corrected in the artifact.
+
 ## Still to do
 
 - Confusion matrix for N4 (above).
