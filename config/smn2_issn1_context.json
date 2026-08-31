@@ -1,0 +1,13 @@
+{
+  "schema_version": "real-transcript-context/1",
+  "target_id": "SMN2_exon7_inclusion",
+  "locus": "SMN2",
+  "assembly": "GRCh38",
+  "chrom": "chr5",
+  "strand": "+",
+  "transcript_version": "NM_017411.4",
+  "sequence": "CCAGCATTATGAAAGTGAATC",
+  "genomic_start_1based_inclusive": 70076584,
+  "genomic_end_1based_inclusive": 70076604,
+  "sequence_provenance": "ISS-N1 target reconstructed as the reverse complement of published Anti-N1 5'-GATTCACTTTCATAATGCTGG-3'; Singh et al., Mol Cell Biol 2006, PMID 16449646, PMCID PMC1367187. GRCh38 mapping uses verified SMN2 exon-7 end chr5:70076574 and published intron-7 positions 10-30. Transcript identity corrected to NCBI RefSeq SMN2 MANE Select NM_017411.4; NM_000344.4 is SMN1. Retrieved/verified 2026-08-30."
+}

@@ -1,0 +1,2 @@
+INCOMPLETE STAGE-A SNAPSHOT
+INCOMPLETE STAGE-A SNAPSHOT: A compute-native SMN2 pipeline recovered the expected splice direction across three deposited steric intervention arms—ASO1, F18MOE, and dCas13d D[333,357]—with replicate observations within each arm; genuine scramble-MOE and non-targeting-guide null arms stayed near zero; and the sequence-committed SMN2 target yielded frozen prospective designs for follow-up testing. Unresolved arms, including F20PMO, are excluded.

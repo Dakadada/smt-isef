@@ -1,0 +1,25 @@
+{
+  "effector_sequence": "ACGTACGTACGTACGTACGT",
+  "enumerator": {
+    "chemistry": "2MOE",
+    "max_edits": 8,
+    "max_indel_bases": 2,
+    "min_alignment_length": 18,
+    "max_alignment_length": 22,
+    "min_expression_tpm": 0.1,
+    "min_score": 0.0,
+    "expression_half_saturation_tpm": 10.0,
+    "localization_floor": 0.1,
+    "rbp_weight": 0.12,
+    "unknown_chemistry_penalty": 0.75,
+    "allow_unknown_chemistry_heuristic": false
+  },
+  "benchmark": {
+    "coordinate_tolerance": 0,
+    "positive_set_metadata": {
+      "provenance": "REQUIRED: frozen validation-set identifier/hash",
+      "complete": false,
+      "blinded": false
+    }
+  }
+}

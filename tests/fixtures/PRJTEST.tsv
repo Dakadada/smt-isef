@@ -1,0 +1,4 @@
+study_accession	run_accession	sample_accession	sample_alias	experiment_title	fastq_ftp	fastq_md5	fastq_bytes	library_layout	library_strategy
+PRJTEST	RUN_T	SAM_T	treated_rep1	target RNA-seq	PLACEHOLDER	PLACEHOLDER	144	SINGLE	RNA-Seq
+PRJTEST	RUN_C	SAM_C	control_rep1	control RNA-seq	PLACEHOLDER	PLACEHOLDER	144	SINGLE	RNA-Seq
+PRJTEST	RUN_X	SAM_X	pooled_screen	pooled screen	PLACEHOLDER	PLACEHOLDER	144	SINGLE	AMPLICON

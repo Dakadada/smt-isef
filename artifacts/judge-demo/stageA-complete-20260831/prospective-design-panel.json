@@ -1,0 +1,1073 @@
+{
+  "banner": "PROSPECTIVE PREDICTION — NOT EXPERIMENTALLY VALIDATED. Candidates require independent experimental and safety validation.",
+  "designability_map": [
+    {
+      "abstention_rate": 0.0,
+      "best_candidate_ids": [
+        "SMN2_exon7_inclusion:ASO:PMO:0-18",
+        "SMN2_exon7_inclusion:ASO:PMO:0-20"
+      ],
+      "best_candidate_rank": 1,
+      "best_directional_confidence": 0.9,
+      "best_pick_off_target_burden": 0.0,
+      "coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:SMN2_exon7_inclusion",
+      "coordinates_verified": true,
+      "locus": "SMN2",
+      "pareto_candidate_count": 2,
+      "state": "DESIGNABLE",
+      "status": "prospective designs meet declared thresholds",
+      "target_id": "SMN2_exon7_inclusion",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:DMD_exon53_inclusion",
+      "coordinates_verified": true,
+      "locus": "DMD",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending real transcript context (no committed digest)",
+      "target_id": "DMD_exon53_inclusion",
+      "therapeutic_goal": "skipping"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+      "coordinates_verified": false,
+      "locus": "STMN2",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "STMN2_cryptic_exon",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+      "coordinates_verified": false,
+      "locus": "UNC13A",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "UNC13A_cryptic_exon",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "coordinates_verified": false,
+      "locus": "ELAVL3",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "TDP43_CRYPTIC_ELAVL3",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "coordinates_verified": false,
+      "locus": "KALRN",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "TDP43_CRYPTIC_KALRN",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "coordinates_verified": false,
+      "locus": "POLDIP3",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "TDP43_CRYPTIC_POLDIP3",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: verify therapeutic polarity and transcript-version-exact GRCh38 event coordinates",
+      "coordinates_verified": false,
+      "locus": "MAPT",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "MAPT_exon10",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: select variant/event and verify transcript-version-exact GRCh38 coordinates",
+      "coordinates_verified": false,
+      "locus": "USH2A",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "USH2A_pseudoexon",
+      "therapeutic_goal": "inclusion"
+    },
+    {
+      "abstention_rate": null,
+      "best_candidate_ids": [],
+      "best_candidate_rank": null,
+      "best_directional_confidence": null,
+      "best_pick_off_target_burden": null,
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease genotype, therapeutic polarity, and transcript-version-exact GRCh38 coordinates",
+      "coordinates_verified": false,
+      "locus": "CFTR",
+      "pareto_candidate_count": 0,
+      "state": "PENDING",
+      "status": "pending coordinate verification",
+      "target_id": "CFTR_exon9",
+      "therapeutic_goal": "inclusion"
+    }
+  ],
+  "designs": [
+    {
+      "banner": "PROSPECTIVE PREDICTION — NOT EXPERIMENTALLY VALIDATED. Candidates require independent experimental and safety validation.",
+      "candidates": [
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:PMO:0-18",
+            "chemistry": "PMO",
+            "effector_class": "ASO",
+            "effector_sequence": "TCACTTTCATAATGCTGG",
+            "end": 18,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGA"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.9,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": true,
+          "pareto_tier": 1,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "7ff48a868f0173f13953b4810eccc57992b0aaf875a0e1ebf0511b19ded8b6ca",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 1,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:PMO:0-20",
+            "chemistry": "PMO",
+            "effector_class": "ASO",
+            "effector_sequence": "ATTCACTTTCATAATGCTGG",
+            "end": 20,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGAAT"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.9,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": true,
+          "pareto_tier": 1,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "f4a8f1cf066c8442b7dc11e476dee3eb7c426b6d09bf083707b677c1c5ac22a5",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 1,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:2MOE:0-18",
+            "chemistry": "2MOE",
+            "effector_class": "ASO",
+            "effector_sequence": "TCACTTTCATAATGCTGG",
+            "end": 18,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGA"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.88,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 2,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "a0544a98d0ee6782ba7ab087a2b40e321b0ad55d610e0df58fd27e1c6fcff732",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 2,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:2MOE:0-20",
+            "chemistry": "2MOE",
+            "effector_class": "ASO",
+            "effector_sequence": "ATTCACTTTCATAATGCTGG",
+            "end": 20,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGAAT"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.88,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 2,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "f54f5c3409a6d31322dddad04d300d1f8bd95d8174c9a77644e3b53e1e044d45",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 2,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:OMe:0-18",
+            "chemistry": "OMe",
+            "effector_class": "ASO",
+            "effector_sequence": "TCACTTTCATAATGCTGG",
+            "end": 18,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGA"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.86,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 3,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "87edc5c1c6b5f952c86e5f85e81bbcb005f5264e6a340116c5fa8c81bf9cc4b9",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 3,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:OMe:0-20",
+            "chemistry": "OMe",
+            "effector_class": "ASO",
+            "effector_sequence": "ATTCACTTTCATAATGCTGG",
+            "end": 20,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGAAT"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.86,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 3,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "7cd877d2cf6b05a9f99dda627d204215ffda024b0abd0cec3e7b46d6ecb909ca",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 3,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:LNA:0-18",
+            "chemistry": "LNA",
+            "effector_class": "ASO",
+            "effector_sequence": "TCACTTTCATAATGCTGG",
+            "end": 18,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGA"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.8,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 4,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "de0e015fdb1c0f7a9d069d856930ab650148cc55e6e5fd5c39eb45591c248efc",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 4,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:ASO:LNA:0-20",
+            "chemistry": "LNA",
+            "effector_class": "ASO",
+            "effector_sequence": "ATTCACTTTCATAATGCTGG",
+            "end": 20,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGAAT"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.8,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 4,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "9ed2a41aedf247af27029c744bc5b76cbf6919bff9aea741f0ace62b29cceca0",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 4,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-18",
+            "chemistry": "U7 snRNA cassette",
+            "effector_class": "U7",
+            "effector_sequence": "TCACTTTCATAATGCTGG",
+            "end": 18,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGA"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.67,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 5,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "dd1b8d408ab926e32f06b130f04054560da6318a7d2f4a284a8ad3d270f7dc22",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 5,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        },
+        {
+          "abstained": false,
+          "candidate": {
+            "candidate_id": "SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-20",
+            "chemistry": "U7 snRNA cassette",
+            "effector_class": "U7",
+            "effector_sequence": "ATTCACTTTCATAATGCTGG",
+            "end": 20,
+            "start": 0,
+            "target_sequence": "CCAGCATTATGAAAGTGAAT"
+          },
+          "directional_confidence": 0.9,
+          "goal_alignment": "supports_goal",
+          "magnitude_claim": null,
+          "manufacturability": 0.67,
+          "off_target_burden": 0.0,
+          "off_target_hit_count": 0,
+          "off_target_sign": "unknown",
+          "pareto": false,
+          "pareto_tier": 5,
+          "predicted_inclusion_direction": "increases_inclusion",
+          "prediction_input_hash": "1128f13407dfe0b91994169f2cb9a242691225a86685bdaa4c7a742f37ba42d3",
+          "prediction_protocol_hash": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+          "rank": 5,
+          "span_robustness": 1.0,
+          "therapeutic_goal": "inclusion",
+          "uncertainty": [
+            "theta is grid-bounded only: direction is primary; magnitude/calibration claims are prohibited",
+            "off-target enumeration is recall-oriented; hit effects have unknown sign"
+          ]
+        }
+      ],
+      "locus": "SMN2",
+      "objective": {
+        "direction": "inclusion",
+        "event_id": "SMN2_exon7_inclusion",
+        "locus": "SMN2",
+        "override_provenance": null,
+        "sign_convention": "positive=increased-exon-inclusion"
+      },
+      "pareto_candidate_ids": [
+        "SMN2_exon7_inclusion:ASO:PMO:0-18",
+        "SMN2_exon7_inclusion:ASO:PMO:0-20"
+      ],
+      "prediction_status": "prospective-not-experimentally-validated",
+      "provenance": {
+        "event_config_sha256": "499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51",
+        "folding_backend_identity_sha256": "013a655b7a3e6e3708153410e202dc2b40933eb180698b9916b089c9a6ac4077",
+        "generated_at": "2026-08-30T00:00:00+00:00",
+        "offtarget_enumerator_identity_sha256": "86b987831496418589cc3174fb8a9c8b0188f1767b67524e16d175e4d9a89a0e",
+        "physics_adapter_identity_sha256": "ebe05bd2b2fe0806a953ee93d07bdeaabd51e6e395f99aa2258249cdc833b77f",
+        "prediction_status": "prospective-not-experimentally-validated",
+        "run_manifest": {
+          "adapter": {
+            "identity_sha256": "ebe05bd2b2fe0806a953ee93d07bdeaabd51e6e395f99aa2258249cdc833b77f",
+            "module_artifact_sha256": "86ffede71278915f58f4c771f8799eb28e8c90411621c8a35415fc47af3fc778",
+            "package_artifacts": {
+              "__init__.py": "8ddfad27691ff64627d62f6291376ed572378c7c96fee41986ba2315a6fba688",
+              "adapter.py": "86ffede71278915f58f4c771f8799eb28e8c90411621c8a35415fc47af3fc778",
+              "folding.py": "031d5d6910114d055f05134c75897ac18d5632b4760f397d56786aab1cecaffd",
+              "link.py": "a7022d5d968c1230a5c654ddcc31c47a549aa61ac4fa39010733c84f04c44fe0",
+              "models.py": "d6775699aba0316547aa85674f33d72ccb719e8d585620b9d62d708826886ae1",
+              "types.py": "3fc59ce9379b39e4880b3d4a76934bf301eee8f68e406f069f91a4a75f22ea06"
+            },
+            "protocol_sha256": "0abfb2c8ab46ce13bd1f8950426ee396a36760f06bfc2a406bf0eb7ce752167a",
+            "qualified_name": "physics_adapter.adapter.EffectorPhysicsAdapter",
+            "source_sha256": "0a1a029a628cd33402970c469cf773f40af7e68c9a1d8cad070eb37093d140a9"
+          },
+          "backend": {
+            "identity_sha256": "013a655b7a3e6e3708153410e202dc2b40933eb180698b9916b089c9a6ac4077",
+            "instance_config": {},
+            "module_artifact_sha256": "ef1f2e984d7c7d372218ab82eaad8b0ba197302cf86b6dc4fba783deefc2ee80",
+            "qualified_name": "design_engine.backends.DeterministicStubFolder",
+            "source_sha256": "1397675f5f7207a92dc02c8f85ad15a8afb3a0f859fbf965fdefc93f379c9869"
+          },
+          "enumerator": {
+            "config": {
+              "allow_unknown_chemistry_heuristic": false,
+              "chemistry": "2MOE",
+              "expression_half_saturation_tpm": 10.0,
+              "localization_floor": 0.1,
+              "max_alignment_length": null,
+              "max_edits": 4,
+              "max_indel_bases": 1,
+              "min_alignment_length": null,
+              "min_expression_tpm": 0.0,
+              "min_score": 0.0,
+              "rbp_weight": 0.12,
+              "unknown_chemistry_penalty": 0.75
+            },
+            "identity_sha256": "86b987831496418589cc3174fb8a9c8b0188f1767b67524e16d175e4d9a89a0e",
+            "module_artifact_sha256": "4ee1f81815bccb7e9517858db10057bb9f2248dd96ce8e01db468bad18aa0af4",
+            "package_artifacts": {
+              "__init__.py": "1eefea9e05714bb3631ee23c478598564470875e3991f840477edd68e91d321c",
+              "__main__.py": "d2c540ef723b305f1be15bf0c4d5618e67a133bbab391c55033b98e6e42bb403",
+              "alignment.py": "b31d3fd5ae49a60b914eb8e2e28870b4e5569ab9c08e2dab4a1763188d46b522",
+              "benchmark.py": "cf58b369116b53c1783ba3fd099121305e5fdb477678415c315d9e9a952c85ce",
+              "chemistry.py": "e53b1d9ca752879f2db1fe4025edd2a8cbbe8251c273c51c3490de6611c0c989",
+              "coordinates.py": "118d4691047c3aeebc2a10de17b8e3b5815a6871779181d7a8a064aa039d2e5c",
+              "enumerator.py": "4ee1f81815bccb7e9517858db10057bb9f2248dd96ce8e01db468bad18aa0af4",
+              "models.py": "bc828a05f48ea8dba943321ace7e1697f19eb3881b443e2caf28ede2f71f8330"
+            },
+            "qualified_name": "offtarget.enumerator.enumerate_offtargets",
+            "source_sha256": "5077a7f206fab5f463e62064e035b49ff8bb012982e95bb8ffe415765fbf92c0"
+          },
+          "event_config_sha256": "499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51",
+          "generated_candidates": [
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:2MOE:0-18",
+              "chemistry": "2MOE",
+              "effector_class": "ASO",
+              "effector_sequence": "TCACTTTCATAATGCTGG",
+              "end": 18,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGA"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:LNA:0-18",
+              "chemistry": "LNA",
+              "effector_class": "ASO",
+              "effector_sequence": "TCACTTTCATAATGCTGG",
+              "end": 18,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGA"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:OMe:0-18",
+              "chemistry": "OMe",
+              "effector_class": "ASO",
+              "effector_sequence": "TCACTTTCATAATGCTGG",
+              "end": 18,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGA"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:PMO:0-18",
+              "chemistry": "PMO",
+              "effector_class": "ASO",
+              "effector_sequence": "TCACTTTCATAATGCTGG",
+              "end": 18,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGA"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-18",
+              "chemistry": "U7 snRNA cassette",
+              "effector_class": "U7",
+              "effector_sequence": "TCACTTTCATAATGCTGG",
+              "end": 18,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGA"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:2MOE:0-20",
+              "chemistry": "2MOE",
+              "effector_class": "ASO",
+              "effector_sequence": "ATTCACTTTCATAATGCTGG",
+              "end": 20,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGAAT"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:LNA:0-20",
+              "chemistry": "LNA",
+              "effector_class": "ASO",
+              "effector_sequence": "ATTCACTTTCATAATGCTGG",
+              "end": 20,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGAAT"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:OMe:0-20",
+              "chemistry": "OMe",
+              "effector_class": "ASO",
+              "effector_sequence": "ATTCACTTTCATAATGCTGG",
+              "end": 20,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGAAT"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:ASO:PMO:0-20",
+              "chemistry": "PMO",
+              "effector_class": "ASO",
+              "effector_sequence": "ATTCACTTTCATAATGCTGG",
+              "end": 20,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGAAT"
+            },
+            {
+              "candidate_id": "SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-20",
+              "chemistry": "U7 snRNA cassette",
+              "effector_class": "U7",
+              "effector_sequence": "ATTCACTTTCATAATGCTGG",
+              "end": 20,
+              "start": 0,
+              "target_sequence": "CCAGCATTATGAAAGTGAAT"
+            }
+          ],
+          "generation_config": {
+            "aso_chemistries": [
+              "2MOE",
+              "OMe",
+              "PMO",
+              "LNA"
+            ],
+            "aso_lengths": [
+              18,
+              20
+            ],
+            "grna_lengths": [
+              22,
+              24
+            ],
+            "grna_shadow": 4,
+            "max_candidates": 160,
+            "stride": 4,
+            "u7_lengths": [
+              18,
+              20
+            ]
+          },
+          "magnitude_claims": {},
+          "magnitude_evidence": {},
+          "offtarget": {
+            "config": {
+              "allow_unknown_chemistry_heuristic": false,
+              "chemistry": "2MOE",
+              "expression_half_saturation_tpm": 10.0,
+              "localization_floor": 0.1,
+              "max_alignment_length": null,
+              "max_edits": 4,
+              "max_indel_bases": 1,
+              "min_alignment_length": null,
+              "min_expression_tpm": 0.0,
+              "min_score": 0.0,
+              "rbp_weight": 0.12,
+              "unknown_chemistry_penalty": 0.75
+            },
+            "corpus_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "evidence_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "target_definition": {
+            "context": {
+              "eclip_repressive_occupancy": {},
+              "probing": {},
+              "sequence": "CCAGCATTATGAAAGTGAATC",
+              "transcript_id": "NM_017411.4"
+            },
+            "design_end": 21,
+            "design_start": 0,
+            "event": {
+              "branchpoint_ppt": [],
+              "event_id": "SMN2_exon7_inclusion",
+              "silencers": [
+                {
+                  "end": 21,
+                  "start": 0
+                }
+              ],
+              "u1_contacts": []
+            },
+            "locus": "SMN2",
+            "objective": {
+              "direction": "inclusion",
+              "event_id": "SMN2_exon7_inclusion",
+              "locus": "SMN2",
+              "override_provenance": null,
+              "sign_convention": "positive=increased-exon-inclusion"
+            },
+            "offtarget_evidence": [],
+            "offtarget_transcripts": [],
+            "target_id": "SMN2_exon7_inclusion"
+          }
+        },
+        "run_manifest_sha256": "860a8caa999f0ef1fffb7e67806ee4b5c5f0d652919d13dc9655dbcee31ba093"
+      },
+      "schema_version": "design-report/2",
+      "target_id": "SMN2_exon7_inclusion"
+    }
+  ],
+  "generated_at": "2026-08-30T00:00:00+00:00",
+  "panel_manifest_sha256": "b18643e83cd11cb30991d166df4a8214e25c105a7faa3c87a07d82fc4901c605",
+  "pending_targets": [
+    {
+      "coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:DMD_exon53_inclusion",
+      "display_name": "DMD exon 53",
+      "locus": "DMD",
+      "status": "pending real transcript context (no committed digest)",
+      "target_id": "DMD_exon53_inclusion"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+      "display_name": "STMN2 TDP-43-associated cryptic exon",
+      "locus": "STMN2",
+      "status": "pending coordinate verification",
+      "target_id": "STMN2_cryptic_exon"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+      "display_name": "UNC13A TDP-43-associated cryptic exon",
+      "locus": "UNC13A",
+      "status": "pending coordinate verification",
+      "target_id": "UNC13A_cryptic_exon"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "display_name": "ELAVL3 candidate TDP-43 cryptic event",
+      "locus": "ELAVL3",
+      "status": "pending coordinate verification",
+      "target_id": "TDP43_CRYPTIC_ELAVL3"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "display_name": "KALRN candidate TDP-43 cryptic event",
+      "locus": "KALRN",
+      "status": "pending coordinate verification",
+      "target_id": "TDP43_CRYPTIC_KALRN"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "display_name": "POLDIP3 candidate TDP-43-associated splice event",
+      "locus": "POLDIP3",
+      "status": "pending coordinate verification",
+      "target_id": "TDP43_CRYPTIC_POLDIP3"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: verify therapeutic polarity and transcript-version-exact GRCh38 event coordinates",
+      "display_name": "MAPT exon 10",
+      "locus": "MAPT",
+      "status": "pending coordinate verification",
+      "target_id": "MAPT_exon10"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: select variant/event and verify transcript-version-exact GRCh38 coordinates",
+      "display_name": "USH2A disease-associated pseudoexon",
+      "locus": "USH2A",
+      "status": "pending coordinate verification",
+      "target_id": "USH2A_pseudoexon"
+    },
+    {
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease genotype, therapeutic polarity, and transcript-version-exact GRCh38 coordinates",
+      "display_name": "CFTR exon 9 splice event",
+      "locus": "CFTR",
+      "status": "pending coordinate verification",
+      "target_id": "CFTR_exon9"
+    }
+  ],
+  "prediction_status": "prospective-not-experimentally-validated",
+  "provenance": {
+    "coordinate_policy": "fail closed: registry exact and real sequence bound",
+    "panel_manifest": {
+      "bound_target_definitions": [
+        {
+          "binding_sequence_sha256": "9ecb7623514e3b71af2ddc7aaee6d9c5bbc32557e299b2d0f20ab2ed0af69622",
+          "definition": {
+            "context": {
+              "eclip_repressive_occupancy": {},
+              "probing": {},
+              "sequence": "CCAGCATTATGAAAGTGAATC",
+              "transcript_id": "NM_017411.4"
+            },
+            "design_end": 21,
+            "design_start": 0,
+            "event": {
+              "branchpoint_ppt": [],
+              "event_id": "SMN2_exon7_inclusion",
+              "silencers": [
+                {
+                  "end": 21,
+                  "start": 0
+                }
+              ],
+              "u1_contacts": []
+            },
+            "locus": "SMN2",
+            "objective": {
+              "direction": "inclusion",
+              "event_id": "SMN2_exon7_inclusion",
+              "locus": "SMN2",
+              "override_provenance": null,
+              "sign_convention": "positive=increased-exon-inclusion"
+            },
+            "offtarget_evidence": [],
+            "offtarget_transcripts": [],
+            "target_id": "SMN2_exon7_inclusion"
+          },
+          "genomic_to_transcript_mapping": [
+            [
+              70076584,
+              0
+            ],
+            [
+              70076585,
+              1
+            ],
+            [
+              70076586,
+              2
+            ],
+            [
+              70076587,
+              3
+            ],
+            [
+              70076588,
+              4
+            ],
+            [
+              70076589,
+              5
+            ],
+            [
+              70076590,
+              6
+            ],
+            [
+              70076591,
+              7
+            ],
+            [
+              70076592,
+              8
+            ],
+            [
+              70076593,
+              9
+            ],
+            [
+              70076594,
+              10
+            ],
+            [
+              70076595,
+              11
+            ],
+            [
+              70076596,
+              12
+            ],
+            [
+              70076597,
+              13
+            ],
+            [
+              70076598,
+              14
+            ],
+            [
+              70076599,
+              15
+            ],
+            [
+              70076600,
+              16
+            ],
+            [
+              70076601,
+              17
+            ],
+            [
+              70076602,
+              18
+            ],
+            [
+              70076603,
+              19
+            ],
+            [
+              70076604,
+              20
+            ]
+          ],
+          "mapping_sha256": "23747adda378762b10b93e575133b9018a74e29e6b156d643ffc0da029661b7d",
+          "sequence_provenance": "ISS-N1 target reconstructed as the reverse complement of published Anti-N1 5'-GATTCACTTTCATAATGCTGG-3'; Singh et al., Mol Cell Biol 2006, PMID 16449646, PMCID PMC1367187. GRCh38 mapping uses verified SMN2 exon-7 end chr5:70076574 and published intron-7 positions 10-30. Transcript identity corrected to NCBI RefSeq SMN2 MANE Select NM_017411.4; NM_000344.4 is SMN1. Retrieved/verified 2026-08-30.",
+          "target_id": "SMN2_exon7_inclusion"
+        }
+      ],
+      "coordinate_registry_sha256": "499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51",
+      "engine_api": "design_engine.engine.design_for",
+      "generated_at": "2026-08-30T00:00:00+00:00",
+      "options": {},
+      "ordered_targets": [
+        {
+          "assembly": "GRCh38",
+          "chrom": "chr5",
+          "coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:SMN2_exon7_inclusion",
+          "coordinate_status": "verified",
+          "display_name": "SMN2 exon 7",
+          "event_id": "SMN2_exon7_inclusion",
+          "locus": "SMN2",
+          "provenance_digest": "28e5cf102d947aa9af6e95a1814c770d737b911687208654f80c5834af718810",
+          "sequence_sha256": "9ecb7623514e3b71af2ddc7aaee6d9c5bbc32557e299b2d0f20ab2ed0af69622",
+          "strand": "+",
+          "target_id": "SMN2_exon7_inclusion",
+          "transcript_version": "NM_017411.4"
+        },
+        {
+          "assembly": "GRCh38",
+          "chrom": "chrX",
+          "coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:DMD_exon53_inclusion",
+          "coordinate_status": "verified",
+          "display_name": "DMD exon 53",
+          "event_id": "DMD_exon53_inclusion",
+          "locus": "DMD",
+          "provenance_digest": "1dba40aea500a45d9ca346ad3b44e8c2685c6853223a69b7c8142da5a91a2318",
+          "sequence_sha256": null,
+          "strand": "-",
+          "target_id": "DMD_exon53_inclusion",
+          "transcript_version": "NM_004006.3"
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+          "coordinate_status": "to-verify",
+          "display_name": "STMN2 TDP-43-associated cryptic exon",
+          "event_id": null,
+          "locus": "STMN2",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "STMN2_cryptic_exon",
+          "transcript_version": null
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+          "coordinate_status": "to-verify",
+          "display_name": "UNC13A TDP-43-associated cryptic exon",
+          "event_id": null,
+          "locus": "UNC13A",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "UNC13A_cryptic_exon",
+          "transcript_version": null
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+          "coordinate_status": "to-verify",
+          "display_name": "ELAVL3 candidate TDP-43 cryptic event",
+          "event_id": null,
+          "locus": "ELAVL3",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "TDP43_CRYPTIC_ELAVL3",
+          "transcript_version": null
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+          "coordinate_status": "to-verify",
+          "display_name": "KALRN candidate TDP-43 cryptic event",
+          "event_id": null,
+          "locus": "KALRN",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "TDP43_CRYPTIC_KALRN",
+          "transcript_version": null
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+          "coordinate_status": "to-verify",
+          "display_name": "POLDIP3 candidate TDP-43-associated splice event",
+          "event_id": null,
+          "locus": "POLDIP3",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "TDP43_CRYPTIC_POLDIP3",
+          "transcript_version": null
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: verify therapeutic polarity and transcript-version-exact GRCh38 event coordinates",
+          "coordinate_status": "to-verify",
+          "display_name": "MAPT exon 10",
+          "event_id": null,
+          "locus": "MAPT",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "MAPT_exon10",
+          "transcript_version": null
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: select variant/event and verify transcript-version-exact GRCh38 coordinates",
+          "coordinate_status": "to-verify",
+          "display_name": "USH2A disease-associated pseudoexon",
+          "event_id": null,
+          "locus": "USH2A",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "USH2A_pseudoexon",
+          "transcript_version": null
+        },
+        {
+          "assembly": null,
+          "chrom": null,
+          "coordinate_provenance": "REQUIRED-INPUT: verify disease genotype, therapeutic polarity, and transcript-version-exact GRCh38 coordinates",
+          "coordinate_status": "to-verify",
+          "display_name": "CFTR exon 9 splice event",
+          "event_id": null,
+          "locus": "CFTR",
+          "provenance_digest": null,
+          "sequence_sha256": null,
+          "strand": null,
+          "target_id": "CFTR_exon9",
+          "transcript_version": null
+        }
+      ],
+      "panel_version": "prospective-design-panel/2",
+      "report_manifest_sha256": [
+        "860a8caa999f0ef1fffb7e67806ee4b5c5f0d652919d13dc9655dbcee31ba093"
+      ]
+    },
+    "panel_manifest_sha256": "b18643e83cd11cb30991d166df4a8214e25c105a7faa3c87a07d82fc4901c605",
+    "prediction_status": "prospective-not-experimentally-validated"
+  },
+  "schema_version": "prospective-design-panel-report/2"
+}

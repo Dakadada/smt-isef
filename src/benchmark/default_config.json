@@ -1,0 +1,12 @@
+{
+  "protocol_locked": true,
+  "seed": 20260828,
+  "neutral_threshold": 5.0,
+  "sensitivity_thresholds": [2.0, 10.0],
+  "direction_margin": 0.05,
+  "max_effective_df": 8.0,
+  "capacity_tolerance_df": 1.0,
+  "min_ci_families": 8,
+  "powered_min_families": 10,
+  "directional_power_validated": false
+}

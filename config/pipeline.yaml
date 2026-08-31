@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0",
+  "asset_sha256": {
+    "reference_fasta": "REQUIRED-INPUT",
+    "annotation_gtf": "REQUIRED-INPUT",
+    "event_junctions": "499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51",
+    "star_index": "REQUIRED-INPUT",
+    "hisat2_index": "REQUIRED-INPUT",
+    "container": "REQUIRED-INPUT"
+  },
+  "paths": {
+    "work_dir": "data/reanalysis",
+    "scratch_dir": "/tmp/smt-rawread",
+    "scratch_namespace": "/tmp/smt-rawread",
+    "checkpoints": "data/reanalysis/checkpoints"
+  },
+  "fetch": {"space_multiplier": 2.2, "minimum_free_bytes": 10737418240, "aggregate_scratch_cap_bytes": 322122547200, "cleanup_fastq_after_quantification": true},
+  "alignment": {"tier": "targeted", "full_tool": "STAR", "threads": 24, "strand_code": "2"},
+  "references": {
+    "build": "GRCh38",
+    "annotation_release": "Ensembl 116 / GRCh38",
+    "fasta": "/path/to/REQUIRED-INPUT.GRCh38.fa",
+    "gtf": "/path/to/REQUIRED-INPUT.GRCh38.gtf",
+    "container": "/path/to/REQUIRED-INPUT.sif",
+    "star_index": "/path/to/frozen/STAR_GRCh38",
+    "hisat2_index": "/path/to/frozen/HISAT2_GRCh38",
+    "salmon_index": "/path/to/frozen/event_transcript_salmon_index",
+    "kallisto_index": "/path/to/frozen/event_transcript_kallisto.idx",
+    "event_junctions_tsv": "config/event_junctions.GRCh38.tsv"
+  },
+  "psi": {"minimum_informative_reads": 20, "marker_specificity_anomaly_rate_threshold": 0.01, "primary_no_change_band": 5, "sensitivity_bands": [2, 10], "units": "percentage_points"},
+  "checkpoint": {"heartbeat_seconds": 600, "max_retries": 3},
+  "tier_concordance": {"passed": false, "report_sha256": "REQUIRED-INPUT before cross-tier pooling"},
+  "tool_lock": {
+    "STAR": "2.7.11b", "HISAT2": "2.2.1", "samtools": "1.20", "regtools": "1.0.0",
+    "salmon": "1.10.3", "kallisto": "0.50.1", "python": "3.11.x",
+    "container": "build and record immutable Apptainer SIF SHA-256 before real execution"
+  },
+  "studies": {
+    "GSE307431_PRJNA1321660": {
+      "project": "PRJNA1321660", "expected_endpoint_runs": 20,
+      "sample_map": {},
+      "filter_note": "All 20 are endpoint RNA-Seq: F18OMe/F18MOE/F20PMO, chemistry scrambles, untreated.",
+      "exclude_regex": [], "matched_theta_proxy": false, "confound_flags": [],
+      "sample_rules": [
+        {"regex": "F18OMe|9224136|9224142|9224149", "intervention": "F18OMe", "condition": "treated", "contrast": "OMe", "batch_covariates": {"chemistry": "2OMe-PS", "system": "GM03813", "dose": "6uM", "time": "24h"}},
+        {"regex": "ScrOMe|9224135|9224141|9224148", "intervention": "scramble_OMe", "condition": "control", "contrast": "OMe", "batch_covariates": {"chemistry": "2OMe-PS", "system": "GM03813", "dose": "6uM", "time": "24h"}},
+        {"regex": "F18MOE|9224138|9224144|9224151", "intervention": "F18MOE", "condition": "treated", "contrast": "MOE", "batch_covariates": {"chemistry": "2MOE-PS", "system": "GM03813", "dose": "6uM", "time": "24h"}},
+        {"regex": "ScrMOE|9224137|9224143|9224150", "intervention": "scramble_MOE", "condition": "control", "contrast": "MOE", "batch_covariates": {"chemistry": "2MOE-PS", "system": "GM03813", "dose": "6uM", "time": "24h"}},
+        {"regex": "F20PMO|9224140|9224146|9224153", "intervention": "F20PMO", "condition": "treated", "contrast": "PMO", "batch_covariates": {"chemistry": "PMO", "system": "GM03813", "dose": "6uM", "time": "24h"}},
+        {"regex": "ScrPMO|9224139|9224145|9224152", "intervention": "scramble_PMO", "condition": "control", "contrast": "PMO", "batch_covariates": {"chemistry": "PMO", "system": "GM03813", "dose": "6uM", "time": "24h"}},
+        {"regex": "untreated|9224134|9224147", "intervention": "untreated", "condition": "control", "contrast": "untreated_only", "batch_covariates": {"chemistry": "none", "system": "GM03813", "dose": "0", "time": "24h"}}
+      ]
+    },
+    "GSE167762_PRJNA705187": {
+      "project": "PRJNA705187", "expected_endpoint_runs": 12,
+      "sample_map": {},
+      "filter_note": "Select ~12 endpoint RNA-Seq of 28; exclude ChIP-Seq, OTHER, POINT-seq and non-endpoint assays.",
+      "exclude_regex": ["ChIP", "POINT", "OTHER"], "matched_theta_proxy": false, "confound_flags": [],
+      "sample_rules": [
+        {"regex": "ASO1.*VPA|VPA.*ASO1|606369[1-3]", "intervention": "ASO1_plus_VPA", "condition": "treated", "contrast": "factorial_combo", "batch_covariates": {"VPA": "yes", "system": "HEK293T"}},
+        {"regex": "ASO1|606368[8-9]|6063690", "intervention": "ASO1", "condition": "treated", "contrast": "pure_ASO1", "batch_covariates": {"VPA": "no", "system": "HEK293T"}},
+        {"regex": "VPA|606368[5-7]", "intervention": "VPA_only", "condition": "control", "contrast": "factorial_combo", "batch_covariates": {"VPA": "yes", "system": "HEK293T"}},
+        {"regex": "control|606368[2-4]", "intervention": "untreated", "condition": "control", "contrast": "pure_ASO1", "batch_covariates": {"VPA": "no", "system": "HEK293T"}}
+      ]
+    },
+    "PRJNA1052769_dCas13d": {
+      "project": "PRJNA1052769", "expected_endpoint_runs": 4,
+      "sample_map": {},
+      "filter_note": "Select ~4 individual-guide RNA-Seq of 16; AMPLICON pooled guide-enrichment screen is excluded.",
+      "exclude_regex": ["AMPLICON", "pooled", "screen", "Dual-IN", "Dual-EX"], "matched_theta_proxy": false, "confound_flags": [],
+      "sample_rules": [
+        {"regex": "D.333.357|333.*357", "intervention": "dCas13d_D[333,357]", "condition": "treated", "contrast": "guide", "batch_covariates": {"effector": "dCas13d", "system": "HEK293T"}},
+        {"regex": "non.target|NT.guide|control", "intervention": "non_targeting_guide", "condition": "control", "contrast": "guide", "batch_covariates": {"effector": "dCas13d", "system": "HEK293T"}}
+      ]
+    },
+    "PRJEB13980_U7": {
+      "project": "PRJEB13980", "expected_endpoint_runs": 12,
+      "sample_map": {},
+      "filter_note": "All 12 are RNA-Seq. Resolve tissue/donor arms from ENA metadata before freezing contrasts.",
+      "exclude_regex": [], "matched_theta_proxy": false,
+      "confound_flags": ["VECTOR_CONTROL_CONFOUND: deposited RNA-seq compares untreated vs rAAV3b-U7-E53; U7-Scr was not RNA-sequenced"],
+      "sample_rules": [
+        {"regex": "(?:^|[^A-Za-z0-9])(?:U7.*E53|treated)(?:$|[^A-Za-z0-9])", "intervention": "U7snRNA-E53", "condition": "treated", "contrast": "U7_vs_untreated", "batch_covariates": {"vector": "rAAV3b", "dose": "1e5vg_per_cell", "tissue": "TO_RESOLVE", "donor": "TO_RESOLVE"}},
+        {"regex": "(?:^|[^A-Za-z0-9])(?:untreated|control)(?:$|[^A-Za-z0-9])", "intervention": "untreated", "condition": "control", "contrast": "U7_vs_untreated", "batch_covariates": {"vector": "none", "dose": "0", "tissue": "TO_RESOLVE", "donor": "TO_RESOLVE"}}
+      ]
+    }
+  },
+  "events": [
+    {"id": "SMN2_exon7_inclusion", "family": "GSE307431_PRJNA1321660", "locus": "SMN2", "primary": true, "effect": "cassette_exon_inclusion", "therapeutic_polarity_multiplier": 1},
+    {"id": "SMN2_exon7_inclusion", "family": "GSE167762_PRJNA705187", "locus": "SMN2", "primary": true, "effect": "cassette_exon_inclusion", "therapeutic_polarity_multiplier": 1},
+    {"id": "SMN2_exon7_inclusion", "family": "PRJNA1052769_dCas13d", "locus": "SMN2", "primary": true, "effect": "cassette_exon_inclusion", "therapeutic_polarity_multiplier": 1},
+    {"id": "DMD_exon53_inclusion", "family": "PRJEB13980_U7", "locus": "DMD", "primary": true, "effect": "cassette_exon_inclusion", "therapeutic_polarity_multiplier": -1}
+  ]
+}

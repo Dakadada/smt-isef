@@ -1,0 +1,8 @@
+{
+  "build_timestamp": "2026-08-30T00:00:00Z",
+  "evidence_sha256": "300579432fdc13ac7822788d3a80e9212a59d76e796e85e30735df9c6eb31566",
+  "panel_manifest_sha256": "b18643e83cd11cb30991d166df4a8214e25c105a7faa3c87a07d82fc4901c605",
+  "panel_sha256": "d0fe5e655dbae786b011b1ceeee8225c6e3e8f5ea486c6f38565ae2f30abd320",
+  "renderer_sha256": "517ba7829e9489329ed5a46a5a7fb6cb00d00f0ec46c9d03371f6c53a0ebcdb8",
+  "schema_version": "judge-demo-provenance/1"
+}

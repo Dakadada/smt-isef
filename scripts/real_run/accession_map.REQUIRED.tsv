@@ -1,0 +1,2 @@
+run_accession	intervention	condition	contrast	pair_set_id	covariates
+# PRJNA1052769 dCas13d arms are embedded in build_manifest.py. DMD is deferred: add all 12 PRJEB13980 rows only after its run-level arms are independently verified; do not infer them from the shared sample_title or guess donor/tissue.
