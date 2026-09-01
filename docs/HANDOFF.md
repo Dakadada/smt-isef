@@ -218,7 +218,9 @@ not overclaimed. A real Stage-A run is DOWNLOADING + COUNTING real data right no
 - ⛔ REVIEW BLOCKED: **#16** cross-disease panel — the vanished job `task-mtencg31-qlmog0` was not resumed. The fail-closed implementation is present on disk and locally verified (frozen registry digest/exact row binding, committed sequence digest, typed real-context sequence+mapping hashes, identity/polarity/clock/report-manifest checks; DMD fails pending without a committed sequence; renamed synthetic fixture and self-asserted verification regression tests). Focused 13/13 and full 117/117 tests pass. **Not LOCKED:** the mandatory `gpt-5.6-sol` adversarial gate cannot reach OpenAI from the current network-restricted sandbox; do not advance until that review runs clean and its findings are fixed/logged.
 - ✅ **#17** judge demo LOCKED (2026-08-31, see RESOLVED block below). 5-arm headline, arm-level null gate, snapshot `stageA-complete-20260831`, 117/117 smoke.
 - ✅ **#8** prospective superior-molecule design set — DONE + sol-medium review clean (see CHECKPOINT). Superior set EMPTY (no off-target corpus; honest, disclosed).
-- ⏳ PENDING: #9 cryptic-exon span-robustness (STMN2/UNC13A); #10 effector-class variance (ASO vs dCas13x, in-silico); #11 minigene compression tooling. (See CHECKPOINT for honesty-bounded scoping.)
+- ✅ DONE (Codex, independently reviewed CLEAN): #9 cryptic-exon span-robustness method
+  (non-locus fixture only), #10 effector-class variance (engine-internal in-silico),
+  and #11 minigene compression tooling. See the 2026-09-01 Codex checkpoint below.
 - 🅿️ #13 C2B34 shelved.
 
 ## Up in the air / next steps
