@@ -180,6 +180,16 @@ class DesignEngineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "run manifest content"):
             render_json(forged_report)
 
+    def test_render_rejects_swapped_candidates_and_duplicate_pareto_ids(self):
+        report = self.engine().design_for("SMN2_exon7_inclusion")
+        candidates = (replace(report.candidates[0], off_target_burden=0.0),) + report.candidates[1:]
+        swapped = replace(report, candidates=candidates)
+        with self.assertRaisesRegex(ValueError, "candidates do not match run manifest"):
+            render_json(swapped)
+        with self.assertRaisesRegex(ValueError, "Pareto identifiers must be unique"):
+            replace(report, pareto_candidate_ids=(report.pareto_candidate_ids[0],)
+                    + report.pareto_candidate_ids)
+
     def test_manifest_binds_backend_enumerator_and_configs(self):
         first = self.engine(folder=StatefulFolder(.1), enumerator=enumerator_a).design_for(
             "SMN2_exon7_inclusion")

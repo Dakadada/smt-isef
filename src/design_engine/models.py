@@ -227,6 +227,8 @@ class DesignReport:
         ids = [row.candidate.candidate_id for row in self.candidates]
         if len(ids) != len(set(ids)):
             raise ValueError("candidate IDs must be unique")
+        if len(self.pareto_candidate_ids) != len(set(self.pareto_candidate_ids)):
+            raise ValueError("Pareto identifiers must be unique")
         if set(self.pareto_candidate_ids) != {
             row.candidate.candidate_id for row in self.candidates if row.pareto
         }:
@@ -243,6 +245,9 @@ class DesignReport:
             raise ValueError("design report provenance requires run_manifest content")
         if _manifest_hash(manifest) != self.provenance.get("run_manifest_sha256"):
             raise ValueError("design report run manifest content does not match its digest")
+        if (_plain(manifest.get("scored_candidates")) != _plain(self.candidates)
+                or tuple(manifest.get("pareto_candidate_ids", ())) != self.pareto_candidate_ids):
+            raise ValueError("design report candidates do not match run manifest")
 
     def to_dict(self) -> dict[str, Any]:
         self.validate_for_rendering()

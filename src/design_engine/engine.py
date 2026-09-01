@@ -275,6 +275,8 @@ class DesignEngine:
         manifest = {
             "target_definition": definition,
             "generated_candidates": generated,
+            "scored_candidates": scored,
+            "pareto_candidate_ids": tuple(sorted(front)),
             "generation_config": self.generation_config,
             "adapter": adapter_identity,
             "offtarget": {

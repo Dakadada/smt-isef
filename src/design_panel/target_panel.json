@@ -1,0 +1,97 @@
+{
+  "schema_version": "design-target-panel/2",
+  "assembly": "GRCh38",
+  "targets": [
+    {
+      "target_id": "SMN2_exon7_inclusion",
+      "locus": "SMN2",
+      "display_name": "SMN2 exon 7",
+      "coordinate_status": "verified",
+      "coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:SMN2_exon7_inclusion",
+      "event_id": "SMN2_exon7_inclusion",
+      "assembly": "GRCh38",
+      "chrom": "chr5",
+      "strand": "+",
+      "transcript_version": "NM_017411.4",
+      "provenance_digest": "28e5cf102d947aa9af6e95a1814c770d737b911687208654f80c5834af718810",
+      "mapping_sha256": "23747adda378762b10b93e575133b9018a74e29e6b156d643ffc0da029661b7d"
+    },
+    {
+      "target_id": "DMD_exon53_inclusion",
+      "locus": "DMD",
+      "display_name": "DMD exon 53",
+      "coordinate_status": "verified",
+      "coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:DMD_exon53_inclusion",
+      "event_id": "DMD_exon53_inclusion",
+      "assembly": "GRCh38",
+      "chrom": "chrX",
+      "strand": "-",
+      "transcript_version": "NM_004006.3",
+      "provenance_digest": "1dba40aea500a45d9ca346ad3b44e8c2685c6853223a69b7c8142da5a91a2318"
+    },
+    {
+      "target_id": "STMN2_cryptic_exon",
+      "locus": "STMN2",
+      "display_name": "STMN2 TDP-43-associated cryptic exon",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+      "event_id": null
+    },
+    {
+      "target_id": "UNC13A_cryptic_exon",
+      "locus": "UNC13A",
+      "display_name": "UNC13A TDP-43-associated cryptic exon",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: verify transcript-version-exact GRCh38 event coordinates and strand",
+      "event_id": null
+    },
+    {
+      "target_id": "TDP43_CRYPTIC_ELAVL3",
+      "locus": "ELAVL3",
+      "display_name": "ELAVL3 candidate TDP-43 cryptic event",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "event_id": null
+    },
+    {
+      "target_id": "TDP43_CRYPTIC_KALRN",
+      "locus": "KALRN",
+      "display_name": "KALRN candidate TDP-43 cryptic event",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "event_id": null
+    },
+    {
+      "target_id": "TDP43_CRYPTIC_POLDIP3",
+      "locus": "POLDIP3",
+      "display_name": "POLDIP3 candidate TDP-43-associated splice event",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease relevance and transcript-version-exact GRCh38 event coordinates",
+      "event_id": null
+    },
+    {
+      "target_id": "MAPT_exon10",
+      "locus": "MAPT",
+      "display_name": "MAPT exon 10",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: verify therapeutic polarity and transcript-version-exact GRCh38 event coordinates",
+      "event_id": null
+    },
+    {
+      "target_id": "USH2A_pseudoexon",
+      "locus": "USH2A",
+      "display_name": "USH2A disease-associated pseudoexon",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: select variant/event and verify transcript-version-exact GRCh38 coordinates",
+      "event_id": null
+    },
+    {
+      "target_id": "CFTR_exon9",
+      "locus": "CFTR",
+      "display_name": "CFTR exon 9 splice event",
+      "coordinate_status": "to-verify",
+      "coordinate_provenance": "REQUIRED-INPUT: verify disease genotype, therapeutic polarity, and transcript-version-exact GRCh38 coordinates",
+      "event_id": null
+    }
+  ]
+}
