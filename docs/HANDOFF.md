@@ -21,6 +21,66 @@
   tautological whole-context geometry, and replaceable validation seam) and P2 stride
   issue were fixed. STMN2 and UNC13A remain unevaluated leads only.
 
+### CODEX ORCHESTRATION UPDATE 2026-09-01 UTC — exact state
+
+The user handed the stopped Claude plan to Codex and explicitly asked Codex to
+orchestrate subagents while preserving usage. Codex created the active goal “finish
+the existing project plan from task #8 onward,” reconstructed state from this file,
+created `docs/TODO.md`, and ran the pre-change baseline: **147/147 smoke tests green**.
+`docs/TODO.md` is now explicitly **CODEX ONLY**.
+
+What Codex completed:
+
+- **#8 was not redone.** Codex verified the prior checkpoint/commit `0cf3603` and
+  preserved its clean 12/12 focused + 147/147 smoke state.
+- **#9 is DONE, independently reviewed CLEAN, and checkpointed in commit `5cbb864`.**
+  See the task #9 block immediately above for exact scientific scope and closed
+  findings. No STMN2/UNC13A result was fabricated.
+- Codex ran separate implementer and independent-review threads. Implementers never
+  approved their own deliverables. No run logs, `work/`, or archived `pre/` content
+  were added to commits.
+
+What is still in flight (do not mark done yet):
+
+- **#10 effector-class characterization:** implementation exists uncommitted in
+  `src/effector_characterization/`, `tests/test_effector_characterization.py`,
+  `scripts/run_effector_characterization.py`, and
+  `artifacts/effector-characterization/`. First focused run was 9/9 and a combined
+  smoke run reached 172/172. Independent review found one P1: construction and
+  rendering shared dynamically replaceable engine/context derivation globals, so a
+  substituted self-consistent artifact could pass. The implementer is currently
+  fixing this by capturing/pinning the authenticated committed-context + actual-engine
+  derivation, binding its source identity, adding substitution teeth tests, and fixing
+  canonical `Z` filename normalization. **Await the existing subagent, re-review, then
+  commit only if clean.**
+- **#11 minigene compression tooling:** implementation exists uncommitted in
+  `src/minigene_context/` and `tests/test_minigene_context.py`. Compression/remapping,
+  reporter-domain propagation, source mapping/provenance, explicit artificial joins,
+  and top-level “not endogenous/not biological validation” wrapper are present. The
+  latest focused run was 9/9 and combined smoke reached 175/175. Re-review found one
+  remaining P1: wrapper validation did not bind the full target/engine output, allowing
+  rehashed event/design geometry, candidate scores, or `grna_shadow`. The implementer
+  is currently pinning the complete target/config and adding deterministic render-time
+  engine re-derivation plus exact teeth tests. **Await the existing subagent, re-review,
+  then commit only if clean.**
+
+Current stop rule: start no new work. Wait only for the already-running #10 and #11
+subagents, run their existing independent gates, update this handoff/TODO accurately,
+run the unified smoke suite, and checkpoint clean tasks. Task #16's additional lock
+gate remains deferred by the prior user decision and must not be silently called done.
+
+**For Claude returning later:** this section is the authoritative context restore.
+Read it together with the top task-#8 checkpoint and `docs/TODO.md`; do not re-run or
+re-implement #8/#9. `TODO.md` is labeled Codex-only because Codex owns execution of
+the queue, but Claude may use this HANDOFF to resume orchestration seamlessly if the
+user explicitly hands ownership back. First inspect `git status --short` and the live
+agent/task notifications. If the current Codex session already finished #10/#11, trust
+the later appended checkpoint instead of the “in flight” text above. Otherwise, wait
+for those two existing implementers, send each result through an independent read-only
+review, fix only reported material findings, run `make smoke-test`, and make scoped
+commits excluding `pre/slurm/logs/`, root `stageA-*.out`, and `work/`. Do not revive old
+Claude/Codex companion thread IDs: they were lost on reconnect.
+
 **Committed this checkpoint** (see commit for exact tree). Green: `make smoke-test` = **147/147**.
 
 ### DONE (implemented + tested; #16 gate DEFERRED by user, #8 gate CLEAN)
@@ -202,6 +262,26 @@ The `.git` read-only and OpenAI-network blocks above were specific to the `codex
 **Connectivity itself is fine** — confirmed separately via the plain `task` path (not `adversarial-review`): a `codex:codex-rescue` subagent forwarding a real repo command (`grep -n "verdict" pre/docs/s5-gate.txt`) got back correct, verbatim, line-numbered output in ~24s, one real tool call. So `task` is reliable here; it's specifically the nested self-review inside `adversarial-review` that has died twice.
 
 **New: a `codex` MCP server was added** (`/home/dashii/smt-isef/.mcp.json`, `command: codex`, `args: ["mcp-server"]`, pre-approved in `.claude/settings.local.json`'s `enabledMcpjsonServers`) as an alternate, non-CLI-wrapper path to Codex — untested as of this writing (needs a session restart for MCP tools to attach). Worth trying for the #16 review next, since it's a different code path than the one that's failed twice.
+
+## CODEX CHECKPOINT 2026-09-01 — tasks #8–#11 resumed
+
+The Codex takeover completed #9–#11 while preserving the prior #8 checkpoint. #9 is
+checkpointed in `5cbb864`; #10 and #11 are implemented, independently reviewed CLEAN,
+and are ready for the next scoped checkpoint commit. Focused evidence is #9 10/10,
+#10 12/12, and #11 13/13; the combined smoke suite reached 175/175. The only
+uncommitted paths intentionally in scope are `src/effector_characterization/`, its
+runner/tests/artifacts, and `src/minigene_context/` plus its tests. Unrelated
+`pre/slurm/logs/`, `stageA-*.out`, and `work/` remain untracked and must stay out of
+commits.
+
+The #10 review initially found a replaceable engine/context derivation seam; the fix
+captures approved dependencies, binds source/module hashes, reruns the authenticated
+engine at render time, and has substitution teeth tests. The #11 review initially
+found reporter provenance dropped downstream; the fix propagates full compression
+receipt metadata and adds a reporter wrapper. A second #11 review found target/config
+and shadow substitutions; the fix pins the complete target/config and deterministically
+reruns the approved engine. Both final independent reviews are CLEAN. Do not call
+#16 locked: its additional adversarial gate remains explicitly deferred by the user.
 
 ## UPDATE 2026-08-31 (main session) — #16 round 4/5: a P0 over-claim path found and closed; Codex gate DEFERRED by user
 

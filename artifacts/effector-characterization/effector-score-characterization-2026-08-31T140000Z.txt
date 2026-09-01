@@ -1,0 +1,50 @@
+PROSPECTIVE PREDICTION — NOT EXPERIMENTALLY VALIDATED. Candidates require independent experimental and safety validation.
+ENGINE-INTERNAL PROSPECTIVE CHARACTERIZATION ONLY. Scores describe the deterministic design engine's manufacturability heuristic on the committed SMN2 tiling; they are NOT measurements, NOT biological effector-class effects, and NOT efficacy or potency. Architecture P1 remains gated OFF.
+P1 gate: OFF — conditional-on-data effector-class analysis is not activated
+
+Frozen characterization timestamp: 2026-08-31T14:00:00+00:00
+Target: SMN2_exon7_inclusion (SMN2); committed context: 21 nt
+Score: manufacturability (engine heuristic)
+Formula: round(clamp(class_base + ASO_chemistry_delta - max(0, length-20)*0.01, 0, 1), 6)
+Class bases: {'ASO': 0.82, 'U7': 0.67, 'dCas13_gRNA': 0.58}
+ASO chemistry deltas: {'PMO': 0.08, '2MOE': 0.06, 'OMe': 0.04, 'LNA': -0.02}
+gRNA shadow: 4 nt on each side, clipped to context; this changes the physics footprint, not the manufacturability scalar.
+
+Tiling limitation: The committed 21-nt window yields only start 0 for each generated 18/20-nt length. Counts above 2 within ASO reflect chemistry variants, not independent positions or biological replicates.
+
+CLASS DISTRIBUTIONS:
+effector_class | count | min | max | mean | availability | limitation
+ASO | 8 | 0.800000 | 0.900000 | 0.860000 | observed-in-engine-output | —
+U7 | 2 | 0.670000 | 0.670000 | 0.670000 | observed-in-engine-output | —
+dCas13_gRNA | 0 | — | — | — | not-generated | No dCas13_gRNA candidates were generated: committed context length 21 nt is shorter than configured lengths 22, 24 nt. The configured 4-nt gRNA shadow therefore was not instantiated and no observed class distribution exists.
+
+CONFIGURED CHEMISTRY/LENGTH DISTRIBUTIONS:
+effector_class | chemistry | length | count | observed_scores | min | max | mean
+ASO | 2MOE | 18 | 1 | [0.88] | 0.880000 | 0.880000 | 0.880000
+ASO | 2MOE | 20 | 1 | [0.88] | 0.880000 | 0.880000 | 0.880000
+ASO | OMe | 18 | 1 | [0.86] | 0.860000 | 0.860000 | 0.860000
+ASO | OMe | 20 | 1 | [0.86] | 0.860000 | 0.860000 | 0.860000
+ASO | PMO | 18 | 1 | [0.9] | 0.900000 | 0.900000 | 0.900000
+ASO | PMO | 20 | 1 | [0.9] | 0.900000 | 0.900000 | 0.900000
+ASO | LNA | 18 | 1 | [0.8] | 0.800000 | 0.800000 | 0.800000
+ASO | LNA | 20 | 1 | [0.8] | 0.800000 | 0.800000 | 0.800000
+U7 | U7 snRNA cassette | 18 | 1 | [0.67] | 0.670000 | 0.670000 | 0.670000
+U7 | U7 snRNA cassette | 20 | 1 | [0.67] | 0.670000 | 0.670000 | 0.670000
+dCas13_gRNA | RNA-guided RNP | 22 | 0 | [] | — | — | —
+dCas13_gRNA | RNA-guided RNP | 24 | 0 | [] | — | — | —
+
+ACTUAL ENGINE CANDIDATES:
+candidate_id | class | chemistry | start | end | length | base | chemistry_delta | length_penalty | engine_score | gRNA_shadow
+SMN2_exon7_inclusion:ASO:2MOE:0-18 | ASO | 2MOE | 0 | 18 | 18 | 0.820000 | 0.060000 | 0.000000 | 0.880000 | —
+SMN2_exon7_inclusion:ASO:LNA:0-18 | ASO | LNA | 0 | 18 | 18 | 0.820000 | -0.020000 | 0.000000 | 0.800000 | —
+SMN2_exon7_inclusion:ASO:OMe:0-18 | ASO | OMe | 0 | 18 | 18 | 0.820000 | 0.040000 | 0.000000 | 0.860000 | —
+SMN2_exon7_inclusion:ASO:PMO:0-18 | ASO | PMO | 0 | 18 | 18 | 0.820000 | 0.080000 | 0.000000 | 0.900000 | —
+SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-18 | U7 | U7 snRNA cassette | 0 | 18 | 18 | 0.670000 | 0.000000 | 0.000000 | 0.670000 | —
+SMN2_exon7_inclusion:ASO:2MOE:0-20 | ASO | 2MOE | 0 | 20 | 20 | 0.820000 | 0.060000 | 0.000000 | 0.880000 | —
+SMN2_exon7_inclusion:ASO:LNA:0-20 | ASO | LNA | 0 | 20 | 20 | 0.820000 | -0.020000 | 0.000000 | 0.800000 | —
+SMN2_exon7_inclusion:ASO:OMe:0-20 | ASO | OMe | 0 | 20 | 20 | 0.820000 | 0.040000 | 0.000000 | 0.860000 | —
+SMN2_exon7_inclusion:ASO:PMO:0-20 | ASO | PMO | 0 | 20 | 20 | 0.820000 | 0.080000 | 0.000000 | 0.900000 | —
+SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-20 | U7 | U7 snRNA cassette | 0 | 20 | 20 | 0.670000 | 0.000000 | 0.000000 | 0.670000 | —
+
+Provenance:
+{"approved_derivation_module_sha256": "d3e58d4ec68f76cbbdfa38769c53fe79376f8a6273eccde7ebb393b189a3f3ff", "approved_derivation_source_sha256": "8893b290964e76cb999297c996d874bd380da19b11bbae158cd0c2410c18bb23", "binding_sequence_sha256": "9ecb7623514e3b71af2ddc7aaee6d9c5bbc32557e299b2d0f20ab2ed0af69622", "candidate_count": 10, "characterization_manifest_sha256": "242ff551a1de6d8d7cbac667a604bb4f9927f5e559f9cf6d1edf74fe1ca99f0a", "committed_context_source": "design_panel.panel.committed_real_contexts", "coordinate_registry_sha256": "499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51", "design_engine_module_sha256": "1c6e4299c610e414d6759c618172006072792ed395a2c10e1f59217c0e12d419", "engine_api": "design_engine.engine.design_for", "engine_report_sha256": "c32829a266ab2146ef69548a954d1ac793d6331c9d392111e5d85499237f5a3d", "engine_run_manifest_sha256": "2a31ddb79c3d2215e1c8945ff1398e72dcb511e3737062541afabe1d03e5fbf8", "generation_config": {"aso_chemistries": ["2MOE", "OMe", "PMO", "LNA"], "aso_lengths": [18, 20], "grna_lengths": [22, 24], "grna_shadow": 4, "max_candidates": 160, "stride": 4, "u7_lengths": [18, 20]}, "manufacturability_function_source_sha256": "3c519e1fdf72d3972cb89a0351433b2704b0cc84b86bf4940816abeb692ee81d", "mapping_sha256": "23747adda378762b10b93e575133b9018a74e29e6b156d643ffc0da029661b7d", "p1_activation_criteria": "repeated interventions in at least 2 effector classes at at least 2 loci", "p1_activation_met": false, "panel_coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:SMN2_exon7_inclusion", "prediction_status": "prospective-not-experimentally-validated", "score_rule_probe_sha256": "84bb993541f0b1a80588ccbde3804ab62c2edc0956d663d668ac5f49d1f6e86e", "sequence_provenance": "ISS-N1 target reconstructed as the reverse complement of published Anti-N1 5'-GATTCACTTTCATAATGCTGG-3'; Singh et al., Mol Cell Biol 2006, PMID 16449646, PMCID PMC1367187. GRCh38 mapping uses verified SMN2 exon-7 end chr5:70076574 and published intron-7 positions 10-30. Transcript identity corrected to NCBI RefSeq SMN2 MANE Select NM_017411.4; NM_000344.4 is SMN1. Retrieved/verified 2026-08-30.", "tiling_disclosure": "The committed 21-nt window yields only start 0 for each generated 18/20-nt length. Counts above 2 within ASO reflect chemistry variants, not independent positions or biological replicates.", "tiling_start_positions": [0]}

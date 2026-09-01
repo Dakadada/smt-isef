@@ -1,0 +1,415 @@
+{
+  "aso_chemistry_deltas": {
+    "2MOE": 0.06,
+    "LNA": -0.02,
+    "OMe": 0.04,
+    "PMO": 0.08
+  },
+  "banner": "PROSPECTIVE PREDICTION — NOT EXPERIMENTALLY VALIDATED. Candidates require independent experimental and safety validation.",
+  "candidates": [
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:2MOE:0-18",
+      "chemistry": "2MOE",
+      "chemistry_delta": 0.06,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 18,
+      "engine_score": 0.88,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 18,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:LNA:0-18",
+      "chemistry": "LNA",
+      "chemistry_delta": -0.02,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 18,
+      "engine_score": 0.8,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 18,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:OMe:0-18",
+      "chemistry": "OMe",
+      "chemistry_delta": 0.04,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 18,
+      "engine_score": 0.86,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 18,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:PMO:0-18",
+      "chemistry": "PMO",
+      "chemistry_delta": 0.08,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 18,
+      "engine_score": 0.9,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 18,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-18",
+      "chemistry": "U7 snRNA cassette",
+      "chemistry_delta": 0.0,
+      "class_base": 0.67,
+      "effector_class": "U7",
+      "end": 18,
+      "engine_score": 0.67,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 18,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:2MOE:0-20",
+      "chemistry": "2MOE",
+      "chemistry_delta": 0.06,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 20,
+      "engine_score": 0.88,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 20,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:LNA:0-20",
+      "chemistry": "LNA",
+      "chemistry_delta": -0.02,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 20,
+      "engine_score": 0.8,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 20,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:OMe:0-20",
+      "chemistry": "OMe",
+      "chemistry_delta": 0.04,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 20,
+      "engine_score": 0.86,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 20,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:ASO:PMO:0-20",
+      "chemistry": "PMO",
+      "chemistry_delta": 0.08,
+      "class_base": 0.82,
+      "effector_class": "ASO",
+      "end": 20,
+      "engine_score": 0.9,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 20,
+      "length_penalty": 0.0,
+      "start": 0
+    },
+    {
+      "candidate_id": "SMN2_exon7_inclusion:U7:U7 snRNA cassette:0-20",
+      "chemistry": "U7 snRNA cassette",
+      "chemistry_delta": 0.0,
+      "class_base": 0.67,
+      "effector_class": "U7",
+      "end": 20,
+      "engine_score": 0.67,
+      "grna_shadow_end": null,
+      "grna_shadow_start": null,
+      "length": 20,
+      "length_penalty": 0.0,
+      "start": 0
+    }
+  ],
+  "claim_boundary": "ENGINE-INTERNAL PROSPECTIVE CHARACTERIZATION ONLY. Scores describe the deterministic design engine's manufacturability heuristic on the committed SMN2 tiling; they are NOT measurements, NOT biological effector-class effects, and NOT efficacy or potency. Architecture P1 remains gated OFF.",
+  "class_bases": {
+    "ASO": 0.82,
+    "U7": 0.67,
+    "dCas13_gRNA": 0.58
+  },
+  "class_summaries": [
+    {
+      "availability": "observed-in-engine-output",
+      "candidate_count": 8,
+      "configured_lengths": [
+        18,
+        20
+      ],
+      "effector_class": "ASO",
+      "limitation": null,
+      "maximum": 0.9,
+      "mean": 0.86,
+      "minimum": 0.8,
+      "observed_scores": [
+        0.8,
+        0.8,
+        0.86,
+        0.86,
+        0.88,
+        0.88,
+        0.9,
+        0.9
+      ]
+    },
+    {
+      "availability": "observed-in-engine-output",
+      "candidate_count": 2,
+      "configured_lengths": [
+        18,
+        20
+      ],
+      "effector_class": "U7",
+      "limitation": null,
+      "maximum": 0.67,
+      "mean": 0.67,
+      "minimum": 0.67,
+      "observed_scores": [
+        0.67,
+        0.67
+      ]
+    },
+    {
+      "availability": "not-generated",
+      "candidate_count": 0,
+      "configured_lengths": [
+        22,
+        24
+      ],
+      "effector_class": "dCas13_gRNA",
+      "limitation": "No dCas13_gRNA candidates were generated: committed context length 21 nt is shorter than configured lengths 22, 24 nt. The configured 4-nt gRNA shadow therefore was not instantiated and no observed class distribution exists.",
+      "maximum": null,
+      "mean": null,
+      "minimum": null,
+      "observed_scores": []
+    }
+  ],
+  "context_length": 21,
+  "distributions": [
+    {
+      "candidate_count": 1,
+      "chemistry": "2MOE",
+      "effector_class": "ASO",
+      "length": 18,
+      "maximum": 0.88,
+      "mean": 0.88,
+      "minimum": 0.88,
+      "observed_scores": [
+        0.88
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "2MOE",
+      "effector_class": "ASO",
+      "length": 20,
+      "maximum": 0.88,
+      "mean": 0.88,
+      "minimum": 0.88,
+      "observed_scores": [
+        0.88
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "OMe",
+      "effector_class": "ASO",
+      "length": 18,
+      "maximum": 0.86,
+      "mean": 0.86,
+      "minimum": 0.86,
+      "observed_scores": [
+        0.86
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "OMe",
+      "effector_class": "ASO",
+      "length": 20,
+      "maximum": 0.86,
+      "mean": 0.86,
+      "minimum": 0.86,
+      "observed_scores": [
+        0.86
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "PMO",
+      "effector_class": "ASO",
+      "length": 18,
+      "maximum": 0.9,
+      "mean": 0.9,
+      "minimum": 0.9,
+      "observed_scores": [
+        0.9
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "PMO",
+      "effector_class": "ASO",
+      "length": 20,
+      "maximum": 0.9,
+      "mean": 0.9,
+      "minimum": 0.9,
+      "observed_scores": [
+        0.9
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "LNA",
+      "effector_class": "ASO",
+      "length": 18,
+      "maximum": 0.8,
+      "mean": 0.8,
+      "minimum": 0.8,
+      "observed_scores": [
+        0.8
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "LNA",
+      "effector_class": "ASO",
+      "length": 20,
+      "maximum": 0.8,
+      "mean": 0.8,
+      "minimum": 0.8,
+      "observed_scores": [
+        0.8
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "U7 snRNA cassette",
+      "effector_class": "U7",
+      "length": 18,
+      "maximum": 0.67,
+      "mean": 0.67,
+      "minimum": 0.67,
+      "observed_scores": [
+        0.67
+      ]
+    },
+    {
+      "candidate_count": 1,
+      "chemistry": "U7 snRNA cassette",
+      "effector_class": "U7",
+      "length": 20,
+      "maximum": 0.67,
+      "mean": 0.67,
+      "minimum": 0.67,
+      "observed_scores": [
+        0.67
+      ]
+    },
+    {
+      "candidate_count": 0,
+      "chemistry": "RNA-guided RNP",
+      "effector_class": "dCas13_gRNA",
+      "length": 22,
+      "maximum": null,
+      "mean": null,
+      "minimum": null,
+      "observed_scores": []
+    },
+    {
+      "candidate_count": 0,
+      "chemistry": "RNA-guided RNP",
+      "effector_class": "dCas13_gRNA",
+      "length": 24,
+      "maximum": null,
+      "mean": null,
+      "minimum": null,
+      "observed_scores": []
+    }
+  ],
+  "generated_at": "2026-08-31T14:00:00+00:00",
+  "grna_shadow_nt": 4,
+  "length_penalty_per_nt": 0.01,
+  "length_penalty_threshold": 20,
+  "locus": "SMN2",
+  "p1_status": "OFF — conditional-on-data effector-class analysis is not activated",
+  "prediction_status": "prospective-not-experimentally-validated",
+  "provenance": {
+    "approved_derivation_module_sha256": "d3e58d4ec68f76cbbdfa38769c53fe79376f8a6273eccde7ebb393b189a3f3ff",
+    "approved_derivation_source_sha256": "8893b290964e76cb999297c996d874bd380da19b11bbae158cd0c2410c18bb23",
+    "binding_sequence_sha256": "9ecb7623514e3b71af2ddc7aaee6d9c5bbc32557e299b2d0f20ab2ed0af69622",
+    "candidate_count": 10,
+    "characterization_manifest_sha256": "242ff551a1de6d8d7cbac667a604bb4f9927f5e559f9cf6d1edf74fe1ca99f0a",
+    "committed_context_source": "design_panel.panel.committed_real_contexts",
+    "coordinate_registry_sha256": "499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51",
+    "design_engine_module_sha256": "1c6e4299c610e414d6759c618172006072792ed395a2c10e1f59217c0e12d419",
+    "engine_api": "design_engine.engine.design_for",
+    "engine_report_sha256": "c32829a266ab2146ef69548a954d1ac793d6331c9d392111e5d85499237f5a3d",
+    "engine_run_manifest_sha256": "2a31ddb79c3d2215e1c8945ff1398e72dcb511e3737062541afabe1d03e5fbf8",
+    "generation_config": {
+      "aso_chemistries": [
+        "2MOE",
+        "OMe",
+        "PMO",
+        "LNA"
+      ],
+      "aso_lengths": [
+        18,
+        20
+      ],
+      "grna_lengths": [
+        22,
+        24
+      ],
+      "grna_shadow": 4,
+      "max_candidates": 160,
+      "stride": 4,
+      "u7_lengths": [
+        18,
+        20
+      ]
+    },
+    "manufacturability_function_source_sha256": "3c519e1fdf72d3972cb89a0351433b2704b0cc84b86bf4940816abeb692ee81d",
+    "mapping_sha256": "23747adda378762b10b93e575133b9018a74e29e6b156d643ffc0da029661b7d",
+    "p1_activation_criteria": "repeated interventions in at least 2 effector classes at at least 2 loci",
+    "p1_activation_met": false,
+    "panel_coordinate_provenance": "event_junctions.GRCh38.tsv:sha256:499ae7dd7eee6715eeadf8c2a7a2a68f6aa0de1a9f679afbb8bf5098d98f0f51:SMN2_exon7_inclusion",
+    "prediction_status": "prospective-not-experimentally-validated",
+    "score_rule_probe_sha256": "84bb993541f0b1a80588ccbde3804ab62c2edc0956d663d668ac5f49d1f6e86e",
+    "sequence_provenance": "ISS-N1 target reconstructed as the reverse complement of published Anti-N1 5'-GATTCACTTTCATAATGCTGG-3'; Singh et al., Mol Cell Biol 2006, PMID 16449646, PMCID PMC1367187. GRCh38 mapping uses verified SMN2 exon-7 end chr5:70076574 and published intron-7 positions 10-30. Transcript identity corrected to NCBI RefSeq SMN2 MANE Select NM_017411.4; NM_000344.4 is SMN1. Retrieved/verified 2026-08-30.",
+    "tiling_disclosure": "The committed 21-nt window yields only start 0 for each generated 18/20-nt length. Counts above 2 within ASO reflect chemistry variants, not independent positions or biological replicates.",
+    "tiling_start_positions": [
+      0
+    ]
+  },
+  "schema_version": "engine-effector-score-characterization/1",
+  "score_formula": "round(clamp(class_base + ASO_chemistry_delta - max(0, length-20)*0.01, 0, 1), 6)",
+  "score_name": "manufacturability (engine heuristic)",
+  "target_id": "SMN2_exon7_inclusion"
+}
