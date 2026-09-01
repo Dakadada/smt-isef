@@ -266,12 +266,9 @@ The `.git` read-only and OpenAI-network blocks above were specific to the `codex
 ## CODEX CHECKPOINT 2026-09-01 — tasks #8–#11 resumed
 
 The Codex takeover completed #9–#11 while preserving the prior #8 checkpoint. #9 is
-checkpointed in `5cbb864`; #10 and #11 are implemented, independently reviewed CLEAN,
-and are ready for the next scoped checkpoint commit. Focused evidence is #9 10/10,
-#10 12/12, and #11 13/13; the combined smoke suite reached 175/175. The only
-uncommitted paths intentionally in scope are `src/effector_characterization/`, its
-runner/tests/artifacts, and `src/minigene_context/` plus its tests. Unrelated
-`pre/slurm/logs/`, `stageA-*.out`, and `work/` remain untracked and must stay out of
+checkpointed in `5cbb864`; #10 and #11 are checkpointed in `b6840c6`. Focused evidence
+is #9 10/10, #10 12/12, and #11 13/13; the unified smoke suite is 182/182. Unrelated
+`pre/slurm/logs/`, `stageA-*.out`, and `work/` remain untracked and were kept out of
 commits.
 
 The #10 review initially found a replaceable engine/context derivation seam; the fix

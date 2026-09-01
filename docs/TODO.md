@@ -21,9 +21,10 @@ Claude or another orchestrator unless the user explicitly changes ownership.
   explicit minigene domain label; this is tooling, not biological validation.
   Independently reviewed CLEAN; focused 13/13; full target/configuration re-derivation
   and artificial-junction gates are enforced.
-- [ ] Run the standing independent review and fix/log findings after each of tasks
+- [x] Run the standing independent review and fix/log findings after each of tasks
   #9, #10, and #11; run focused tests plus `make smoke-test`; checkpoint each clean
-  increment.
+  increment. Final evidence: #9 10/10, #10 12/12, #11 13/13, unified 182/182;
+  checkpoints `5cbb864` and `b6840c6`.
 - [ ] Task #16 additional adversarial lock gate — deferred by prior user decision,
   not silently treated as completed.
 
