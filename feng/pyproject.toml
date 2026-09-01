@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "feng"
+version = "0.0.0"
+description = "Clean-room infrastructure for the prospective Feng arm"
+requires-python = ">=3.11"
+
+[project.scripts]
+feng = "feng.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

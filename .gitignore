@@ -2,6 +2,16 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 data
+# feng/src/feng/data is the source data-manifest package (not downloaded data, which
+# lives in scratch/pool) — keep it tracked despite the broad `data` rule above.
+!feng/src/feng/data/
+!feng/src/feng/data/**
+# but the broad negation above must not drag bytecode back in:
+feng/src/feng/data/**/__pycache__/
+feng/src/feng/data/**/*.pyc
 slurm/logs/
+# SLURM job logs (feng arm): keep the dir, not the run outputs
+feng/logs/*
+!feng/logs/.gitkeep
 *.egg-info/
 .pytest_cache/

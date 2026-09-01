@@ -1,0 +1,8 @@
+chrToy	feng_fixture	gene	501	1600	.	+	.	gene_id "gene1"; gene_name "TinyGene";
+chrToy	feng_fixture	transcript	501	1600	.	+	.	gene_id "gene1"; transcript_id "tx_include"; gene_name "TinyGene";
+chrToy	feng_fixture	exon	501	600	.	+	.	gene_id "gene1"; transcript_id "tx_include"; exon_number "1";
+chrToy	feng_fixture	exon	1001	1100	.	+	.	gene_id "gene1"; transcript_id "tx_include"; exon_number "2";
+chrToy	feng_fixture	exon	1501	1600	.	+	.	gene_id "gene1"; transcript_id "tx_include"; exon_number "3";
+chrToy	feng_fixture	transcript	501	1600	.	+	.	gene_id "gene1"; transcript_id "tx_skip"; gene_name "TinyGene";
+chrToy	feng_fixture	exon	501	600	.	+	.	gene_id "gene1"; transcript_id "tx_skip"; exon_number "1";
+chrToy	feng_fixture	exon	1501	1600	.	+	.	gene_id "gene1"; transcript_id "tx_skip"; exon_number "2";

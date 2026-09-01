@@ -1,0 +1,22 @@
+name: feng
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - viennarna=2.7.2
+  - intarna=3.4.1
+  - biopython
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - openpyxl
+  - matplotlib
+  - pytest
+  - star
+  - samtools
+  - bcftools
+  - bedtools
+  - rmats=4.3.0
+
