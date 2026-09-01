@@ -282,6 +282,25 @@ and shadow substitutions; the fix pins the complete target/config and determinis
 reruns the approved engine. Both final independent reviews are CLEAN. Do not call
 #16 locked: its additional adversarial gate remains explicitly deferred by the user.
 
+### FINAL PLAN STATUS — documented for handoff
+
+The Codex-owned #8–#11 execution queue is complete. Remaining plan items are:
+
+- **Deferred:** #16's independent adversarial lock gate, by explicit user decision.
+- **Pending compute/data:** report harmonized dPSI from Stage-A; wire verified Ensembl
+  transcript sequences into the design engine/panel; and run the real benchmark with
+  SpliceAI, Pangolin, ViennaRNA, and a verified folding backend once inputs are ready.
+- **Optional:** resolve DMD intervention arms to add a second locus.
+- **Blocked external dependency:** `docs/lab-request.md` awaits partner densitometry;
+  Phase B must not consume PSI until real measurements arrive.
+- **Shelved:** #13 C2B34 remains shelved under the causal-timing objection.
+- **Scientific boundary:** STMN2/UNC13A remain prior-art leads only, and #8's superior
+  set remains honestly empty until a real off-target corpus and richer transcript data
+  are wired.
+
+This is the authoritative end-state of the Codex takeover; no remaining item above was
+silently marked complete.
+
 ## UPDATE 2026-08-31 (main session) — #16 round 4/5: a P0 over-claim path found and closed; Codex gate DEFERRED by user
 
 Rounds 1-3 closed 4 of 5 blockers. The 5th (round 4) was removed cleanly, but firing the
