@@ -6,6 +6,21 @@
 
 ## ★ CHECKPOINT 2026-08-31 ~23:30 EDT — DONE vs NOT (handing off to Codex for #9–#11)
 
+### RESUME UPDATE 2026-09-01 UTC — task #9 CLEAN
+
+- **#9 prospective span-robustness method — DONE, independent review CLEAN.** Added
+  `src/span_robustness/` and `tests/test_span_robustness.py` (10/10 focused). Because
+  STMN2/UNC13A still lack committed cryptic-exon contexts and qualifying matched
+  intervention reads, the deliverable is deliberately a closed-world, allowlisted
+  **non-locus method/engine-wiring fixture**, not a locus result and not architecture
+  P4's data-conditional benchmark. It uses the actual `EffectorPhysicsAdapter` with
+  explicit accessible/silencer fixture geometry, produces increase/decrease/abstain
+  cases, binds sequence/event/config/backend/package/predictor source provenance, and
+  deterministically re-derives predictions and summaries before serialization. The
+  gate's P1 findings (arbitrary lead contexts, self-asserted engine/provenance,
+  tautological whole-context geometry, and replaceable validation seam) and P2 stride
+  issue were fixed. STMN2 and UNC13A remain unevaluated leads only.
+
 **Committed this checkpoint** (see commit for exact tree). Green: `make smoke-test` = **147/147**.
 
 ### DONE (implemented + tested; #16 gate DEFERRED by user, #8 gate CLEAN)
