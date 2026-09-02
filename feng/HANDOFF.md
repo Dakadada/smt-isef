@@ -24,9 +24,58 @@ arm, still open/optional.
 `$SCRATCH/feng/phase3/rmats/{F18OMe_vs_scrambled_OMe,F18MOE_vs_scrambled_MOE,F20PMO_vs_scrambled_PMO}`.
 Job 21824983 finished, queue empty. Results stay SEALED pre-freeze (do NOT read ΔPSI).
 
-**Still open after atlas LOWs:** Arm D step-3 (strata matching + score impls, use
-`positive_interval_to_exon_key`); Arm B hg19->v50 liftover; Codex sol standing-gate re-review as
-durable gate of record (Codex weekly limit resets Sep 7 ~01:29).
+**Arm B liftover: DONE + COMMITTED `8497f34`.** `feng/src/feng/rbp/liftover.py` (377 lines,
+self-contained UCSC-chain parser+mapper, NO external tool) lifts hg19 eCLIP peaks to GRCh38(v50),
+re-stamps assembly=GRCh38 + source/target + chain path/SHA so encode.py's hard fence accepts a join;
+raw hg19 still rejected, unmapped/multimap dropped+counted. test_rbp_liftover.py 10 passed. Fence NOT
+weakened. FOLLOW-UP for real Phase-10 run: stage `hg19ToHg38.over.chain.gz`
+(https://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz, ~230KB) on
+scratch, pass path to load_chain_file. feng-env has NO pyliftover/CrossMap/liftOver/pysam — pure-Python
+engine removes that dependency. Concordance test itself NOT run (post-freeze, Phase 10).
+
+**Arm D step-3: DONE + gate-clean (fallback) + COMMITTED.** Fix-pass resolved all 4 gate findings;
+Claude verified on disk (suite 163 passed / 3 skipped; freeze-seal test unchanged; anchor-row logic
+read + freeze-safe). Strata schema now 14 cols incl is_positive + coords (chrom/exon_start_0base/
+exon_end/strand); 808 rows = 8 positives (is_positive anchor, match_distance 0, coords from own
+universe row) × (1 + 100 backgrounds); scores.py runs on it with no missing-column error; sbatch
+sharded 32-way idempotent (per-shard .done, skip-if-exists, atomic mv, merge-when-all), NOT launched.
+Durable Codex sol gate STILL deferred to Sep 7 — re-run whole step-3 gate then as gate of record.
+Files (feng/src/feng/bench/): match.py (build_strata — control-only 5-covariate matching PSI/junction/
+CPM/exon-len/GC, log1p on the 3 heavy-tailed, caliper 1.0 SD, deterministic nearest-100 exon_key
+tiebreak, positives removed from pool, assert_no_contrast_fields guard, fail-closed nulls/dupes/zero-
+spread; map_positives_to_universe via positive_interval_to_exon_key; check_kill_gates; CLI), scores.py
+(18-nt Hamming-to-nusinersen-RC baseline full + IntaRNA wrapper never-fabricate + CLI), permute.py
+(Phase-9 ΔR/10^6-perm test HARD-GUARDED: assert_phase9_unlocked raises unless FENG_PHASE9_UNLOCK=1/
+sentinel; run_phase9_test body NotImplementedError; only pure percentile primitive testable; seed
+20260901). feng/scripts/bench_intarna_scores.sbatch scaffold (NOT launched). 3 test files.
+- Freeze seal FIXED: test bans substring "terminal" in non-docstring literals across bench/field/rbp/
+  gate; renamed FENG_TERMINAL_UNLOCK->FENG_PHASE9_UNLOCK etc. test_freeze_seal 17 passed.
+- IntaRNA PRESENT: /home/dashii/orcd/pool/feng-env/bin/IntaRNA (+RNAplfold, samtools; pysam absent ->
+  samtools fallback live). Fixture: complementary -27.0 kcal/mol, polyA 0.0.
+- Kill-gate ALL 8 PASS (eligible bg 2999-14352, 100 selected each; all in_universe+detectable).
+- Full suite 162 passed / 3 skipped / 0 fail. Claude read permute.py + match.py directly: freeze-safe
+  confirmed (no ΔR/rank/perm readout, control-only, positives excluded).
+- Adversarial fallback gate (fork ae639f9be47421056) RETURNED **DO-NOT-ADVANCE**: freeze discipline
+  CLEAN (seal genuine/AST-based/unweakened, no ΔR/rank/perm computed, control-only confirmed, matching
+  logic sound + substantively tested), but 2 HIGH seam defects + MED + LOW. FIX-PASS IN FLIGHT (resumed
+  builder fork af1c8ba310560fc55):
+  * HIGH-1 strata output lacks coord cols (chrom/exon_start_0base/exon_end/strand) scores.py needs ->
+    sweep ValueError row 1. Fix: carry coords from universe into strata block.
+  * HIGH-2 positives excluded from scored artifact -> 8 positives never scored, permute has nothing to
+    rank. Fix: emit positive anchor rows flagged is_positive into the scored input, w/ coords+covariates
+    (strata parquet = scoring input = ranking input).
+  * MED match->score seam untested (both green in isolation). Fix: add end-to-end seam test.
+  * LOW sbatch not idempotent on mit_preemptable. Fix: per-shard .done / skip-if-exists.
+  Freeze-safe (adding positive rows to SCORE input is fine — scores are pure sequence fns; ranking stays
+  in guarded permute). On green + re-check -> commit.
+
+**OPEN FREEZE-DECISION (user, before Phase-8 FREEZE):** PLAN L146 says matching uses "ScrMOE controls
+ONLY", but the committed detectable universe pools scrambled+untreated controls, so match covariates
+are computed over BOTH control types. Fork flagged, did NOT change pre-freeze (correct). Resolving =
+either (a) accept scrambled+untreated as the control definition and amend the prereg wording, or (b)
+rebuild the universe on ScrMOE-only. Decide before FREEZE; not a step-3 code bug.
+
+Codex sol durable gate still deferred to Sep 7 (~01:29 reset).
 
 ---
 
