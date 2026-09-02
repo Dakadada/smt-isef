@@ -1,0 +1,126 @@
+source	source_locator	aso_id	region	start	end	segments	distinct_window_key	block_id	display_direction	direction_eligible	n_guides_containing_hull	local_z_median	local_z_q1	local_z_q3	local_z_min	local_z_max	local_z_positive_n	local_z_negative_n	local_z_zero_n	direction_relation	result_state
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	01-15	E7	320	334	320-334	E7:320..334	E7-1	inclusion decrease	true	19	0.387326	-0.21792	0.733575	-0.983072	1.08311	12	7	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	06-20	E7	325	339	325-339	E7:325..339	E7-1	inclusion increase	true	19	0.403644	0.00153541	0.749774	-1.01985	2.59754	15	4	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	11-25	E7	330	344	330-344	E7:330..344	E7-2	inclusion decrease	true	19	0.351484	-0.269394	0.798181	-1.82325	2.59754	12	7	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	16-30	E7	335	349	335-349	E7:335..349	E7-2	inclusion decrease	true	19	0.241577	-0.240708	0.832201	-5.19716	1.83156	11	7	1	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	21-35	E7	340	354	340-354	E7:340..354	E7-2	inclusion decrease	true	19	-0.268782	-7.16513	0.297182	-41.3822	1.1942	7	11	1	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	26-40	E7	345	360	345-355;357-360	E7:345..360	E7-3	inclusion decrease	true	17	-10.9361	-19.5533	-6.48274	-41.3822	-1.0175	0	17	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	31-45	E7	350	365	350-355;357-365	E7:350..365	E7-3	inclusion decrease	true	17	-3.50231	-10.1761	-2.22556	-28.0894	1.03456	2	15	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	36-50	E7	355	370	355-355;357-370	E7:355..370	E7-3	inclusion increase	true	17	-1.298	-3.09003	-0.581094	-4.71941	1.32043	3	14	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 1B and 2	40-54	E7	360	374	360-374	E7:360..374	E7-3	neutral	false	19	-0.581094	-0.897964	0.755434	-4.50851	1.64189	7	12	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	08-22	E7	327	341	327-341	E7:327..341	E7-1	assay-discordant	false	19	0.418632	-0.373098	0.839741	-1.82325	2.59754	13	6	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	07-21	E7	326	340	326-340	E7:326..340	E7-1	inclusion increase	true	19	0.403644	-0.0983555	0.813587	-1.82325	2.59754	14	5	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	05-19	E7	324	338	324-338	E7:324..338	E7-1	unresolved, not digitized	false	19	0.418632	0.00153541	0.749774	-0.890609	2.59754	15	4	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	04-18	E7	323	337	323-337	E7:323..337	E7-1	inclusion increase	true	19	0.387326	-0.0915181	0.731723	-0.890609	1.08311	14	5	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	03-17	E7	322	336	322-336	E7:322..336	E7-1	unresolved, not digitized	false	19	0.387326	-0.348526	0.731723	-0.983072	1.08311	12	7	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	02-16	E7	321	335	321-335	E7:321..335	E7-1	assay-discordant	false	19	0.403644	-0.341689	0.733575	-0.983072	1.08311	13	6	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	05-20	E7	324	339	324-339	E7:324..339	E7-1	unresolved, not digitized	false	17	0.418632	0.00230938	0.765244	-0.890609	2.59754	14	3	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	12-23	E7	331	342	331-342	E7:331..342	E7-2	inclusion decrease	true	25	0.380025	-0.212635	0.817551	-1.82325	2.59754	16	9	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	11-22	E7	330	341	330-341	E7:330..341	E7-2	inclusion decrease	true	25	0.380025	-0.212635	0.817551	-1.82325	2.59754	16	9	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	10-21	E7	329	340	329-340	E7:329..340	E7-2	unresolved, not digitized	false	25	0.403644	-0.212635	0.817551	-1.82325	2.59754	17	8	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	09-20	E7	328	339	328-339	E7:328..339	E7-1	assay-discordant	false	25	0.403644	-0.197472	0.817551	-1.82325	2.59754	18	7	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	08-19	E7	327	338	327-338	E7:327..338	E7-1	unresolved, not digitized	false	25	0.403644	-0.197472	0.765244	-1.82325	2.59754	18	7	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	07-18	E7	326	337	326-337	E7:326..337	E7-1	unresolved, not digitized	false	25	0.387326	-0.183798	0.734305	-1.82325	2.59754	18	7	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	06-17	E7	325	336	325-336	E7:325..336	E7-1	unresolved, not digitized	false	25	0.380025	-0.197472	0.732844	-1.01985	2.59754	17	8	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	05-16	E7	324	335	324-335	E7:324..335	E7-1	unresolved, not digitized	false	25	0.403644	-0.183798	0.734305	-0.983072	2.59754	18	7	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	04-15	E7	323	334	323-334	E7:323..334	E7-1	inclusion decrease	true	25	0.380025	-0.197472	0.730602	-0.983072	1.08311	16	9	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	03-14	E7	322	333	322-333	E7:322..333	E7-1	unresolved, not digitized	false	25	0.387326	-0.252043	0.730602	-0.983072	1.08311	15	10	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	36-53	E7	355	373	355-355;357-373	E7:355..373	E7-3	inclusion decrease	true	11	-0.648952	-1.39473	-0.0392879	-4.50851	1.32043	3	8	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	35-52	E7	354	372	354-355;357-372	E7:354..372	E7-3	inclusion decrease	true	11	-1.29312	-1.88274	-0.385422	-4.50851	0.468188	2	9	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	34-51	E7	353	371	353-355;357-371	E7:353..371	E7-3	inclusion decrease	true	11	-1.49634	-2.65779	-0.419351	-4.50851	0.468188	2	9	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	33-50	E7	352	370	352-355;357-370	E7:352..370	E7-3	inclusion decrease	true	11	-2.22556	-3.49555	-1.39717	-4.71941	0.468188	2	9	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	32-49	E7	351	369	351-355;357-369	E7:351..369	E7-3	inclusion decrease	true	11	-3.09003	-4.11086	-1.51813	-19.2313	0.111174	1	10	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	39-53	E7	359	373	359-373	E7:359..373	E7-3	neutral	false	19	-0.18975	-0.897964	0.814128	-4.50851	1.64189	9	10	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	38-52	E7	358	372	358-372	E7:358..372	E7-3	neutral	false	19	-0.581094	-1.39473	0.230987	-4.50851	1.32043	7	12	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	37-51	E7	357	371	357-371	E7:357..371	E7-3	inclusion increase	true	19	-0.71432	-1.51813	-0.0604024	-4.50851	1.32043	5	14	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	35-49	E7	354	369	354-355;357-369	E7:354..369	E7-3	inclusion increase	true	17	-1.53992	-3.50231	-0.648952	-19.2313	0.468188	2	15	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	34-48	E7	353	368	353-355;357-368	E7:353..368	E7-3	inclusion increase	true	17	-2.92589	-4.50851	-1.298	-19.2313	0.468188	2	15	0	opposite	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	33-47	E7	352	367	352-355;357-367	E7:352..367	E7-3	assay-discordant	false	17	-2.92589	-4.50851	-1.49634	-19.2313	1.03456	3	14	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	32-46	E7	351	366	351-355;357-366	E7:351..366	E7-3	inclusion decrease	true	17	-3.09003	-6.48274	-1.53992	-19.2313	1.03456	2	15	0	same	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	42-53	E7	362	373	362-373	E7:362..373	E7-3	unresolved, not digitized	false	25	0.0166685	-0.705843	0.638375	-4.50851	1.64189	13	12	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	41-52	E7	361	372	361-372	E7:361..372	E7-3	unresolved, not digitized	false	25	-0.397664	-1.08161	0.638375	-4.50851	1.64189	11	14	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	40-51	E7	360	371	360-371	E7:360..371	E7-3	unresolved, not digitized	false	25	-0.648952	-1.298	0.350799	-4.50851	1.64189	9	16	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	39-50	E7	359	370	359-370	E7:359..370	E7-3	unresolved, not digitized	false	25	-0.648952	-1.53992	0.350799	-4.71941	1.64189	9	16	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	38-49	E7	358	369	358-369	E7:358..369	E7-3	assay-discordant	false	25	-1.08161	-3.09003	0.0689452	-19.2313	1.32043	7	18	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	37-48	E7	357	368	357-368	E7:357..368	E7-3	unresolved, not digitized	false	25	-1.298	-3.4888	-0.397664	-19.2313	1.32043	5	20	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	36-47	E7	355	367	355-355;357-367	E7:355..367	E7-3	unresolved, not digitized	false	23	-1.53992	-3.49555	-0.615023	-19.2313	1.32043	4	19	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	35-46	E7	354	366	354-355;357-366	E7:354..366	E7-3	unresolved, not digitized	false	23	-2.22556	-4.61396	-0.971037	-19.2313	1.03456	3	20	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	34-45	E7	353	365	353-355;357-365	E7:353..365	E7-3	assay-discordant	false	23	-3.09003	-7.25339	-1.39717	-28.0894	1.03456	3	20	0	not_evaluable	candidate
+Hua 2007 PLoS Biology	Table 1; Figures 3B-C, 5A-D, and 9	33-44	E7	352	364	352-355;357-364	E7:352..364	E7-3	assay-discordant	false	23	-3.50231	-11.5658	-1.64175	-41.3822	1.03456	3	20	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	60-46	I6	260	274	260-274	I6:260..274	I6-1	unresolved, not digitized	false	19	0.0189419	-0.319423	0.534595	-1.07709	1.42633	10	6	3	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	55-41	I6	265	279	265-279	I6:265..279	I6-1	inclusion increase	true	19	0.0189419	-0.156276	0.625902	-1.07709	1.55184	10	7	2	same	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	50-36	I6	270	284	270-284	I6:270..284	I6-2	unresolved, not digitized	false	19	0.326886	-0.0463519	0.704885	-1.5906	1.55184	11	5	3	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	45-31	I6	275	289	275-289	I6:275..289	I6-2	unresolved, not digitized	false	19	0	-0.288775	0.232159	-1.5906	1.55184	6	6	7	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	40-26	I6	280	294	280-294	I6:280..294	I6-2	unresolved, not digitized	false	19	-0.0970088	-0.620516	0	-1.17928	0.764512	4	10	5	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	35-21	I6	285	299	285-299	I6:285..299	I6-3	unresolved, not digitized	false	19	0	-0.132838	0.308052	-1.09938	0.835967	9	7	3	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	30-16	I6	290	304	290-304	I6:290..304	I6-3	inclusion decrease	true	19	0	-0.299655	0.373103	-0.791822	2.18147	8	7	4	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	25-11	I6	295	309	295-309	I6:295..309	I6-3	unresolved, not digitized	false	19	0	-0.299844	0.769114	-1.52791	2.18147	7	8	4	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	20-06	I6	300	314	300-314	I6:300..314	I6-4	inclusion decrease	true	19	0	-0.0918239	0.326275	-1.52791	1.83848	8	6	5	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1A and 2A-C	15-01	I6	305	319	305-319	I6:305..319	I6-4	inclusion decrease	true	19	0.0545706	-0.0874255	0.663917	-1.11712	1.26041	10	5	4	opposite	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	51-37	I6	269	283	269-283	I6:269..283	I6-2	unresolved, not digitized	false	19	0	-0.285197	0.536871	-1.5906	1.55184	9	7	3	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	52-38	I6	268	282	268-282	I6:268..282	I6-2	unresolved, not digitized	false	19	0	-0.399316	0.536871	-1.5906	1.55184	8	9	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	53-39	I6	267	281	267-281	I6:267..281	I6-1	unresolved, not digitized	false	19	0.349307	-0.285197	0.625902	-1.5906	1.55184	10	8	1	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	54-40	I6	266	280	266-280	I6:266..280	I6-1	unresolved, not digitized	false	19	0.0189419	-0.156276	0.517515	-1.07709	1.55184	10	7	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	56-42	I6	264	278	264-278	I6:264..278	I6-1	unresolved, not digitized	false	19	0.0189419	-0.156276	0.475024	-1.07709	1.42633	10	7	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	57-43	I6	263	277	263-277	I6:263..277	I6-1	unresolved, not digitized	false	19	0.0189419	-0.156276	0.440515	-1.07709	1.42633	10	7	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	58-44	I6	262	276	262-276	I6:262..276	I6-1	unresolved, not digitized	false	19	0	-0.319423	0.440515	-1.07709	1.42633	9	8	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	59-45	I6	261	275	261-275	I6:261..275	I6-1	unresolved, not digitized	false	19	0.219812	-0.156276	0.534595	-1.07709	1.42633	11	6	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	48-37	I6	272	283	272-283	I6:272..283	I6-2	unresolved, not digitized	false	25	0.228916	-0.213474	0.428484	-1.5906	1.55184	13	8	4	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	49-38	I6	271	282	271-282	I6:271..282	I6-2	unresolved, not digitized	false	25	0	-0.356921	0.428484	-1.5906	1.55184	11	10	4	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	50-39	I6	270	281	270-281	I6:270..281	I6-2	unresolved, not digitized	false	25	0.228916	-0.213474	0.606547	-1.5906	1.55184	13	9	3	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	51-40	I6	269	280	269-280	I6:269..280	I6-2	unresolved, not digitized	false	25	0	-0.213474	0.428484	-1.5906	1.55184	12	9	4	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	52-41	I6	268	279	268-279	I6:268..279	I6-1	unresolved, not digitized	false	25	0	-0.356921	0.606547	-1.5906	1.55184	12	10	3	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	53-42	I6	267	278	267-278	I6:267..278	I6-1	unresolved, not digitized	false	25	0.219812	-0.213474	0.606547	-1.5906	1.55184	14	9	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	54-43	I6	266	277	266-277	I6:266..277	I6-1	unresolved, not digitized	false	25	0.349307	-0.0990777	0.547625	-1.07709	1.55184	15	8	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	55-44	I6	265	276	265-276	I6:265..276	I6-1	unresolved, not digitized	false	25	0.219812	-0.213474	0.547625	-1.07709	1.55184	14	9	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 6; Figure 7	56-45	I6	264	275	264-275	I6:264..275	I6-1	unresolved, not digitized	false	25	0.219812	-0.213474	0.547625	-1.07709	1.42633	14	9	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	01-15	I7	375	389	375-389	I7:375..389	I7-1	inclusion decrease	true	19	-0.555803	-1.82395	0.521027	-2.92231	3.98347	7	11	1	same	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	06-20	I7	380	394	380-394	I7:380..394	I7-1	unresolved, not digitized	false	19	-1.44158	-2.92025	0.626684	-7.00643	5.56709	6	13	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	11-25	I7	385	399	385-399	I7:385..399	I7-2	inclusion increase	true	19	0.809491	-1.45727	2.88118	-7.00643	9.7436	11	8	0	same	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	16-30	I7	390	404	390-404	I7:390..404	I7-2	inclusion increase	true	19	0.853492	-0.0997193	2.3726	-1.56981	9.7436	14	5	0	same	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	21-35	I7	395	409	395-409	I7:395..409	I7-2	unresolved, not digitized	false	19	0.375068	-0.255008	1.28559	-1.57978	6.16631	13	6	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	26-40	I7	400	414	400-414	I7:400..414	I7-3	unresolved, not digitized	false	19	0.0145369	-0.542915	0.520293	-1.57978	6.16631	10	8	1	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	31-45	I7	405	419	405-419	I7:405..419	I7-3	unresolved, not digitized	false	19	0	-0.20645	0.583602	-0.936165	1.62573	9	8	2	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	36-50	I7	410	424	410-424	I7:410..424	I7-3	unresolved, not digitized	false	19	0.357424	-0.081843	0.713944	-0.560585	1.24329	13	6	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	41-55	I7	415	429	415-429	I7:415..429	I7-4	unresolved, not digitized	false	19	0.375735	-0.105842	0.692307	-0.663088	0.941176	12	7	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1; Figures 1B and 2A-C	46-60	I7	420	434	420-434	I7:420..434	I7-4	unresolved, not digitized	false	19	0	-0.362611	0.737555	-0.714517	1.40125	9	9	1	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	08-25	I7	382	399	382-399	I7:382..399	I7-2	inclusion increase	true	13	-0.138853	-3.71151	2.65702	-7.00643	5.56709	6	7	0	opposite	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	09-26	I7	383	400	383-400	I7:383..400	I7-2	inclusion increase	true	13	-0.138853	-3.71151	1.44491	-7.00643	4.58544	6	7	0	opposite	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	10-27	I7	384	401	384-401	I7:384..401	I7-2	inclusion increase	true	13	0.661226	-1.30616	2.61826	-7.00643	9.7436	7	6	0	same	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	11-28	I7	385	402	385-402	I7:385..402	I7-2	inclusion increase	true	13	0.853492	-1.30616	2.65702	-7.00643	9.7436	8	5	0	same	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	15-29	I7	389	403	389-403	I7:389..403	I7-2	unresolved, not digitized	false	19	0.661226	-0.392753	2.3726	-3.71151	9.7436	13	6	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	14-28	I7	388	402	388-402	I7:388..402	I7-2	unresolved, not digitized	false	19	0.661226	-1.10174	2.3726	-7.00643	9.7436	11	8	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	13-27	I7	387	401	387-401	I7:387..401	I7-2	unresolved, not digitized	false	19	0.661226	-0.694373	2.3726	-7.00643	9.7436	11	8	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	12-26	I7	386	400	386-400	I7:386..400	I7-2	unresolved, not digitized	false	19	0.661226	-1.45727	2.3726	-7.00643	9.7436	10	9	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	10-24	I7	384	398	384-398	I7:384..398	I7-2	inclusion increase	true	19	-0.138853	-2.26329	2.63764	-7.00643	9.7436	9	10	0	opposite	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	09-23	I7	383	397	383-397	I7:383..397	I7-2	inclusion increase	true	19	-0.138853	-2.92025	2.03158	-7.00643	5.56709	9	10	0	opposite	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	08-22	I7	382	396	382-396	I7:382..396	I7-1	unresolved, not digitized	false	19	-1.30616	-2.92025	0.798003	-7.00643	5.56709	7	12	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	07-21	I7	381	395	381-395	I7:381..395	I7-1	unresolved, not digitized	false	19	-1.30616	-2.92025	0.798003	-7.00643	5.56709	7	12	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	18-29	I7	392	403	392-403	I7:392..403	I7-2	unresolved, not digitized	false	25	0.514528	-0.294089	1.62725	-3.71151	9.7436	17	8	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	17-28	I7	391	402	391-402	I7:391..402	I7-2	unresolved, not digitized	false	25	0.168487	-0.491417	1.62725	-7.00643	9.7436	15	10	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	16-27	I7	390	401	390-401	I7:390..401	I7-2	unresolved, not digitized	false	25	0.168487	-0.491417	1.62725	-7.00643	9.7436	15	10	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	15-26	I7	389	400	389-400	I7:389..400	I7-2	unresolved, not digitized	false	25	0.0660178	-1.30616	1.44491	-7.00643	9.7436	14	11	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	14-25	I7	388	399	388-399	I7:388..399	I7-2	unresolved, not digitized	false	25	0.661226	-1.30616	2.61826	-7.00643	9.7436	14	11	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	13-24	I7	387	398	387-398	I7:387..398	I7-2	unresolved, not digitized	false	25	0.168487	-1.30616	2.61826	-7.00643	9.7436	13	12	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	12-23	I7	386	397	386-397	I7:386..397	I7-2	unresolved, not digitized	false	25	0.661226	-1.60838	2.61826	-7.00643	9.7436	13	12	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	11-22	I7	385	396	385-396	I7:385..396	I7-2	unresolved, not digitized	false	25	-0.138853	-2.59046	2.61826	-7.00643	9.7436	12	13	0	not_evaluable	candidate
+Hua 2008 AJHG	Table 1, Microwalk in intron 7; Figure 7	10-21	I7	384	395	384-395	I7:384..395	I7-2	inclusion increase	true	25	-0.491417	-2.59046	1.44491	-7.00643	9.7436	11	14	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	Anti-N1	I7	384	403	384-403	I7:384..403	I7-2	inclusion increase	true	9	1.44491	-0.491417	2.65702	-3.71151	9.7436	6	3	0	same	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	F15	I7	384	398	384-398	I7:384..398	I7-2	inclusion increase	true	19	-0.138853	-2.26329	2.63764	-7.00643	9.7436	9	10	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	1UP15	I7	383	397	383-397	I7:383..397	I7-2	inclusion increase	true	19	-0.138853	-2.92025	2.03158	-7.00643	5.56709	9	10	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	2UP15	I7	382	396	382-396	I7:382..396	I7-1	inclusion increase	true	19	-1.30616	-2.92025	0.798003	-7.00643	5.56709	7	12	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	3UP15	I7	381	395	381-395	I7:381..395	I7-1	inclusion increase	true	19	-1.30616	-2.92025	0.798003	-7.00643	5.56709	7	12	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	1DN15	I7	385	399	385-399	I7:385..399	I7-2	mixed/uncertain	false	19	0.809491	-1.45727	2.88118	-7.00643	9.7436	11	8	0	not_evaluable	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	2DN15	I7	386	400	386-400	I7:386..400	I7-2	mixed/uncertain	false	19	0.661226	-1.45727	2.3726	-7.00643	9.7436	10	9	0	not_evaluable	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	3DN15	I7	387	401	387-401	I7:387..401	I7-2	mixed/uncertain	false	19	0.661226	-0.694373	2.3726	-7.00643	9.7436	11	8	0	not_evaluable	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	F14	I7	384	397	384-397	I7:384..397	I7-2	inclusion increase	true	21	-0.138853	-2.91819	2.61826	-7.00643	9.7436	10	11	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	L14	I7	385	398	385-398	I7:385..398	I7-2	inclusion decrease	true	21	0.661226	-1.60838	2.65702	-7.00643	9.7436	11	10	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	F13	I7	384	396	384-396	I7:384..396	I7-2	inclusion increase	true	23	-0.491417	-2.75433	2.03158	-7.00643	9.7436	10	13	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	L13	I7	386	398	386-398	I7:386..398	I7-2	mixed/uncertain	false	23	0.661226	-1.45727	2.63764	-7.00643	9.7436	12	11	0	not_evaluable	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	M13	I7	385	397	385-397	I7:385..397	I7-2	mixed/uncertain	false	23	0.661226	-2.26329	2.63764	-7.00643	9.7436	12	11	0	not_evaluable	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	F12	I7	384	395	384-395	I7:384..395	I7-2	inclusion increase	true	25	-0.491417	-2.59046	1.44491	-7.00643	9.7436	11	14	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	M12F	I7	385	396	385-396	I7:385..396	I7-2	mixed/uncertain	false	25	-0.138853	-2.59046	2.61826	-7.00643	9.7436	12	13	0	not_evaluable	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	M12L	I7	386	397	386-397	I7:386..397	I7-2	mixed/uncertain	false	25	0.661226	-1.60838	2.61826	-7.00643	9.7436	13	12	0	not_evaluable	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	F11	I7	384	394	384-394	I7:384..394	I7-1	inclusion increase	true	27	-0.642254	-2.3954	1.1272	-7.00643	9.7436	11	16	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	F10	I7	384	393	384-393	I7:384..393	I7-1	inclusion increase	true	29	-0.491417	-2.20034	0.846419	-7.00643	9.7436	12	17	0	opposite	candidate
+Singh 2010 RNA	Table 1 and Figure 1B-C	F9	I7	384	392	384-392	I7:384..392	I7-1	inclusion increase	true	31	-0.555803	-2.08856	0.827955	-7.00643	9.7436	12	19	0	opposite	candidate

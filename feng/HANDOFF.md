@@ -8,7 +8,64 @@ arm. The old `src/`/`pre/` program is a separate, committed effort — see
 
 ---
 
-## ★ LIVE CHECKPOINT — 2026-09-02 ~09:25 EDT (three fronts in flight)
+## ★ LIVE CHECKPOINT — 2026-09-02 (2 Opus-4.8 forks in flight, post-fronts)
+
+Three prior fronts LANDED on disk (details below the older checkpoint). State:
+- **Arm A descriptive atlas — DONE** (`feng/artifacts/arm_a_descriptive/`): report + 2 figures
+  + 2 tsv. +9nt S4 offset fixed. Descriptive only, honesty-tagged.
+- **Phase 2 HapSMA audit — DONE, REAL NO-GO -> Appendix arm KILLED** (`feng/artifacts/
+  phase2_variant_recon/EXTRACTION_HAPSMA.md`): 0 qualifying donor-independent target-site ALTs
+  (need >=2); NOT a biological zero-variant/conservation claim; 1000G rows = HPRC controls.
+  Verdict verified not a coord artifact (Fork 2 gate). **Appendix (natural-variant x ASO
+  decomposition) is FORMALLY KILLED on public evidence** — kill-gated by design, expected under
+  four-concurrent-headlines framing; does NOT touch A-D. Only legit revival = genuinely new
+  independent patient data with target-site ALTs + per-base callability; public well is dry
+  (controlled-access blocked by do-not; Paraphase bamlets = controls not patients; interval is
+  locked, cannot broaden). Do NOT re-litigate without new public patient cohort.
+- **Phase 3 rMATS — INCOMPLETE**: `feng/scripts/phase3_rmats.sbatch` written (per-chemistry-
+  vs-matched-scrambled, no pooled model) but `sample_conditions.tsv` NEVER delivered; sbatch
+  hard-fails without it. Not submitted.
+
+**Two Opus-4.8 fork subagents dispatched (this session, background):**
+1. FINISH rMATS: resolve GSM9224134-9224153 -> condition/chemistry/control_type from
+   authoritative GEO metadata, write+validate `feng/artifacts/phase3/sample_conditions.tsv`
+   (cols run_accession,condition,chemistry,control_type; 3+3 per contrast; label the 2 non-
+   contrast samples), then `sbatch feng/scripts/phase3_rmats.sbatch` (env SCRATCH=/home/dashii/
+   orcd/scratch FENG_ENV_PREFIX=/home/dashii/orcd/pool/feng-env, from repo root). Returns job ID.
+2. STANDING-GATE adversarial review (read-only) of the 2 DONE deliverables (Arm A atlas +
+   HapSMA NO-GO) — structural + honesty-state + coord/frame + claim-inflation. Returns findings.
+
+**Fork 1 DONE (2026-09-02):** `feng/artifacts/phase3/sample_conditions.tsv` written+validated
+(20 rows; mapping from GEO SOFT `GSE307431_family.soft.gz` + SRA RunInfo, joined by BioSample).
+**rMATS submitted: job 21824983 (PENDING, Priority).** Contrasts: F18OMe/F18MOE/F20PMO each vs
+own chemistry-matched scrambled; GSM9224134/47=untreated (never enter a contrast). Strandedness
+fr-firststrand (verified from ReadsPerGene col4>>col3). GTF pinned via FENG_P3_GTF=...primary_
+assembly.annotation.gtf. Outputs -> `$SCRATCH/feng/phase3/rmats/{contrast}/`. Idempotent/requeue-
+safe (per-contrast .done). Resubmit env: from repo root, `SCRATCH=/home/dashii/orcd/scratch
+FENG_ENV_PREFIX=/home/dashii/orcd/pool/feng-env FENG_P3_GTF=<primary_assembly gtf> sbatch
+feng/scripts/phase3_rmats.sbatch`.
+
+**Fork 2 DONE (2026-09-02): STANDING GATE PASSED on both deliverables.** No HIGH/MED
+confirmed defects; both honesty-clean + internally consistent. +9nt fix is test-guarded
+(a -9 shift raises); HapSMA coord reconciliation verified end-to-end; NO-GO correctly framed
+as evidence-gate not biological-zero; no forbidden strings; no pooling. ADVANCE approved.
+- FIXED inline: recon `README.md` top status line now SUPERSEDED -> points at EXTRACTION_HAPSMA
+  NO-GO (was stale `NEEDS-EXTRACTION`).
+- LOGGED LOW (non-blocking, optional): (a) atlas `arm_a.py:553/529` — two manifest count lines
+  ("125 records / 115 windows", "115/115 guide-covered") are hardcoded string literals in
+  write_report, correct now (test-guarded) but could silently drift if inputs change; interpolate
+  from `data`. (b) atlas Methods should name the two distinct same/opposite reference medians
+  (window-local containing-guide vs block positional). (c) atlas 0/N block-fraction cell when
+  block zmedian==0 (documented). (d) atlas report line 8 clarify q<0 for I6. (e) PLAUSIBLE, not
+  re-verified: EXTRACTION line 37 "no extras or omissions" exact-match on 142 PSV13 carriers.
+
+Resume after /clear: (1) check job 21824983 in squeue; when COMPLETE verify 3 rmats output dirs +
+.done at `$SCRATCH/feng/phase3/rmats/`. (2) Standing gate is CLEAR — advance. Optional: knock out
+the atlas LOW findings above. Nothing committed this session.
+
+---
+
+## ★ PRIOR CHECKPOINT — 2026-09-02 ~09:25 EDT (three fronts in flight)
 
 **STOP-ALL deadline this session: 10:05 AM EDT** (user-set). Checkpoint + halt then.
 
