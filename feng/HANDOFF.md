@@ -38,6 +38,11 @@ controls, NOT SMA patients** (confirms README cohort-label discrepancy). So Para
 bamlets are control-conservation evidence only; HapSMA MOESM5 is the sole patient
 source. Not staging the control bamlets (200+ LFS BAMs; HPC courtesy).
 
+**10:02 EDT status:** all 3 Codex tasks still RUNNING, none reported yet at the
+10:05 stop deadline. They keep running in background; outputs land on disk. Working
+tree has in-flight Codex edits (feng/.../README.md, .gitignore) — NOT committed here,
+leave for the task to finish.
+
 Resume after /clear: check `/codex:status <task-id>` for each; verify outputs on disk
 (atlas figures/code under feng/; `feng/scripts/phase3_rmats.sbatch` +
 `feng/artifacts/phase3/sample_conditions.tsv`; `feng/artifacts/phase2_variant_recon/
