@@ -8,7 +8,29 @@ arm. The old `src/`/`pre/` program is a separate, committed effort — see
 
 ---
 
-## ★ LIVE CHECKPOINT — 2026-09-02 (build layers COMMITTED; fallback gates clean)
+## ★ LIVE CHECKPOINT — 2026-09-02b (atlas LOW cleanup DONE + committed; phase3 rMATS DONE)
+
+**Arm A atlas LOWs: DONE.** All 4 fixed in `feng/src/feng/atlas/arm_a.py` write_report (Opus-4.8
+fork): (a) hardcoded 125/115/115 counts now interpolated from `data.windows` (n_records=len;
+n_exact_windows=distinct_window_key.nunique; n_guide_covered=nunique where n_guides_containing_hull>0)
+— regen reproduced 125/115/115 byte-identical, value-verified; (b) Methods now names the two
+reference medians (local_z_median window-local vs block_z_positional_median coarse-block); (d) I6
+bullet clarifies q<0 below E7 start 320. (c) already-documented, no change. pytest 122 passed / 3
+skipped / 0 fail, lint PASS. Figure SVG/PDF regen was pure matplotlib nondeterministic-id noise
+(no plotting/data change) — REVERTED, kept out of commit. LOW-(e) EXTRACTION line-37 is a different
+arm, still open/optional.
+
+**Phase 3 rMATS: DONE (not just submitted).** All 3 contrasts have `.done` in
+`$SCRATCH/feng/phase3/rmats/{F18OMe_vs_scrambled_OMe,F18MOE_vs_scrambled_MOE,F20PMO_vs_scrambled_PMO}`.
+Job 21824983 finished, queue empty. Results stay SEALED pre-freeze (do NOT read ΔPSI).
+
+**Still open after atlas LOWs:** Arm D step-3 (strata matching + score impls, use
+`positive_interval_to_exon_key`); Arm B hg19->v50 liftover; Codex sol standing-gate re-review as
+durable gate of record (Codex weekly limit resets Sep 7 ~01:29).
+
+---
+
+## ★ PRIOR CHECKPOINT — 2026-09-02 (build layers COMMITTED; fallback gates clean)
 
 **One-line state:** Arm D/B build layers (positives_v50, detectable universe, RBP eCLIP/KD) are
 FIXED, gate-clean on the fallback path, and COMMITTED on `feng-arm`. Ground-truth phase still DONE +

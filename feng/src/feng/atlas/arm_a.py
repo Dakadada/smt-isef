@@ -520,15 +520,21 @@ def _inventory_tables(data: AtlasData) -> str:
 def write_report(data: AtlasData, guide_csv: Path, aso_csv: Path, output_path: Path) -> None:
     versions = {name: importlib.metadata.version(name) for name in ("numpy", "pandas", "matplotlib")}
     study_rel = data.blocks[["block_id", "study", "eligible_direction_n", "same_n", "opposite_n", "same_direction_fraction"]]
+    # Derive the inventory counts from data so the prose cannot silently drift from the artifact.
+    n_records = len(data.windows)
+    n_exact_windows = int(data.windows["distinct_window_key"].nunique())
+    n_guide_covered_windows = int(
+        data.windows.loc[data.windows["n_guides_containing_hull"] > 0, "distinct_window_key"].nunique()
+    )
     report = f"""# Arm A descriptive SMN2 field atlas
 
 > Claim boundary: descriptive and hypothesis-generating only. Allowed result states in this package are `candidate` and `paper_supported`.
 
 ## Manifest and coordinate reconciliation
 
-- [paper_supported] Input ASO inventory: 125 records / 115 exact windows / 115 guide-covered exact windows. The exact-window count has no independence interpretation.
-- [paper_supported] The source audit found that the earlier ASO artifact was nine nucleotides below the SpliceRUSH S4 field frame because it omitted the S4 5-prime prefix `ATGGCTAGC`. This package uses the corrected input coordinates: I6 maps as `320 + q`, natural E7 starts at 320 with the artificial G at 356, and I7 maps as `374 + q`.
-- [paper_supported] Sequence-alignment evidence recorded in the source memo: guide 1001 contains the prefix before the Dataset S1 exon-6 sequence; guide 1340 aligns at S1-concatenated 331-355 and S4 340-364; guide 1384 aligns at S1-concatenated 375-399 and S4 384-408. The generator independently recomputes all 125 corrected hulls and segments from paper-local coordinates and stops on any mismatch.
+- [paper_supported] Input ASO inventory: {n_records} records / {n_exact_windows} exact windows / {n_guide_covered_windows} guide-covered exact windows. The exact-window count has no independence interpretation.
+- [paper_supported] The source audit found that the earlier ASO artifact was nine nucleotides below the SpliceRUSH S4 field frame because it omitted the S4 5-prime prefix `ATGGCTAGC`. This package uses the corrected input coordinates: I6 maps as `320 + q` (within I6 the offset q is negative, placing I6 positions below the E7 start at 320), natural E7 starts at 320 with the artificial G at 356, and I7 maps as `374 + q`.
+- [paper_supported] Sequence-alignment evidence recorded in the source memo: guide 1001 contains the prefix before the Dataset S1 exon-6 sequence; guide 1340 aligns at S1-concatenated 331-355 and S4 340-364; guide 1384 aligns at S1-concatenated 375-399 and S4 384-408. The generator independently recomputes all {n_records} corrected hulls and segments from paper-local coordinates and stops on any mismatch.
 - [candidate] Display span: inclusive corrected S4 positions {SPAN_START}-{SPAN_END}; construct regions I6 260-319, E7 320-374, and I7 375-434.
 - [paper_supported] dCas13d sign semantics are verified: positive combined Z denotes exon-7 inclusion activation and negative combined Z denotes inhibition. Source: {SIGN_SOURCE}.
 - [candidate] Quantiles use NumPy method `{QUANTILE_METHOD}` at every base, window, and coarse display block. There is no smoothing or interpolation.
@@ -550,11 +556,12 @@ Each ASO study record is assigned once to one of eleven fixed coarse display blo
 
 ### Exact-window coverage [candidate]
 
-- 115 / 115 distinct exact windows have at least one fully containing retained guide.
+- {n_guide_covered_windows} / {n_exact_windows} distinct exact windows have at least one fully containing retained guide.
 
 ### Block-by-study descriptive sign counts [candidate]
 
 The denominator is the number of `increase` or `decrease` records in that named study and block. `same_direction_fraction` is `same_n / eligible_direction_n`; zero-denominator cells are explicit `NA`.
+Two distinct reference medians appear in this package and are not interchangeable: the *window-local containing-guide median* (`local_z_median` in the window-alignment table — the median combined Z over the guides that fully contain an individual ASO hull) governs each window's own `direction_relation`, whereas the *coarse-block positional median* (`block_z_positional_median` — the median of the per-base positional Z medians across a display block) governs the same/opposite counts in the block-by-study table below.
 When the block median is exactly zero, eligible ASOs are in the denominator but are neither same nor opposite; the printed fraction is therefore zero and both sign counts are zero.
 
 {_markdown_table(study_rel)}
