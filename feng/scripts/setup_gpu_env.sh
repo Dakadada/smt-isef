@@ -67,18 +67,27 @@ echo "Creating GPU env at ${GPU_ENV_PREFIX} (python ${PY_VERSION})..."
 conda create -y -p "${GPU_ENV_PREFIX}" "python=${PY_VERSION}"
 conda activate "${GPU_ENV_PREFIX}"
 
-# --- torch (CUDA 12.x wheel line; matches cuda/12.9 + cudnn9.8) --------------
-# Pin an exact torch once validated. cu124 wheels run against the 12.9 driver.
+# --- VALIDATED COMBO (installed + imported 2026-09-03, env 6.2 GB) -----------
+#   python=3.11.16  openmm=8.2.0.dev  torch=2.6.0+cu124  pangolin=1.0.2
+#   (from github.com/tkzeng/Pangolin). Ordering below is the FIXED order that
+#   actually worked: OpenMM/cudatoolkit FIRST, torch cu124 LAST, so the conda
+#   step cannot clobber torch's bundled CUDA libs (re-checked import after each).
+
+# --- OpenMM FIRST (MD; conda-forge CUDA build) -------------------------------
+conda install -y -c conda-forge openmm cudatoolkit
+python -c "import openmm; print('openmm', openmm.version.version)"
+
+# --- torch LAST (cu124 wheel; matches cuda/12.9 + cudnn9.8) -------------------
 pip install --index-url https://download.pytorch.org/whl/cu124 \
     torch torchvision torchaudio
+python -c "import torch, openmm; print('torch', torch.__version__)"  # openmm must still import
 
 # --- Pangolin (primary deep-splice; torch-based) -----------------------------
-# From source per its README (pangolin + its gffutils/pyfasta deps).
+# The pip name `pangolin-splice` may not match; the source of record is
+# github.com/tkzeng/Pangolin (imports as `pangolin`; needs gffutils/pyfasta).
 pip install pangolin-splice || \
-    echo "NOTE: install Pangolin from github.com/tkzeng/Pangolin if the wheel name differs"
-
-# --- OpenMM (MD; conda-forge CUDA build) -------------------------------------
-conda install -y -c conda-forge openmm cudatoolkit
+    pip install "git+https://github.com/tkzeng/Pangolin.git" || \
+    echo "NOTE: install Pangolin from github.com/tkzeng/Pangolin if both fail"
 
 # --- SpliceAI: SEPARATE env recommended (TF conflict — see caveats) ----------
 # Do NOT co-install into this torch env without resolving the TF/Keras pin.

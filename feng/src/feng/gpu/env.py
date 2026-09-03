@@ -136,9 +136,16 @@ def check_gpu_env(
     prefix: str = GPU_ENV_PREFIX,
     *,
     packages: tuple[str, ...] = GPU_PACKAGES,
-    timeout_s: float = 30.0,
+    timeout_s: float = 120.0,
 ) -> dict:
     """Structured report on the GPU env: does it exist, which libs import.
+
+    ``timeout_s`` is generous (torch's cold import is ~15-25s and slower under
+    node CPU load); a probe that times out is reported False with a ``timeout:``
+    error string -- inconclusive, not proof of absence -- so callers can tell a
+    slow import from a genuinely missing package. This report is ADVISORY: GPU
+    scorers do their real import inside their own worker and treat a genuine
+    ImportError there as the authoritative "unavailable", never this probe.
 
     NEVER raises, NEVER installs. If the env python is absent, every package is
     reported missing. If present, each package is probed by a short subprocess
