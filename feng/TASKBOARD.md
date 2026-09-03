@@ -100,6 +100,34 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked/gate
 - **GATE C:** >30% negative-label instability under reasonable power thresholds → Arm C
   dies.
 
+## Phase 5–8 — Arm E build: StericRuler (length titration, parallel; pre-FREEZE)
+
+- [x] **E.1** Symmetric ladder (`titration/ladder.py`) — even 2→30 around the true
+  nusinersen 18-mer, GRCh38 v50 anchor `chr5:70076584-70076601`, fail-closed L=18 ==
+  nusinersen. *Done + committed `b08fae7` (12 tests). Opus-fork gate: ADVANCE.*
+- [x] **E.2** Per-mer CPU scorers (`titration/evaluate.py`) — IntaRNA on-target (3 honest
+  states), Vienna RNAduplex/RNAcofold/RNAup/RNAplfold(genomic-context)/RNAfold, off-target
+  seed-extend. *Done + committed `b08fae7` (19 tests). MED-1 accessibility fix applied.*
+- [x] **E.3** Therapeutic-window endpoint (`titration/window.py`) — potency ÷ off-target
+  burden + preregistration-lock mechanism (**DRAFT, no seal cut**). *Done + committed
+  `b08fae7` (32 tests). Opus-fork gate: ADVANCE; MED-1 verdict-plateau fix applied.*
+- [x] **E.4** Artifact builder (`titration/report.py`) — README + per-mer table + length-
+  axis figure + provenance, load-bearing honesty lint. *Done + committed `b08fae7`
+  (11 tests).*
+- [x] **E.5** Shared GPU infra (`gpu/env.py`, `gpu/checkpoint.py`,
+  `scripts/templates/gpu_preemptable.sbatch`, documented-not-run `scripts/setup_gpu_env.sh`).
+  *Done (24 tests); NOT yet committed. Reusable by all arms.*
+- [ ] **E.6** Off-target transcriptome scan → populate off-target burden (the decisive
+  CPU axis; runnable today; makes `therapeutic_window` real + gives the directional verdict).
+- [ ] **E.7** GPU env install (`feng-gpu-env`: cu124 torch + Pangolin/SpliceAI + OpenMM;
+  quota-checked, manually run) + wire G/H scorers (GROMACS MD, deep-splice, hnRNPA1).
+- [!] **E.8** Prereg **seal** (`locked=true`) — gated: needs user sign-off + all axes
+  (off-target + GPU) present. Currently DRAFT.
+- **GATE E:** window non-monotonic / favoring sub-18 **and** wet-lab-concordant → SUCCESS;
+  monotonic-increasing or wet-lab-discordant → KILL. **HONEST DRAFT SIGNAL:** CPU-thermo
+  potency alone `refutes shorter-better` (rises with length) — verdict pends off-target + GPU.
+  Codex sol durable gate deferred to Sep 7; Opus-fork fallback gates used on E.1–E.4.
+
 ## Phase 8 — FREEZE
 
 - [ ] **8.1** `PREREGISTRATION.md`: event universe, score defs, matching tolerances,
@@ -153,3 +181,14 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked/gate
 - [ ] Honesty linter + allowed-result-states enforcement wired before any report is
   generated (`honesty/`).
 - [ ] All heavy compute via `sbatch`, checkpointed, preemptable-safe.
+- [x] Shared GPU tier (`gpu/`) + `gpu_preemptable.sbatch` template + documented installer.
+  *Done (E.5); not yet committed.*
+- [ ] **GPU-slot A** (design-only now): neural effector-kernel / DL latent-field fit
+  augmenting Arm A's kernel, wired to `gpu/`. Build deferred to a follow-up plan.
+- [ ] **GPU-slot B** (design-only now): deep RBP-binding predictor for hnRNPA1 displacement
+  over eCLIP/KD, wired to `gpu/`. Build deferred.
+- [ ] **GPU-slot C** (design-only now): DL actionability model for the bind→act
+  leave-one-ASO-out harness, wired to `gpu/`. Build deferred.
+- [!] **GPU-slot D** (design-only now): GPU alternative score (MD/DL) — **secondary,
+  preregistered, defined BEFORE the FREEZE tag; must NOT alter the locked primary IntaRNA
+  score or the sealed Phase-9 test.** Build deferred.

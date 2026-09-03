@@ -87,6 +87,10 @@ a baseline, never as training labels.
 
 **Compute:** 200–2,000 CPU core-hours; <20 GPU-hours for optional neural kernels.
 
+**GPU tier** *(design + hooks now; build deferred to a follow-up plan).* A neural
+effector-kernel / DL latent-field fit augmenting the analytic kernel, wired to the shared
+`feng/src/feng/gpu/` infra (`mit_preemptable`, checkpoint + requeue).
+
 ### Arm B — RBPShadow (mechanism)
 *Replaces your arm 4 — the real "grammar" is which RBP gets displaced.*
 
@@ -110,6 +114,10 @@ nearby non-overlapping eCLIP peaks as negative controls.
 **Data:** ENCODE eCLIP ENCSR456FVU; HepG2 KD-RNA-seq ENCSR369TWP; K562 ENCSR795JHH;
 processed splicing ENCSR413YAF / ENCSR870OLK; Holgersen *processed* tables; GSE307431.
 **Compute:** 300–2,000 CPU core-hours on processed ENCODE events; <20 GPU-hours.
+
+**GPU tier** *(design + hooks now; build deferred to a follow-up plan).* A deep RBP-binding
+predictor for hnRNPA1 displacement over eCLIP/KD, wired to the shared `feng/src/feng/gpu/`
+infra (`mit_preemptable`, checkpoint + requeue).
 
 ### Arm C — Bind→Act gate (safety)
 *Replaces your arm 3 — the honest, useful version.*
@@ -135,6 +143,10 @@ external AUCPR gain <0.05.
 
 **Compute:** 5,000–20,000 CPU core-hours for IntaRNA/RNAplfold candidate generation.
 
+**GPU tier** *(design + hooks now; build deferred to a follow-up plan).* A DL actionability
+model for the bind→act leave-one-ASO-out harness, wired to the shared `feng/src/feng/gpu/`
+infra (`mit_preemptable`, checkpoint + requeue).
+
 ### Arm D — The locked nusinersen benchmark (the floor)
 *The null-safe terminal validation. Guarantees a real result even if A–C all fail.*
 
@@ -156,6 +168,49 @@ exons per positive; clean-room reanalysis fails to recover published direction f
 A secondary panel tests whether a fixed sequence score assigns F18MOE and F18OMe the same
 risk despite different observed event sets — a **model transport failure**, not a learned
 chemistry model.
+
+**GPU tier** *(design + hooks now; build deferred to a follow-up plan).* A GPU alternative
+score (MD / DL) wired to the shared `feng/src/feng/gpu/` infra, added **only as a secondary,
+preregistered score defined BEFORE the FREEZE tag**. It must **not** alter the locked primary
+IntaRNA score or the sealed Phase-9 permutation test; it is a preregistered add-on ranked
+alongside, never a replacement for, the locked benchmark.
+
+### Arm E — StericRuler (length titration)
+*New fifth arm. Symmetric length-titration of the true nusinersen 18-mer, run in tandem
+with a wet-lab length series. Pre-FREEZE; freeze-safe (reads no sealed ΔPSI).*
+
+**Claim.** A symmetric length ladder over the true nusinersen 18-mer (even lengths 2→30,
+GRCh38 v50 anchor `chr5:70076584-70076601`, ±1 nt/end from the center) predicts a per-length
+**therapeutic window** = predicted on-target potency ÷ off-target burden. Pre-registered
+directional prediction — **"shorter is better"** (window favors a sub-18 length) — locked
+before the wet-lab readout.
+
+**Why it is open.** No study titrates length symmetrically around the real drug in the
+correct genomic frame and scores potency *against* specificity per length. CPU-thermo
+potency alone rises monotonically with length, so whether a shorter mer trades potency for
+specificity *favorably* is genuinely unknown until the off-target and GPU axes enter the
+window.
+
+**Primary endpoint.** The per-mer therapeutic-window curve vs length and a directional
+verdict (`supports` / `refutes` shorter-better), preregistration-locked (currently **DRAFT,
+unsealed**) before the wet-lab length series is read.
+
+**Success:** window non-monotonic / favoring a sub-18 length **and** rank-concordant with
+the wet-lab series.
+**Kill:** window monotonically increasing with length (refutes "shorter better"), or wet-lab
+discordant.
+
+**Terminal artifact.** `StericRuler` — the locked per-length ladder, the window curve with
+its axis definitions, a length-axis figure, and the prereg hash, comparable against the blot.
+
+**Data (all public):** nusinersen anchor + GRCh38 v50 genome. CPU scorers (IntaRNA on-target,
+Vienna RNAduplex/RNAcofold/RNAup/RNAplfold/RNAfold) + off-target seed-extend transcriptome
+scan. GPU axes: GROMACS MD binding free energy, Pangolin/SpliceAI deep-splice (on-target
+potency + off-target splicing), hnRNPA1 displacement. Reads **no sealed ΔPSI** — freeze-safe;
+its score/window definitions are preregistered at the eventual Phase-8 FREEZE.
+
+**Compute:** CPU core done (`feng/src/feng/titration/`); GPU tier on `mit_preemptable` via the
+shared `feng/src/feng/gpu/` infra (checkpoint + requeue).
 
 ### Appendix — variant × ASO decomposition (kill-gated)
 *Your arm 1, reduced to what survives.*
@@ -181,6 +236,7 @@ a target-site conservation audit and stop.
 | 3–4 | **Ground truth** | Clean-room full-transcriptome alignment of the 20 GSE307431 libraries; control-only detectable-exon universe; digitized Hua/Singh walk tables with provenance; SpliceRUSH guide-level effects separated from reporter enrichment. **Treatment contrasts written to a sealed directory, not inspected.** | ≥80% unique mapping; no chemistry/control swap; SMN2 target junction moves in the expected direction. Catastrophic batch confounding kills Arm D. |
 | 5–7 | **Arm A build** | Latent field + effector kernel fits; blocked-region CV harness; baselines (guide-window averaging, accessibility-only, DANGO-style deletion). | ≥25 independent ASO windows recoverable, kernel bootstrap-stable. |
 | 6–8 | **Arm C build** (parallel) | Transcriptome candidate generation; power-aware active/inactive labels **defined before features**; leave-one-ASO-out harness. | >30% negative-label instability → Arm C dies. |
+| 5–8 | **Arm E build** (parallel) | StericRuler symmetric length ladder + CPU scorers + therapeutic-window endpoint + shared GPU tier (`feng/src/feng/gpu/`). Prereg **DRAFT** (unsealed). | CPU potency alone rises with length → the window verdict needs the off-target + GPU axes; score/window defs sealed at FREEZE. |
 | 8 | **FREEZE** | Preregistration: event universe, score definitions, matching tolerances, endpoints, tests, thresholds, exclusions, and the null-result text — all written out. Git tag + timestamped OSF/Zenodo deposit of code/config/data hashes. | No terminal contrast or rank result inspected before freeze. |
 | 9 | **Terminal execution** | One shot. Unlock sealed contrasts. Run Arm A validation, Arm D permutation test, Arm C external replication. | **No refitting.** A bug found after unblinding invalidates the confirmatory label; the correction is explicitly exploratory. |
 | 10 | **Arm B** | RBPShadow concordance test + atlas. | <50 uniquely assigned events → mechanistic claim dropped, panel stays descriptive. |
@@ -213,6 +269,8 @@ feng/
     rbp/         encode.py, concordance.py            # Arm B
     gate/        power.py, features.py, model.py      # Arm C
     bench/       strata.py, permute.py, terminal.py   # Arm D
+    titration/   ladder.py, evaluate.py, window.py, report.py   # Arm E
+    gpu/         env.py, checkpoint.py                 # shared GPU tier (all arms)
     honesty/     claims.py, linter.py, states.py
   tests/
   terminal/                    # SEALED until month 8 freeze

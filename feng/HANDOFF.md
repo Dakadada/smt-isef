@@ -108,7 +108,7 @@ appear in `duplex_dg`.
 
 ---
 
-## ★ LIVE CHECKPOINT — 2026-09-03b (Arm E BUILD STARTED — CPU core done, gate-clean)
+## ★ LIVE CHECKPOINT — 2026-09-03b (Arm E — CPU stack COMMITTED b08fae7; GPU infra + docs built)
 
 **Arm E (StericRuler length-titration) build underway** (Codex down till Sep 7 -> Opus fork
 subagents). Plan `~/.claude/plans/add-this-as-a-goofy-whistle.md`. New pkg
@@ -138,11 +138,23 @@ better` — longer mers bind monotonically harder (IntaRNA -27->-48, L 18->30). 
 better" hypothesis lives or dies in the FULL therapeutic window (÷ off-target burden + GPU
 MD/splice), NOT raw potency. RNAup plateaus ~-42 for L>=26 (the turnover). Verdict not settled.
 
-**NEXT (Arm E remaining):** (1) window.py adversarial gate; (2) report.py + artifacts (mirror
-arm_a); (3) OFF-TARGET transcriptome scan compute -> populate burden (the decisive CPU axis,
-runnable today); (4) GPU infra (feng/src/feng/gpu/ + gpu_preemptable.sbatch) for G/H axes;
-(5) PLAN.md/TASKBOARD.md Arm E section + A-D GPU slots; (6) final gate + commit. Perf note
-(LOW-3): evaluate re-indexes the 3GB genome per fetch -> slow; pass on-disk .fai in a perf pass.
+**DONE since:** CPU stack (ladder/evaluate/window/report) COMMITTED b08fae7. **GPU infra**
+(feng/src/feng/gpu/ env.py+checkpoint.py, feng/scripts/templates/gpu_preemptable.sbatch,
+feng/scripts/setup_gpu_env.sh documented-not-run) BUILT + Opus-gate ADVANCE; 3 MED fixed
+(MED-1 signal-flush: B: prefix meant payload never got SIGTERM -> checkpoint_on_signal was dead
+code; now bash trap forwards kill -TERM to child + waits within 60s grace before single requeue,
+proven by a real SIGTERM subprocess test; MED-2 cuda/cudnn cross-constraint; MED-3 check_gpu_env
+no-raise). **PLAN.md + TASKBOARD.md** Arm E section + A-D GPU-tier slots (Arm D = secondary/
+preregistered/no-alter-locked-score) written. Suite **304**. GPU infra + docs COMMIT pending
+this turn.
+
+**NEXT (Arm E remaining):** (1) OFF-TARGET transcriptome scan compute -> populate burden (the
+decisive CPU axis that makes therapeutic_window non-None + gives the real directional verdict;
+runnable today, no new env); (2) GPU env INSTALL (setup_gpu_env.sh: torch cu124 + Pangolin
+primary / SpliceAI separate sub-env / OpenMM; heavy, quota-check first) + wire G/H scorers into
+evaluate.py; (3) prereg SEAL (gated: user sign-off + all axes); (4) final adversarial gate +
+Codex sol durable gate (Sep 7). Perf (LOW-3): evaluate re-indexes the 3GB genome per fetch ->
+slow; pass on-disk .fai in a perf pass (bites the off-target scan next).
 
 ## ★ LIVE CHECKPOINT — 2026-09-02c (Arm E GO; Arm C probe AMBER->GO-leaning)
 
