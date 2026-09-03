@@ -8,6 +8,243 @@ arm. The old `src/`/`pre/` program is a separate, committed effort — see
 
 ---
 
+## ★ PLANS — TWO now exist (2026-09-02)
+NOTE ON "FROZEN": the program is PRE-FREEZE — no `feng-freeze*` git tag is cut, feng/terminal/ holds
+only README, freeze-seal test still active. "Settled design" (PLAN.md is locked-for-execution, don't
+re-litigate) is NOT the scientific Phase-8 FREEZE. Adding Arm E now is legit: its new score defs get
+preregistered at the eventual FREEZE.
+1. The settled program design (feng/PLAN.md + moon execution addendum in ~/.claude/plans/) — Arms A-D
+   + Appendix. Pre-FREEZE.
+2. NEW: **Arm E — symmetric nusinersen length-titration + GPU enablement** — plan at
+   `~/.claude/plans/add-this-as-a-goofy-whistle.md`. Symmetric 2→30-mer ladder over the true
+   nusinersen 18-mer (anchor chr5:70076584-70076601 +, GRCh38 v50), CPU thermo + off-target +
+   GPU MD + GPU deep-splice scoring, therapeutic-window endpoint, prereg in tandem with wet lab
+   ("shorter mer is better" hypothesis). Also: shared heavy-GPU infra + a GPU-tooling slot added
+   to Arms A-D (design/hooks now, build later; Arm D GPU score is freeze-gated).
+   **APPROVED (user, 2026-09-02) — GO.** Not yet started; build pending.
+
+## ★ LIVE CHECKPOINT — 2026-09-03 (Arm C FULL COMPUTE LAUNCHED — running)
+
+**LAUNCH CORRECTION (added after the fact):** the "BUILT, NOT LAUNCHED" state below
+froze the 05:33 build. An autonomous goal loop then rebuilt `armc_scan.sbatch`
+(mtime 09:05) and **LAUNCHED the full compute** — this line was missing from the
+checkpoint. Actual live state as of 2026-09-03 ~16:30:
+- **Scan array `21881181`** (feng-armc-scan, `--array=1-81%16`, mit_preemptable, 4 CPU /
+  16G, `--time=08:00:00`, `--requeue` + `--signal=B:SIGTERM@60`). Submitted 09:05:44,
+  WorkDir repo root. Per task: build shared exonome once (exonome.lock), then
+  `armc_build scan` revcomp(SBO) @ max_edit=5 vs GENCODE-v50 genome ->
+  `$SCRATCH/feng/armc/hits/<DG_ID>.parquet` + `.done`.
+- **Gate `21881182`** (feng-armc-gate, `--dependency=afterok:21881181`, 30 min) ->
+  `armc_gate` LOSO CV -> writes `feng/artifacts/phase0_arm_c_probe/GATE_RESULT.md`.
+- Progress ~16:30: **60/81 `.done`**, 14 running, 8 pending. `.err` files are benign
+  low-complexity SBO SKIP messages (16 self-skips by design), NOT failures. Pooled so
+  far POS=157 / NEG~121.9k; steering toward ~238 positives once all ~40 positive-
+  bearing SBOs land. Monitor `bz2sn3mim` fires to MAIN at gate terminal.
+- Pinned inputs on scratch: GENCODE v50 primary GTF+FASTA, hg19ToHg38 chain.
+- NEXT: read GATE_RESULT.md at gate terminal; re-review verdict before it becomes a
+  headline; hold the pre-specified GO bar (beat best baseline +0.05 on BOTH AUC & AP).
+
+**Negative-set blocker from the 09-02c checkpoint is RESOLVED.** `sbo_sequences.tsv`
+(81 SBOs) plus the Holgersen S1 design-table PDF (`feng/sj-pdf-1-nat-...-2.pdf`) are now
+staged, so the full bind->act pipeline was built end-to-end. **sbatch was deliberately
+NOT called** — coordinator instruction: build + pytest only, then stop for a fresh
+adversarial review of the scan-orientation / label-join logic before anything touches
+the cluster. `sbatch --test-only` dry-run validated both scripts' SLURM syntax; no job
+was queued.
+
+Files written (`feng/src/feng/bench/armc_build.py`, `armc_gate.py`,
+`feng/scripts/armc_scan.sbatch`, `armc_gate.sbatch`, `feng/tests/test_armc.py`). Full
+suite `feng/tests/` **178 passed / 3 skipped / 0 fail** (11 of those in test_armc.py,
+incl. real-PDF parse-count checks against S1/S4 — 105 S1 rows / 82 unique dg_id / 81
+unique sequences, 724 S4 rows / 75 unique ids, all confirmed against the actual PDFs
+via pdfplumber, not assumed).
+
+Scan orientation: SBO 5'->3' is reverse-complemented before scanning (`scan_sbo`
+in armc_build.py) since the exonome holds transcript(sense)-strand exon sequences and
+SBOs are antisense; `test_scan_orientation_matters` is a positive-control unit test
+proving the *unreverse-complemented* query does NOT hit a planted target while the
+correct orientation does (guards the literal reversed-strand bug class).
+
+Label join: S4.id -> S1.id (unique key) -> S1.dg_id, then S4's own 1-based-inclusive
+exon interval -> `feng.bench.strata.positive_interval_to_exon_key` (same converter
+Arm D's positives use) -> exact `exon_key` string match against the bound-exon set
+from the scan. `actionable=1` iff the bound exon_key is in that SBO's positive set,
+else `actionable=0` (bind-no-act). A dg_id tested in >1 cell type unions positives
+across all its S1 ids (binding features are sequence-only/cell-agnostic).
+
+Leakage guard: `duplex_dg` is computed by the SAME IntaRNA call (SBO as query, exon
+sequence as target — mirrors the existing `feng.bench.scores` nusinersen convention)
+for every bound exon regardless of label; S4's own `rnaplex_dg`/`rnacofold_dg`
+columns are read ONLY to build the positive-exon_key set, never copied into a
+feature column — `test_label_join_sanity` explicitly asserts those two values never
+appear in `duplex_dg`.
+
+**Deviations from the original brief (flag for the reviewer):**
+- `sklearn` is confirmed **NOT installed** in feng-env (`ModuleNotFoundError`).
+  `armc_gate.py` implements its own small L2 logistic-regression (batch gradient
+  descent, numpy, deterministic zero-init/no RNG) plus ROC-AUC/average-precision from
+  scratch (numpy + `scipy.stats.rankdata`), rather than sklearn GradientBoosting.
+- `build_exonome()` reuses `feng.bench.scores`'s existing pysam-preferred/
+  samtools-fallback fail-closed sequence fetch (same path Arm D's frozen scores use)
+  instead of a fresh `bedtools getfasta` call — one proven fetch path, not two.
+- `parse_s4` uses pdfplumber `extract_tables()` directly; it already reassembles the
+  two-line-wrapped exon-interval cells into one row (verified: every one of the 724
+  data rows comes back with exactly 11 cells). The raw-text/regex reconstruction the
+  brief anticipated was not needed.
+- S1 has 82 unique `dg_id` values, not 81: `DG111` and `DG2386` share an identical
+  sequence (`CCATACCCCACCTCCCTC`) in S1 — `sbo_sequences.tsv` already dropped
+  `DG2386` as the duplicate. The build pipeline drives its 81 array tasks off
+  `sbo_sequences.tsv`, not S1's `dg_id` column, so this doesn't affect sizing.
+- Label join uses **exact** `exon_key` match (no coordinate-overlap fallback) — a
+  paper-vs-GENCODE-v50 exon-boundary mismatch would under-label a true positive as
+  `actionable=0`, which is conservative (biases toward NO-GO, not toward leakage) but
+  is a real, un-fixed limitation worth the reviewer's attention.
+- Untested at real scale: only synthetic 2-3-exon fixtures were exercised. The actual
+  81621-exon x 81-SBO scan's hit-rate, IntaRNA call volume, and per-fold class balance
+  are unknown until the array job actually runs.
+
+**Not done:** sbatch was not called. Next step once review is clean: launch
+`armc_scan.sbatch` (array 1-81%16), then `armc_gate.sbatch --dependency=afterok:<array id>`.
+
+---
+
+## ★ LIVE CHECKPOINT — 2026-09-03b (Arm E BUILD STARTED — CPU core done, gate-clean)
+
+**Arm E (StericRuler length-titration) build underway** (Codex down till Sep 7 -> Opus fork
+subagents). Plan `~/.claude/plans/add-this-as-a-goofy-whistle.md`. New pkg
+`feng/src/feng/titration/`. Slices landed (all additive, TDD, NOT committed yet):
+- **ladder.py** — `build_ladder` symmetric even 2..30 ladder around the true nusinersen
+  18-mer anchor chr5:70076584-70076601 (GRCh38 v50, +). Fail-closed in-code assert L=18 ASO ==
+  NUSINERSEN_5P_TO_3P. Reuses scores.py revcomp + fetch. 12 tests. Frame verified vs the
+  published intron-7 flank on every rung.
+- **evaluate.py** — per-mer CPU scorers: IntaRNA on-target (3 honest states: None sub-seed
+  error / 0.0 no_duplex flag / real dg — plan's "0.0 for short mers" was WRONG, corrected),
+  Vienna RNAduplex/RNAcofold/RNAup/RNAplfold/RNAfold, off-target via scan.seed_and_extend
+  (opt-in). MED-1 FIXED: rnaplfold_accessibility now folds the target in GENOMIC CONTEXT
+  (pad=70/W=70/L=40) not the isolated window -> accessibility 0.31-0.51 (was ~1.0 artifact).
+  19 tests.
+- **window.py** — therapeutic-window endpoint: potency (backbone = IntaRNA + RNAup only;
+  RNAduplex/cofold + plfold-acc secondary, no double-count) / (off-target burden + 1). Prereg
+  lock MECHANISM (prereg_payload/hash/lock/verify, deterministic SHA-256) but **DRAFT only —
+  NO real seal cut** (real lock = gated step pending user sign-off + GPU axes). 25 tests.
+- **Adversarial gate (Opus fork) over ladder+evaluate: ADVANCE** — no HIGH, frame-correct,
+  never-fabricate clean, orientation consistent, honesty/freeze clean. Findings MED-1 (fixed),
+  LOW-1/2/3 (carried into window / logged). rnafold_mfe=0.00-everywhere REFUTED as bug (real
+  open-chain MFE).
+- Full suite **252 tests** collects clean.
+
+**HONEST DRAFT SIGNAL (do NOT manufacture a GO):** CPU-only POTENCY alone == `refutes_shorter_
+better` — longer mers bind monotonically harder (IntaRNA -27->-48, L 18->30). The "shorter
+better" hypothesis lives or dies in the FULL therapeutic window (÷ off-target burden + GPU
+MD/splice), NOT raw potency. RNAup plateaus ~-42 for L>=26 (the turnover). Verdict not settled.
+
+**NEXT (Arm E remaining):** (1) window.py adversarial gate; (2) report.py + artifacts (mirror
+arm_a); (3) OFF-TARGET transcriptome scan compute -> populate burden (the decisive CPU axis,
+runnable today); (4) GPU infra (feng/src/feng/gpu/ + gpu_preemptable.sbatch) for G/H axes;
+(5) PLAN.md/TASKBOARD.md Arm E section + A-D GPU slots; (6) final gate + commit. Perf note
+(LOW-3): evaluate re-indexes the 3GB genome per fetch -> slow; pass on-disk .fai in a perf pass.
+
+## ★ LIVE CHECKPOINT — 2026-09-02c (Arm E GO; Arm C probe AMBER->GO-leaning)
+
+**Arm E APPROVED (user) — GO, not started.** Length-titration + GPU plan at
+`~/.claude/plans/add-this-as-a-goofy-whistle.md`. Build pending.
+
+**Arm C probe RUN (Codex down till Sep 7 -> Claude-side).** Memo `feng/artifacts/phase0_arm_c_probe/
+README.md`. Initial Sonnet probe = AMBER (feared 16-gene clustering). Then Claude parsed Holgersen 2021
+supp S4/S5 (pdfplumber, installed into feng-env; PDFs at feng/sj-pdf-4/5-...0921.pdf):
+- **~75 SBOs across diverse loci** (NOT 16 clustered genes) -> ≥25 LOAO bar CLEARED.
+- Both axes in ONE harmonized source (binding RNAplex/RNAcofold ΔG + edit distance; action S4 exon
+  ΔPSI 724 sites, S5 gene LFC 30493 rows). No cross-study pooling (Arm A's killer absent).
+- BUT both tables are HITS/RESPONDERS only -> **bind-but-no-act negative class must be CONSTRUCTED**.
+- Verdict updated AMBER->GO-leaning, conditional on negative-set construction.
+Subagents (Claude-side; both hit a session rate-limit 429 first run — resets 11:10pm ET — then resumed):
+  1. Sequence blocker RESOLVED — user staged S1/S2/S3/S6 + main text into feng/. **S1
+     (sj-pdf-1-...-2.pdf) = the design table with the 81 SBO SEQUENCES** (ID|DG|cell|cases|controls|
+     Sequence|category). Parsed -> feng/artifacts/phase0_arm_c_probe/sbo_sequences.tsv (81 distinct
+     seqs 16-20nt / 82 DG ids). Join key: S4 numeric ID == S1 ID -> links spliced sites to SBO seq+cell.
+  2. Haiku lit scan DONE — external-validation set exists: **eSkip-Finder** (~300-500 ASOs, tier-1,
+     siloed/no-pool), Scharner 2020 (tier-2, measured Tm), Collins dystrophin (tier-3). Kept for later.
+
+**STANDING ORDER (user, autonomous): drive Arm C until the compute is LOCKED + a revolutionary
+headline that returns positive results healthily. Do NOT return to user; lean subagents + /loop;
+minimize main-thread tokens; decisions optimized for revolutionary-but-defensible.**
+
+**ARM C COMPUTE — Sonnet builder DISPATCHED (background) to build + LAUNCH the pipeline:**
+- armc_build.py (parse S1/S4, bedtools getfasta exon-ome from the 81621-universe, scan revcomp(SBO)
+  @edit<=5 vs exon-ome, label actionable=in-S4-hits vs bind-no-act) + armc_gate.py (leave-one-SBO-out
+  CV: binding-feature model vs edit-distance/energy baseline -> AUC/AP -> GO/NO-GO in GATE_RESULT.md).
+- armc_scan.sbatch (array 1-81%16, mit_preemptable, requeue-safe, per-SBO .done) -> armc_gate.sbatch
+  (afterok dependency). One launch = fully autonomous. Builder returns array+gate job ids + pytest.
+- Builder DONE (build+pytest, NOT launched). Fresh **Opus reviewer** ran (per user: Opus reviews AND
+  applies its own fixes, not Sonnet) -> 2 HIGH + 1 MED fixed: (a) average-precision tie bug that
+  inflated baseline AP ~0.33 = verdict-corrupting (rewrote to sklearn convention + known-answer test);
+  (b) 16 degenerate/repeat-motif SBOs (poly-A/(AC)n/ATCATC...) matched ~every exon at 3nt seeds ->
+  runtime blowup + label swamp, added sequence-only complexity guard, EXCLUDED before scan (65 SBOs
+  remain); (c) wall-clock 2h->24h (max_edit=5 ~=3h/SBO). 181 passed/3 skipped. LAUNCH-READY yes.
+- **CANARY LAUNCHED: job 21864147 (array task 5 = DG952, clean 20mer), mit_preemptable.** Per Opus
+  advice (real repeat-rich wall time unknown; preemptable restarts from scratch) — validate 1 SBO
+  before the full array. Background waiter bxlg5g715 notifies main on terminal w/ state+Elapsed+DG952
+  hit rows/class balance.
+- **CANARY COMPLETED (3h33m) -> EXPOSED FATAL DESIGN FLAW. Full array HALTED.** DG952 = 483 bound
+  exons but 0 positives / 483 negatives. Root cause (verified): candidate universe was Arm D's
+  detectable_universe_v50.parquet = GSE307431 **SMA-fibroblast** SE set, but Holgersen assayed
+  **HEK293T/HepG2/PXB** -> only **3 of 724 S4 positives (0.4%) exist in that universe** -> no positive
+  class -> NO-GO by construction. ALSO: S4 edit_dist is "background"/NaN for ~430 of 724 spliced exons
+  (INDIRECT effects, not bound); only ~294 are direct sequence matches (edit 0-5; ~194 at edit 4-5).
+- **REDESIGN dispatched to fresh Opus agent (implements own fixes, per user rule).** Decisions (locked):
+  (1) universe = genome-wide GENCODE v50 exons (verify >=90% of ~294 direct positives present);
+  (2) positive class = direct-bound-acted = S4 rows with NUMERIC edit_dist<=5 (~294); indirect ~430
+  excluded from the bind->act test; (3) negatives = bound-but-not-acted SAMPLED against a fixed
+  deterministic random background pool (20k-50k GENCODE exons, label-blind) — bounds scan cost, keeps
+  max_edit=5; (4) max_edit stays 5 (positives reach edit 4-5, CANNOT tighten); (5) features binding-only
+  recomputable genome-wide (edit_distance, exact_match_length, duplex_dg, gc_fraction, exon_length;
+  DROP baseline_psi). Stronger/more-revolutionary framing: among near-complementary binding sites, does
+  binding predict splicing ACTION? Opus re-tunes sbatch --time (24h was for the abandoned full-exonome
+  scan) + shard plan, re-runs pytest, does a fast 1-2 SBO verification that positives are non-empty.
+- **Redesign #1 (genome-wide universe) DONE but tripwire caught a DEEPER flaw: S4 coords are hg19.**
+  Only ~10-17% of the 204 direct-positive intervals overlap GENCODE v50 (GRCh38); Holgersen methods
+  cite Gencode v25/v27 (misleading — the S4 TABLE is GRCh37/hg19). PROVEN: hg19->GRCh38 liftover lifts
+  **204/204 (100%)** cleanly, overlap 10%->51%. Chain staged: $SCRATCH/feng/liftover/hg19ToHg38.over.
+  chain.gz (224K, UCSC). feng.rbp.liftover.load_chain_file -> ChainMap.lift_interval handles it.
+- **Redesign #2 (coordinate fix) dispatched to fresh Opus implementer.** (1) lift S4 positives
+  hg19->GRCh38 (drop+count unmapped/multimap); (2) positive target = the LIFTED interval's own GRCh38
+  sequence (NOT required to equal an annotated exon -> recovers ~100%, not the ~51% ceiling of exact-
+  exon join; keeps novel/Intropolis exons); (3) negatives = bounded random annotated-exon pool; (4)
+  features SITE/DUPLEX-level, identical path both classes (edit_distance, exact_match_length, duplex_dg
+  IntaRNA, binding_window_gc) — DROP whole-exon length/gc (region-vs-exon confound); gate conditioned on
+  binding (no edit<=5 hit in target -> excluded from both classes); no S4-ΔG/edit leakage (recompute).
+  Residual limitation flagged: neg pool may include unexpressed exons (binding-only features can't
+  exploit expression -> conservative label noise). Opus re-tunes --time, verifies positives non-empty.
+- **Coord fix DONE + verified: 204/204 lift (100%), frame confirmed (edit0 positives' revcomp appears
+  at edit0 in lifted region w/ 30bp pad, both classes). pytest 189/3 green. LAUNCH-READY yes.**
+  Positive-side LOSO feasibility (computed inline from S4, no scan): **40 non-degenerate SBOs have >=1
+  direct positive** (33>=2, 26>=3), 238 positives total, spread 1-25/SBO -> clears >=25-fold bar.
+  Negatives abundant (~5.5% bind -> ~1100/SBO).
+- **PRODUCTION CANARY LAUNCHED: job 21875568 (array 17,61,79 = DG745/DG1063/DG767, positive-rich).**
+  Confirms end-to-end integration (lift+fetch positives, pool build, scan, feature write) + wall time
+  before the full array. Monitor bkibxl01r fires at terminal w/ per-SBO POS/NEG. Stale cache cleared.
+- **CANARY HEALTHY (3 SBOs, job 21875568):** DG745 POS15/NEG2095, DG1063 16/3203, DG767 14/3887 —
+  both classes, correct site-level feature schema. Wall: DG745 3h11m (incl one-time shared pool build),
+  others ~1h55m -> steady-state ~2h/SBO. Bumped --time 4h->8h for preemption headroom.
+- **GATE SMOKE (3-SBO, local, /tmp): pipeline works end-to-end.** Model ROC-AUC 0.869, AP 0.062;
+  baselines edit_distance AUC 0.637/AP 0.044, **duplex_dg AUC 0.864/AP 0.042**. Verdict NO-GO on 3 SBOs
+  (GO needs beat best baseline +0.05 on BOTH AUC & AP; model beats duplex_dg by only +0.005 AUC).
+  IMPORTANT HONEST SIGNAL: duplex energy alone nearly explains action on these 3 -> watch whether the
+  full 40-SBO run shows the model beating energy (the revolutionary "bind != act beyond energy" claim)
+  or NOT. DO NOT move the pre-specified GO criterion to manufacture a GO (post-hoc-repair do-not).
+- **FULL COMPUTE LAUNCHED: scan array 21881181 (1-81%16) + gate 21881182 (afterok).** 3 canary + 16
+  low-complexity SBOs self-skip. ~40 positive-bearing SBOs drive the LOSO. Gate writes
+  feng/artifacts/phase0_arm_c_probe/GATE_RESULT.md + .done. Monitor bz2sn3mim (durable, zero-token vs a
+  12h-blocking Haiku) fires to MAIN at gate terminal w/ verdict + pooled metrics; also catches
+  DependencyNeverSatisfied (a scan shard failing -> gate would need manual relaunch after requeue).
+- NEXT on gate terminal: read GATE_RESULT.md. If GO healthy -> lock Arm C + headline + Codex/Opus
+  structural review of the result before locking. If NO-GO (energy explains action) -> that is the
+  HONEST finding; present it + the strong-energy mechanism (itself a clean result); consider a
+  separately-prespecified question only transparently, never a goalpost move. Either way: re-review the
+  gate result before it becomes a headline.
+Parked decisions still open: freeze control definition (ScrMOE-only vs scrambled+untreated); Sep-7
+Codex Arm D step-3 durable gate.
+
 ## ★ LIVE CHECKPOINT — 2026-09-02b (atlas LOW cleanup DONE + committed; phase3 rMATS DONE)
 
 **Arm A atlas LOWs: DONE.** All 4 fixed in `feng/src/feng/atlas/arm_a.py` write_report (Opus-4.8
