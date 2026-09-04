@@ -23,7 +23,28 @@ preregistered at the eventual FREEZE.
    to Arms A-D (design/hooks now, build later; Arm D GPU score is freeze-gated).
    **APPROVED (user, 2026-09-02) — GO.** Not yet started; build pending.
 
-## ★ LIVE CHECKPOINT — 2026-09-03 (Arm C FULL COMPUTE LAUNCHED — running)
+## ★ LIVE CHECKPOINT — 2026-09-03 (Arm C DONE — verdict NO-GO; Arm E CPU+GPU-infra+H committed)
+
+**ARM C GATE TERMINAL (job 21881182 COMPLETED 4m21s) -> VERDICT: NO-GO.** GATE_RESULT.md written
+(feng/artifacts/phase0_arm_c_probe/GATE_RESULT.md). Honest, prespecified, NOT goalpost-moved:
+- 190743 bound (SBO,exon) rows; positive rate 217/190743 = 0.001 (extreme imbalance); 65 SBO
+  groups, only ~15 evaluable (25 folds degenerate / 0-positive held-out).
+- Pooled held-out: Model (LOSO logistic, binding features) AUC 0.838 / AP 0.042. Baselines:
+  -edit_distance 0.674 / 0.040; **-duplex_dg 0.797 / 0.004**. GO bar = beat best baseline +0.05
+  on BOTH. Model beats best AUC baseline (duplex_dg) by only +0.041 (<0.05 FAIL) and best AP
+  baseline (edit_distance) by +0.002 (FAIL). -> **NO-GO on both margins.**
+- HONEST READ (the anticipated outcome): duplex ENERGY largely explains action (dG-alone AUC
+  0.797, per-fold dG AUC frequently 0.8-0.99). Binding model adds a little AUC, not past the bar;
+  AP near-flat under 0.001 prevalence. This is a clean result, NOT a failure: "binding predicts
+  action, but mostly via energy, not beyond it." Do NOT move the GO criterion to manufacture a GO.
+- NEXT (post-clear): re-review the gate result (Codex/Opus structural) BEFORE it becomes a
+  headline; present NO-GO + the strong-energy mechanism honestly; any separately-prespecified
+  follow-up only transparently. Freeze-safe (candidate/paper_supported; no sealed ΔPSI read).
+- Per-SBO checkpointing gap noted (whole-SBO .done only; repeat-rich SBOs reset on preemption) --
+  did not fix mid-run, let it finish. For a rerun: intra-SBO exon-batch checkpoint OR non-
+  preemptable partition for the heavy tail.
+
+## ★ LIVE CHECKPOINT — 2026-09-03 (Arm C FULL COMPUTE LAUNCHED — running) [SUPERSEDED by NO-GO above]
 
 **LAUNCH CORRECTION (added after the fact):** the "BUILT, NOT LAUNCHED" state below
 froze the 05:33 build. An autonomous goal loop then rebuilt `armc_scan.sbatch`
@@ -148,13 +169,39 @@ no-raise). **PLAN.md + TASKBOARD.md** Arm E section + A-D GPU-tier slots (Arm D 
 preregistered/no-alter-locked-score) written. Suite **304**. GPU infra + docs COMMIT pending
 this turn.
 
-**NEXT (Arm E remaining):** (1) OFF-TARGET transcriptome scan compute -> populate burden (the
-decisive CPU axis that makes therapeutic_window non-None + gives the real directional verdict;
-runnable today, no new env); (2) GPU env INSTALL (setup_gpu_env.sh: torch cu124 + Pangolin
-primary / SpliceAI separate sub-env / OpenMM; heavy, quota-check first) + wire G/H scorers into
-evaluate.py; (3) prereg SEAL (gated: user sign-off + all axes); (4) final adversarial gate +
-Codex sol durable gate (Sep 7). Perf (LOW-3): evaluate re-indexes the 3GB genome per fetch ->
-slow; pass on-disk .fai in a perf pass (bites the off-target scan next).
+**GPU ENABLEMENT DONE (committed):** env `~/orcd/pool/feng-gpu-env` (6.2G; torch 2.6.0+cu124 /
+openmm 8.2 / pangolin 1.0.2; SpliceAI deferred TF-conflict) installed 4m on mit_normal (compute
+nodes have internet). Commit 0004d8f = **axis H Pangolin deep-splice scorer** (gpu_scores.py:
+pangolin_exon7_delta = ISS-N1-masking -> exon-7 inclusion shift, gpu-env _worker subprocess;
+H-off off-target-splicing interface wired, genome-wide sweep deferred) + GPU-env gate fix
+(check_gpu_env probe timed out under CPU load -> false torch:False; now timeout=inconclusive +
+scorer imports in-worker) + recipe pin. Suite green.
+
+**KEY HONEST FINDING:** Pangolin CPU smoke, correct sign (masking ISS-N1 raises exon-7 inclusion
+= nusinersen mechanism). SATURATION AMBIGUOUS + readout-sensitive (do NOT claim monotonic): the
+donor-exact exon7_delta rises L6..L30 (0.0015->0.027) BUT the near-donor max_gain rises L6->L24
+(0.014->0.253) then DROPS at L30 (0.075) — a turnover hint. No clean saturates-vs-rises claim at
+smoke scale; needs a LOCKED readout + full-ladder GPU-scale run before any prereg use. Combined
+with IntaRNA duplex + RNAup (both rise with length), the on-target potency picture leans
+longer-acts-harder but is not settled on the splice axis. "Shorter is better" still rests mainly
+on the SPECIFICITY side: off-target scan + H-off (Pangolin off-target splicing) must show shorter
+mers shedding off-targets faster than they lose potency. At L30 max splice-gain shifted to a new
+offset (+6) = off-target splicing emerging. NOT a GO; do not manufacture one.
+OPEN: (a) masking scheme (footprint->N one-hot; readout = gain at exon-7 5' donor chr5:70076575)
+is a CANDIDATE modeling choice NEEDING adversarial review + a locked readout before prereg.
+(b) LICENSE: gpu_scores.py reproduces Pangolin's compute_score+one_hot_encode VERBATIM (GPL-3.0,
+attributed) because pangolin.pangolin top-imports absent vcf/gffutils/pyfastx. Vendoring GPL-3.0
+into feng needs a license decision (feng repo license? GPL copyleft may apply to the combined
+work) — resolve before any release/publication.
+
+**NEXT (Arm E remaining) — REPRIORITIZED:** the decisive axis is now SPECIFICITY, not more
+on-target scorers. (1) OFF-TARGET compute: CPU seed-extend transcriptome scan (populate burden)
++ H-off Pangolin off-target-splicing genome-wide sweep via gpu_preemptable.sbatch -> makes
+therapeutic_window non-None + gives the REAL directional verdict. HEAVY (Arm-C-scale). (2) axis G
+OpenMM MD binding-free-energy scorer — ANOTHER on-target proxy (likely also rises with length),
+lower priority than specificity. (3) prereg SEAL (gated: user sign-off + all axes). (4) final
+adversarial gate over gpu_scores masking scheme + Codex sol durable gate (Sep 7). Perf (LOW-3):
+evaluate re-indexes the 3GB genome per fetch -> pass on-disk .fai before the off-target scan.
 
 ## ★ LIVE CHECKPOINT — 2026-09-02c (Arm E GO; Arm C probe AMBER->GO-leaning)
 
