@@ -2,21 +2,19 @@
 
 Two readouts, both ``candidate`` / pre-registration-eligible:
 
-* **H-on (on-target potency):** model each ASO footprint as *steric masking* of
-  its target window and ask Pangolin how much SMN2 exon-7 5' splice-site usage
-  changes.  The ASO-covered genomic bases are replaced by ``N`` (an all-zero
-  one-hot column -- the model sees "no nucleotide here", i.e. the base is
-  occluded by the bound oligo), and the predicted splice-usage GAIN at the
-  exon-7 donor is the predicted inclusion shift.  Blocking the intron-7 ISS-N1
-  silencer should *raise* exon-7 inclusion (nusinersen's known mechanism), so a
-  positive gain is the expected sign.  The scientific question this axis exists
-  to answer: does that inclusion shift **saturate** as the footprint grows past
-  the ~18-nt ISS-N1 element (which would let a shorter mer win) or keep rising?
+* **H-on (on-target potency):** replace each ASO footprint with ``N`` and ask
+  Pangolin how much SMN2 exon-7 5' splice-site usage changes.  Pangolin encodes
+  ``N`` as an all-zero one-hot column, so this readout is explicitly an
+  **N-ablation sensitivity proxy**: it measures sensitivity to missing sequence
+  recognition information, not a validated prediction of physical steric
+  occlusion by a bound ASO.  A positive gain is the expected sign given the
+  known ISS-N1 mechanism, but the proxy does not itself model that mechanism.
 
 * **H-off (off-target splicing burden):** the same delta-splice prediction run
-  at each near-complement off-target site; aggregated into a per-mer burden.
+  at each near-complement off-target site and aggregated into a per-mer burden.
+  It retains the same N-ablation-proxy interpretation.
   The per-site function is built + wired here; the genome-wide sweep is a
-  separate GPU compute step (via ``scripts/templates/gpu_preemptable.sbatch``).
+  separate GPU compute step (via ``scripts/arm_e_hoff.sbatch``).
 
 Runtime split: this module imports cleanly under the CPU ``feng-env`` (torch and
 Pangolin are imported only inside the worker, which runs under the GPU env
@@ -24,20 +22,24 @@ Pangolin are imported only inside the worker, which runs under the GPU env
 :func:`feng.gpu.env.check_gpu_env`; when the GPU env / Pangolin is absent it
 returns ``value=None`` with a reason and never fabricates a number.
 
-The masking scheme and the exon-7 readout position are deliberate MODELING
+The N-ablation proxy and the exon-7 readout position are deliberate MODELING
 CHOICES flagged ``candidate`` -- they need review before any prereg seal.
 """
 
 from __future__ import annotations
 
 import json
+import math
 import os
 import subprocess
 import sys
 from pathlib import Path
 from typing import Optional
 
+from feng import source_auth
+
 STATE = "candidate"
+PANGOLIN_MASKING_METHOD = "N-ablation sensitivity proxy"
 
 # --- SMN2 anchor (GRCh38 v50, + strand, 1-based; from the feng phase2 recon
 #     README:167-177, the same verified frame the ladder is built on). ----------
@@ -49,7 +51,13 @@ ISS_N1_END_1B = 70076601
 
 PANGOLIN_CONTEXT = 5000                # flank Pangolin needs on each side
 DEFAULT_DISTANCE = 50                  # Pangolin -d; output covers +/- d around center
-DEFAULT_READOUT_1B = EXON7_DONOR_1B    # where we read the induced splice gain
+# Pangolin labels 5' donor-site usage at the last exonic base, not at the first
+# intronic base of the genomic splice boundary.
+DEFAULT_READOUT_1B = EXON7_LAST_BASE_1B
+
+PANGOLIN_WEIGHT_FILENAMES = tuple(
+    f"final.{j}.{i}.3.v2" for i in (0, 2, 4, 6) for j in (1, 2, 3)
+)
 
 DEFAULT_GPU_PYTHON = Path(
     os.environ.get("FENG_GPU_PYTHON", os.path.expanduser("~/orcd/pool/feng-gpu-env/bin/python"))
@@ -85,8 +93,10 @@ def footprint_mask(
     """Return ``ref_window`` with the ASO footprint bases replaced by ``mask_char``.
 
     Length-preserving. ``N`` one-hot-encodes to an all-zero column in Pangolin
-    (``IN_MAP[0]``), i.e. an occluded base. Raises if the footprint falls
-    outside the window (fail-closed -- never silently mask nothing).
+    (``IN_MAP[0]``), representing missing/unknown sequence information. This is
+    an ablation proxy, not a validated physical-occlusion model. Raises if the
+    footprint falls outside the window (fail-closed -- never silently mask
+    nothing).
     """
     if footprint_end_1b < footprint_start_1b:
         raise ValueError("footprint end precedes start")
@@ -157,10 +167,13 @@ def _fetch_window(center_1b: int, d: int, genome_fasta: Path) -> tuple[str, int]
 
 def _run_worker(jobs: list[dict], d: int, gpu_python: Path) -> list[dict]:
     """Dispatch scoring jobs to the GPU-env Pangolin worker. Never fabricates."""
-    payload = json.dumps({"d": d, "strand": "+", "jobs": jobs})
+    payload = json.dumps({"d": d, "jobs": jobs})
     env = dict(os.environ)
     src = str(Path(__file__).resolve().parents[2])  # feng/src
-    env["PYTHONPATH"] = src + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+    env["PYTHONPATH"] = src
+    env["PYTHONSAFEPATH"] = "1"
+    env["PYTHONNOUSERSITE"] = "1"
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
     # Cap BLAS/OpenMP thread pools: torch's OpenBLAS otherwise spawns one thread
     # per core and blows past a shared node's RLIMIT_NPROC (768) under load,
     # making `import torch` itself fail (`blas_thread_init: RLIMIT_NPROC`). A
@@ -169,8 +182,19 @@ def _run_worker(jobs: list[dict], d: int, gpu_python: Path) -> list[dict]:
     _threads = os.environ.get("FENG_GPU_THREADS", "4")
     for _var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
         env[_var] = _threads
+    source_root = env.get("FENG_ARME_SOURCE_ROOT")
+    if source_root:
+        bootstrap = Path(source_root) / "feng" / "src" / "feng" / "source_auth.py"
+        worker_command = [
+            str(gpu_python), str(bootstrap), "run-module",
+            "feng.titration.gpu_scores", "--", "_worker",
+        ]
+    elif env.get("FENG_REQUIRE_SOURCE_AUTH") == "1":
+        raise RuntimeError("source authentication environment missing for Pangolin worker")
+    else:
+        worker_command = [str(gpu_python), "-m", "feng.titration.gpu_scores", "_worker"]
     proc = subprocess.run(
-        [str(gpu_python), "-m", "feng.titration.gpu_scores", "_worker"],
+        worker_command,
         input=payload,
         capture_output=True,
         text=True,
@@ -198,10 +222,11 @@ def pangolin_exon7_delta(
     """H-on: predicted SMN2 exon-7 inclusion shift per ladder rung (candidate).
 
     Returns one dict per input rung: ``pangolin_exon7_delta`` (splice GAIN at the
-    exon-7 donor when the ASO footprint is steric-masked), ``pangolin_max_gain``
-    /``pangolin_max_gain_offset`` (strongest induced gain in +/- d and where),
-    ``state='candidate'``, ``pangolin_incomplete`` + ``reason`` when the GPU env
-    is unavailable (value None -- never fabricated).
+    exon-7 donor under the N-ablation sensitivity proxy),
+    ``pangolin_max_gain``/``pangolin_max_gain_offset`` (strongest induced gain
+    in +/- d and where), ``masking_method='N-ablation sensitivity proxy'``,
+    ``state='candidate'``, and ``pangolin_incomplete`` + ``reason`` when the GPU
+    env is unavailable (value None -- never fabricated).
     """
     def _incomplete(reason: str) -> list[dict]:
         return [
@@ -212,6 +237,7 @@ def pangolin_exon7_delta(
                 "pangolin_max_gain_offset": None,
                 "pangolin_incomplete": True,
                 "reason": reason,
+                "masking_method": PANGOLIN_MASKING_METHOD,
                 "state": STATE,
             }
             for r in rungs
@@ -236,7 +262,7 @@ def pangolin_exon7_delta(
                 {"id": int(r["length"]), "ref_seq": ref_window, "alt_seq": alt, "readout_idx": idx}
             )
         results = _run_worker(jobs, d, gpu_python)
-    except (RuntimeError, ValueError, OSError) as exc:
+    except (KeyError, RuntimeError, ValueError, OSError) as exc:
         return _incomplete(f"pangolin worker/fetch failed: {exc}")
     by_id = {res["id"]: res for res in results}
 
@@ -251,15 +277,16 @@ def pangolin_exon7_delta(
                 "pangolin_max_gain_offset": res.get("max_gain_offset"),
                 "pangolin_incomplete": res.get("delta_at_readout") is None,
                 "reason": None if res.get("delta_at_readout") is not None else "no worker result",
+                "masking_method": PANGOLIN_MASKING_METHOD,
                 "state": STATE,
             }
         )
     return out
 
 
-def pangolin_offtarget_burden(
+def pangolin_off_target_burden(
     aso_5to3: str,
-    offtarget_sites: list[dict],
+    off_target_sites: list[dict],
     *,
     genome_fasta: Path = DEFAULT_GENOME_FASTA,
     gpu_python: Path = DEFAULT_GPU_PYTHON,
@@ -267,36 +294,86 @@ def pangolin_offtarget_burden(
 ) -> dict:
     """H-off: aggregate delta-splice burden across an ASO's off-target sites (candidate).
 
-    Each site dict needs ``chrom``, ``start`` and ``end`` (1-based inclusive) of
-    the near-complement footprint. Burden = sum of max |gain|+|loss| induced by
-    steric-masking each footprint. Returns ``value=None`` (incomplete) when the
-    GPU env is absent or no sites were given -- never a fabricated zero.
+    Each site dict needs ``chrom``, ``start`` and ``end`` (1-based inclusive),
+    ``strand`` (target transcript strand), and ``target_5to3`` for the
+    near-complement footprint. Burden = sum across sites of
+    ``max(0, max_gain) + max(0, -max_loss)`` under the N-ablation sensitivity
+    proxy. Returns ``value=None`` (incomplete) when the GPU env is absent or no
+    sites were given -- never a fabricated zero.
     """
     def _incomplete(reason: str) -> dict:
-        return {"pangolin_offtarget_burden": None, "pangolin_offtarget_incomplete": True,
-                "reason": reason, "n_sites": len(offtarget_sites), "state": STATE}
+        return {"pangolin_off_target_burden": None, "pangolin_off_target_incomplete": True,
+                "reason": reason, "n_sites": len(off_target_sites),
+                "masking_method": PANGOLIN_MASKING_METHOD, "state": STATE}
 
-    if not offtarget_sites:
+    if not off_target_sites:
         return _incomplete("no off-target sites supplied (not scanned)")  # != zero burden
     if not Path(gpu_python).exists():
         return _incomplete(f"GPU env python absent at {gpu_python}")
 
     try:
+        aso = aso_5to3.upper().replace("U", "T")
+        if not aso or set(aso) - set("ACGT"):
+            raise ValueError("aso_5to3 must be a nonempty A/C/G/T sequence")
+        from feng.bench.scores import reverse_complement
+        from feng.scan.seed_extend import _alignment_cost
+        hybridization_query = reverse_complement(aso)
         jobs = []
-        for i, site in enumerate(offtarget_sites):
+        for i, site in enumerate(off_target_sites):
             chrom = str(site.get("chrom", CHROM))
+            strand = str(site["strand"])
+            if strand not in {"+", "-"}:
+                raise ValueError(f"off-target site {i} has invalid strand {strand!r}")
             center = (int(site["start"]) + int(site["end"])) // 2
             ref_window, win_start_1b = _fetch_window_generic(chrom, center, d, genome_fasta)
+            lo = int(site["start"]) - win_start_1b
+            hi = int(site["end"]) - win_start_1b + 1
+            genomic_target = ref_window[lo:hi]
+            oriented_target = (
+                reverse_complement(genomic_target) if strand == "-" else genomic_target
+            )
+            declared_target = str(site["target_5to3"]).upper().replace("U", "T")
+            if declared_target != oriented_target:
+                raise ValueError(
+                    f"off-target site {i} target_5to3 does not match reference on {strand} strand"
+                )
+            rc_distance = _alignment_cost(hybridization_query, declared_target)[0]
+            direct_distance = _alignment_cost(aso, declared_target)[0]
+            # Palindromic or near-symmetric targets can tie.  Their orientation
+            # is established by the strand-aware reference check above, so only
+            # a strictly closer direct-ASO match is invalid.
+            if rc_distance > direct_distance:
+                raise ValueError(
+                    f"off-target site {i} has direct-ASO orientation "
+                    f"(hybridization edit distance={rc_distance}, direct={direct_distance})"
+                )
             alt = footprint_mask(ref_window, int(site["start"]), int(site["end"]), win_start_1b)
-            jobs.append({"id": i, "ref_seq": ref_window, "alt_seq": alt, "readout_idx": d})
+            jobs.append({
+                "id": i,
+                "ref_seq": ref_window,
+                "alt_seq": alt,
+                "readout_idx": d,
+                "strand": strand,
+                # Provenance metadata only; worker scoring uses ref_seq/alt_seq.
+                "hybridization_query_5to3_provenance": hybridization_query,
+            })
         results = _run_worker(jobs, d, gpu_python)
-    except (RuntimeError, ValueError, OSError) as exc:
+    except (KeyError, RuntimeError, ValueError, OSError) as exc:
         return _incomplete(f"pangolin worker/fetch failed: {exc}")
+    by_id = {res.get("id"): res for res in results}
+    if len(by_id) != len(results) or set(by_id) != set(range(len(off_target_sites))):
+        return _incomplete("pangolin worker returned duplicate or missing site results")
     burden = 0.0
-    for res in results:
-        burden += abs(res.get("max_gain") or 0.0) + abs(res.get("max_loss") or 0.0)
-    return {"pangolin_offtarget_burden": burden, "pangolin_offtarget_incomplete": False,
-            "reason": None, "n_sites": len(offtarget_sites), "state": STATE}
+    for i in range(len(off_target_sites)):
+        gain, loss = by_id[i].get("max_gain"), by_id[i].get("max_loss")
+        if gain is None or loss is None:
+            return _incomplete(f"pangolin worker returned missing value for site {i}")
+        if not math.isfinite(float(gain)) or not math.isfinite(float(loss)):
+            return _incomplete(f"pangolin worker returned non-finite value for site {i}")
+        burden += max(0.0, float(gain)) + max(0.0, -float(loss))
+    return {"pangolin_off_target_burden": burden, "pangolin_off_target_incomplete": False,
+            "reason": None, "n_sites": len(off_target_sites),
+            "masking_method": PANGOLIN_MASKING_METHOD, "state": STATE}
 
 
 def _fetch_window_generic(chrom: str, center_1b: int, d: int, genome_fasta: Path) -> tuple[str, int]:
@@ -319,6 +396,7 @@ def _fetch_window_generic(chrom: str, center_1b: int, d: int, genome_fasta: Path
 # vcf/gffutils/pyfastx top-level dependencies (absent in the GPU env). Only
 # ``pangolin.model`` (numpy+torch) is imported.
 def _worker_main() -> int:
+    source_auth.verify_pangolin_package()
     # The worker's real import is the AUTHORITATIVE availability check -- a
     # genuine ImportError here (torch/pangolin actually missing) is reported as a
     # structured error, never a fabricated score. This is why the parent does not
@@ -330,7 +408,7 @@ def _worker_main() -> int:
         from pangolin.model import Pangolin, L, W, AR
     except ImportError as exc:
         print(json.dumps({"error": f"gpu import failed: {type(exc).__name__}: {exc}"}))
-        return 0
+        return 1
 
     IN_MAP = np.asarray([[0, 0, 0, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
 
@@ -378,22 +456,23 @@ def _worker_main() -> int:
 
     req = json.loads(sys.stdin.read())
     d = int(req["d"])
-    strand = req.get("strand", "+")
 
     mdir = os.path.join(os.path.dirname(pm.__file__), "models")
     models = []
-    for i in [0, 2, 4, 6]:
-        for j in range(1, 4):
-            model = Pangolin(L, W, AR)
-            weights = torch.load(os.path.join(mdir, f"final.{j}.{i}.3.v2"), map_location=torch.device("cpu"))
-            if torch.cuda.is_available():
-                model.cuda()
-            model.load_state_dict(weights)
-            model.eval()
-            models.append(model)
+    for weight_filename in PANGOLIN_WEIGHT_FILENAMES:
+        model = Pangolin(L, W, AR)
+        weights = torch.load(
+            os.path.join(mdir, weight_filename), map_location=torch.device("cpu")
+        )
+        if torch.cuda.is_available():
+            model.cuda()
+        model.load_state_dict(weights)
+        model.eval()
+        models.append(model)
 
     results = []
     for job in req["jobs"]:
+        strand = job.get("strand", "+")
         loss, gain = compute_score(job["ref_seq"], job["alt_seq"], strand, d, models)
         ridx = int(job["readout_idx"])
         max_i = int(gain.argmax())

@@ -82,6 +82,20 @@ pip install --index-url https://download.pytorch.org/whl/cu124 \
     torch torchvision torchaudio
 python -c "import torch, openmm; print('torch', torch.__version__)"  # openmm must still import
 
+# --- data IO: feng.bench.scores (imported transitively by arm_e_hoff) needs ---
+# pandas at module load, and parquet artifacts need pyarrow. The CPU feng-env
+# ships these; the GPU env must too or the hoff array dies on import. numpy is
+# already 2.x here, so keep pandas 2.x (numpy-2 compatible).
+pip install "pandas>=2.2" pyarrow
+python -c "import pandas, pyarrow; print('pandas', pandas.__version__, 'pyarrow', pyarrow.__version__)"
+
+# --- genome fetch: feng.bench.{scores,strata} lazily import pysam (FastaFile) ---
+# to pull per-site genome windows for the pangolin H-off scorer. Scan never hits
+# this path; hoff payload rungs (L>=8) do, and die "pysam is unavailable" without
+# it. manylinux wheel, no htslib build needed.
+pip install "pysam>=0.22"
+python -c "import pysam; print('pysam', pysam.__version__)"
+
 # --- Pangolin (primary deep-splice; torch-based) -----------------------------
 # The pip name `pangolin-splice` may not match; the source of record is
 # github.com/tkzeng/Pangolin (imports as `pangolin`; needs gffutils/pyfasta).

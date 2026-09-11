@@ -57,9 +57,15 @@ SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$PWD}"
 PYTHON_BIN="${GPU_ENV_PREFIX}/bin/python"
 export PYTHONPATH="${SUBMIT_DIR}/feng/src:${PYTHONPATH:-}"
 
+# --- self-heal SCRATCH: batch env may not inherit it; the ~/orcd/scratch
+#     symlink is the authoritative resolver. The :? guard below still fires if
+#     even the symlink is gone, so a genuinely missing scratch never runs.
+: "${SCRATCH:=$(readlink -f "${HOME}/orcd/scratch" 2>/dev/null || true)}"
+export SCRATCH
+
 # --- output layout: per-shard result + sentinel + checkpoint ------------------
 TASK="${SLURM_ARRAY_TASK_ID:?ERROR: run me as a SLURM array job}"
-OUT_DIR="${FENG_GPU_OUT_DIR:-${SCRATCH:-}/feng/__JOB_NAME__}"
+OUT_DIR="${FENG_GPU_OUT_DIR:-${SCRATCH:?SCRATCH is required}/feng/__JOB_NAME__}"
 mkdir -p "${OUT_DIR}" feng/logs
 OUT="${OUT_DIR}/shard_${TASK}.parquet"
 DONE="${OUT_DIR}/shard_${TASK}.done"
@@ -88,10 +94,16 @@ requeue_handler() {
     if [[ -n "${PAYLOAD_PID}" ]]; then
         kill -TERM "${PAYLOAD_PID}" 2>/dev/null || true
         # bounded by SLURM's grace window; wait for the child's final flush+exit
-        wait "${PAYLOAD_PID}" 2>/dev/null || true
+        if ! wait "${PAYLOAD_PID}"; then
+            echo "ERROR: payload failed while handling checkpoint signal" >&2
+            exit 1
+        fi
     fi
     echo "requeuing job ${SLURM_JOB_ID:-unknown} (single requeue owner: sbatch trap)" >&2
-    [[ -n "${SLURM_JOB_ID:-}" ]] && scontrol requeue "${SLURM_JOB_ID}" || true
+    if [[ -z "${SLURM_JOB_ID:-}" ]] || ! scontrol requeue "${SLURM_JOB_ID}"; then
+        echo "ERROR: checkpoint saved but requeue failed" >&2
+        exit 1
+    fi
     exit 0
 }
 trap requeue_handler SIGTERM SIGUSR1

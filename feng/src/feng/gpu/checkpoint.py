@@ -134,15 +134,19 @@ def checkpoint_on_signal(
     previous: dict[int, Any] = {}
 
     def _handler(signum, _frame):
+        failure: BaseException | None = None
         try:
             on_signal(signum)
-        finally:
-            if requeue:
-                requeue_self()
-            if exit_after:
-                # 0 + a pending requeue = clean resume; nonzero could be read as
-                # a real failure by afterok dependents.
-                os._exit(0)
+        except BaseException as exc:
+            failure = exc
+        # Never resume from stale state: requeue is attempted only after the
+        # final checkpoint callback completed successfully.
+        if failure is None and requeue and not requeue_self():
+            failure = RuntimeError("checkpoint succeeded but SLURM requeue failed")
+        if exit_after:
+            os._exit(1 if failure is not None else 0)
+        if failure is not None:
+            raise failure
 
     try:
         for sig in signals:

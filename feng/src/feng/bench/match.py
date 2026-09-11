@@ -40,7 +40,10 @@ import pandas as pd
 
 from feng.bench.strata import (
     FreezeGuardError,
+    INPUT_PROVENANCE_COLUMNS,
+    UNIVERSE_PROVENANCE_COLUMNS,
     assert_no_contrast_fields,
+    assert_scrmoe_universe,
     positive_interval_to_exon_key,
 )
 
@@ -124,6 +127,15 @@ def map_positives_to_universe(
         raise ValueError(f"positives table lacks columns: {sorted(missing)}")
     if "exon_key" not in universe.columns:
         raise ValueError("universe lacks an exon_key column")
+    duplicate_ids = sorted(
+        positives.loc[positives["event_id"].duplicated(keep=False), "event_id"]
+        .astype(str)
+        .unique()
+    )
+    if duplicate_ids:
+        raise FreezeGuardError(
+            "positive event_id values must be unique: " + ", ".join(duplicate_ids)
+        )
 
     detect_by_key = (
         universe.set_index("exon_key")["detectable"].to_dict()
@@ -223,6 +235,7 @@ def build_strata(
     """
     config = config or MatchConfig()
     assert_no_contrast_fields(universe)
+    assert_scrmoe_universe(universe)
 
     mapping = map_positives_to_universe(universe, positives)
     positive_keys = set(mapping["exon_key"])
@@ -295,7 +308,15 @@ def build_strata(
         # Background rows: exon_key + coordinates + covariates, plus the anchor
         # columns. The universe carries its own rMATS ``event_id``; the positive
         # anchor is named ``positive_event_id`` to avoid clobbering it.
-        block = pool.iloc[take][["exon_key", *COORD_COLUMNS, *config.covariates]].copy()
+        block = pool.iloc[take][
+            [
+                "exon_key",
+                *COORD_COLUMNS,
+                *config.covariates,
+                *UNIVERSE_PROVENANCE_COLUMNS,
+                *INPUT_PROVENANCE_COLUMNS,
+            ]
+        ].copy()
         block.insert(0, "match_distance", take_dist)
         block.insert(0, "is_positive", False)
 
@@ -309,6 +330,8 @@ def build_strata(
                 "exon_key": key,
                 **{c: pos_row[c] for c in COORD_COLUMNS},
                 **{c: pos_row[c] for c in config.covariates},
+                **{c: universe_by_key.loc[key, c] for c in UNIVERSE_PROVENANCE_COLUMNS},
+                **{c: universe_by_key.loc[key, c] for c in INPUT_PROVENANCE_COLUMNS},
             }]
         )
 
@@ -336,6 +359,7 @@ def build_strata(
             columns=[
                 "positive_event_id", "positive_exon_key", "is_positive",
                 "match_distance", "exon_key", *COORD_COLUMNS, *config.covariates,
+                *UNIVERSE_PROVENANCE_COLUMNS, *INPUT_PROVENANCE_COLUMNS,
             ]
         )
     )

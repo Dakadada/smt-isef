@@ -27,15 +27,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Mapping
 import argparse
+import hashlib
+import json
 import shutil
 import subprocess
 import tempfile
 
 import pandas as pd
 
-from feng.bench.strata import GenomeFastaError, _resolve_fasta_contig
+from feng.bench.strata import (
+    GenomeFastaError,
+    _resolve_fasta_contig,
+    assert_scrmoe_universe,
+)
 
 # --- nusinersen oligo --------------------------------------------------------
 
@@ -49,6 +55,12 @@ OLIGO_LENGTH = len(NUSINERSEN_5P_TO_3P)
 _COMPLEMENT = str.maketrans("ACGTacgt", "TGCAtgca")
 
 DEFAULT_WINDOW = 100  # +/- flank added to each exon before scoring
+SCORE_JOIN_KEYS = (
+    "positive_event_id",
+    "positive_exon_key",
+    "is_positive",
+    "exon_key",
+)
 
 
 def reverse_complement(sequence: str) -> str:
@@ -56,6 +68,61 @@ def reverse_complement(sequence: str) -> str:
 
 
 NUSINERSEN_RC = reverse_complement(NUSINERSEN_5P_TO_3P)
+
+
+def score_cache_key(inputs: Mapping[str, Path], parameters: dict) -> str:
+    """Hash every score input and parameter into a content-addressed cache key."""
+    digest = hashlib.sha256()
+    digest.update(
+        json.dumps(parameters, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    )
+    for role, raw_path in sorted(inputs.items()):
+        path = Path(raw_path)
+        if not path.is_file():
+            raise FileNotFoundError(f"score-cache input is missing: {path}")
+        role_bytes = role.encode("utf-8")
+        digest.update(len(role_bytes).to_bytes(8, "big"))
+        digest.update(role_bytes)
+        digest.update(path.stat().st_size.to_bytes(16, "big"))
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1 << 20), b""):
+                digest.update(chunk)
+    return digest.hexdigest()
+
+
+def join_score_tables(baseline: pd.DataFrame, test: pd.DataFrame) -> pd.DataFrame:
+    """Join baseline and test scores exactly one-to-one, refusing key drift."""
+    assert_scrmoe_universe(baseline)
+    assert_scrmoe_universe(test)
+    missing = [
+        f"{label}:{key}"
+        for label, frame in (("baseline", baseline), ("test", test))
+        for key in SCORE_JOIN_KEYS
+        if key not in frame.columns
+    ]
+    if missing:
+        raise ValueError(f"score table lacks join keys: {missing}")
+    for label, frame in (("baseline", baseline), ("test", test)):
+        if frame[list(SCORE_JOIN_KEYS)].isna().any().any():
+            raise ValueError(f"{label} score table has null join keys")
+        if frame.duplicated(list(SCORE_JOIN_KEYS)).any():
+            raise ValueError(f"{label} score table has duplicate join keys")
+    baseline_keys = set(map(tuple, baseline[list(SCORE_JOIN_KEYS)].itertuples(index=False, name=None)))
+    test_keys = set(map(tuple, test[list(SCORE_JOIN_KEYS)].itertuples(index=False, name=None)))
+    if baseline_keys != test_keys:
+        missing_test = len(baseline_keys - test_keys)
+        missing_baseline = len(test_keys - baseline_keys)
+        raise ValueError(
+            "score tables have non-identical keys "
+            f"({missing_test} missing from test, {missing_baseline} missing from baseline)"
+        )
+    test_scores = test[[*SCORE_JOIN_KEYS, "intarna_min_energy"]]
+    return baseline.merge(
+        test_scores,
+        on=list(SCORE_JOIN_KEYS),
+        how="inner",
+        validate="one_to_one",
+    )
 
 
 # --- sequence extraction -----------------------------------------------------
@@ -67,7 +134,11 @@ class WindowSpec:
 
     exon_key: str
     chrom: str
-    start_0base: int  # window start, 0-based half-open (clamped at 0)
+    start_0base: int  # window start, 0-based half-open; MAY be negative — the
+                      # fetch layer clamps to the contig and N-pads back to the
+                      # requested length. Do NOT re-add a max(0, ...) clamp here:
+                      # it would silently disable left-edge padding (see
+                      # _fetch_with_pysam / _pad_window_to_length).
     end: int          # window end, 0-based half-open
     strand: str
 
@@ -124,6 +195,51 @@ def _orient(sequence: str, strand: str) -> str:
     return reverse_complement(sequence) if strand == "-" else sequence
 
 
+def _pad_window_to_length(
+    seq_inbounds: str, start_0base: int, end: int, contig_length: int
+) -> str:
+    """N-pad an edge-clamped fetch back to the full requested window length.
+
+    ``seq_inbounds`` is the sequence returned for the in-bounds sub-interval
+    ``[max(0, start_0base), min(contig_length, end))`` -- i.e. the requested
+    window ``[start_0base, end)`` clamped to the contig. When the requested
+    window runs off a contig edge (``start_0base < 0`` or ``end >
+    contig_length``), the missing genomic flank(s) are filled with ``'N'`` so
+    the result is EXACTLY ``end - start_0base`` nt with the true center at its
+    requested offset. Padding is applied in genomic (+ strand) orientation,
+    before any reverse complement in :func:`_orient` (``reverse_complement('N')
+    == 'N'``, so only offset correctness matters). This is the Pangolin /
+    SpliceAI convention for chromosome ends -- an ``'N'`` one-hot-encodes to an
+    all-zero column (no nucleotide), so no off-target site is dropped from the
+    burden denominator merely for sitting near a short scaffold's edge.
+
+    A window with NO overlap with the contig (center off-contig) is a genuinely
+    bad spec, not an edge condition, and fails closed.
+    """
+    requested = end - start_0base
+    fetch_start = max(0, start_0base)
+    fetch_end = min(contig_length, end)
+    if fetch_start >= fetch_end:
+        raise GenomeFastaError(
+            f"window [{start_0base}, {end}) does not overlap contig "
+            f"of length {contig_length}"
+        )
+    expected_inbounds = fetch_end - fetch_start
+    if len(seq_inbounds) != expected_inbounds:
+        raise GenomeFastaError(
+            f"FASTA returned {len(seq_inbounds)} bases for in-bounds interval "
+            f"[{fetch_start}, {fetch_end}); expected {expected_inbounds}"
+        )
+    left_pad = fetch_start - start_0base   # > 0 only when start_0base < 0
+    right_pad = end - fetch_end            # > 0 only when end > contig_length
+    padded = ("N" * left_pad) + seq_inbounds + ("N" * right_pad)
+    if len(padded) != requested:  # pragma: no cover - guaranteed by construction
+        raise GenomeFastaError(
+            f"padded window is {len(padded)} nt; expected {requested}"
+        )
+    return padded
+
+
 def _fetch_with_pysam(specs: list[WindowSpec], genome_fasta: Path) -> dict[str, str]:
     try:
         import pysam
@@ -135,7 +251,21 @@ def _fetch_with_pysam(specs: list[WindowSpec], genome_fasta: Path) -> dict[str, 
             available = set(fasta.references)
             for spec in specs:
                 contig = _resolve_fasta_contig(spec.chrom, available)
-                seq = fasta.fetch(contig, spec.start_0base, spec.end)
+                contig_length = fasta.get_reference_length(contig)
+                # Clamp the fetch to the contig so pysam never sees an
+                # out-of-range coordinate (start < 0 raises; end > length is
+                # ambiguous across pysam versions), then N-pad any missing
+                # flank back to the requested fixed length.
+                fetch_start = max(0, spec.start_0base)
+                fetch_end = min(contig_length, spec.end)
+                seq = (
+                    fasta.fetch(contig, fetch_start, fetch_end)
+                    if fetch_start < fetch_end
+                    else ""
+                )
+                seq = _pad_window_to_length(
+                    seq, spec.start_0base, spec.end, contig_length
+                )
                 out[spec.exon_key] = _orient(seq, spec.strand)
     except GenomeFastaError:
         raise
@@ -158,19 +288,32 @@ def _fetch_with_samtools(
         except (OSError, subprocess.CalledProcessError) as exc:
             stderr = getattr(exc, "stderr", "")
             raise GenomeFastaError(f"failed to index FASTA {genome_fasta}: {stderr}") from exc
-        available = {
-            line.split("\t", 1)[0]
-            for line in fai.read_text(encoding="utf-8").splitlines()
-            if line
-        }
+        contig_lengths: dict[str, int] = {}
+        for line in fai.read_text(encoding="utf-8").splitlines():
+            if not line:
+                continue
+            cols = line.split("\t")
+            contig_lengths[cols[0]] = int(cols[1])
+        available = set(contig_lengths)
+        # Clamp each requested window to its contig so samtools never sees an
+        # out-of-range region (start < 1 or end > length), remembering the pad
+        # geometry so each window is N-padded back to its fixed length below.
+        pad_geometry: list[tuple[int, int, int]] = []  # (start_0base, end, contig_length)
+        region_lines: list[str] = []
+        for s in specs:
+            contig = _resolve_fasta_contig(s.chrom, available)
+            clen = contig_lengths[contig]
+            fetch_start = max(0, s.start_0base)
+            fetch_end = min(clen, s.end)
+            if fetch_start >= fetch_end:
+                raise GenomeFastaError(
+                    f"window [{s.start_0base}, {s.end}) does not overlap contig "
+                    f"{contig!r} of length {clen}"
+                )
+            region_lines.append(f"{contig}:{fetch_start + 1}-{fetch_end}\n")
+            pad_geometry.append((s.start_0base, s.end, clen))
         regions = tmpdir / "regions.txt"
-        regions.write_text(
-            "".join(
-                f"{_resolve_fasta_contig(s.chrom, available)}:{s.start_0base + 1}-{s.end}\n"
-                for s in specs
-            ),
-            encoding="utf-8",
-        )
+        regions.write_text("".join(region_lines), encoding="utf-8")
         try:
             result = subprocess.run(
                 [str(samtools), "faidx", "--fai-idx", str(fai), "-r", str(regions), str(genome_fasta)],
@@ -194,7 +337,12 @@ def _fetch_with_samtools(
         raise GenomeFastaError(
             f"FASTA returned {len(sequences)} windows; expected {len(specs)}"
         )
-    return {spec.exon_key: _orient(seq, spec.strand) for spec, seq in zip(specs, sequences)}
+    return {
+        spec.exon_key: _orient(
+            _pad_window_to_length(seq, start_0base, end, clen), spec.strand
+        )
+        for spec, seq, (start_0base, end, clen) in zip(specs, sequences, pad_geometry)
+    }
 
 
 # --- baseline: min 18-nt Hamming distance ------------------------------------
@@ -235,6 +383,7 @@ def baseline_hamming_scores(
     target: str = NUSINERSEN_RC,
 ) -> pd.DataFrame:
     """Attach ``baseline_min_hamming`` for every exon (fail-closed on sequence)."""
+    assert_scrmoe_universe(events)
     specs = exon_window_specs(events, window=window)
     seqs = _fetch_transcript_sequences(specs, genome_fasta, samtools=samtools)
     scores = []
@@ -322,6 +471,7 @@ def intarna_energy_scores(
     not inline. This helper exists so the sbatch and the tiny unit fixture share
     one code path.
     """
+    assert_scrmoe_universe(events)
     exe = find_intarna(intarna)
     if exe is None:
         raise IntaRNAError(f"IntaRNA executable not available at {intarna}")

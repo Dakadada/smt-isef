@@ -281,6 +281,33 @@ def test_checkpoint_on_signal_invokes_callback(monkeypatch):
     assert calls == [signal.SIGUSR1]
 
 
+def test_failed_flush_is_propagated_and_never_requeued(monkeypatch):
+    requeues = []
+    monkeypatch.setattr(ckpt_mod, "requeue_self", lambda: requeues.append(True) or True)
+
+    def fail(_signum):
+        raise RuntimeError("flush failed")
+
+    with pytest.raises(RuntimeError, match="flush failed"):
+        with ckpt_mod.checkpoint_on_signal(
+            fail, signals=(signal.SIGUSR1,), requeue=True, exit_after=False
+        ):
+            os.kill(os.getpid(), signal.SIGUSR1)
+    assert requeues == []
+
+
+def test_requeue_failure_is_propagated_when_not_exiting(monkeypatch):
+    monkeypatch.setattr(ckpt_mod, "requeue_self", lambda: False)
+    with pytest.raises(RuntimeError, match="requeue failed"):
+        with ckpt_mod.checkpoint_on_signal(
+            lambda _signum: None,
+            signals=(signal.SIGUSR1,),
+            requeue=True,
+            exit_after=False,
+        ):
+            os.kill(os.getpid(), signal.SIGUSR1)
+
+
 def test_sigterm_flushes_final_checkpoint_before_exit(tmp_path):
     """MED-1: a REAL forwarded SIGTERM must flush a final checkpoint then exit.
 
@@ -331,3 +358,37 @@ def test_sigterm_flushes_final_checkpoint_before_exit(tmp_path):
     assert ckpt.exists(), "final checkpoint was not flushed on SIGTERM"
     state = json.loads(ckpt.read_text())
     assert state["final"] is True and state["last_index"] == 42
+
+
+def test_sigterm_checkpoint_failure_exits_nonzero(tmp_path):
+    ready = tmp_path / "ready-fail"
+    src_root = Path(ckpt_mod.__file__).resolve().parents[3]
+    script = textwrap.dedent(f"""
+        import signal, time
+        from pathlib import Path
+        from feng.gpu.checkpoint import checkpoint_on_signal
+        READY = Path({str(ready)!r})
+        def failed_flush(signum):
+            raise RuntimeError("checkpoint write failed")
+        with checkpoint_on_signal(failed_flush, signals=(signal.SIGTERM,),
+                                  requeue=False, exit_after=True):
+            READY.write_text("up")
+            while True:
+                time.sleep(0.1)
+    """)
+    env = dict(os.environ)
+    env["PYTHONPATH"] = str(src_root) + os.pathsep + env.get("PYTHONPATH", "")
+    proc = subprocess.Popen([sys.executable, "-c", script], env=env)
+    try:
+        for _ in range(100):
+            if ready.exists():
+                break
+            time.sleep(0.1)
+        assert ready.exists()
+        proc.send_signal(signal.SIGTERM)
+        proc.wait(timeout=10)
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+            proc.wait(timeout=5)
+    assert proc.returncode != 0

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "seeded_date": "2026-09-11",
+  "interpreter_path": "/home/dashii/orcd/pool/feng-gpu-env/bin/python",
+  "scan_command": "/home/dashii/orcd/pool/feng-gpu-env/bin/python -c \"import importlib.metadata as m,json,runpy,sys; n=runpy.run_path('feng/src/feng/source_auth.py',run_name='_pangolin_seed_scan'); i=n['pangolin_package_identity'](); print(json.dumps({'interpreter':sys.executable,'pangolin_version':m.version('pangolin'),**i},sort_keys=True))\"",
+  "pangolin_version": "1.0.2",
+  "hash_policy": {
+    "aggregate": "sha256 over sorted (package-relative path, per-file sha256) pairs encoded as path + NUL + lowercase hash + LF",
+    "bytecode_candidates": [".pyc", ".pyo"],
+    "bytecode_normalization": "strip exactly the leading 16-byte CPython 3.7+ header; hash the remaining marshal/code body",
+    "other_executable_candidates": "hash full file bytes for .py, .pyd, and every importlib.machinery.EXTENSION_SUFFIXES candidate",
+    "loader_requirement": "SourceFileLoader for the pangolin package and importable submodules"
+  },
+  "pangolin_package_sha256": "0af9857403226c5e72719e42d52fa5babfcda8fde9957ce7824df277e0051234",
+  "pangolin_package_manifest": {
+    "file_count": 6,
+    "files": [
+      {
+        "path": "__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "__pycache__/__init__.cpython-311.pyc",
+        "sha256": "0c5bc5301fb33cbc1e43654f77ea8e04f93a53838971c8e4254e526d8b2d39de"
+      },
+      {
+        "path": "__pycache__/model.cpython-311.pyc",
+        "sha256": "8c4629b4d28cbf37d2fe739e5a3728941336dd51320ebf8ccb61e73c887cb171"
+      },
+      {
+        "path": "__pycache__/pangolin.cpython-311.pyc",
+        "sha256": "7baa1e1f129b6c488c21081203f16361ad948399a72a050607020650d7d1d45a"
+      },
+      {
+        "path": "model.py",
+        "sha256": "4a1c5c2570aafe1452bb43332255321677e6c6c817adf84b9dd438e3ca4be6f8"
+      },
+      {
+        "path": "pangolin.py",
+        "sha256": "f3f25c4febf64d01ef42f967dc5cf10f6856bf3aa92d26f09803ad408169da9b"
+      }
+    ]
+  }
+}
