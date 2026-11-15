@@ -1,0 +1,2 @@
+{"ts":"2026-11-15T06:54:53Z","worker":"fable","task":"F1","event":"dispatch","quota":"UNKNOWN","note":"1 opening-session dispatch allowed"}
+{"ts":"2026-11-15T07:03:53Z","worker":"fable","task":"F1","event":"return","tests":"38 passed (orchestrator re-verified)","fable_warnings":"none observed"}

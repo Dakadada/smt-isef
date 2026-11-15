@@ -1,0 +1,10 @@
+{
+ "T0": "2026-11-15T06:52:49Z",
+ "branch": "model-v2-explore",
+ "base": "35a0df8",
+ "host": "login006 (MIT Engaging, HPC login node)",
+ "squeue": "empty",
+ "quota": "HOME 64%, SCRATCH 77.7%, POOL 22.6% (cache 01:29 EST)",
+ "fable": "UNKNOWN quota; 0 calls so far",
+ "codex_mcp": "CONNECTION_CLOSED; CLI route to verify"
+}

@@ -1,0 +1,426 @@
+{
+  "$defs": {
+    "ASO": {
+      "additionalProperties": false,
+      "properties": {
+        "aso_id": {
+          "type": "string"
+        },
+        "chemistry": {
+          "$ref": "#/$defs/Chemistry"
+        },
+        "note": {
+          "type": "string"
+        },
+        "requires_human_confirmation": {
+          "type": "boolean"
+        },
+        "sequence_5to3": {
+          "type": "string"
+        },
+        "sequence_evidence": {
+          "enum": [
+            "observed",
+            "derived",
+            "proxy",
+            "model_assumption",
+            "unlabeled",
+            "not_available"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "aso_id",
+        "sequence_5to3",
+        "chemistry",
+        "requires_human_confirmation",
+        "sequence_evidence",
+        "note"
+      ],
+      "type": "object"
+    },
+    "Chemistry": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "enum": [
+            "observed",
+            "derived",
+            "proxy",
+            "model_assumption",
+            "unlabeled",
+            "not_available"
+          ],
+          "type": "string"
+        },
+        "family": {
+          "type": "string"
+        },
+        "modifications": {
+          "items": {
+            "$ref": "#/$defs/Modification"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "family",
+        "modifications",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "Intervention": {
+      "additionalProperties": false,
+      "properties": {
+        "alternates": {
+          "items": {
+            "$ref": "#/$defs/PlacementResult"
+          },
+          "type": "array"
+        },
+        "aso": {
+          "$ref": "#/$defs/ASO"
+        },
+        "predictions": {
+          "items": {
+            "$ref": "#/$defs/Prediction"
+          },
+          "type": "array"
+        },
+        "reference": {
+          "$ref": "#/$defs/PlacementResult"
+        },
+        "schema_version": {
+          "enum": [
+            "1.0.0"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "aso",
+        "reference",
+        "alternates",
+        "predictions"
+      ],
+      "type": "object"
+    },
+    "Modification": {
+      "additionalProperties": false,
+      "properties": {
+        "backbone": {
+          "type": "string"
+        },
+        "base": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "sugar": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "position",
+        "sugar",
+        "backbone",
+        "base"
+      ],
+      "type": "object"
+    },
+    "Placement": {
+      "additionalProperties": false,
+      "properties": {
+        "annotation": {
+          "enum": [
+            "GENCODE v50"
+          ],
+          "type": "string"
+        },
+        "assembly": {
+          "enum": [
+            "GRCh38"
+          ],
+          "type": "string"
+        },
+        "chrom": {
+          "type": "string"
+        },
+        "end": {
+          "type": "integer"
+        },
+        "evidence": {
+          "enum": [
+            "observed",
+            "derived",
+            "proxy",
+            "model_assumption",
+            "unlabeled",
+            "not_available"
+          ],
+          "type": "string"
+        },
+        "geometry": {
+          "$ref": "#/$defs/SpliceGeometry"
+        },
+        "locus_id": {
+          "type": "string"
+        },
+        "site_id": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer"
+        },
+        "strand": {
+          "enum": [
+            "+",
+            "-"
+          ],
+          "type": "string"
+        },
+        "target_sequence": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "locus_id",
+        "assembly",
+        "annotation",
+        "chrom",
+        "start",
+        "end",
+        "strand",
+        "target_sequence",
+        "geometry",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "PlacementResult": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/Placement"
+          },
+          "type": "array"
+        },
+        "locus_id": {
+          "type": "string"
+        },
+        "placement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Placement"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "reference",
+            "alternate"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "placed",
+            "needs_human_confirmation",
+            "no_match",
+            "mismatch"
+          ],
+          "type": "string"
+        },
+        "window_end": {
+          "type": "integer"
+        },
+        "window_start": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "locus_id",
+        "role",
+        "status",
+        "reason",
+        "window_start",
+        "window_end",
+        "placement",
+        "candidates"
+      ],
+      "type": "object"
+    },
+    "Prediction": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "enum": [
+            "observed",
+            "derived",
+            "proxy",
+            "model_assumption",
+            "unlabeled",
+            "not_available"
+          ],
+          "type": "string"
+        },
+        "identifiability": {
+          "enum": [
+            "identifiable",
+            "unidentifiable"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "evidence",
+        "identifiability",
+        "note"
+      ],
+      "type": "object"
+    },
+    "SpliceGeometry": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptor_dist_3p_from_first_exonic": {
+          "type": "integer"
+        },
+        "acceptor_dist_3p_from_last_intronic": {
+          "type": "integer"
+        },
+        "acceptor_dist_5p_from_first_exonic": {
+          "type": "integer"
+        },
+        "acceptor_dist_5p_from_last_intronic": {
+          "type": "integer"
+        },
+        "acceptor_first_exonic_base": {
+          "type": "integer"
+        },
+        "acceptor_last_intronic_base": {
+          "type": "integer"
+        },
+        "donor_dist_3p_from_first_intronic": {
+          "type": "integer"
+        },
+        "donor_dist_3p_from_last_exonic": {
+          "type": "integer"
+        },
+        "donor_dist_5p_from_first_intronic": {
+          "type": "integer"
+        },
+        "donor_dist_5p_from_last_exonic": {
+          "type": "integer"
+        },
+        "donor_first_intronic_base": {
+          "type": "integer"
+        },
+        "donor_last_exonic_base": {
+          "type": "integer"
+        },
+        "evidence": {
+          "enum": [
+            "observed",
+            "derived",
+            "proxy",
+            "model_assumption",
+            "unlabeled",
+            "not_available"
+          ],
+          "type": "string"
+        },
+        "region": {
+          "enum": [
+            "exonic",
+            "intronic",
+            "exon_intron_spanning"
+          ],
+          "type": "string"
+        },
+        "region_3p": {
+          "enum": [
+            "exonic",
+            "intronic_upstream",
+            "intronic_downstream"
+          ],
+          "type": "string"
+        },
+        "region_5p": {
+          "enum": [
+            "exonic",
+            "intronic_upstream",
+            "intronic_downstream"
+          ],
+          "type": "string"
+        },
+        "target_3p_pos": {
+          "type": "integer"
+        },
+        "target_5p_pos": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "donor_last_exonic_base",
+        "donor_first_intronic_base",
+        "acceptor_first_exonic_base",
+        "acceptor_last_intronic_base",
+        "target_5p_pos",
+        "target_3p_pos",
+        "donor_dist_5p_from_last_exonic",
+        "donor_dist_3p_from_last_exonic",
+        "donor_dist_5p_from_first_intronic",
+        "donor_dist_3p_from_first_intronic",
+        "acceptor_dist_5p_from_first_exonic",
+        "acceptor_dist_3p_from_first_exonic",
+        "acceptor_dist_5p_from_last_intronic",
+        "acceptor_dist_3p_from_last_intronic",
+        "region_5p",
+        "region_3p",
+        "region",
+        "evidence"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "conference/model_v2/schema/trans_intervention.schema.json",
+  "$ref": "#/$defs/Intervention",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "ASO intervention on a pre-mRNA locus; 1-based inclusive GRCh38 / GENCODE v50 coordinates.",
+  "title": "TransIntervention",
+  "x-evidence-classes": [
+    "observed",
+    "derived",
+    "proxy",
+    "model_assumption",
+    "unlabeled",
+    "not_available"
+  ],
+  "x-schema-version": "1.0.0"
+}

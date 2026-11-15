@@ -1,0 +1,2 @@
+{"ts":"2026-11-15T06:55:45Z","job":"J2","kind":"sentinel","slurm_id":"29159943","cmd":"sbatch conference/model_v2/jobs/j2_sentinel.sbatch"}
+{"ts":"2026-11-15T07:03:53Z","job":"J2","kind":"sentinel","slurm_id":"29159943","state":"COMPLETED","rows":3762,"sha256":"37008e2e...af697ca","out":"~/orcd/scratch/feng/model_v2/j2_sentinel"}

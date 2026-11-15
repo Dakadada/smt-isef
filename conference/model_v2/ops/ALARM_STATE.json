@@ -1,0 +1,16 @@
+{
+ "alarms": [
+  {
+   "id": "b6mqmr2ds",
+   "kind": "59min",
+   "created": "2026-11-15T06:53:30Z",
+   "planned": "2026-11-15T07:52:30Z",
+   "status": "armed"
+  },
+  {
+   "id": "bnvzu9o91",
+   "kind": "10s_test",
+   "status": "pending"
+  }
+ ]
+}
