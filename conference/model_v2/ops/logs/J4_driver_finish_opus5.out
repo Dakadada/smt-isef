@@ -1,0 +1,12 @@
+`39 passed in 2.01s` (was 4 failed / 35 passed). 1 real code bug, 3 bad tests:
+
+**Code wrong** — `j4_scale_driver.drive()`: skip branch bumped `state["skipped"]` but never called `flush()`, and no final flush existed. All-skip resume left the zeroed startup checkpoint on disk (`skipped=0`) while stdout correctly said `skipped=3`. Now flushes on the skip path.
+
+**Tests wrong:**
+- `test_driver_flush_hook_...`: captured the *last* `checkpoint_on_signal` registration. `gpu_perturbation_atlas` does `from feng.gpu import checkpoint as ck` — same module object — so `run_atlas`'s nested per-config hook was recorded last; calling it wrote the engine checkpoint, not the driver's. Now grabs `hooks[1]` (task-level) and asserts the nesting depth `2+len(TOY)`, all `requeue=False`.
+- `test_sigterm_mid_config_flushes_and_resumes`: killed at `len(self.calls)==3`, which falls inside config A (reference-score calls), so A never reached `.done`. Now triggers once A is `.done` and B has published one part — a genuine partial resume, asserted via `checkpoint.next == len(parts) == 1` plus C untouched.
+- `test_array2_sbatch_...`: counted `j4_scale_driver.py` over the whole file, matching the header comment that documents the script. Now counts non-comment lines only (1 invocation); same for the `gpu_perturbation_atlas` / `scontrol requeue` checks.
+
+Spec items all present: single scorer load per task, stub-level byte equivalence with the per-config CLI (`run_id` + `ablation.sha256` + parquet rows), idempotent skip gate, SIGTERM flush with the sbatch as sole requeue owner, `j4_scale_gate.py` manifest gate, `--time=00:45:00`.
+
+Result doc at `conference/model_v2/ops/briefs/J4_DRIVER_RESULT.md` (18 lines) — carries the unexecuted `sbatch --array=0-318%16` line (319 shards / 20,395 emitted configs confirmed from the ledger), ~3.8 min/task + ~1.3 h wall at %16, and the 3-config real-model equivalence command. Nothing submitted, no commit.

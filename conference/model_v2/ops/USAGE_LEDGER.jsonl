@@ -13,3 +13,6 @@
 {"ts":"2026-11-15T07:53:35Z","worker":"opus-5.5","task":"J6_rereview","event":"failed","error":"Opus 5.5 safeguards flagged [bio] req_011Ch4MPCBTxjEpda2DqwXP1; no output; no retry on other models"}
 {"ts":"2026-11-15T07:54:20Z","event":"dispatch","task":"J6_rereview","worker":"claude -p --model claude-opus-5 (user-requested Opus 5 specifically)"}
 {"ts":"2026-11-15T08:04:07Z","event":"dispatch","task":"J4_scale","worker":"claude -p claude-opus-5"}
+{"ts":"2026-11-15T08:44:28Z","event":"dispatch","task":"J4_driver","worker":"claude -p claude-opus-5"}
+{"ts":"2026-11-15T08:56:17Z","event":"claude usage limit reached (Sonnet orchestrator); stop model dispatch; Slurm continues"}
+{"ts":"2026-11-15T10:49:29Z","event":"dispatch","task":"J4_driver_finish","worker":"claude -p claude-opus-5","note":"limit reset observed; alarm bp3tjhzkj fired 10:49Z"}

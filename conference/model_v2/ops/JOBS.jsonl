@@ -21,3 +21,12 @@
 {"ts":"2026-11-15T08:03:01Z","job":"J6","kind":"gate","slurm_id":"29168378","dependency":"afterok:29168377"}
 {"ts":"2026-11-15T08:03:52Z","job":"J4","slurm_id":"29167204","state":"COMPLETED","elapsed":"62s","node":"node3003 cuda","result":"20 ablation + 4 reference rows, 0 failures; CPU/GPU tolerance PASSED max_abs_err 2.8e-7 (atol 1e-5); weights_sha256 10cd8a5d...","out":"~/orcd/scratch/feng/model_v2/j4_sentinel_v2","class":"reference derived/model_evidence; ablation=sequence_ablation_proxy"}
 {"ts":"2026-11-15T08:16:37Z","job":"J4","kind":"scale_bench","slurm_id":"29169335","configs":20395,"est_inferences":1121937}
+{"ts":"2026-11-15T08:44:28Z","job":"J4","slurm_id":"29169335","state":"COMPLETED","elapsed":"10m40s","bench":"bs4 11.2 inf/s, bs16 14.6, bs32 17.4 (3.16 s/config); peak GPU 0.28GiB; model_load 23.1s once per invocation","decision":"per-config invocation would cost 20395x23s=130h load; need in-process driver"}
+{"ts":"2026-11-15T09:50:15Z","job":"J6","slurm_id":"29168377/29168378","state":"COMPLETED","gate":"expected 52424 shards, bad 0, rows 11002701","out":"~/orcd/scratch/feng/model_v2/j6_genome_v1","scope":"gene bodies exons+introns, F18/F14/F10 k<=3, 3UP8 excluded"}
+{"ts":"2026-11-15T09:50:15Z","job":"J2","slurm_id":"29166103","state":"COMPLETED 128/128, 128 .done markers","out":"~/orcd/scratch/feng/model_v2/j2_phase2"}
+{"ts":"2026-11-15T10:49:39Z","job":"J3","kind":"size_test_shard0_of_1024","slurm_id":"29181966","input":"j6_genome_v1 (11.0M sites)"}
+{"ts":"2026-11-15T11:48:47Z","job":"J3","kind":"size_test_result","slurm_id":"29181966","state":"COMPLETED","elapsed":"10m42s","maxrss_time":"1.2GB","sacct_maxrss":"5.5GB","note":"1/1024 shard"}
+{"ts":"2026-11-15T11:49:22Z","job":"J4","kind":"equiv_probe","slurm_id":"29186247","gate":"driver-vs-CLI real model, 3 configs; array depends afterok"}
+{"ts":"2026-11-15T11:49:22Z","job":"J4","kind":"atlas_array_wave1","slurm_id":"29186278","array":"0-199%16","dependency":"afterok:29186247","configs":"shards 0-199 of 319","est":"~20 GPU-h total"}
+{"ts":"2026-11-15T11:49:22Z","job":"J4","kind":"wave2_submitter","slurm_id":"29186279","dependency":"afterany:29186278","action":"sbatch --array=200-318%16","reason":"QOS MaxSubmitJobsPU mit_preemptable=256, mit_normal=448, assoc 500"}
+{"ts":"2026-11-15T11:49:22Z","job":"J3","kind":"array_genome_v1","slurm_id":"29186280","array":"0-255%64","shard_count":256,"est":"~43min/task, ~183 CPU-h","input":"J6 gate-passed j6_genome_v1 11,002,701 sites"}

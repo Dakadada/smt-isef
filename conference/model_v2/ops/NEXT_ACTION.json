@@ -1,1 +1,14 @@
-{"next":"J6 re-review HELD (Opus5.5 [bio] flag); J6 scale blocked pending user decision; check J6 sentinel 29166984 + J2 p2 + J4 fix"}
+{
+ "ts": "2026-11-15T11:55Z",
+ "state": "ACTIVE (limit reset); alarm bk5zw82qi armed (~12:48Z)",
+ "running_slurm": "J4 equiv probe 29186247 -> J4 atlas wave1 29186278 (0-199%16, afterok) -> wave2 submitter 29186279 (afterany) -> tasks 200-318; J3 genome array 29186280 (0-255%64, 256 shards)",
+ "limits": "QOS submit caps: mit_preemptable 256, mit_normal 448, assoc 500 jobs/user",
+ "next": [
+  "on equiv probe result: EQUIVALENCE_OK expected in ops/logs/mv2-j4-equiv-29186247.out; if MISMATCH cancel 29186278 (scancel) and diagnose",
+  "after J4 waves: python conference/model_v2/jobs/j4_scale_gate.py --deep --report ...",
+  "write+run J3 completeness gate (256 expected .done markers in j3_genome_v1) once array completes",
+  "J4 fixes re-review (independent), J3/J6 downstream: J7 splice geometry joins, J9 baselines M0-M4 (label rules!), J10 robustness, J11 report",
+  "3UP8 human confirm; GTF-confirm derived coords; feng cleanroom failure note",
+  "Astra gpt-6-astra via codex CLI; claude-opus-5 via claude -p (stdin prompt); Fable/Opus5.5 refused [bio]"
+ ]
+}

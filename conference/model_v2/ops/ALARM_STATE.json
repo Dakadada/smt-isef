@@ -20,7 +20,14 @@
    "kind": "59min",
    "created": "2026-11-15T07:52:10Z",
    "planned": "2026-11-15T08:51:10Z",
-   "status": "armed"
+   "status": "fired"
+  },
+  {
+   "id": "bxmqq5kxj",
+   "kind": "59min",
+   "created": "2026-11-15T08:51:20Z",
+   "status": "armed",
+   "note": "id in latest tool result"
   }
  ]
 }

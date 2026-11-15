@@ -1,0 +1,167 @@
+{
+  "configs_loaded": 50,
+  "configs_requested": 50,
+  "footprints_per_config": [
+    54
+  ],
+  "model_load_seconds": 23.111868254840374,
+  "provenance": {
+    "deterministic": true,
+    "device": "cuda",
+    "model": "Pangolin-1.0.2-splice-probability-four-tissue-three-replicate",
+    "model_evidence": true,
+    "model_sha256": "4a1c5c2570aafe1452bb43332255321677e6c6c817adf84b9dd438e3ca4be6f8",
+    "output_channels": [
+      1,
+      4,
+      7,
+      10
+    ],
+    "pangolin_package_manifest": {
+      "file_count": 6,
+      "files": [
+        {
+          "path": "__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "__pycache__/__init__.cpython-311.pyc",
+          "sha256": "0c5bc5301fb33cbc1e43654f77ea8e04f93a53838971c8e4254e526d8b2d39de"
+        },
+        {
+          "path": "__pycache__/model.cpython-311.pyc",
+          "sha256": "8c4629b4d28cbf37d2fe739e5a3728941336dd51320ebf8ccb61e73c887cb171"
+        },
+        {
+          "path": "__pycache__/pangolin.cpython-311.pyc",
+          "sha256": "7baa1e1f129b6c488c21081203f16361ad948399a72a050607020650d7d1d45a"
+        },
+        {
+          "path": "model.py",
+          "sha256": "4a1c5c2570aafe1452bb43332255321677e6c6c817adf84b9dd438e3ca4be6f8"
+        },
+        {
+          "path": "pangolin.py",
+          "sha256": "f3f25c4febf64d01ef42f967dc5cf10f6856bf3aa92d26f09803ad408169da9b"
+        }
+      ]
+    },
+    "pangolin_package_sha256": "0af9857403226c5e72719e42d52fa5babfcda8fde9957ce7824df277e0051234",
+    "reference": {
+      "assembly": "GRCh38",
+      "fai_path": "/orcd/scratch/orcd/011/dashii/feng/gencode/v50/GRCh38.primary_assembly.genome.fa.fai",
+      "fai_sha256": "a2c323ea4cff34d7123ace4578f7e122b2d2f5a22f40dc23eb8b97d17723d169",
+      "fasta_path": "/orcd/scratch/orcd/011/dashii/feng/gencode/v50/GRCh38.primary_assembly.genome.fa",
+      "primary_contig_lengths": {
+        "chr1": 248956422,
+        "chr10": 133797422,
+        "chr11": 135086622,
+        "chr12": 133275309,
+        "chr13": 114364328,
+        "chr14": 107043718,
+        "chr15": 101991189,
+        "chr16": 90338345,
+        "chr17": 83257441,
+        "chr18": 80373285,
+        "chr19": 58617616,
+        "chr2": 242193529,
+        "chr20": 64444167,
+        "chr21": 46709983,
+        "chr22": 50818468,
+        "chr3": 198295559,
+        "chr4": 190214555,
+        "chr5": 181538259,
+        "chr6": 170805979,
+        "chr7": 159345973,
+        "chr8": 145138636,
+        "chr9": 138394717,
+        "chrM": 16569,
+        "chrX": 156040895,
+        "chrY": 57227415
+      },
+      "primary_signature_sha256": "00f28d94578ba26605dd0d1a4ab5dab1b82668bacda9bb592069ed81e0e6ef3c",
+      "verification": "FAI-primary-contig-length-signature"
+    },
+    "source_files": {
+      "conference/model_v2/gpu_perturbation_atlas.py": "840400b13131949c6182fbb2632ace376e6a87f930991ce2790e6e5683e849f5",
+      "conference/model_v2/trans_intervention.py": "c999351a039fcea33f0d9c9b9f7d049f2b4a9b46af217f129f0041b45582feb0",
+      "feng/src/feng/gpu/checkpoint.py": "5978b6a8ccbb0764baf2f64c4b90021a7f1e131fe23621272d77052f449efbc0",
+      "feng/src/feng/pangolin_package_seed_provenance.json": "be2f92f88700b2a9564b47be9c916702b39f2fb0aa8f2ecd91199546fcaf9c20",
+      "feng/src/feng/source_auth.py": "9b4cb3fdab73c368cad7f6ddc0bfc57caef9fd3e8050f79f97d9c3f2eb01055b",
+      "feng/src/feng/titration/gpu_scores.py": "33a57caac12327a5da25f0278424920b2e9acf6f4087275a3ecd217968e937c2"
+    },
+    "source_sha256": "8b2a34b9b120ea40fecfe00595393c7fdba56c31e95397cb7eb094c947d2e32e",
+    "tf32": false,
+    "torch_version": "2.6.0+cu124",
+    "weight_files": {
+      "final.1.0.3.v2": "f0478fab173b75f7f7e9fe96688bad6c50fa4a46d70557f423b110caaf565501",
+      "final.1.2.3.v2": "559c05de3e1ce65c2515ca3e92ef85edb0ec2e47686ca58060e25891ce06eb3a",
+      "final.1.4.3.v2": "c50b12e0c0af776d5674ca5e346493f8265783494d4df383364de9c1136657f6",
+      "final.1.6.3.v2": "2aae563fa18a8a9b6699c6c96e0d32b8ec7543f8f805fb3bc9de77302cc9f66e",
+      "final.2.0.3.v2": "c4c6bb4880fa6fb28b14182ae3ea0600edb07056158f55325b5e6e6e48fc9f26",
+      "final.2.2.3.v2": "48758ba8b95eee9aa9feea52672ef06ca1b34111299c27f8a710f734d8b9aae5",
+      "final.2.4.3.v2": "e03303bed4fd6f135ec0f6c1b192cce954ea42d0646f44d17b4a6fbb2b1f610e",
+      "final.2.6.3.v2": "7d3c0b1b2a60067b940dec315567874fbc8bcd322f1b7c76bf969f51f0f53f7f",
+      "final.3.0.3.v2": "ec685a6e7105a4486c1f89a005458a13deb3fe7171f13d434f4877e386d10676",
+      "final.3.2.3.v2": "7cb576c2b24db4fdd6970c4ca4fb7c20ae1b1d8ae80645ebbe689848b5743129",
+      "final.3.4.3.v2": "9476d2e25520d7ff15bece0cd5d3b657e3b1dd3cc5fcab1d9c3b62bea7a0c5b6",
+      "final.3.6.3.v2": "756e7721a382cace24e9bfea5b543af5623f2487d9a3efe7385e9c76367005fd"
+    },
+    "weights_sha256": "10cd8a5d7746af384fc6003682682a90c3999e515b2c70009342941a636592cb"
+  },
+  "shard_dir": "/home/dashii/orcd/scratch/feng/model_v2/j4_configs/shards",
+  "sweeps": [
+    {
+      "batch_size": 4,
+      "budget_exhausted": false,
+      "configs": 50,
+      "footprints": 2700,
+      "footprints_per_second": 11.018512516681161,
+      "gpu_memory": {
+        "available": true,
+        "peak_allocated_gib": 0.10825538635253906,
+        "peak_reserved_gib": 0.130859375
+      },
+      "inferences": 2750,
+      "inferences_per_second": 11.22255904476785,
+      "seconds_per_config": 4.900843005646021,
+      "wall_seconds": 245.042150282301
+    },
+    {
+      "batch_size": 16,
+      "budget_exhausted": false,
+      "configs": 50,
+      "footprints": 2700,
+      "footprints_per_second": 14.287893941138503,
+      "gpu_memory": {
+        "available": true,
+        "peak_allocated_gib": 0.18257474899291992,
+        "peak_reserved_gib": 0.24609375
+      },
+      "inferences": 2750,
+      "inferences_per_second": 14.552484569678105,
+      "seconds_per_config": 3.7794233511574564,
+      "wall_seconds": 188.97116755787283
+    },
+    {
+      "batch_size": 32,
+      "budget_exhausted": false,
+      "configs": 50,
+      "footprints": 2700,
+      "footprints_per_second": 17.08639755308507,
+      "gpu_memory": {
+        "available": true,
+        "peak_allocated_gib": 0.28237390518188477,
+        "peak_reserved_gib": 0.4140625
+      },
+      "inferences": 2750,
+      "inferences_per_second": 17.402812322586648,
+      "seconds_per_config": 3.1604087305255235,
+      "wall_seconds": 158.02043652627617
+    }
+  ]
+}
+BENCH batch_size=4 configs=50 inferences=2750 wall_s=245.0 inferences_per_s=11.22 peak_gpu=0.10825538635253906 reserved_gpu=0.130859375
+BENCH batch_size=16 configs=50 inferences=2750 wall_s=189.0 inferences_per_s=14.55 peak_gpu=0.18257474899291992 reserved_gpu=0.24609375
+BENCH batch_size=32 configs=50 inferences=2750 wall_s=158.0 inferences_per_s=17.40 peak_gpu=0.28237390518188477 reserved_gpu=0.4140625
+BENCH model_load_seconds=23.1 (paid once per engine invocation by the array runner)
