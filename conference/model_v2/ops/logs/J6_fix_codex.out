@@ -5602,3 +5602,106 @@ hook: PostToolUse
 hook: PostToolUse Completed
 hook: PostToolUse
 hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "cat > conference/model_v2/ops/briefs/J6_FIX_RESULT.md <<'EOF'
+J6-FIX — five review code findings addressed; production memory target remains unverified.
+- "'`j6_site_universe.py:319`: require pinned GRCh38 primary chromosome length signature before production fetch; reject mismatched assemblies.
+- `j6_site_universe.py:390`: synthetic references require explicit opt-in, emit assembly=synthetic and separate site IDs; immutable run modes prohibit mixed reuse; synthetic sentinel acceptance is rejected.
+- `j6_site_universe.py:567`: frozen configuration plus atomic run_manifest.json lists every expected shard; changed window/region/inputs, legacy directories, and unlisted shards are rejected without deleting prior results.
+- `j6_site_universe.py:449`: SMN evidence uses the full gene universe independently of regional output; missing other paralog yields null instead of false.
+- `j6_site_universe.py:378`: cache universe hash, chromosome interval tree, and SMN sequences once per worker; stream unsharded output via iter_sites and Parquet via 512-row batches.
+- `j6_site_universe.py:533`: cache run manifest digest/stat once; per-shard verification avoids repeatedly reading/hashing the complete expected-shard list; changed manifests cannot commit.
+- `j6_site_universe.py:608`: validate completion marker object/count/hash/expected metadata and Parquet schema; [], null, malformed markers and damaged shards rebuild.
+- `j6_site_universe.py:185`: release consumed GTF file cache in bounded 8-MiB chunks with optional POSIX_FADV_DONTNEED; parsing/records remain unchanged.
+- `tests/test_j6_site_universe.py:186`: corruption, assembly, restart, paralog, streaming, scaling, worker reuse, cache advice, and manifest-mutation regressions.
+Requested gate: **62 passed, 0 skipped, 0 failed**, 3.03 s; exact thread-limited command from the task used.
+`jobs/j6_sentinel.sbatch`: bash -n passed; owned-file git diff --check passed; all existing J3 record field names and Arrow types preserved.
+`jobs/j6_profile.py`: separate bounded runs with 1,000 / 8,000 genes: setup 0.0113 / 0.0937 s; 20 interval queries 0.0020 / 0.0021 s, 455 / 572 traversal calls.
+Each profile also streamed 19,997 dense rows; peak process RSS **118,188 / 124,784 KiB** (115.4 / 121.9 MiB), both below 2 GiB.
+Memory cause inference: the known GTF is 4,688,772,094 bytes (4.37 GiB); its sequential scan can populate file cache counted in a Slurm cgroup peak. Prior sentinel had only 6,145 rows in 22 shards.
+Unresolved: the reported 4.19-GB production peak was not reproduced/attributed conclusively; sacct failed connecting to slurm003. Production <2 GB requires a fresh sentinel run; POSIX advice is advisory/filesystem-dependent.
+Reference limitation: the pinned primary-contig length signature identifies assembly, not FASTA base-content authenticity; immutable FASTA/FAI filesystem identities still apply. enumerate_sites retains its sorted-list compatibility behavior; use iter_sites for streaming.
+Prepared sentinel: fresh output .../model_v2/j6_sentinel_fix_v1; fixed region chr5:70000000-71100000, six-anchor acceptance, thread limits, stage RSS and /usr/bin/time -v reporting.
+Later submission command: `sbatch conference/model_v2/jobs/j6_sentinel.sbatch` — **not executed**. No commits, submissions, sealed-data access, or edits outside J6 owner files and this requested report.
+EOF
+wc -l conference/model_v2/ops/briefs/J6_FIX_RESULT.md
+rg -n '"'ambiguous = False|others =|def prepare_run|class RunConfig|def _valid_done|def reference_identity|def _gtf_lines' conference/model_v2/j6_site_universe.py
+ git status --short -- conference/model_v2/j6_site_universe.py conference/model_v2/tests/test_j6_site_universe.py conference/model_v2/jobs/j6_sentinel.sbatch conference/model_v2/jobs/j6_profile.py conference/model_v2/ops/briefs/J6_FIX_RESULT.md" in /home/dashii/smt-isef
+ succeeded in 46ms:
+19 conference/model_v2/ops/briefs/J6_FIX_RESULT.md
+185:def _gtf_lines(path):
+319:def reference_identity(genome, *, synthetic_reference=False):
+454:                    ambiguous = False
+457:                        others = self.paralogs[other_name]
+458:                        ambiguous = False if others else None
+533:class RunConfig:
+567:def prepare_run(output_dir, worker, identities, shards, *, max_mismatch=3,
+608:def _valid_done(manifest, *, expected=None):
+?? conference/model_v2/ops/briefs/J6_FIX_RESULT.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "git log -1 --format='%h %s'; git ls-files -- conference/model_v2/jobs/j6_profile.py; stat -c '%y %n' conference/model_v2/j6_site_universe.py conference/model_v2/tests/test_j6_site_universe.py conference/model_v2/jobs/j6_profile.py; sed -n '1,22p' conference/model_v2/ops/briefs/J6_FIX_RESULT.md" in /home/dashii/smt-isef
+ succeeded in 42ms:
+3c2a3c8 model_v2: J2 phase2 DAG, J3 scoring (33 tests), J4 atlas (pre-fix), J6 site universe (pre-fix), reviews
+conference/model_v2/jobs/j6_profile.py
+2026-11-15 02:50:19.352813000 -0500 conference/model_v2/j6_site_universe.py
+2026-11-15 02:50:19.354783000 -0500 conference/model_v2/tests/test_j6_site_universe.py
+2026-11-15 02:50:19.355832000 -0500 conference/model_v2/jobs/j6_profile.py
+J6-FIX — five review code findings addressed; production memory target remains unverified.
+- `j6_site_universe.py:319`: require pinned GRCh38 primary chromosome length signature before production fetch; reject mismatched assemblies.
+- `j6_site_universe.py:390`: synthetic references require explicit opt-in, emit assembly=synthetic and separate site IDs; immutable run modes prohibit mixed reuse; synthetic sentinel acceptance is rejected.
+- `j6_site_universe.py:567`: frozen configuration plus atomic run_manifest.json lists every expected shard; changed window/region/inputs, legacy directories, and unlisted shards are rejected without deleting prior results.
+- `j6_site_universe.py:449`: SMN evidence uses the full gene universe independently of regional output; missing other paralog yields null instead of false.
+- `j6_site_universe.py:378`: cache universe hash, chromosome interval tree, and SMN sequences once per worker; stream unsharded output via iter_sites and Parquet via 512-row batches.
+- `j6_site_universe.py:533`: cache run manifest digest/stat once; per-shard verification avoids repeatedly reading/hashing the complete expected-shard list; changed manifests cannot commit.
+- `j6_site_universe.py:608`: validate completion marker object/count/hash/expected metadata and Parquet schema; [], null, malformed markers and damaged shards rebuild.
+- `j6_site_universe.py:185`: release consumed GTF file cache in bounded 8-MiB chunks with optional POSIX_FADV_DONTNEED; parsing/records remain unchanged.
+- `tests/test_j6_site_universe.py:186`: corruption, assembly, restart, paralog, streaming, scaling, worker reuse, cache advice, and manifest-mutation regressions.
+Requested gate: **62 passed, 0 skipped, 0 failed**, 3.03 s; exact thread-limited command from the task used.
+`jobs/j6_sentinel.sbatch`: bash -n passed; owned-file git diff --check passed; all existing J3 record field names and Arrow types preserved.
+`jobs/j6_profile.py`: separate bounded runs with 1,000 / 8,000 genes: setup 0.0113 / 0.0937 s; 20 interval queries 0.0020 / 0.0021 s, 455 / 572 traversal calls.
+Each profile also streamed 19,997 dense rows; peak process RSS **118,188 / 124,784 KiB** (115.4 / 121.9 MiB), both below 2 GiB.
+Memory cause inference: the known GTF is 4,688,772,094 bytes (4.37 GiB); its sequential scan can populate file cache counted in a Slurm cgroup peak. Prior sentinel had only 6,145 rows in 22 shards.
+Unresolved: the reported 4.19-GB production peak was not reproduced/attributed conclusively; sacct failed connecting to slurm003. Production <2 GB requires a fresh sentinel run; POSIX advice is advisory/filesystem-dependent.
+Reference limitation: the pinned primary-contig length signature identifies assembly, not FASTA base-content authenticity; immutable FASTA/FAI filesystem identities still apply. enumerate_sites retains its sorted-list compatibility behavior; use iter_sites for streaming.
+Prepared sentinel: fresh output .../model_v2/j6_sentinel_fix_v1; fixed region chr5:70000000-71100000, six-anchor acceptance, thread limits, stage RSS and /usr/bin/time -v reporting.
+Later submission command: `sbatch conference/model_v2/jobs/j6_sentinel.sbatch` — **not executed**. No commits, submissions, sealed-data access, or edits outside J6 owner files and this requested report.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "/home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+p=Path('conference/model_v2/ops/briefs/J6_FIX_RESULT.md')
+s=p.read_text().replace('j6_site_universe.py:449','j6_site_universe.py:457')
+s=s.replace('No commits, submissions, sealed-data access, or edits outside J6 owner files and this requested report.', 'No commits/submissions made by this session, no sealed-data access, and no edits outside J6 owner files and this requested report.')
+s += 'Concurrent workspace change: HEAD advanced externally to 3c2a3c8 and now contains the tested J6 code; this session did not run git commit. The requested result report remains untracked.\\n'
+p.write_text(s)
+print('report_lines=', len(s.splitlines()))
+PY" in /home/dashii/smt-isef
+ succeeded in 57ms:
+report_lines= 20
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+Five code findings addressed. [20-line report](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J6_FIX_RESULT.md).
+
+**62 passed, 0 skipped, 0 failed.** Synthetic peak RSS: 121.9 MiB maximum. Production <2 GB remains unverified.
+
+No commits or submissions made by this session; shared HEAD advanced externally.
+hook: Stop
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+101,006
+Five code findings addressed. [20-line report](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J6_FIX_RESULT.md).
+
+**62 passed, 0 skipped, 0 failed.** Synthetic peak RSS: 121.9 MiB maximum. Production <2 GB remains unverified.
+
+No commits or submissions made by this session; shared HEAD advanced externally.

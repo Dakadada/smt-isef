@@ -1,0 +1,71 @@
+peak_rss_kib stage=startup value=19864
+peak_rss_kib stage=prepared value=63368
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070000001-000070050000.parquet
+peak_rss_kib stage=chr5.000070000001-000070050000 value=162508
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070050001-000070100000.parquet
+peak_rss_kib stage=chr5.000070050001-000070100000 value=165920
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070100001-000070150000.parquet
+peak_rss_kib stage=chr5.000070100001-000070150000 value=166180
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070150001-000070200000.parquet
+peak_rss_kib stage=chr5.000070150001-000070200000 value=166444
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070200001-000070250000.parquet
+peak_rss_kib stage=chr5.000070200001-000070250000 value=166612
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070250001-000070300000.parquet
+peak_rss_kib stage=chr5.000070250001-000070300000 value=166616
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070300001-000070350000.parquet
+peak_rss_kib stage=chr5.000070300001-000070350000 value=166820
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070350001-000070400000.parquet
+peak_rss_kib stage=chr5.000070350001-000070400000 value=166820
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070400001-000070450000.parquet
+peak_rss_kib stage=chr5.000070400001-000070450000 value=166820
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070450001-000070500000.parquet
+peak_rss_kib stage=chr5.000070450001-000070500000 value=167016
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070500001-000070550000.parquet
+peak_rss_kib stage=chr5.000070500001-000070550000 value=167084
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070550001-000070600000.parquet
+peak_rss_kib stage=chr5.000070550001-000070600000 value=167084
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070600001-000070650000.parquet
+peak_rss_kib stage=chr5.000070600001-000070650000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070650001-000070700000.parquet
+peak_rss_kib stage=chr5.000070650001-000070700000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070700001-000070750000.parquet
+peak_rss_kib stage=chr5.000070700001-000070750000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070750001-000070800000.parquet
+peak_rss_kib stage=chr5.000070750001-000070800000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070800001-000070850000.parquet
+peak_rss_kib stage=chr5.000070800001-000070850000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070850001-000070900000.parquet
+peak_rss_kib stage=chr5.000070850001-000070900000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070900001-000070950000.parquet
+peak_rss_kib stage=chr5.000070900001-000070950000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000070950001-000071000000.parquet
+peak_rss_kib stage=chr5.000070950001-000071000000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000071000001-000071050000.parquet
+peak_rss_kib stage=chr5.000071000001-000071050000 value=169132
+/orcd/scratch/orcd/011/dashii/feng/model_v2/j6_sentinel_fix_v1/chr5.000071050001-000071100000.parquet
+peak_rss_kib stage=chr5.000071050001-000071100000 value=169132
+verified_smn_anchors=6
+peak_rss_kib stage=finished value=185536
+	Command being timed: "/home/dashii/orcd/pool/smt-isef-env/bin/python -m conference.model_v2.j6_site_universe --fasta /home/dashii/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa --gtf /home/dashii/orcd/scratch/feng/gencode/v50/gencode.v50.primary_assembly.annotation.gtf --output-dir /home/dashii/orcd/scratch/feng/model_v2/j6_sentinel_fix_v1 --region chr5:70000000-71100000 --asos F18 F14 F10 --max-mismatch 3 --check-smn-anchors --profile-memory"
+	User time (seconds): 5.56
+	System time (seconds): 2.18
+	Percent of CPU this job got: 52%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:14.78
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 185536
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1339
+	Minor (reclaiming a frame) page faults: 31956
+	Voluntary context switches: 9289
+	Involuntary context switches: 47
+	Swaps: 0
+	File system inputs: 9431408
+	File system outputs: 1112
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

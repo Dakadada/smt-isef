@@ -27,6 +27,10 @@ export OPENBLAS_NUM_THREADS=4 OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 NUMEXPR_NUM_TH
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 OUT="${J4_OUT_DIR:-${HOME}/orcd/scratch/feng/model_v2/j4_sentinel}"
 mkdir -p "${OUT}"
+# A fresh, private marker per invocation prevents stale readiness on requeue.
+READY_DIR=$(mktemp -d "${OUT}/.j4-ready.XXXXXX")
+export J4_READY_FILE="${READY_DIR}/ready"
+trap 'rm -f -- "${J4_READY_FILE}"; rmdir -- "${READY_DIR}"' EXIT
 
 # Sole requeue owner, following feng/scripts/templates/gpu_preemptable.sbatch.
 # Python installs checkpoint_on_signal(requeue=False), flushes, and exits 0.
@@ -36,8 +40,13 @@ requeue_handler() {
     if [[ -n "${PAYLOAD_PID}" ]]; then
         kill -TERM "${PAYLOAD_PID}" 2>/dev/null || true
         if ! wait "${PAYLOAD_PID}"; then
-            echo 'ERROR: payload checkpoint flush failed; refusing requeue' >&2
-            exit 1
+            # Read after the child exits: it may have installed its handler
+            # concurrently with TERM. Before readiness it cannot have written
+            # atlas work, so a default TERM exit is safe to requeue.
+            if [[ -e "${J4_READY_FILE}" ]]; then
+                echo 'ERROR: payload checkpoint flush failed; refusing requeue' >&2
+                exit 1
+            fi
         fi
     fi
     if [[ -z "${SLURM_JOB_ID:-}" ]] || ! scontrol requeue "${SLURM_JOB_ID}"; then
@@ -46,7 +55,10 @@ requeue_handler() {
     fi
     exit 0
 }
-trap requeue_handler SIGTERM SIGUSR1
+# Defer handling across spawn/$! assignment, so even an immediate TERM has
+# a known child to stop and reap before requeue.
+PREEMPT_REQUESTED=0
+trap 'PREEMPT_REQUESTED=1' SIGTERM SIGUSR1
 CHECK_ARGS=()
 if [[ "${J4_CHECK_TOLERANCE:-0}" == 1 ]]; then
     CHECK_ARGS+=(--check-tolerance)
@@ -54,5 +66,7 @@ fi
 "${PYTHON_BIN}" -m conference.model_v2.gpu_perturbation_atlas \
     --smoke --output-dir "${OUT}" --batch-size 2 "${CHECK_ARGS[@]}" &
 PAYLOAD_PID=$!
+trap requeue_handler SIGTERM SIGUSR1
+if (( PREEMPT_REQUESTED )); then requeue_handler; fi
 wait "${PAYLOAD_PID}"
 trap - SIGTERM SIGUSR1

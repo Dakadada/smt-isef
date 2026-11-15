@@ -247,7 +247,7 @@ a.run_atlas([window], grid, genome, Terminated(), Path(os.environ['ATLAS_TEST_OU
     assert done['expected_rows'] == 32 and done['failures'] == 0
 
 
-@pytest.mark.parametrize('phase', ['ready', 'flush_failure', 'importing'])
+@pytest.mark.parametrize('phase', ['ready', 'flush_failure', 'importing', 'readiness_race'])
 def test_sentinel_shell_is_single_requeue_owner(tmp_path, phase):
     import signal
     import subprocess
@@ -258,8 +258,8 @@ def test_sentinel_shell_is_single_requeue_owner(tmp_path, phase):
     fake_bin = fake_env / 'bin'
     fake_bin.mkdir(parents=True)
     (fake_bin / 'python').write_text('''#!/bin/bash
-trap 'echo flushed > "$TEST_DIR/flushed"; exit "$TEST_FLUSH_EXIT"' TERM
-if [[ -n "${J4_READY_FILE:-}" ]]; then : > "$J4_READY_FILE"; fi
+trap 'if [[ -n "${J4_READY_FILE:-}" ]]; then : > "$J4_READY_FILE"; fi; echo flushed > "$TEST_DIR/flushed"; exit "$TEST_FLUSH_EXIT"' TERM
+if [[ "$TEST_PHASE" != readiness_race && -n "${J4_READY_FILE:-}" ]]; then : > "$J4_READY_FILE"; fi
 : > "$TEST_DIR/started"
 while true; do sleep 0.1; done
 ''')
@@ -291,7 +291,7 @@ echo "$*" >> "$TEST_DIR/requeues"
     startup.write_text('module() { :; }; export -f module\n')
     env = dict(os.environ, BASH_ENV=str(startup), PATH=str(fake_bin) + ':' + os.environ['PATH'],
                J4_GPU_ENV=str(fake_env), J4_OUT_DIR=str(tmp_path / 'out'), TEST_DIR=str(tmp_path), SLURM_JOB_ID='123',
-               TEST_PHASE=phase, TEST_FLUSH_EXIT='1' if phase == 'flush_failure' else '0')
+               TEST_PHASE=phase, TEST_FLUSH_EXIT='1' if phase in ('flush_failure', 'readiness_race') else '0')
     child = subprocess.Popen(['bash', str(job)], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
         deadline = time.monotonic() + 5
@@ -300,7 +300,7 @@ echo "$*" >> "$TEST_DIR/requeues"
         assert (tmp_path / 'started').exists()
         child.send_signal(signal.SIGTERM)
         _, err = child.communicate(timeout=5)
-        if phase == 'flush_failure':
+        if phase in ('flush_failure', 'readiness_race'):
             assert child.returncode == 1, err
             assert not (tmp_path / 'requeues').exists()
             assert b'checkpoint flush failed' in err
@@ -478,8 +478,9 @@ def indexed_reference(tmp_path):
 
 
 @pytest.mark.parametrize('smoke', [False, True])
+@pytest.mark.parametrize('override', [False, True])
 @pytest.mark.parametrize('defect', ['grch37', 'missing', 'duplicate', 'malformed'])
-def test_cli_rejects_wrong_reference_before_model(atlas, indexed_reference, tmp_path, monkeypatch, smoke, defect):
+def test_cli_rejects_wrong_reference_before_model(atlas, indexed_reference, tmp_path, monkeypatch, smoke, override, defect):
     index = Path(str(indexed_reference) + '.fai')
     original = index.read_text()
     if defect == 'grch37':
@@ -499,8 +500,10 @@ def test_cli_rejects_wrong_reference_before_model(atlas, indexed_reference, tmp_
     config.write_text(json.dumps({'assembly': 'GRCh38', 'annotation': 'GENCODE v50',
                                  'windows': [asdict(w) for w in windows], 'grid': asdict(grid)}))
     mode = ['--smoke'] if smoke else ['--config', str(config)]
+    monkeypatch.setattr(atlas.ti, 'DEFAULT_FASTA', str(indexed_reference))
+    fasta_args = ['--fasta', str(indexed_reference)] if override else []
     with pytest.raises(ValueError, match='GRCh38'):
-        atlas.main(mode + ['--fasta', str(indexed_reference), '--output-dir', str(tmp_path / 'out')])
+        atlas.main(mode + fasta_args + ['--output-dir', str(tmp_path / 'out')])
     assert not (tmp_path / 'out').exists()
 
 
@@ -512,6 +515,7 @@ def test_cli_reference_identity_bound_to_outputs_and_alias_stable(atlas, indexed
     out = tmp_path / 'out'
     assert atlas.main(['--smoke', '--fasta', str(indexed_reference), '--output-dir', str(out)]) == 0
     assert ready.is_file()
+    monkeypatch.delenv('J4_READY_FILE')  # Each shell invocation supplies a fresh marker.
     done = atlas.load_manifest(out / 'shard_0.done')
     identity = done['provenance']['reference']
     assert identity['assembly'] == 'GRCh38'

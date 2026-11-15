@@ -1,0 +1,15 @@
+**ADVANCE.** All 5 prior findings verified fixed by reading code, not report. Tests: 62 passed, 0 failed (real-GRCh38 anchor test ran, not skipped).
+
+Verified fixes:
+- **Assembly signature** — `j6_site_universe.py:319` fails closed: 25 pinned primary lengths vs FAI, non-`FaiFastaReader` rejected, `_alt/_fix/_novel` rejected. GRCh37 chr5 FAI → reject, no output dir.
+- **Run fencing** — `:567` seals `run_manifest.json` under `flock`; `_check_run` re-stats it before/after commit; `.done` carries `run_sha256`. Probed: changed `--asos` and changed `--max-mismatch` both rejected (not just window/region, which tests cover).
+- **Paralog null** — `:458` `False if others else None`; CLI reads whole GTF regardless of `--region`. Probed SMN1-only → `None`. `check_smn_anchors` requires exactly `True`, so null can't pass.
+- **Per-shard O(genes)** — digest/params/interval-tree/SMN cache built once in `__post_init__`; 512-row Arrow batches.
+- **`.done` validation** — `_valid_done` type-checks before field access; 11 damage cases rebuild.
+
+New finding (MED, logged, non-blocking):
+`j6_site_universe.py:796-810` — sharded runs have **no completeness gate**. `expected_shards` written but never read back; `--check-smn-anchors` forbidden when `shard_count != 1`, so the array path has no acceptance check. Probed: `--shard-count 2 --shard-index 0` exits 0 with `expected 2 committed 1` — a preempted task leaves a silently partial directory whose `*.done` glob all validates. Fix: `verify_run_complete(output_dir)` requiring every expected shard to have a validated `.done` with matching `run_sha256`. Not blocking because no J6 consumer exists yet (grepped).
+
+No regression in strand/off-by-one (sharded vs unsharded vs independent oracle agree at k=0..3, 3 seeds, N bases, edges, overlaps, window 13), sub-window halo ownership (120 kb gene → 119,997 sites, 3 fetches), or synthetic isolation.
+
+Carried open: 4.19-GB production peak still unattributed; sentinel runtime/memory fit unmeasured. Report at `conference/model_v2/ops/briefs/J6_REREVIEW_RESULT.md`. No source edits, no submissions, no commits.

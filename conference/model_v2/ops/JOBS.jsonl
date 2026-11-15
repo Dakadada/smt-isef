@@ -12,3 +12,12 @@
 {"ts":"2026-11-15T07:46:37Z","job":"J3","kind":"sentinel","slurm_id":"29166104"}
 {"ts":"2026-11-15T07:48:38Z","job":"J4","slurm_id":"29165682","state":"FAILED","cause":"relative_to symlink path mismatch gpu_perturbation_atlas.py:184 (before model load)","action":"J4_fix dispatched astra"}
 {"ts":"2026-11-15T07:51:31Z","job":"J3","slurm_id":"29166104","state":"COMPLETED","elapsed":"2m08s","maxrss":"223MB","rows":6145,"channels":"all ok x3, 0 failed","input":"J6 sentinel (pre-fix)","out":"~/orcd/scratch/feng/model_v2/j3_sentinel"}
+{"ts":"2026-11-15T07:53:09Z","job":"J6","kind":"sentinel_postfix","slurm_id":"29166984","out":"j6_sentinel_fix_v1"}
+{"ts":"2026-11-15T07:56:35Z","job":"J4","kind":"gpu_sentinel_v2+tolerance","slurm_id":"29167204","out":"j4_sentinel_v2"}
+{"ts":"2026-11-15T07:58:30Z","job":"J6","slurm_id":"29166984","state":"COMPLETED","elapsed":"16s","maxrss":"261MB (was 4.19GB pre-fix)","note":"post-fix; independent re-review pending (opus5)"}
+{"ts":"2026-11-15T08:03:01Z","job":"J6","kind":"prep_genes_gtf","slurm_id":"29168354"}
+{"ts":"2026-11-15T08:03:01Z","job":"J6","kind":"sentinel_genesgtf","slurm_id":"29168376","dependency":"afterok:29168354"}
+{"ts":"2026-11-15T08:03:01Z","job":"J6","kind":"array_genome_v1","slurm_id":"29168377","array":"0-127","dependency":"afterok:29168376","scope":"gene bodies exons+introns, F18/F14/F10, k<=3, 3UP8 excluded","review":"Opus5 re-review ADVANCE (1 MED: no completeness gate -> j6_gate)"}
+{"ts":"2026-11-15T08:03:01Z","job":"J6","kind":"gate","slurm_id":"29168378","dependency":"afterok:29168377"}
+{"ts":"2026-11-15T08:03:52Z","job":"J4","slurm_id":"29167204","state":"COMPLETED","elapsed":"62s","node":"node3003 cuda","result":"20 ablation + 4 reference rows, 0 failures; CPU/GPU tolerance PASSED max_abs_err 2.8e-7 (atol 1e-5); weights_sha256 10cd8a5d...","out":"~/orcd/scratch/feng/model_v2/j4_sentinel_v2","class":"reference derived/model_evidence; ablation=sequence_ablation_proxy"}
+{"ts":"2026-11-15T08:16:37Z","job":"J4","kind":"scale_bench","slurm_id":"29169335","configs":20395,"est_inferences":1121937}

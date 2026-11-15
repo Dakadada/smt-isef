@@ -5,12 +5,22 @@
    "kind": "59min",
    "created": "2026-11-15T06:53:30Z",
    "planned": "2026-11-15T07:52:30Z",
-   "status": "armed"
+   "status": "fired",
+   "received": "2026-11-15T07:51:57Z",
+   "note": "fired ~35s before planned; delivered to session"
   },
   {
    "id": "bnvzu9o91",
    "kind": "10s_test",
-   "status": "pending"
+   "status": "fired",
+   "received": "2026-11-15T06:53:03Z"
+  },
+  {
+   "id": "bet2fdor7",
+   "kind": "59min",
+   "created": "2026-11-15T07:52:10Z",
+   "planned": "2026-11-15T08:51:10Z",
+   "status": "armed"
   }
  ]
 }

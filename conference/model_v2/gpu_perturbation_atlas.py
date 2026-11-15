@@ -38,6 +38,16 @@ from feng.titration import gpu_scores as gs
 
 VERSION = 1
 TISSUES = (0, 2, 4, 6)  # published weight-group indices, not inferred tissue labels
+# GRCh38 primary chromosomes, including mitochondrial sequence. Extra scaffolds
+# are allowed. Source: https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes
+GRCH38_PRIMARY_LENGTHS = dict(zip(
+    [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY", "chrM"],
+    [248956422, 242193529, 198295559, 190214555, 181538259,
+     170805979, 159345973, 145138636, 138394717, 133797422,
+     135086622, 133275309, 114364328, 107043718, 101991189,
+     90338345, 83257441, 80373285, 58617616, 64444167,
+     46709983, 50818468, 156040895, 57227415, 16569],
+))
 
 
 def digest(value) -> str:
@@ -46,10 +56,48 @@ def digest(value) -> str:
 
 def file_sha(path) -> str:
     h = hashlib.sha256()
-    with open(path, "rb") as stream:
+    with Path(path).expanduser().resolve().open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def grch38_reference(fasta):
+    """Authenticate the index's assembly signature; no whole-genome scan.
+
+    This verifies contig lengths, not every reference base. The full index hash
+    and the separately hashed input slices bind subsequent outputs to inputs.
+    """
+    path = Path(fasta).expanduser()
+    fai = Path(str(path) + ".fai").resolve()
+    index_bytes = fai.read_bytes()
+    lengths = {}
+    try:
+        for line in index_bytes.decode("ascii").splitlines():
+            fields = line.split("\t")
+            if len(fields) != 5 or not fields[0] or fields[0] in lengths:
+                raise ValueError("malformed or duplicate contig")
+            length, offset, bases, width = map(int, fields[1:])
+            if length <= 0 or offset < 0 or not 0 < bases <= width:
+                raise ValueError("invalid index geometry")
+            lengths[fields[0]] = length
+    except (ValueError, UnicodeError) as exc:
+        raise ValueError(f"GRCh38 reference index invalid: {fai}: {exc}") from exc
+    mismatches = [chrom for chrom, length in GRCH38_PRIMARY_LENGTHS.items() if lengths.get(chrom) != length]
+    if mismatches:
+        raise ValueError(f"GRCh38 primary contig-length signature mismatch: {', '.join(mismatches)}")
+    genome = ti.FaiFastaReader(str(path))
+    genome.path, genome.fai_path = genome.path.resolve(), genome.fai_path.resolve()
+    index_sha = hashlib.sha256(index_bytes).hexdigest()
+    if file_sha(genome.fai_path) != index_sha:
+        raise ValueError("GRCh38 reference index changed during authentication")
+    identity = {
+        "assembly": "GRCh38", "verification": "FAI-primary-contig-length-signature",
+        "primary_contig_lengths": dict(GRCH38_PRIMARY_LENGTHS),
+        "primary_signature_sha256": digest(GRCH38_PRIMARY_LENGTHS),
+        "fasta_path": str(genome.path), "fai_path": str(genome.fai_path), "fai_sha256": index_sha,
+    }
+    return genome, identity
 
 
 def half_open(start: int, end: int) -> tuple[int, int]:
@@ -166,7 +214,7 @@ class PangolinScorer:
         torch.backends.cudnn.deterministic = True
         torch.backends.cuda.matmul.allow_tf32 = False
         torch.backends.cudnn.allow_tf32 = False
-        mdir = Path(pm.__file__).parent / "models"
+        mdir = Path(pm.__file__).resolve().parent / "models"
         hashes, self.models = {}, []
         for filename in gs.PANGOLIN_WEIGHT_FILENAMES:
             path = mdir / filename
@@ -181,7 +229,7 @@ class PangolinScorer:
         root = Path(__file__).resolve().parents[2]
         source_paths = [Path(__file__), Path(ti.__file__), Path(gs.__file__), Path(ck.__file__),
                         Path(source_auth.__file__), root / "feng/src/feng/pangolin_package_seed_provenance.json"]
-        sources = {str(p.relative_to(root)): file_sha(p) for p in source_paths}
+        sources = {str(p.resolve().relative_to(root)): file_sha(p.resolve()) for p in source_paths}
         self.provenance = {
             "model": "Pangolin-1.0.2-splice-probability-four-tissue-three-replicate",
             "output_channels": [1, 4, 7, 10],
@@ -298,7 +346,7 @@ def load_manifest(path):
 
 
 def verify_artifact(item, provenance):
-    path = Path(item["path"])
+    path = Path(item["path"]).resolve()
     if not path.is_file() or file_sha(path) != item["sha256"]:
         raise ValueError(f"artifact integrity failed: {path}")
     metadata = pq.read_metadata(path)
@@ -505,8 +553,13 @@ def main(argv=None):
         grid = Grid(**dict(config["grid"], lengths=tuple(config["grid"]["lengths"])))
     # Startup has no completed work to persist. Shell remains sole requeue owner.
     with ck.checkpoint_on_signal(lambda _sig: None, requeue=False):
-        genome = ti.FaiFastaReader(args.fasta)
+        # Publish only AFTER signal handlers exist and BEFORE any output work.
+        # Shell checks this marker after wait, avoiding a readiness/TERM race.
+        if ready_file := os.environ.get("J4_READY_FILE"):
+            Path(ready_file).resolve().touch(exist_ok=False)
+        genome, reference_identity = grch38_reference(args.fasta)
         scorer = PangolinScorer()
+        scorer.provenance = dict(scorer.provenance, reference=reference_identity)
         done = run_atlas(windows, grid, genome, scorer, args.output_dir,
                          batch_size=args.batch_size, shard=args.shard, shards=args.shards)
         if args.check_tolerance:
