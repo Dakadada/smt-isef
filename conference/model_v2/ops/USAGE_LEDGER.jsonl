@@ -37,3 +37,6 @@
 {"ts":"2026-11-15T21:15:34Z","obs":"CODEX/GPT usage limit hit; resets 6:24 PM (EST => ~23:24Z). Astra J8J10 worker stopped mid-task (partial j8_feature_join.py, j10_robustness.py). Claude available."}
 {"ts":"2026-11-15T21:39:34Z","event":"dispatch","task":"F3_fix2","worker":"codex gpt-6.1-sol medium","note":"re-review (terra) DO-NOT-ADVANCE 3H 2M"}
 {"ts":"2026-11-15T22:02:05Z","event":"dispatch","task":"J8J10","worker":"claude -p claude-opus-5","note":"user directed Opus 5; continues partial Astra draft"}
+{"ts":"2026-11-15T22:39:23Z","event":"dispatch","task":"J10_offtarget","worker":"codex gpt-6.1-sol medium"}
+{"ts":"2026-11-15T22:39:23Z","worker":"codex sol","task":"F3_fix2","event":"return","tests":"model_v2 full: 652 passed 1 skipped (verified)"}
+{"ts":"2026-11-15T23:23:00Z","worker":"claude-opus-5","task":"J8J10","event":"return"}

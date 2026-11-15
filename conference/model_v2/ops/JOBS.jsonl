@@ -43,3 +43,5 @@
 {"ts":"2026-11-15T20:41:43Z","job":"J9","kind":"rebuild_full_atlas","slurm_id":"29228637","note":"v1 backed up to j9_smn2_v1_sentinelatlas_backup"}
 {"ts":"2026-11-15T21:15:34Z","job":"J9","kind":"rebuild_curated_atlas_dir","slurm_id":"29230958","note":"prev rebuild 29228637 pointed at atlas root (per-config subdirs) -> M5 not_available regression; now curated SMN2_exon7_issn1_fine dir (stride-1 lengths 8,10,14,18)"}
 {"ts":"2026-11-15T21:39:34Z","job":"WETLAB","result":"exon3 exploratory audit done (codex sol): 22/22 PSI cells recompute; sequence/strand/band identity/product sizes UNVERIFIED (10 needs_human_confirmation); not comparable to computational features; 20 tests","out":"conference/model_v2/wetlab/"}
+{"ts":"2026-11-15T23:23:00Z","job":"J8","kind":"bounded_sentinel","slurm_id":"29242485","tests":"J8+J10 40 passed (orchestrator re-verified)"}
+{"ts":"2026-11-15T23:23:00Z","job":"J10","kind":"bounded","slurm_id":"29242486","dependency":"afterok:29242485"}
