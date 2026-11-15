@@ -1,0 +1,13 @@
+PLAN shard=shard_9999.jsonl configs=3 batch_size=32
+LOAD model_load_seconds=21.9 (once per task)
+{"expected_rows": 216, "failures": 0, "run_id": "6236ccc0cf778caa39d4d25278a616abe72c5a7b83a9d75bbf71b380c32dfbe4", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "bd7b832c4874dd3550027f0c2b6862752e6a4e84eefcbdccd848950cafe69e33", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "d6788cf0645240c7ec3555e0a4b1abad59a0d1c4893350f09093688f087a966c", "status": "complete"}
+SHARD 9999 done=3 skipped=0 failed=0
+{"expected_rows": 216, "failures": 0, "run_id": "6236ccc0cf778caa39d4d25278a616abe72c5a7b83a9d75bbf71b380c32dfbe4", "status": "complete"}
+ENST00000009530.13_ex1__donor driver=[6236ccc0cf778caa39d4d25278a616abe72c5a7b83a9d75bbf71b380c32dfbe4 281c55c6d6a1e19998068da09c4dfcfa049c2f8b34df2e086bc8203288303780] cli=[6236ccc0cf778caa39d4d25278a616abe72c5a7b83a9d75bbf71b380c32dfbe4 281c55c6d6a1e19998068da09c4dfcfa049c2f8b34df2e086bc8203288303780]
+{"expected_rows": 216, "failures": 0, "run_id": "bd7b832c4874dd3550027f0c2b6862752e6a4e84eefcbdccd848950cafe69e33", "status": "complete"}
+ENST00000009530.13_ex2__acceptor driver=[bd7b832c4874dd3550027f0c2b6862752e6a4e84eefcbdccd848950cafe69e33 54a56b44723d0616567b2ebbf450e9331e8db76f05bf4065e170b9b2f8478daf] cli=[bd7b832c4874dd3550027f0c2b6862752e6a4e84eefcbdccd848950cafe69e33 54a56b44723d0616567b2ebbf450e9331e8db76f05bf4065e170b9b2f8478daf]
+{"expected_rows": 216, "failures": 0, "run_id": "d6788cf0645240c7ec3555e0a4b1abad59a0d1c4893350f09093688f087a966c", "status": "complete"}
+ENST00000009530.13_ex2__donor driver=[d6788cf0645240c7ec3555e0a4b1abad59a0d1c4893350f09093688f087a966c 95a2fbebe81a17d50d849f4819cd7e3cdd010ab0993abeb72e61205a4f148b98] cli=[d6788cf0645240c7ec3555e0a4b1abad59a0d1c4893350f09093688f087a966c 95a2fbebe81a17d50d849f4819cd7e3cdd010ab0993abeb72e61205a4f148b98]
+EQUIVALENCE_OK

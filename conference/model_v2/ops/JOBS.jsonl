@@ -30,3 +30,6 @@
 {"ts":"2026-11-15T11:49:22Z","job":"J4","kind":"atlas_array_wave1","slurm_id":"29186278","array":"0-199%16","dependency":"afterok:29186247","configs":"shards 0-199 of 319","est":"~20 GPU-h total"}
 {"ts":"2026-11-15T11:49:22Z","job":"J4","kind":"wave2_submitter","slurm_id":"29186279","dependency":"afterany:29186278","action":"sbatch --array=200-318%16","reason":"QOS MaxSubmitJobsPU mit_preemptable=256, mit_normal=448, assoc 500"}
 {"ts":"2026-11-15T11:49:22Z","job":"J3","kind":"array_genome_v1","slurm_id":"29186280","array":"0-255%64","shard_count":256,"est":"~43min/task, ~183 CPU-h","input":"J6 gate-passed j6_genome_v1 11,002,701 sites"}
+{"ts":"2026-11-15T12:47:45Z","job":"J3","kind":"gate","slurm_id":"29190031","dependency":"afterok:29186280","checks":"256 shards, sha, rows==11002701, channel failure counts"}
+{"ts":"2026-11-15T12:47:45Z","job":"J4","slurm_id":"29186247","state":"COMPLETED","result":"EQUIVALENCE_OK real-model driver==CLI run_id+ablation sha on 3 configs"}
+{"ts":"2026-11-15T14:45:47Z","job":"J9","kind":"smn2_m2m3_real_vienna","slurm_id":"29198432","tests":"58 passed","scope":"descriptive N=3, no supervised claims"}
