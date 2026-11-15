@@ -1,0 +1,6 @@
+done /home/dashii/orcd/scratch/feng/model_v2/j2_idem/j2_shard0000.parquet 3762 37008e2eb25ce9bd3a5704ce605713f549f1be71afb6144a247138580af697ca
+second run (expect skip):
+skip /home/dashii/orcd/scratch/feng/model_v2/j2_idem/j2_shard0000.done
+done /home/dashii/orcd/scratch/feng/model_v2/j2_idem/j2_shard0000.parquet 3762 37008e2eb25ce9bd3a5704ce605713f549f1be71afb6144a247138580af697ca
+H1=37008e2eb25ce9bd3a5704ce605713f549f1be71afb6144a247138580af697ca H2=37008e2eb25ce9bd3a5704ce605713f549f1be71afb6144a247138580af697ca SENT=37008e2eb25ce9bd3a5704ce605713f549f1be71afb6144a247138580af697ca
+IDEMPOTENT_DETERMINISTIC_OK

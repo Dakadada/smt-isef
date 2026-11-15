@@ -1,2 +1,5 @@
 {"ts":"2026-11-15T06:54:53Z","worker":"fable","task":"F1","event":"dispatch","quota":"UNKNOWN","note":"1 opening-session dispatch allowed"}
 {"ts":"2026-11-15T07:03:53Z","worker":"fable","task":"F1","event":"return","tests":"38 passed (orchestrator re-verified)","fable_warnings":"none observed"}
+{"ts":"2026-11-15T07:17:18Z","event":"dispatch","task":"J6","worker":"codex gpt-6.1-sol high","note":"astra model_not_found via ChatGPT-account codex"}
+{"ts":"2026-11-15T07:17:18Z","event":"dispatch","task":"J4","worker":"fable","note":"quota per user report: fable weekly ~0%, 5h window ~50% used"}
+{"ts":"2026-11-15T07:18:09Z","worker":"fable","task":"J4","event":"failed","error":"Fable 5.2 safeguards flagged message [bio] (invalid_request, req_011Ch4JgJdYZvnXPvLUWDU5W); no output; auto model switch off","action":"no retry; J4 held for user decision"}
