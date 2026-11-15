@@ -1,0 +1,3050 @@
+Reading additional input from stdin...
+OpenAI Codex v0.159.2
+--------
+workdir: /home/dashii/smt-isef
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: high
+reasoning summaries: none
+session id: 01a1de1e-f01c-7471-bbda-4e459bcbfccd
+--------
+user
+# TASK J6-REVIEW (Codex gpt-6.1-sol, high, FRESH thread, READ-ONLY except report). Adversarial review of conference/model_v2/j6_site_universe.py + tests/test_j6_site_universe.py + jobs/j6_sentinel.sbatch against SCIENTIFIC_LOCK.md and ops/briefs/J6.md. Hunt: strand/revcomp errors, off-by-one, missed hits at shard halos/chrom edges, N handling, mismatch-position orientation (ASO 5'->3'), SMN1/SMN2 paralog handling, dedupe collapsing distinct genes, nondeterminism, atomic-write/restart holes, anything counting unassayed as negative, scalability to full genome (memory/time). Run tests: PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py -q. Do NOT edit source. Write findings (severity, file:line, concrete failing scenario, fix) to conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md, <=40 lines. No heavy compute, no /orcd traversal.
+warning: clamping SessionEnd hook timeout to 3s in /home/dashii/.codex/plugins/cache/openai-codex/codex/1.0.6/hooks/hooks.json
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+hook: UserPromptSubmit Completed
+codex
+I’ll check the code, tests, and sentinel against the scientific lock and J6 brief, run the specified tests, and write a review report of at most 40 lines. I’ll leave source unchanged.
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/using-superpowers/SKILL.md' in /home/dashii/smt-isef
+ succeeded in 102ms:
+---
+name: using-superpowers
+description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+---
+
+<SUBAGENT-STOP>
+If you were dispatched as a subagent to execute a specific task, ignore this skill.
+</SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. You cannot rationalize your way out of this.
+</EXTREMELY-IMPORTANT>
+
+## The Rule
+
+**Invoke relevant or requested skills BEFORE any response or action** — including clarifying questions, exploring the codebase, or checking files. If it turns out wrong for the situation, you don't have to use it.
+
+**Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
+
+Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
+
+## Skill Priority
+
+When multiple skills apply, process skills come first — they set the approach, then implementation skills (frontend-design, etc.) carry it out. Brainstorming and systematic-debugging are Superpowers' most common process skills, but the rule holds for any of them.
+
+- "Let's build X" → superpowers:brainstorming first, then implementation skills.
+- "Fix this bug" → superpowers:systematic-debugging first, then domain skills.
+
+## Red Flags
+
+These thoughts mean STOP—you're rationalizing:
+
+| Thought | Reality |
+|---------|---------|
+| "This is just a simple question" | Questions are tasks. Check for skills. |
+| "I need more context first" | Skill check comes BEFORE clarifying questions. |
+| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
+| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
+| "Let me gather information first" | Skills tell you HOW to gather information. |
+| "This doesn't need a formal skill" | If a skill exists, use it. |
+| "I remember this skill" | Skills evolve. Read current version. |
+| "This doesn't count as a task" | Action = task. Check for skills. |
+| "The skill is overkill" | Simple things become complex. Use it. |
+| "I'll just do this one thing first" | Check BEFORE doing anything. |
+| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
+| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+
+## Platform Adaptation
+
+If your harness appears here, read its reference file for special instructions:
+
+- Claude Code: `references/claude-code-tools.md`
+- Codex: `references/codex-tools.md`
+- Pi: `references/pi-tools.md`
+- Antigravity: `references/antigravity-tools.md`
+- Hermes Agent: `references/hermes-tools.md`
+- Muse: `references/muse-tools.md`
+
+## User Instructions
+
+User instructions (CLAUDE.md, AGENTS.md, GEMINI.md, etc, direct requests) take precedence over skills, which in turn override default behavior. Only skip skill workflows or instructions when your human partner has explicitly told you to.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/caveman/caveman/4.1.0/skills/caveman-review/SKILL.md' in /home/dashii/smt-isef
+ succeeded in 28ms:
+---
+name: caveman-review
+description: >
+  Compressed code review - one line per finding with location, problem and fix.
+  Use for /caveman-review, "review this PR", or "review the diff".
+---
+
+Write code review comments terse and actionable. One line per finding. Location, problem, fix. No throat-clearing.
+
+## Rules
+
+**Format:** `L<line>: <problem>. <fix>.` — or `<file>:L<line>: ...` when reviewing multi-file diffs.
+
+**Severity prefix (optional, when mixed):**
+- `🔴 bug:` — broken behavior, will cause incident
+- `🟡 risk:` — works but fragile (race, missing null check, swallowed error)
+- `🔵 nit:` — style, naming, micro-optim. Author can ignore
+- `❓ q:` — genuine question, not a suggestion
+
+**Drop:**
+- "I noticed that...", "It seems like...", "You might want to consider..."
+- "This is just a suggestion but..." — use `nit:` instead
+- "Great work!", "Looks good overall but..." — say it once at the top, not per comment
+- Restating what the line does — the reviewer can read the diff
+- Hedging ("perhaps", "maybe", "I think") — if unsure use `q:`
+
+**Keep:**
+- Exact line numbers
+- Exact symbol/function/variable names in backticks
+- Concrete fix, not "consider refactoring this"
+- The *why* if the fix isn't obvious from the problem statement
+
+## Examples
+
+❌ "I noticed that on line 42 you're not checking if the user object is null before accessing the email property. This could potentially cause a crash if the user is not found in the database. You might want to add a null check here."
+
+✅ `L42: 🔴 bug: user can be null after .find(). Add guard before .email.`
+
+❌ "It looks like this function is doing a lot of things and might benefit from being broken up into smaller functions for readability."
+
+✅ `L88-140: 🔵 nit: 50-line fn does 4 things. Extract validate/normalize/persist.`
+
+❌ "Have you considered what happens if the API returns a 429? I think we should probably handle that case."
+
+✅ `L23: 🟡 risk: no retry on 429. Wrap in withBackoff(3).`
+
+## Auto-Clarity
+
+Drop terse mode for: security findings (CVE-class bugs need full explanation + reference), architectural disagreements (need rationale, not just a one-liner), and onboarding contexts where the author is new and needs the "why". In those cases write a normal paragraph, then resume terse for the rest.
+
+## Boundaries
+
+Reviews only — does not write the code fix, does not approve/request-changes, does not run linters. Output the comment(s) ready to paste into the PR. "stop caveman-review" or "normal mode": revert to verbose review style.
+exec
+/usr/bin/bash -lc 'rg --files -g AGENTS.md -g SCIENTIFIC_LOCK.md -g J6.md -g j6_site_universe.py -g test_j6_site_universe.py -g j6_sentinel.sbatch conference .agents' in /home/dashii/smt-isef
+ succeeded in 30ms:
+conference/model_v2/j6_site_universe.py
+conference/model_v2/tests/test_j6_site_universe.py
+conference/model_v2/jobs/j6_sentinel.sbatch
+conference/model_v2/SCIENTIFIC_LOCK.md
+conference/model_v2/ops/briefs/J6.md
+
+exec
+/usr/bin/bash -lc "pwd; git status --short; sed -n '1,85p' feng/HANDOFF.md; cat /home/dashii/orcd/.quota; cat /etc/motd.d/*" in /home/dashii/smt-isef
+ succeeded in 191ms:
+/home/dashii/smt-isef
+ M conference/model_v2/j6_site_universe.py
+ M conference/model_v2/jobs/j6_sentinel.sbatch
+ M conference/model_v2/ops/JOBS.jsonl
+ M conference/model_v2/ops/USAGE_LEDGER.jsonl
+ M conference/model_v2/ops/logs/J6_codex.out
+ M conference/model_v2/tests/test_j6_site_universe.py
+?? conference/model_v2/gpu_perturbation_atlas.py
+?? conference/model_v2/jobs/j4_sentinel.sbatch
+?? conference/model_v2/ops/briefs/J3.md
+?? conference/model_v2/ops/briefs/J4b_astra.md
+?? conference/model_v2/ops/briefs/J6_RESULT.md
+?? conference/model_v2/ops/briefs/J6_review.md
+?? conference/model_v2/ops/logs/J3_codex.out
+?? conference/model_v2/ops/logs/J4b_astra.out
+?? conference/model_v2/ops/logs/J6_review_codex.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_0.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_1.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_10.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_11.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_12.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_13.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_14.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_15.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_16.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_17.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_18.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_19.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_2.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_20.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_3.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_4.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_5.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_6.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_7.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_8.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_9.out
+?? conference/model_v2/ops/logs/mv2-j6-sentinel-29164482.out
+?? conference/model_v2/tests/test_gpu_perturbation_atlas.py
+# HANDOFF — feng/ (the new prospective arm)
+
+Entry point for anyone (Claude or Codex) picking up the `feng/` arm. The old
+`src/`/`pre/` program is a separate, committed effort — see `docs/HANDOFF.md`.
+`feng/` does not touch that code.
+
+> **History trimmed 2026-09-09.** The blow-by-blow Arm D publish-atomicity review
+> saga (R1–R4, H1–H5) and the Arm E hoff bug#1–#4 / site-15 saga are SUPERSEDED
+> (both arms' compute is out) and live in git history of this file (working tree at
+> `f0b0d48` + uncommitted). Earlier dated checkpoints (09-01…09-04) are in
+> `feng/HANDOFF_ARCHIVE.md`. This file = LIVE state + evergreen orientation only.
+
+---
+## ⏩ CONFERENCE POSTER — LIVE (2026-09-30)
+GOAL (user): get compute out. Keep HANDOFF current so /clear is always safe. Codex MCP still DOWN
+(CONNECTION_CLOSED) but the **CLI route WORKS** — see Codex route note below. sol-low rule stands.
+All prior monitors/heartbeat STOPPED (user paused, then resumed).
+- **★★★ 2026-10-28 — ITEM 2 (PSI efficacy) REANALYSIS: endogenous size series band identity SOLVED by
+  blind replicate validation. NOT yet adversarially reviewed (standing gate OPEN).**
+  Source data = the two endogenous size-series gels in repo root (untracked): `Singh Lab Quantified
+  Data - 7-27 truncated ASOs endogenous (including RT PCR) samples 1-9.csv` (audit "Gel 8") +
+  `...7-28 ASO size comparison w samples 1-9 on endogenous gene (+RT PCR).csv` ("Gel 9"). They are a
+  REPLICATE PAIR of the same size series → used as the independent (non-circular) scorer.
+  METHOD: blind brute force over all 6 band-pair hypotheses (product bands at Rf clusters ~0.40 /
+  ~0.48 / ~0.56 / ~0.58; inclusion = lower-Rf = larger amplicon), scored ONLY on cross-gel replicate
+  agreement — biology NEVER fed into selection, applied only as an after-the-fact check.
+  WINNER: **+E7 (inclusion) = ~0.56 band, ΔE7 (skipping) = ~0.58 band; the big ~0.40 band is a
+  non-product (gDNA/heteroduplex), excluded.** Pearson r=0.991 / Spearman ρ=0.967 (NOT ceiling-driven:
+  only lanes F18 & 3UP8 peg at 100%, dropping them r=0.995; max lane-to-lane |Δ|=4.0 pp). The lab
+  audit's PHOTO band call (+E7=upper0.40 / ΔE7=0.56) ranks DEAD LAST (r=0.030) → this reanalysis
+  OVERTURNS the workbook photo assignment in `psi25/SMN2_all_sources_PSI_band_assignment_audit.xlsx`.
+  RESULT under the FINAL-PSI loading order (lane2=WT,3=Scr18,4=F18,5=Scr14,6=F14,7=Scr10,8=F10,
+  9=Scr8,10=3UP8) — mean inclusion PSI% (G8/G9): F18 100(100/100), 3UP8 98(100/96), F14 95(94/96),
+  F10 91(90/93) | Scr18 74, Scr10 71, Scr8 67, WT 59, Scr14 57. All 4 actives (91-100) ≫ all 5
+  controls (57-74), clean bimodal gap; **F18>F14>F10 potency order correct** → CORROBORATES item 1 ΔG
+  rank (F18 -24.7 > F14 -17.0 > F10 -11.1): binding energy predicts inclusion.
+  CAVEATS (do NOT publish as measured): (1) RANK-only, not quantitative — F18/3UP8 peg at 100% ceiling
+  (skip band ~absent) + WT=59% baseline is biologically high (untreated SMN2 usually ~10-20%) ⇒
+  absolute PSI miscalibrated; safe claim = ORDERING only. (2) Band rule is replicate-VALIDATED but the
+  lane→ASO LABELS still assume the FINAL-PSI loading order (the 4-active/5-control split is forced by
+  the PSI gap, but which active=F18 vs F14 is not). (3) CONTRADICTS the gel photo → needs ONE
+  amplicon-size anchor (ladder MW or junction/seq call) to confirm 0.56=+E7 before publication.
+  7-17 POSITIONAL (E3 walk A-F) endogenous pair ATTEMPTED, FAILED validation: trial-1 lanes 5-8 are
+  single-band → PSI undefined → replicate anchor collapses (best r=-0.31). Too degenerate to blind-
+  validate from this export; NOT presenting a number. Only the size series survives.
+  Scripts (session scratchpad, SESSION-SCOPED — rebuildable from this entry if gone):
+  `/tmp/claude-264670/-home-dashii-smt-isef/1f0a4778-fd3f-44fb-94ee-1a8a1119f4cd/scratchpad/`
+  {brute.py (6-hypothesis blind search), psi_perm2.py (coherence), xlsxdump.py (audit reader)}.
+  NEXT: STANDING-GATE Codex sol adversarial review of this reanalysis BEFORE it feeds any artifact;
+  lab ask = (a) lane→ASO map + (b) one amplicon-size anchor. No artifact written yet.
+- **★★★ 2026-10-05/06 — ITEM 3 JOB 24817368 COMPLETED, B DEFECT CONFIRMED FIXED. REVIEW IN FLIGHT.**
+  `sacct`: **COMPLETED exit 0:0**, elapsed **1-11:57:02** (~36h, vs the 4.5h ETA — shards slowed from
+  ~1min to ~40min each late in the run), End 2026-10-05T22:07:21, MaxRSS 7.67G of 120G. **241/241**
+  accessibility shards `.done`. Tables rewritten 22:07 in `conference/artifacts/item3_spec_{occupancy,
+  gated,absolute}.tsv` + `item3_spec_provenance.txt`. NOTE job stdout/stderr logs are **0 bytes** (shard
+  loop prints nothing) — shard `.done` mtimes in
+  `/orcd/scratch/orcd/011/dashii/conference_smn2_aso/results/item3_spec_v1/accessibility_shards/` are
+  the real progress signal, NOT the logs.
+  **B IS REAL NOW:** applicable/evaluated/**failed** → F18 10/10/**0**, F14 1751/1751/**0**,
+  F10 320202/320202/**0** (was 100% failed). Accessible loci (genes): F18 3 (3), F14 1133 (1114),
+  F10 204838 (35268). Gate cuts everyone ~3-4× but **ordering unchanged** — @100nM `sum_theta_off`
+  ungated→gated: F18 16→3, F14 4144→1133, F10 577057→148952; burden F10/F18=**49,650.7×**,
+  F14/F18=377.7×; specificity ratio F10/F18=**1.995e-5**, F14/F18=2.648e-3; `theta_on_over_sum_theta_off`
+  F18 0.3333 / F14 8.826e-4 / F10 6.650e-6. Expression still `unavailable` (expected).
+  ⇒ **A, B, C now all agree: length DEGRADES specificity. No regime shows honest parity.** Headline
+  stands as "length degrades specificity; occupancy- AND accessibility-weighting confirm it".
+  **⚠ STANDING-GATE REVIEW NOT YET RUN — dispatched then CANCELLED by user 2026-10-06 within ~1 min.**
+  Task b7gcw4xm1 killed (`TaskStop` confirmed, no codex process left); `item3_review.out` 0 bytes, NO
+  verdict produced, sandbox was read-only so repo/artifacts untouched. **The gate is still OPEN — item 3
+  must NOT advance to README reframe until it runs.**
+  RE-FIRE verbatim (prompt file survives, no rebuild needed):
+  `cd /home/dashii/smt-isef && codex exec -m gpt-5.6-sol -c model_reasoning_effort="low" --sandbox
+  read-only --skip-git-repo-check "$(cat <scratchpad>/item3_review_prompt.txt)"`
+  where `<scratchpad>` = `/tmp/claude-264670/-home-dashii-smt-isef/6ccb40ba-d2c7-4718-8218-723d9b48c985/
+  scratchpad` (SESSION-SCOPED — if that dir is gone, the prompt must be rebuilt; its 9 attack points are
+  summarized next so it can be).
+  Scope was item3_spec.py + test_item3_spec.py + the 3 tables + provenance + sbatch. 9 attack points:
+  (1) does the U→T fix merely SILENCE the fail-closed check — could a WRONG locus now pass? (2) F10
+  theta_on=0.511@1nM vs ~1.0 for F18/F14 — bug, and is theta_on/sum_theta_off well-posed across ASOs
+  with differing theta_on? (3) mass-balance violation — ~149k simultaneously occupied sites from a
+  finite pool; does it inflate or deflate the F10-vs-F18 contrast? (4) F18's denominator-of-3
+  fragility; (5) is the accessibility gate applied SYMMETRICALLY to on- vs off-target? (6) 3UP8
+  saturated-empties not coerced to 0/NaN; (7) shard-merge integrity — header leakage, dupes, does
+  anything assert 241? (8) `query_id " [candidate]"` suffix severity + is query_id ever a join key?
+  (9) any other "confident number on absent evidence" (the B-was-all-failed class) recurrence.
+                               QUOTA REPORT
+ Space   | Usage (GB) | Limit (GB) | % Used |  Files | Limit | % Used
+---------+------------+------------+--------+--------+-------+--------
+ HOME    |      129.1 |      200.0 |  64.55 | 712.1K |  1.0M |  71.21
+ SCRATCH |      795.9 |     1024.0 |  77.72 | 142.4K |  1.0M |  14.24
+ POOL    |      231.8 |     1024.0 |  22.64 | 506.4K |  1.1M |  46.04
+Last updated: Sun Nov 15 02:30:13 EST 2026
+ ==========================================================================
+|        MIT Office of Research Computing and Data Engaging System         |
+|                                                                          |
+|  Website:            https://orcd.mit.edu                                |
+|  Documentation:      https://orcd-docs.mit.edu                           |
+|  Web Portal:         https://orcd-ood.mit.edu                            |
+|  Consulting:         orcd-help-engaging@mit.edu                          |
+|  Office Hours:       https://orcd.mit.edu/news-and-events/office-hours   |
+|  ORCD Updates Slack: https://mit-orcd-updates.slack.com                  |
+ ==========================================================================
+ *************************************************************************
+*                 === IMPORTANT POLICY INFORMATION ===                     *
+*                                                                          *
+* - Account and password sharing is prohibited.                            *
+* - ORCD systems are suitable for storing low-level security requirements. *
+*   See https://orcd-docs.mit.edu/data-security/ for more information.     *
+* - See https://orcd-docs.mit.edu/code-of-conduct/ for Acceptable Use and  *
+*   Code of Conduct.                                                       *
+* - Authorized users must adhere to ALL MIT Acceptable Use Policies:       *
+*               https://ist.mit.edu/about/it-policies                      *
+*                                                                          *
+ *************************************************************************
+ *************************************************************************
+
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+I’m using the caveman-review skill to keep findings concise and actionable. The three target files already have uncommitted changes; I’ll review their current contents and write only the requested report. Your explicit `conference/model_v2` scope overrides the standing `feng/` default.
+exec
+/usr/bin/bash -lc 'for p in AGENTS.md conference/AGENTS.md conference/model_v2/AGENTS.md conference/model_v2/tests/AGENTS.md conference/model_v2/jobs/AGENTS.md conference/model_v2/ops/AGENTS.md conference/model_v2/ops/briefs/AGENTS.md; do if test -f "$p"; then head -200 "$p"; fi; done; wc -l conference/model_v2/j6_site_universe.py conference/model_v2/tests/test_j6_site_universe.py; cat conference/model_v2/SCIENTIFIC_LOCK.md conference/model_v2/ops/briefs/J6.md; nl -ba conference/model_v2/jobs/j6_sentinel.sbatch' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc 'PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py -q' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "nl -ba conference/model_v2/tests/test_j6_site_universe.py | sed -n '1,300p'" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "nl -ba conference/model_v2/j6_site_universe.py | sed -n '1,260p'" in /home/dashii/smt-isef
+ succeeded in 363ms:
+# AGENTS.md — Codex working agreement for smt-isef
+
+Standing instructions for any Codex session in this repo. Read before acting. The
+human partner drives; you implement, investigate, and review. When a task prompt
+conflicts with this file, the task prompt wins — but flag the conflict.
+
+## Repo layout
+
+- `feng/` — the active **prospective** arm (Arms A–E + appendix). All current work
+  lives here. This is where you operate unless told otherwise.
+- `src/`, `pre/` — the older committed program. Separate effort. Do **not** touch it
+  while working `feng/`. Its handoff is `docs/HANDOFF.md`.
+- Entry point for state: **`feng/HANDOFF.md`** — read its top `LIVE CHECKPOINT` block
+  first every session; it holds the current live job/monitor/thread IDs and the
+  next action. `feng/PLAN.md` + `feng/TASKBOARD.md` are the frozen design.
+
+## Environment (exact)
+
+- Python interpreter: `/home/dashii/orcd/pool/feng-env/bin/python`
+- Source path: run with `PYTHONPATH=feng/src`
+- Test suite (the gate): `PYTHONPATH=feng/src /home/dashii/orcd/pool/feng-env/bin/python -m pytest feng/tests/ -q`
+- GPU env: `~/orcd/pool/feng-gpu-env` (torch 2.6.0+cu124 / openmm 8.2 / pangolin 1.0.2).
+- Binaries in feng-env: `IntaRNA`, `RNAplfold`, `samtools` (pysam absent → samtools
+  fallback is the live path). Do not assume `sklearn` — it is **not** installed.
+- Scratch: `$SCRATCH=/home/dashii/orcd/scratch`; pool: `/home/dashii/orcd/pool`.
+
+## HPC guard rails (shared, quota-limited node)
+
+- Never scan/walk/`find`/`du`/`ls -R` `/orcd/scratch` or `/orcd/pool`, or traverse
+  `/orcd` broadly. Scope every filesystem op to a known subdir with bounded depth.
+- Read quota from `~/orcd/.quota` (cached), not `du`. Read `/etc/motd.d/*` for
+  maintenance/policy before substantive work.
+- Heavy compute goes to Slurm on `mit_preemptable` with `--requeue` + checkpointing;
+  do not run long jobs in the session shell.
+
+## Scientific discipline — non-negotiable
+
+1. **Pre-FREEZE.** No `feng-freeze*` git tag is cut. The prereg seal is UNOPENED and
+   the sealed Phase-9 test is one-shot and terminal. **Never** cut a freeze tag, lock
+   a real seal, set `FENG_PHASE9_UNLOCK`, or read sealed ΔPSI unless the human
+   explicitly says so in that session. These are fail-closed by design — keep them so.
+2. **Never manufacture a GO.** Do not move a pre-specified criterion, substitute a
+   weaker endpoint, or tune until a result appears. A clean NO-GO is a real result;
+   report it honestly. If an endpoint is under-powered or a curve incomplete, return
+   indeterminate/None — never a verdict.
+3. **Never fabricate a score.** Missing/failed computations return `None` or raise —
+   never a fabricated `0.0`. Follow the honest 3-state convention already in the
+   scorers. Recompute features leakage-free; never copy a label-derived value into a
+   feature column.
+4. **Coordinates.** Genome is GRCh38 / GENCODE v50. hg19/GRCh37 inputs must be lifted
+   (`feng.rbp.liftover`) before any join; assembly fences are hard — do not weaken them.
+5. **Freeze-safety of edits.** Additive, TDD, control-only where matching requires it.
+   No new ΔPSI/rank/permutation readout outside the guarded Phase-9 path.
+
+## Token / usage economy — you share one limited account
+
+Codex here is driven by Claude Code and runs on a shared account with a **5-hour
+rolling usage limit** that has stalled work mid-task. Be economical so more real
+work fits per window:
+
+- **Trust the prompt.** Claude hands you the findings, file:lines, and context you
+  need. Don't re-explore the repo, re-read HANDOFF end-to-end, or re-derive what the
+  prompt already states. Go straight to the named files.
+- **Targeted reads.** Open the specific functions/lines you're changing, not whole
+  large files or trees. No broad `grep`/`find` sweeps when a path is given.
+- **Don't re-run the full suite gratuitously.** Run the pytest gate once when your
+  edits are complete (and only the relevant subset while iterating). Reuse a green
+  result the prompt already states rather than reproducing it.
+- **Batch the work.** Fix all findings in a pass before the test run; don't
+  round-trip per finding.
+- **Return tight.** Structured `file:line` + one line each + counts. No prose walls,
+  no re-quoting the prompt back, no restating unchanged context.
+
+## Workflow
+
+- **TDD.** Write/extend a test for each change; the full suite must pass before you
+  call a task done. Report exact pass/skip/fail counts, never "should pass."
+- **Verify on disk**, don't assert from intent — check counts, nulls, mtimes, actual
+  file contents.
+- **Do not commit, `sbatch`, or launch anything** unless the task explicitly says to.
+  Leave unrelated untracked files (e.g. Arm C rank/readout artifacts) unstaged.
+- **Reviews are adversarial.** Assume defects exist; return a clear `ADVANCE` /
+  `DO-NOT-ADVANCE` verdict with `file:line` + concrete failure scenario + fix per
+  finding, ranked HIGH/MED/LOW. Do not raise cosmetic nits at a launch gate.
+- On any deviation from a brief (missing dep, wrong assumption, a limitation you
+  couldn't fix), flag it explicitly in your return summary rather than hiding it.
+
+## Return format
+
+End substantive tasks with: (1) per-finding/change `file:line` + one line each;
+(2) anything unfixed + why; (3) exact pytest counts; (4) new limitations a reviewer
+or the human should know.
+  559 conference/model_v2/j6_site_universe.py
+  381 conference/model_v2/tests/test_j6_site_universe.py
+  940 total
+# SCIENTIFIC_LOCK (immutable boundaries)
+- Never touch feng/terminal, Phase 9, FENG_PHASE9_UNLOCK, feng-freeze tag, sealed outcomes. Do not mutate feng/.
+- 7-27/7-28 = exon-7 gels; 7-7/7-9 = exon-3. Lab outcome workbook SMN2_Exon7_7_27+28_Complete_Data.xlsx excluded from fitting/selection/joins. July gels NOT prospective.
+- No fabricated negatives; no AUPRC/FDR/accuracy without verified negatives (else PU mode). Holgersen S4 = responder-only.
+- Modified ASO != RNA thermodynamics; dG/occupancy != potency. N-mask Pangolin = sequence_ablation_proxy.
+- Every result labelled observed|derived|proxy|model_assumption|unlabeled|not_available.
+- No /orcd/scratch|pool traversal; no heavy compute on login node; no push; no paid credits.
+# TASK J6 — exact/near-match ASO site universe (Codex gpt-6.1-sol, effort high; Astra unavailable: model_not_found). 
+Owner files ONLY: conference/model_v2/j6_site_universe.py, conference/model_v2/tests/test_j6_site_universe.py, conference/model_v2/jobs/j6_*. Do not edit other files. Read: conference/model_v2/SCIENTIFIC_LOCK.md, conference/model_v2/trans_intervention.py (public API only), feng/src/feng/scan/seed_extend.py (import read-only; do NOT import old pre/src).
+Python: /home/dashii/orcd/pool/smt-isef-env/bin/python (pytest). Heavy compute only via sbatch; login node: tiny tests only. NEVER scan /orcd/scratch or /orcd/pool.
+## Contract
+Enumerate genomic sites in GRCh38 where an ASO's target (reverse complement) matches the pre-mRNA-sense strand with <=K substitutions (K default 0..3; edit-distance optional, off by default). Search space = pre-mRNA gene bodies (exons AND introns) from GENCODE v50 GTF (~/orcd/scratch/feng/gencode/v50/gencode.v50.primary_assembly.annotation.gtf; read gene lines only via bounded awk/py) on the correct gene strand — state explicitly which regions the index includes; do not reuse the exonic-union notion. 
+Output record per site: aso_id, chrom, start1,end1 (1-based inclusive), gene strand, gene_id, region class (exon/intron/junction-spanning/UTR as derivable), mismatch count + mismatch positions (ASO 5'->3'), target seq, evidence_class (derived), paralog_ambiguity flag (SMN1/SMN2 sequence-identical sites must both appear with distinct site IDs and ambiguity flag), duplicate policy documented (same coords across overlapping transcripts of one gene collapse to one site with transcript list).
+Deterministic sharding by (chrom, window) with stable shard IDs; atomic tmp->rename parquet + .done manifest (rows, sha256, params, fasta/gtf identity); idempotent restart.
+Tests: brute-force oracle on tiny synthetic references (random, with planted exact/mismatched/reverse-strand sites, overlapping hits, N bases, chrom edges) must equal seed-extend results exactly; strand correctness for + and - genes; off-by-one; shard union == unsharded; restart idempotence; F18/F14/F10 exact hits include SMN2 ISS-N1 site chr5:70076584-70076601 and SMN1 paralog site (reference F1 module for coords).
+Sentinel: jobs/j6_sentinel.sbatch (partition mit_quicktest, <=10 min, --requeue) over a small bounded region (chr5:70.0-71.1 Mb) for F18/F14/F10; DO NOT submit it, just make it ready; report the exact command.
+## Report
+Write conference/model_v2/ops/briefs/J6_RESULT.md (<=30 lines): files, exact pytest counts, region-coverage statement, open issues. Do not commit.
+     1	#!/bin/bash
+     2	#SBATCH --job-name=mv2-j6-sentinel
+     3	#SBATCH --partition=mit_quicktest
+     4	#SBATCH --time=00:10:00
+     5	#SBATCH --mem=4G
+     6	#SBATCH --cpus-per-task=1
+     7	#SBATCH --requeue
+     8	#SBATCH --output=/home/dashii/smt-isef/conference/model_v2/ops/logs/%x-%j.out
+     9	set -euo pipefail
+    10	cd /home/dashii/smt-isef
+    11	export PYTHONPATH=feng/src${PYTHONPATH:+:$PYTHONPATH}
+    12	exec /home/dashii/orcd/pool/smt-isef-env/bin/python \
+    13	  -m conference.model_v2.j6_site_universe \
+    14	  --fasta "$HOME/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa" \
+    15	  --gtf "$HOME/orcd/scratch/feng/gencode/v50/gencode.v50.primary_assembly.annotation.gtf" \
+    16	  --output-dir "$HOME/orcd/scratch/feng/model_v2/j6_sentinel" \
+    17	  --region chr5:70000000-71100000 --asos F18 F14 F10 --max-mismatch 3 \
+    18	  --check-smn-anchors
+
+hook: PostToolUse
+ succeeded in 396ms:
+     1	"""J6: independent Hamming oracle, annotation, coordinates, and crash recovery."""
+     2	import dataclasses
+     3	import hashlib
+     4	import json
+     5	import random
+     6	import subprocess
+     7	import sys
+     8	from pathlib import Path
+     9	
+    10	import pytest
+    11	
+    12	ROOT = Path(__file__).resolve().parents[3]
+    13	sys.path.insert(0, str(ROOT))
+    14	sys.path.insert(0, str(ROOT / "feng/src"))
+    15	from conference.model_v2 import trans_intervention as ti
+    16	
+    17	
+    18	def module():
+    19	    from conference.model_v2 import j6_site_universe
+    20	    return j6_site_universe
+    21	
+    22	
+    23	def test_module_exposes_site_enumerator():
+    24	    assert callable(module().enumerate_sites)
+    25	
+    26	
+    27	def rc(seq):
+    28	    return seq.translate(str.maketrans("ACGTN", "TGCAN"))[::-1]
+    29	
+    30	
+    31	def oracle(seqs, genes, asos, k):
+    32	    rows = set()
+    33	    for gene in genes:
+    34	        for aso in asos:
+    35	            query = rc(aso.sequence_5to3)
+    36	            for start in range(gene.start1, gene.end1 - len(query) + 2):
+    37	                target = seqs[gene.chrom][start - 1:start + len(query) - 1]
+    38	                if gene.strand == "-":
+    39	                    target = rc(target)
+    40	                positions = tuple(sorted(len(query) - i for i, (a, b) in
+    41	                                         enumerate(zip(query, target)) if a != b or b == "N"))
+    42	                if len(positions) <= k:
+    43	                    rows.add((aso.aso_id, gene.chrom, start, start + len(query) - 1,
+    44	                              gene.strand, gene.gene_id, target, positions))
+    45	    return rows
+    46	
+    47	
+    48	def key(site):
+    49	    return (site.aso_id, site.chrom, site.start1, site.end1, site.strand,
+    50	            site.gene_id, site.target_sequence, site.mismatch_positions)
+    51	
+    52	
+    53	@pytest.mark.parametrize("k", range(4))
+    54	@pytest.mark.parametrize("seed", [0, 17, 98])
+    55	def test_seed_extend_equals_independent_oracle_with_edges_N_overlaps(seed, k):
+    56	    j = module()
+    57	    rng = random.Random(seed)
+    58	    seq = list("".join(rng.choice("ACGTN") for _ in range(190)))
+    59	    target = "AACGTT"
+    60	    for pos, planted in [(0, target), (15, "AATGTT"), (40, rc(target)),
+    61	                         (65, "AACNTT"), (100, "AAAAAAA"), (184, target)]:
+    62	        seq[pos:pos + len(planted)] = planted
+    63	    seqs = {"chrT": "".join(seq), "chrTiny": "AC"}
+    64	    genes = [j.Gene("g+", "chrT", 1, 190, "+"),
+    65	             j.Gene("g-", "chrT", 1, 190, "-"),
+    66	             j.Gene("partial", "chrT", 3, 187, "+"),
+    67	             j.Gene("tiny", "chrTiny", 1, 2, "+")]
+    68	    asos = [ti.ASO("q", rc(target)), ti.ASO("overlap", "TTTT"), ti.ASO("short", "A")]
+    69	    genome = ti.InMemoryGenome(seqs)
+    70	    expected = oracle(seqs, genes, asos, k)
+    71	    unsharded = j.enumerate_sites(genome, genes, asos, max_mismatch=k)
+    72	    assert {key(s) for s in unsharded} == expected
+    73	    sharded = [s for shard in j.make_shards(genes, window_size=13)
+    74	               for s in j.enumerate_sites(genome, genes, asos, max_mismatch=k, shard=shard)]
+    75	    assert {key(s) for s in sharded} == expected
+    76	    assert len(sharded) == len(expected)
+    77	    assert {s.site_id for s in sharded} == {s.site_id for s in unsharded}
+    78	    assert all(s.mismatch_count == len(s.mismatch_positions) and s.evidence_class == "derived"
+    79	               for s in sharded)
+    80	
+    81	
+    82	@pytest.mark.parametrize("strand,sequence,want", [("+", "TACGTA", (4,)), ("-", "TACGTA", (4,))])
+    83	def test_mismatch_positions_are_one_based_ASO_five_prime(strand, sequence, want):
+    84	    j = module()
+    85	    sense = sequence
+    86	    genome = ti.InMemoryGenome({"chrT": sense if strand == "+" else rc(sense)})
+    87	    sites = j.enumerate_sites(genome, [j.Gene("g", "chrT", 1, 6, strand)],
+    88	                              [ti.ASO("a", rc("TATGTA"))], max_mismatch=1)
+    89	    assert len(sites) == 1
+    90	    assert sites[0].mismatch_positions == want
+    91	    assert sites[0].target_sequence == sense
+    92	
+    93	
+    94	def test_annotation_collapses_transcripts_but_not_overlapping_genes():
+    95	    j = module()
+    96	    transcripts = (j.Transcript("t2", 1, 16, ((1, 8), (13, 16)), ((1, 4),)),
+    97	                   j.Transcript("t1", 1, 16, ((1, 8), (13, 16)), ((1, 4),)))
+    98	    genes = [j.Gene("g", "chrT", 1, 16, "+", transcripts=transcripts),
+    99	             j.Gene("other", "chrT", 1, 16, "+")]
+   100	    sites = j.enumerate_sites(ti.InMemoryGenome({"chrT": "A" * 16}), genes,
+   101	                              [ti.ASO("a", "TTTT")], max_mismatch=0)
+   102	    assert len(sites) == 26
+   103	    by_start = {s.start1: s for s in sites if s.gene_id == "g"}
+   104	    assert by_start[1].region_class == "UTR"
+   105	    assert by_start[5].region_class == "exon"
+   106	    assert by_start[7].region_class == "junction-spanning"
+   107	    assert by_start[9].region_class == "intron"
+   108	    assert by_start[1].transcript_ids == ("t1", "t2")
+   109	    assert all(s.region_class == "not_available" and s.transcript_ids is None
+   110	               for s in sites if s.gene_id == "other")
+   111	
+   112	
+   113	def test_alternative_transcripts_preserve_multiple_region_classes():
+   114	    j = module()
+   115	    txs = (j.Transcript("exonic", 1, 8, ((1, 8),)),
+   116	           j.Transcript("intronic", 1, 8, ((1, 2), (7, 8))))
+   117	    gene = j.Gene("g", "chrT", 1, 8, "+", transcripts=txs)
+   118	    sites = j.enumerate_sites(ti.InMemoryGenome({"chrT": "AACCGGTT"}), [gene],
+   119	                              [ti.ASO("a", "CCGG")], max_mismatch=0)
+   120	    assert len(sites) == 1
+   121	    assert sites[0].region_class == "transcript_dependent"
+   122	    assert sites[0].region_classes == ("exon", "intron")
+   123	
+   124	
+   125	def test_gene_gtf_reader_is_gene_only_region_bounded_and_assembly_fenced(tmp_path):
+   126	    j = module()
+   127	    path = tmp_path / "genes.gtf"
+   128	    path.write_text('##description: genome (GRCh38), version 50\n'
+   129	                    'chrT\tt\tgene\t1\t20\t.\t+\t.\tgene_id "g1"; gene_name "SMN2";\n'
+   130	                    'chrT\tt\texon\tBROKEN\tIGNORED\t.\t+\t.\t.\n'
+   131	                    'chrT\tt\tgene\t30\t40\t.\t-\t.\tgene_id "g2";\n')
+   132	    genes = j.read_gene_bodies(path, region=("chrT", 10, 25))
+   133	    assert [(g.gene_id, g.start1, g.end1, g.gene_name) for g in genes] == [("g1", 1, 20, "SMN2")]
+   134	    for header in ["GRCh37, version 50", "GRCh38, version 49", "unknown"]:
+   135	        path.write_text("##description: " + header + "\n")
+   136	        with pytest.raises(ValueError):
+   137	            j.read_gene_bodies(path)
+   138	
+   139	
+   140	def test_region_limits_ownership_without_cutting_boundary_hit():
+   141	    j = module()
+   142	    gene = j.Gene("g", "chrT", 1, 12, "+")
+   143	    genome = ti.InMemoryGenome({"chrT": "AAAAAAAAAAAA"})
+   144	    shards = j.make_shards([gene], window_size=4, region=("chrT", 4, 6))
+   145	    sites = [s for shard in shards for s in j.enumerate_sites(
+   146	        genome, [gene], [ti.ASO("a", "TTTT")], max_mismatch=0, shard=shard)]
+   147	    assert [s.start1 for s in sites] == [4, 5, 6]
+   148	    assert len({s.site_id for s in sites}) == 3
+   149	    assert j.make_shards([gene], window_size=4) == j.make_shards([gene, gene], window_size=4)
+   150	
+   151	
+   152	def tiny_job(tmp_path):
+   153	    j = module()
+   154	    genome = ti.InMemoryGenome({"chrT": "AACCGGTT"})
+   155	    genes = [j.Gene("g", "chrT", 1, 8, "+")]
+   156	    asos = [ti.ASO("a", "CCGG")]
+   157	    shard = j.make_shards(genes, window_size=8)[0]
+   158	    return j, dict(genome=genome, genes=genes, asos=asos, shard=shard,
+   159	                   output_dir=tmp_path, max_mismatch=0,
+   160	                   identities={"fasta": {"test": "synthetic"}, "gtf": {"test": "synthetic"}})
+   161	
+   162	
+   163	def test_atomic_parquet_manifest_and_restart_idempotence(tmp_path):
+   164	    import pyarrow.parquet as pq
+   165	    j, kwargs = tiny_job(tmp_path)
+   166	    path = j.run_shard(**kwargs)
+   167	    done = path.with_suffix(".done")
+   168	    manifest = json.loads(done.read_text())
+   169	    assert manifest["rows"] == 1
+   170	    assert manifest["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+   171	    assert manifest["params"]["max_mismatch"] == 0
+   172	    assert manifest["identities"] == kwargs["identities"]
+   173	    table = pq.read_table(path)
+   174	    assert table.to_pylist()[0]["mismatch_positions"] == []
+   175	    assert table.to_pylist()[0]["transcript_ids"] is None
+   176	    mtimes = path.stat().st_mtime_ns, done.stat().st_mtime_ns
+   177	    j.run_shard(**kwargs)
+   178	    assert (path.stat().st_mtime_ns, done.stat().st_mtime_ns) == mtimes
+   179	    assert not list(tmp_path.glob("*.tmp"))
+   180	
+   181	
+   182	@pytest.mark.parametrize("damage", ["parquet", "manifest", "missing_done", "params", "identity", "genes", "rows"])
+   183	def test_restart_rebuilds_incomplete_corrupt_or_stale_shards(tmp_path, damage):
+   184	    j, kwargs = tiny_job(tmp_path)
+   185	    path = j.run_shard(**kwargs)
+   186	    done = path.with_suffix(".done")
+   187	    if damage == "parquet":
+   188	        path.write_bytes(b"corrupt")
+   189	    elif damage == "manifest":
+   190	        done.write_text("{")
+   191	    elif damage == "missing_done":
+   192	        done.unlink()
+   193	    elif damage == "params":
+   194	        kwargs["max_mismatch"] = 1
+   195	    elif damage == "identity":
+   196	        kwargs["identities"]["fasta"]["test"] = "changed"
+   197	    elif damage == "genes":
+   198	        kwargs["genes"] = [dataclasses.replace(kwargs["genes"][0], gene_id="new")]
+   199	    else:
+   200	        manifest = json.loads(done.read_text())
+   201	        manifest["rows"] = 100
+   202	        done.write_text(json.dumps(manifest))
+   203	    j.run_shard(**kwargs)
+   204	    manifest = json.loads(done.read_text())
+   205	    assert manifest["rows"] == 1
+   206	    assert manifest["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+   207	    assert manifest["params"]["max_mismatch"] == kwargs["max_mismatch"]
+   208	    assert manifest["identities"] == kwargs["identities"]
+   209	    if damage == "genes":
+   210	        import pyarrow.parquet as pq
+   211	        assert pq.read_table(path).to_pylist()[0]["gene_id"] == "new"
+   212	
+   213	
+   214	def test_empty_shard_has_typed_schema(tmp_path):
+   215	    import pyarrow.parquet as pq
+   216	    j, kwargs = tiny_job(tmp_path)
+   217	    kwargs["asos"] = [ti.ASO("nohit", "AAAA")]
+   218	    path = j.run_shard(**kwargs)
+   219	    table = pq.read_table(path)
+   220	    assert table.num_rows == 0
+   221	    assert str(table.schema.field("start1").type) == "int64"
+   222	    assert "mismatch_positions" in table.column_names
+   223	
+   224	
+   225	def test_crash_between_parquet_and_marker_leaves_no_valid_commit(tmp_path, monkeypatch):
+   226	    j, kwargs = tiny_job(tmp_path)
+   227	    replace = j.os.replace
+   228	
+   229	    def crash_at_done(source, dest):
+   230	        if str(dest).endswith(".done"):
+   231	            raise OSError("simulated interruption")
+   232	        return replace(source, dest)
+   233	
+   234	    monkeypatch.setattr(j.os, "replace", crash_at_done)
+   235	    with pytest.raises(OSError, match="simulated interruption"):
+   236	        j.run_shard(**kwargs)
+   237	    assert len(list(tmp_path.glob("*.parquet"))) == 1
+   238	    assert not list(tmp_path.glob("*.done"))
+   239	    assert not list(tmp_path.glob("*.tmp"))
+   240	    monkeypatch.setattr(j.os, "replace", replace)
+   241	    path = j.run_shard(**kwargs)
+   242	    assert path.with_suffix(".done").is_file()
+   243	
+   244	
+   245	def test_stale_real_input_identity_cannot_resume(tmp_path):
+   246	    j, kwargs = tiny_job(tmp_path / "output")
+   247	    fasta = tmp_path / "reference.fa"
+   248	    fasta.write_text(">chrT\nAACCGGTT\n")
+   249	    kwargs["identities"]["fasta"] = j.file_identity(fasta)
+   250	    j.run_shard(**kwargs)
+   251	    fasta.write_text(">chrT\nAACCGGTTAAAA\n")
+   252	    with pytest.raises(ValueError, match="identity changed"):
+   253	        j.run_shard(**kwargs)
+   254	
+   255	
+   256	def test_reference_mutation_during_enumeration_cannot_commit(tmp_path):
+   257	    j, kwargs = tiny_job(tmp_path / "output")
+   258	    fasta = tmp_path / "reference.fa"
+   259	    fasta.write_text(">chrT\nAACCGGTT\n")
+   260	    kwargs["identities"]["fasta"] = j.file_identity(fasta)
+   261	
+   262	    class ChangingGenome(ti.InMemoryGenome):
+   263	        def fetch(self, chrom, start, end):
+   264	            fasta.write_text(">chrT\nAACCGGTTAAAA\n")
+   265	            return super().fetch(chrom, start, end)
+   266	
+   267	    kwargs["genome"] = ChangingGenome({"chrT": "AACCGGTT"})
+   268	    with pytest.raises(ValueError, match="identity changed"):
+   269	        j.run_shard(**kwargs)
+   270	    assert not list((tmp_path / "output").glob("*.done"))
+   271	
+   272	
+   273	def test_cli_with_synthetic_fai_gtf_and_idempotent_restart(tmp_path):
+   274	    import os
+   275	    import pyarrow.parquet as pq
+   276	    fasta = tmp_path / "tiny.fa"
+   277	    fasta.write_text(">chrT\nAACCGGTT\n")
+   278	    fasta.with_suffix(".fa.fai").write_text("chrT\t8\t6\t8\t9\n")
+   279	    gtf = tmp_path / "genes.gtf"
+   280	    gtf.write_text('##description: genome (GRCh38), version 50\n'
+   281	                   'chrT\tt\tgene\t1\t8\t.\t+\t.\tgene_id "g";\n')
+   282	    out = tmp_path / "output"
+   283	    cmd = [sys.executable, "-m", "conference.model_v2.j6_site_universe",
+   284	           "--fasta", str(fasta), "--gtf", str(gtf), "--output-dir", str(out),
+   285	           "--region", "chrT:1-8", "--max-mismatch", "0", "--window-size", "4"]
+   286	    env = dict(os.environ, PYTHONPATH=str(ROOT / "feng/src"))
+   287	    subprocess.run(cmd, check=True, env=env, cwd=ROOT, capture_output=True, text=True)
+   288	    files = list(out.glob("*.done"))
+   289	    assert len(files) == 2
+   290	    mtimes = {p.name: p.stat().st_mtime_ns for p in files}
+   291	    subprocess.run(cmd, check=True, env=env, cwd=ROOT, capture_output=True, text=True)
+   292	    assert {p.name: p.stat().st_mtime_ns for p in files} == mtimes
+   293	    assert sum(pq.read_metadata(p).num_rows for p in out.glob("*.parquet")) == 0
+   294	
+   295	
+   296	@pytest.mark.parametrize("bad", [-1, 1.5, True])
+   297	def test_invalid_budgets_fail_closed(bad):
+   298	    j, kwargs = tiny_job(Path("unused"))
+   299	    with pytest.raises((TypeError, ValueError)):
+   300	        j.enumerate_sites(kwargs["genome"], kwargs["genes"], kwargs["asos"], max_mismatch=bad)
+
+ succeeded in 395ms:
+     1	"""Derived, substitution-only ASO sites in GRCh38 / GENCODE v50 pre-mRNA.
+     2	
+     3	Coverage: complete contiguous gene bodies, including exons AND introns, on the
+     4	annotated gene strand; no intergenic sequence, no exon-union index, and no
+     5	splice-concatenated RNA. A hit must fit entirely inside its gene. Ambiguous
+     6	reference bases count as substitutions, never wildcards. K defaults to 3 (use
+     7	0, 1, 2, or 3 for the usual nested universes); edit distance is not implemented.
+     8	
+     9	The GTF loader reads gene records only. Consequently region_class and transcript
+    10	membership are not_available/null unless callers supply Transcript annotations.
+    11	With annotations, junction-spanning means a *genomic exon/intron boundary*, not
+    12	a spliced exon/exon junction. Alternative-transcript classes are preserved.
+    13	Same ASO/coordinates/strand within one gene collapse to one record, with sorted
+    14	transcript IDs; different genes (including paralogs) NEVER collapse. Gene-only
+    15	records have transcript_ids=None, not a fabricated empty transcript list.
+    16	
+    17	Shards own genomic leftmost starts in closed, fixed chromosome windows; a right
+    18	halo retains boundary hits on both strands. Region bounds restrict starts, not
+    19	ends. IDs depend on coordinates/gene/ASO/sequence, not sharding or K. SMN ambiguity
+    20	means the identical transcript-sense sequence was verified in the other SMN gene
+    21	in the supplied gene universe, even if it lies outside the current shard.
+    22	
+    23	Outputs are explicit-schema Parquet, then an atomic .done JSON commit marker.
+    24	Restart verifies parameters, input identities, row count, and Parquet SHA256.
+    25	Input identities use resolved path/size/mtime_ns/inode plus FAI SHA256; they are
+    26	filesystem identities, NOT full FASTA/GTF content hashes. Inputs must be immutable
+    27	during a run. No full reference hashing or unbounded reference fetch is performed.
+    28	
+    29	CLI (from repo root, with PYTHONPATH=feng/src):
+    30	  python -m conference.model_v2.j6_site_universe --output-dir OUT [--region chr5:70000000-71100000]
+    31	"""
+    32	from __future__ import annotations
+    33	
+    34	import argparse
+    35	from dataclasses import asdict, dataclass
+    36	import fcntl
+    37	import hashlib
+    38	import json
+    39	import os
+    40	from pathlib import Path
+    41	import re
+    42	import tempfile
+    43	from typing import Mapping, Sequence
+    44	
+    45	from conference.model_v2.trans_intervention import (
+    46	    ANNOTATION, ASSEMBLY, ASOS, ASO, DEFAULT_FASTA, FaiFastaReader,
+    47	    MAX_SLICE_BASES, reverse_complement,
+    48	)
+    49	from feng.scan.seed_extend import seed_and_extend
+    50	
+    51	VERSION = "1.0.0"
+    52	DEFAULT_GTF = "~/orcd/scratch/feng/gencode/v50/gencode.v50.primary_assembly.annotation.gtf"
+    53	DEFAULT_WINDOW = 50_000
+    54	
+    55	
+    56	def _interval(start, end):
+    57	    if type(start) is not int or type(end) is not int or not 1 <= start <= end:
+    58	        raise ValueError("coordinates must be integers with 1 <= start <= end")
+    59	
+    60	
+    61	@dataclass(frozen=True)
+    62	class Transcript:
+    63	    transcript_id: str
+    64	    start1: int
+    65	    end1: int
+    66	    exons: tuple[tuple[int, int], ...]
+    67	    utrs: tuple[tuple[int, int], ...] = ()
+    68	
+    69	    def __post_init__(self):
+    70	        _interval(self.start1, self.end1)
+    71	        if not self.transcript_id or not self.exons:
+    72	            raise ValueError("transcript ID and complete exon intervals required")
+    73	        for lo, hi in self.exons + self.utrs:
+    74	            _interval(lo, hi)
+    75	            if not self.start1 <= lo <= hi <= self.end1:
+    76	                raise ValueError("feature outside transcript")
+    77	        exons = sorted(self.exons)
+    78	        if any(a[1] >= b[0] for a, b in zip(exons, exons[1:])):
+    79	            raise ValueError("overlapping exon intervals within a transcript")
+    80	        for lo, hi in self.utrs:
+    81	            if not any(a <= lo <= hi <= b for a, b in self.exons):
+    82	                raise ValueError("UTR outside exons")
+    83	
+    84	
+    85	@dataclass(frozen=True)
+    86	class Gene:
+    87	    gene_id: str
+    88	    chrom: str
+    89	    start1: int
+    90	    end1: int
+    91	    strand: str
+    92	    gene_name: str = ""
+    93	    transcripts: tuple[Transcript, ...] | None = None
+    94	
+    95	    def __post_init__(self):
+    96	        _interval(self.start1, self.end1)
+    97	        if not self.gene_id or not self.chrom or self.strand not in ("+", "-"):
+    98	            raise ValueError("gene ID, chromosome and +/- strand required")
+    99	        if self.transcripts is not None:
+   100	            ids = [t.transcript_id for t in self.transcripts]
+   101	            if not ids or len(ids) != len(set(ids)):
+   102	                raise ValueError("supply distinct transcripts, or None for unavailable")
+   103	            if any(not self.start1 <= t.start1 <= t.end1 <= self.end1 for t in self.transcripts):
+   104	                raise ValueError("transcript outside gene")
+   105	
+   106	
+   107	@dataclass(frozen=True, order=True)
+   108	class Shard:
+   109	    chrom: str
+   110	    start1: int
+   111	    end1: int
+   112	
+   113	    def __post_init__(self):
+   114	        _interval(self.start1, self.end1)
+   115	        if not re.fullmatch(r"[A-Za-z0-9_.-]+", self.chrom):
+   116	            raise ValueError("unsafe chromosome name")
+   117	
+   118	    @property
+   119	    def shard_id(self):
+   120	        return f"{self.chrom}.{self.start1:012d}-{self.end1:012d}"
+   121	
+   122	
+   123	@dataclass(frozen=True)
+   124	class Site:
+   125	    site_id: str
+   126	    aso_id: str
+   127	    chrom: str
+   128	    start1: int
+   129	    end1: int
+   130	    strand: str
+   131	    gene_id: str
+   132	    gene_name: str
+   133	    region_class: str
+   134	    region_classes: tuple[str, ...]
+   135	    transcript_ids: tuple[str, ...] | None
+   136	    mismatch_count: int
+   137	    mismatch_positions: tuple[int, ...]
+   138	    target_sequence: str
+   139	    paralog_ambiguity: bool
+   140	    evidence_class: str = "derived"
+   141	    assembly: str = ASSEMBLY
+   142	    annotation: str = ANNOTATION
+   143	
+   144	
+   145	def _json(value):
+   146	    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+   147	
+   148	
+   149	def _digest(value):
+   150	    return hashlib.sha256(_json(value).encode()).hexdigest()
+   151	
+   152	
+   153	def _genes(genes):
+   154	    unique = {}
+   155	    for gene in genes:
+   156	        if gene.gene_id in unique and unique[gene.gene_id] != gene:
+   157	            raise ValueError(f"conflicting records for gene {gene.gene_id}")
+   158	        unique[gene.gene_id] = gene
+   159	    return tuple(sorted(unique.values(), key=lambda g: (g.chrom, g.start1, g.end1, g.gene_id)))
+   160	
+   161	
+   162	def _budget(value):
+   163	    if type(value) is not int:
+   164	        raise TypeError("max_mismatch must be an integer")
+   165	    if value < 0:
+   166	        raise ValueError("max_mismatch must be nonnegative")
+   167	
+   168	
+   169	def read_gene_bodies(path, *, region=None) -> tuple[Gene, ...]:
+   170	    """Stream one known GTF file; parse only gene lines, retain full gene bounds.
+   171	
+   172	    Header must explicitly identify GRCh38 and version 50. No feature/transcript
+   173	    inference is attempted. Optional region bounds filter overlapping genes.
+   174	    """
+   175	    if region is not None:
+   176	        Shard(*region)
+   177	    genes = []
+   178	    valid_header = False
+   179	    with Path(path).expanduser().open() as handle:
+   180	        for line in handle:
+   181	            if line.startswith("#"):
+   182	                if line.startswith("##description:"):
+   183	                    if not (re.search(r"\bGRCh38\b", line) and re.search(r"\bversion 50\b", line)):
+   184	                        raise ValueError("GTF must declare GRCh38 / GENCODE version 50")
+   185	                    valid_header = True
+   186	                continue
+   187	            prefix = line.split("\t", 3)
+   188	            if len(prefix) < 4 or prefix[2] != "gene":
+   189	                continue
+   190	            fields = line.rstrip("\n").split("\t")
+   191	            if len(fields) != 9:
+   192	                raise ValueError("malformed GTF gene record")
+   193	            chrom, _, _, lo, hi, _, strand, _, attrs = fields
+   194	            lo, hi = int(lo), int(hi)
+   195	            if region and (chrom != region[0] or hi < region[1] or lo > region[2]):
+   196	                continue
+   197	            attributes = dict(re.findall(r'(\w+) "([^"\n]*)";', attrs))
+   198	            genes.append(Gene(attributes["gene_id"], chrom, lo, hi, strand,
+   199	                              attributes.get("gene_name", "")))
+   200	    if not valid_header:
+   201	        raise ValueError("missing GRCh38 / GENCODE v50 GTF description")
+   202	    return _genes(genes)
+   203	
+   204	
+   205	def make_shards(genes, *, window_size=DEFAULT_WINDOW, region=None) -> tuple[Shard, ...]:
+   206	    """Stable chromosome windows; region clipping affects the explicit shard ID."""
+   207	    if type(window_size) is not int or window_size < 1 or window_size > MAX_SLICE_BASES:
+   208	        raise ValueError("window_size must be 1..100000")
+   209	    if region is not None:
+   210	        Shard(*region)
+   211	    windows = set()
+   212	    for gene in _genes(genes):
+   213	        lo, hi = gene.start1, gene.end1
+   214	        if region:
+   215	            if gene.chrom != region[0]:
+   216	                continue
+   217	            lo, hi = max(lo, region[1]), min(hi, region[2])
+   218	        if lo > hi:
+   219	            continue
+   220	        for index in range((lo - 1) // window_size, (hi - 1) // window_size + 1):
+   221	            start, end = index * window_size + 1, (index + 1) * window_size
+   222	            if region:
+   223	                start, end = max(start, region[1]), min(end, region[2])
+   224	            windows.add(Shard(gene.chrom, start, end))
+   225	    return tuple(sorted(windows))
+   226	
+   227	
+   228	def site_sort_key(site):
+   229	    return site.chrom, site.start1, site.end1, site.strand, site.gene_id, site.aso_id
+   230	
+   231	
+   232	def _annotation(gene, start, end):
+   233	    if gene.transcripts is None:
+   234	        return "not_available", (), None
+   235	    classes, transcripts = set(), []
+   236	    for tx in gene.transcripts:
+   237	        if not tx.start1 <= start <= end <= tx.end1:
+   238	            continue
+   239	        transcripts.append(tx.transcript_id)
+   240	        exon_bases = sum(max(0, min(end, b) - max(start, a) + 1) for a, b in tx.exons)
+   241	        if exon_bases == 0:
+   242	            classes.add("intron")
+   243	        elif exon_bases < end - start + 1:
+   244	            classes.add("junction-spanning")
+   245	        elif any(a <= start <= end <= b for a, b in tx.utrs):
+   246	            classes.add("UTR")
+   247	        else:
+   248	            classes.add("exon")
+   249	    regions = tuple(sorted(classes))
+   250	    region = regions[0] if len(regions) == 1 else "transcript_dependent" if regions else "not_available"
+   251	    return region, regions, tuple(sorted(transcripts))
+   252	
+   253	
+   254	def _fetch(genome, chrom, start, end):
+   255	    """Bound every individual public FASTA fetch, including API-only large shards."""
+   256	    parts = []
+   257	    for lo in range(start, end + 1, MAX_SLICE_BASES):
+   258	        hi = min(end, lo + MAX_SLICE_BASES - 1)
+   259	        part = genome.fetch(chrom, lo, hi)
+   260	        if len(part) != hi - lo + 1:
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+ exited 1 in 1828ms:
+...............................F...........                              [100%]
+=================================== FAILURES ===================================
+____________ test_cli_with_synthetic_fai_gtf_and_idempotent_restart ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0')
+
+    def test_cli_with_synthetic_fai_gtf_and_idempotent_restart(tmp_path):
+        import os
+        import pyarrow.parquet as pq
+        fasta = tmp_path / "tiny.fa"
+        fasta.write_text(">chrT\nAACCGGTT\n")
+        fasta.with_suffix(".fa.fai").write_text("chrT\t8\t6\t8\t9\n")
+        gtf = tmp_path / "genes.gtf"
+        gtf.write_text('##description: genome (GRCh38), version 50\n'
+                       'chrT\tt\tgene\t1\t8\t.\t+\t.\tgene_id "g";\n')
+        out = tmp_path / "output"
+        cmd = [sys.executable, "-m", "conference.model_v2.j6_site_universe",
+               "--fasta", str(fasta), "--gtf", str(gtf), "--output-dir", str(out),
+               "--region", "chrT:1-8", "--max-mismatch", "0", "--window-size", "4"]
+        env = dict(os.environ, PYTHONPATH=str(ROOT / "feng/src"))
+>       subprocess.run(cmd, check=True, env=env, cwd=ROOT, capture_output=True, text=True)
+
+conference/model_v2/tests/test_j6_site_universe.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = True, timeout = None, check = True
+popenargs = (['/home/dashii/orcd/pool/smt-isef-env/bin/python', '-m', 'conference.model_v2.j6_site_universe', '--fasta', '/tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/tiny.fa', '--gtf', ...],)
+kwargs = {'env': {'PYTHONPATH': '/home/dashii/smt-isef/feng/src', 'NoDefaultCurrentDirectoryInExePath': '1', 'NO_COLOR': '1', 'LC_ALL': 'C.UTF-8', ...}, 'cwd': PosixPath('/home/dashii/smt-isef'), 'text': True, 'stdout': -1, ...}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/home/dashii/orcd/pool/smt-isef-env/bin/python', '-m', 'conference.model_v2.j6_site_universe', '--fasta', '/tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/tiny.fa', '--gtf', '/tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/genes.gtf', '--output-dir', '/tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/output', '--region', 'chrT:1-8', '--max-mismatch', '0', '--window-size', '4']' died with <Signals.SIGINT: 2>.
+
+../orcd/pool/smt-isef-env/lib/python3.11/subprocess.py:571: CalledProcessError
+=========================== short test summary info ============================
+FAILED conference/model_v2/tests/test_j6_site_universe.py::test_cli_with_synthetic_fai_gtf_and_idempotent_restart
+1 failed, 42 passed in 1.24s
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "nl -ba conference/model_v2/j6_site_universe.py | sed -n '254,559p'; nl -ba conference/model_v2/tests/test_j6_site_universe.py | sed -n '300,400p'" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "rg -n '"'^(class (ASO|.*Genome|FaiFastaReader)|def reverse_complement|ASOS|ASSEMBLY|ANNOTATION|MAX_SLICE_BASES)|SMN1|SMN2|ISS|70076584|709'"' conference/model_v2/trans_intervention.py; nl -ba feng/src/feng/scan/seed_extend.py | sed -n '1,260p'; cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/verification-before-completion/SKILL.md" in /home/dashii/smt-isef
+ succeeded in 50ms:
+   254	def _fetch(genome, chrom, start, end):
+   255	    """Bound every individual public FASTA fetch, including API-only large shards."""
+   256	    parts = []
+   257	    for lo in range(start, end + 1, MAX_SLICE_BASES):
+   258	        hi = min(end, lo + MAX_SLICE_BASES - 1)
+   259	        part = genome.fetch(chrom, lo, hi)
+   260	        if len(part) != hi - lo + 1:
+   261	            raise ValueError("short reference fetch")
+   262	        parts.append(part)
+   263	    return "".join(parts).upper()
+   264	
+   265	
+   266	def enumerate_sites(genome, genes: Sequence[Gene], asos: Sequence[ASO], *,
+   267	                    max_mismatch=3, shard: Shard | None = None) -> list[Site]:
+   268	    """Complete Hamming enumeration, using Feng seed-and-extend read-only.
+   269	
+   270	    Memory is bounded by a chromosome window plus output rows for that window.
+   271	    Unsharded calls internally use the same windows, retaining identical site IDs.
+   272	    """
+   273	    _budget(max_mismatch)
+   274	    genes = _genes(genes)
+   275	    asos = tuple(sorted(asos, key=lambda a: a.aso_id))
+   276	    if len({a.aso_id for a in asos}) != len(asos):
+   277	        raise ValueError("duplicate ASO IDs")
+   278	    if not asos:
+   279	        raise ValueError("at least one ASO is required")
+   280	    if shard is None:
+   281	        return sorted([site for window in make_shards(genes)
+   282	                       for site in enumerate_sites(genome, genes, asos,
+   283	                                                   max_mismatch=max_mismatch, shard=window)],
+   284	                      key=site_sort_key)
+   285	    selected = [g for g in genes if g.chrom == shard.chrom and
+   286	                g.start1 <= shard.end1 and g.end1 >= shard.start1]
+   287	    if not selected:
+   288	        return []
+   289	    length = genome.length(shard.chrom)
+   290	    if any(g.end1 > length for g in selected):
+   291	        raise ValueError("gene outside reference chromosome")
+   292	    halo_end = min(length, shard.end1 + max(a.length for a in asos) - 1)
+   293	    if shard.start1 > length:
+   294	        return []
+   295	    sequence = _fetch(genome, shard.chrom, shard.start1, halo_end)
+   296	    sites = []
+   297	    paralog_sequences = {}
+   298	    for gene in selected:
+   299	        start = max(gene.start1, shard.start1)
+   300	        end = min(gene.end1, halo_end)
+   301	        reference = sequence[start - shard.start1:end - shard.start1 + 1]
+   302	        for aso in asos:
+   303	            query = aso.target_sequence if gene.strand == "+" else aso.sequence_5to3
+   304	            for hit in seed_and_extend(query, reference, max_mismatch=max_mismatch):
+   305	                lo, hi = start + hit.start, start + hit.end - 1
+   306	                if lo > shard.end1:
+   307	                    continue
+   308	                target = reference[hit.start:hit.end]
+   309	                if gene.strand == "-":
+   310	                    target = reverse_complement(target)
+   311	                positions = tuple(sorted(aso.length - i for i, (a, b) in
+   312	                                         enumerate(zip(aso.target_sequence, target)) if a != b))
+   313	                if len(positions) != hit.mismatches:
+   314	                    raise ValueError("scanner/mismatch-position disagreement")
+   315	                ambiguous = False
+   316	                if gene.gene_name in ("SMN1", "SMN2"):
+   317	                    other_name = "SMN1" if gene.gene_name == "SMN2" else "SMN2"
+   318	                    for other in genes:
+   319	                        if other.gene_name != other_name:
+   320	                            continue
+   321	                        if other.gene_id not in paralog_sequences:
+   322	                            seq = _fetch(genome, other.chrom, other.start1, other.end1)
+   323	                            paralog_sequences[other.gene_id] = seq if other.strand == "+" else reverse_complement(seq)
+   324	                        if target in paralog_sequences[other.gene_id]:
+   325	                            ambiguous = True
+   326	                            break
+   327	                region, regions, transcripts = _annotation(gene, lo, hi)
+   328	                identity = [ASSEMBLY, ANNOTATION, aso.aso_id, aso.sequence_5to3,
+   329	                            gene.gene_id, gene.chrom, lo, hi, gene.strand, target]
+   330	                sites.append(Site("j6-" + _digest(identity), aso.aso_id, gene.chrom, lo, hi,
+   331	                                  gene.strand, gene.gene_id, gene.gene_name, region, regions,
+   332	                                  transcripts, hit.mismatches, positions, target, ambiguous))
+   333	    return sorted(sites, key=site_sort_key)
+   334	
+   335	
+   336	def _sha256(path):
+   337	    digest = hashlib.sha256()
+   338	    with Path(path).open("rb") as handle:
+   339	        for block in iter(lambda: handle.read(1024 * 1024), b""):
+   340	            digest.update(block)
+   341	    return digest.hexdigest()
+   342	
+   343	
+   344	def file_identity(path):
+   345	    path = Path(path).expanduser().resolve(strict=True)
+   346	    info = path.stat()
+   347	    result = dict(path=str(path), size=info.st_size, mtime_ns=info.st_mtime_ns, inode=info.st_ino)
+   348	    fai = Path(str(path) + ".fai")
+   349	    if fai.is_file():
+   350	        result["fai_sha256"] = _sha256(fai)
+   351	    return result
+   352	
+   353	
+   354	def _check_identities(identities):
+   355	    for identity in identities.values():
+   356	        if "path" in identity and file_identity(identity["path"]) != identity:
+   357	            raise ValueError("reference input identity changed during run")
+   358	
+   359	
+   360	def _schema():
+   361	    import pyarrow as pa
+   362	    return pa.schema([
+   363	        ("site_id", pa.string()), ("aso_id", pa.string()), ("chrom", pa.string()),
+   364	        ("start1", pa.int64()), ("end1", pa.int64()), ("strand", pa.string()),
+   365	        ("gene_id", pa.string()), ("gene_name", pa.string()), ("region_class", pa.string()),
+   366	        ("region_classes", pa.list_(pa.string())), ("transcript_ids", pa.list_(pa.string())),
+   367	        ("mismatch_count", pa.int32()), ("mismatch_positions", pa.list_(pa.int32())),
+   368	        ("target_sequence", pa.string()), ("paralog_ambiguity", pa.bool_()),
+   369	        ("evidence_class", pa.string()), ("assembly", pa.string()), ("annotation", pa.string()),
+   370	    ])
+   371	
+   372	
+   373	def _fsync_dir(path):
+   374	    fd = os.open(path, os.O_RDONLY)
+   375	    try:
+   376	        os.fsync(fd)
+   377	    finally:
+   378	        os.close(fd)
+   379	
+   380	
+   381	def run_shard(*, genome, genes, asos, shard, output_dir, identities: Mapping,
+   382	              max_mismatch=3) -> Path:
+   383	    """Commit/reuse one shard; .done is the sole completeness marker.
+   384	
+   385	    Per-shard advisory locks serialize concurrent retries. Orphan temporary files
+   386	    are ignored; absent/invalid markers or changed parameters force a rebuild.
+   387	    """
+   388	    import pyarrow as pa
+   389	    import pyarrow.parquet as pq
+   390	    _budget(max_mismatch)
+   391	    if not {"fasta", "gtf"} <= identities.keys():
+   392	        raise ValueError("both FASTA and GTF identities are required")
+   393	    genes = _genes(genes)
+   394	    asos = tuple(sorted(asos, key=lambda a: a.aso_id))
+   395	    if not asos or len({a.aso_id for a in asos}) != len(asos):
+   396	        raise ValueError("distinct ASO IDs required")
+   397	    output_dir = Path(output_dir)
+   398	    output_dir.mkdir(parents=True, exist_ok=True)
+   399	    path = output_dir / (shard.shard_id + ".parquet")
+   400	    done = path.with_suffix(".done")
+   401	    import feng.scan.seed_extend as scanner
+   402	    params = dict(version=VERSION, assembly=ASSEMBLY, annotation=ANNOTATION,
+   403	                  shard=asdict(shard), max_mismatch=max_mismatch, mode="substitutions",
+   404	                  asos=[dict(aso_id=a.aso_id, sequence=a.sequence_5to3) for a in asos],
+   405	                  gene_universe_sha256=_digest([asdict(g) for g in genes]),
+   406	                  implementation_sha256=_sha256(__file__), scanner_sha256=_sha256(scanner.__file__))
+   407	    expected = json.loads(_json(dict(params=params, identities=identities)))
+   408	    with path.with_suffix(".lock").open("a") as lock:
+   409	        fcntl.flock(lock, fcntl.LOCK_EX)
+   410	        _check_identities(identities)
+   411	        try:
+   412	            manifest = json.loads(done.read_text())
+   413	            if (all(manifest.get(k) == v for k, v in expected.items()) and
+   414	                    manifest["sha256"] == _sha256(path) and
+   415	                    manifest["rows"] == pq.read_metadata(path).num_rows):
+   416	                return path
+   417	        except (OSError, ValueError, KeyError, TypeError, pa.ArrowException):
+   418	            pass
+   419	        # Invalidate the old commit marker BEFORE replacing its data file.
+   420	        done.unlink(missing_ok=True)
+   421	        _fsync_dir(output_dir)
+   422	        sites = enumerate_sites(genome, genes, asos, max_mismatch=max_mismatch, shard=shard)
+   423	        _check_identities(identities)
+   424	        table = pa.Table.from_pylist([asdict(s) for s in sites], schema=_schema())
+   425	        temps = []
+   426	        try:
+   427	            fd, temp = tempfile.mkstemp(prefix=shard.shard_id + ".", suffix=".tmp", dir=output_dir)
+   428	            os.close(fd)
+   429	            temps.append(Path(temp))
+   430	            pq.write_table(table, temp, compression="zstd")
+   431	            with open(temp, "rb") as handle:
+   432	                os.fsync(handle.fileno())
+   433	            sha = _sha256(temp)
+   434	            os.replace(temp, path)
+   435	            _fsync_dir(output_dir)
+   436	            manifest = dict(**expected, rows=table.num_rows, sha256=sha)
+   437	            _check_identities(identities)
+   438	            fd, temp = tempfile.mkstemp(prefix=shard.shard_id + ".", suffix=".tmp", dir=output_dir)
+   439	            temps.append(Path(temp))
+   440	            with os.fdopen(fd, "w") as handle:
+   441	                handle.write(_json(manifest) + "\n")
+   442	                handle.flush()
+   443	                os.fsync(handle.fileno())
+   444	            os.replace(temp, done)
+   445	            _fsync_dir(output_dir)
+   446	        finally:
+   447	            for temp in temps:
+   448	                temp.unlink(missing_ok=True)
+   449	    return path
+   450	
+   451	
+   452	def _region(text):
+   453	    match = re.fullmatch(r"([A-Za-z0-9_.-]+):(\d+)-(\d+)", text)
+   454	    if not match:
+   455	        raise argparse.ArgumentTypeError("region must be chrom:start1-end1")
+   456	    chrom, start, end = match.groups()
+   457	    try:
+   458	        return_tuple = chrom, int(start), int(end)
+   459	        Shard(*return_tuple)
+   460	        return return_tuple
+   461	    except ValueError as exc:
+   462	        raise argparse.ArgumentTypeError(str(exc)) from exc
+   463	
+   464	
+   465	def check_smn_anchors(output_dir, *, paths=None) -> int:
+   466	    """Sentinel acceptance: six exact F18/F14/F10 records, two distinct genes.
+   467	
+   468	    Inspect only committed shards in this specific output directory; verify each
+   469	    checksum before reading. No new genomic search or reference traversal.
+   470	    """
+   471	    import pyarrow as pa
+   472	    import pyarrow.parquet as pq
+   473	    expected = {(gene, aso): (start, start + length - 1, target)
+   474	                for gene, start in (("SMN2", 70076584), ("SMN1", 70952004))
+   475	                for aso, length, target in (("F18", 18, "CCAGCATTATGAAAGTGA"),
+   476	                                            ("F14", 14, "CCAGCATTATGAAA"),
+   477	                                            ("F10", 10, "CCAGCATTAT"))}
+   478	    found = {}
+   479	    markers = (Path(output_dir).glob("*.done") if paths is None else
+   480	               (Path(path).with_suffix(".done") for path in paths))
+   481	    for done in sorted(markers):
+   482	        path = done.with_suffix(".parquet")
+   483	        try:
+   484	            manifest = json.loads(done.read_text())
+   485	            if manifest["sha256"] != _sha256(path):
+   486	                raise ValueError(f"sentinel checksum mismatch: {path}")
+   487	            if manifest["rows"] != pq.read_metadata(path).num_rows:
+   488	                raise ValueError(f"sentinel row-count mismatch: {path}")
+   489	            rows = pq.read_table(path, filters=[("start1", "in", [70076584, 70952004])]).to_pylist()
+   490	        except (OSError, KeyError, TypeError, pa.ArrowException) as exc:
+   491	            raise ValueError(f"invalid committed sentinel shard: {path}") from exc
+   492	        for row in rows:
+   493	            key = row["gene_name"], row["aso_id"]
+   494	            if key not in expected or row["start1"] != expected[key][0]:
+   495	                continue
+   496	            if (row["chrom"] != "chr5" or row["strand"] != "+" or
+   497	                    (row["start1"], row["end1"], row["target_sequence"]) != expected[key] or
+   498	                    row["mismatch_count"] != 0 or row["mismatch_positions"] != [] or
+   499	                    row["paralog_ambiguity"] is not True or row["evidence_class"] != "derived"):
+   500	                raise ValueError(f"invalid sentinel anchor: {key}")
+   501	            if key in found:
+   502	                raise ValueError(f"duplicate sentinel anchor: {key}")
+   503	            found[key] = row
+   504	    if set(found) != set(expected):
+   505	        raise ValueError(f"missing sentinel anchors: {sorted(set(expected) - set(found))}")
+   506	    if len({r["site_id"] for r in found.values()}) != 6:
+   507	        raise ValueError("sentinel site IDs collapse distinct ASOs/paralogs")
+   508	    if {found[("SMN1", a)]["gene_id"] for a in ("F18", "F14", "F10")} & {
+   509	            found[("SMN2", a)]["gene_id"] for a in ("F18", "F14", "F10")}:
+   510	        raise ValueError("sentinel gene IDs collapse paralogs")
+   511	    return 6
+   512	
+   513	
+   514	def main(argv=None):
+   515	    parser = argparse.ArgumentParser(description=__doc__)
+   516	    parser.add_argument("--fasta", default=DEFAULT_FASTA)
+   517	    parser.add_argument("--gtf", default=DEFAULT_GTF)
+   518	    parser.add_argument("--output-dir", required=True)
+   519	    parser.add_argument("--region", type=_region)
+   520	    parser.add_argument("--asos", nargs="+", choices=sorted(ASOS), default=["F18", "F14", "F10"])
+   521	    parser.add_argument("--max-mismatch", type=int, default=3)
+   522	    parser.add_argument("--window-size", type=int, default=DEFAULT_WINDOW)
+   523	    parser.add_argument("--shard-index", type=int, default=0)
+   524	    parser.add_argument("--shard-count", type=int, default=1)
+   525	    parser.add_argument("--check-smn-anchors", action="store_true")
+   526	    args = parser.parse_args(argv)
+   527	    _budget(args.max_mismatch)
+   528	    if not 0 <= args.shard_index < args.shard_count:
+   529	        parser.error("require 0 <= shard-index < shard-count")
+   530	    if args.check_smn_anchors and args.shard_count != 1:
+   531	        parser.error("sentinel acceptance requires a single complete shard worker")
+   532	    genome = FaiFastaReader(args.fasta)
+   533	    identities = dict(fasta=file_identity(genome.path), gtf=file_identity(args.gtf))
+   534	    genes = read_gene_bodies(args.gtf, region=args.region)
+   535	    if file_identity(args.gtf) != identities["gtf"]:
+   536	        raise ValueError("GTF changed while reading")
+   537	    if not genes:
+   538	        parser.error("no gene bodies overlap the requested universe")
+   539	    asos = [ASOS[name] for name in args.asos]
+   540	    shards = make_shards(genes, window_size=args.window_size, region=args.region)
+   541	    completed = []
+   542	    for index, shard in enumerate(shards):
+   543	        if index % args.shard_count != args.shard_index:
+   544	            continue
+   545	        if (file_identity(genome.path) != identities["fasta"] or
+   546	                file_identity(args.gtf) != identities["gtf"]):
+   547	            raise ValueError("reference input identity changed during run")
+   548	        path = run_shard(genome=genome, genes=genes, asos=asos, shard=shard,
+   549	                         output_dir=args.output_dir, identities=identities,
+   550	                         max_mismatch=args.max_mismatch)
+   551	        completed.append(path)
+   552	        print(path, flush=True)
+   553	    if args.check_smn_anchors:
+   554	        print(f"verified_smn_anchors={check_smn_anchors(args.output_dir, paths=completed)}", flush=True)
+   555	    return 0
+   556	
+   557	
+   558	if __name__ == "__main__":
+   559	    raise SystemExit(main())
+   300	        j.enumerate_sites(kwargs["genome"], kwargs["genes"], kwargs["asos"], max_mismatch=bad)
+   301	
+   302	
+   303	def test_duplicate_ASO_ids_and_conflicting_gene_ids_fail_closed():
+   304	    j, kw = tiny_job(Path("unused"))
+   305	    with pytest.raises(ValueError):
+   306	        j.enumerate_sites(kw["genome"], kw["genes"], kw["asos"] * 2)
+   307	    with pytest.raises(ValueError):
+   308	        j.enumerate_sites(kw["genome"], kw["genes"] + [
+   309	            dataclasses.replace(kw["genes"][0], strand="-")], kw["asos"])
+   310	
+   311	
+   312	def test_paralog_flag_requires_identical_sequence_on_correct_gene_strand():
+   313	    j = module()
+   314	    genes = [j.Gene("g1", "chr1", 1, 6, "+", "SMN1"),
+   315	             j.Gene("g2", "chr2", 1, 6, "-", "SMN2")]
+   316	    genome = ti.InMemoryGenome({"chr1": "AACCGG", "chr2": "CCGGTT"})
+   317	    asos = [ti.ASO("q", "CCGGTT")]
+   318	    sites = j.enumerate_sites(genome, genes, asos, max_mismatch=0)
+   319	    assert len(sites) == 2 and all(s.paralog_ambiguity for s in sites)
+   320	    genome = ti.InMemoryGenome({"chr1": "AACCGG", "chr2": "CCGGTA"})
+   321	    sites = j.enumerate_sites(genome, genes, asos, max_mismatch=1)
+   322	    assert len(sites) == 2 and not any(s.paralog_ambiguity for s in sites)
+   323	
+   324	
+   325	@pytest.mark.parametrize("damage", [None, "missing", "target", "duplicate_id", "checksum"])
+   326	def test_sentinel_checker_requires_six_committed_exact_anchor_records(tmp_path, damage):
+   327	    import pyarrow as pa
+   328	    import pyarrow.parquet as pq
+   329	    j = module()
+   330	    for name, start in [("SMN2", 70076584), ("SMN1", 70952004)]:
+   331	        rows = []
+   332	        for aso, seq in [("F18", "CCAGCATTATGAAAGTGA"), ("F14", "CCAGCATTATGAAA"),
+   333	                         ("F10", "CCAGCATTAT")]:
+   334	            rows.append(dict(site_id=name + aso, aso_id=aso, chrom="chr5", start1=start,
+   335	                             end1=start + len(seq) - 1, strand="+", gene_name=name,
+   336	                             gene_id=name, target_sequence=seq, mismatch_count=0,
+   337	                             mismatch_positions=[], paralog_ambiguity=True,
+   338	                             evidence_class="derived"))
+   339	        if name == "SMN1":
+   340	            if damage == "missing":
+   341	                rows.pop()
+   342	            elif damage == "target":
+   343	                rows[0]["target_sequence"] = "A" * 18
+   344	            elif damage == "duplicate_id":
+   345	                rows[0]["site_id"] = "SMN2F18"
+   346	        path = tmp_path / f"{name}.parquet"
+   347	        pq.write_table(pa.Table.from_pylist(rows), path)
+   348	        sha = hashlib.sha256(path.read_bytes()).hexdigest()
+   349	        path.with_suffix(".done").write_text(json.dumps(dict(rows=len(rows), sha256=sha)))
+   350	    if damage == "checksum":
+   351	        (tmp_path / "SMN1.parquet").write_bytes(b"invalid")
+   352	    if damage is None:
+   353	        assert j.check_smn_anchors(tmp_path) == 6
+   354	        # Old output files cannot satisfy acceptance for an empty current run.
+   355	        with pytest.raises(ValueError, match="missing sentinel anchors"):
+   356	            j.check_smn_anchors(tmp_path, paths=[])
+   357	    else:
+   358	        with pytest.raises(ValueError):
+   359	            j.check_smn_anchors(tmp_path)
+   360	
+   361	
+   362	def test_real_GRCh38_SMN1_SMN2_exact_hits_and_paralog_ambiguity():
+   363	    j = module()
+   364	    try:
+   365	        genome = ti.FaiFastaReader()
+   366	    except ti.GenomeAccessError as exc:
+   367	        pytest.skip(str(exc))
+   368	    genes = [j.Gene("SMN2", "chr5", 70076521, 70076674, "+", "SMN2"),
+   369	             j.Gene("SMN1", "chr5", 70951941, 70952094, "+", "SMN1")]
+   370	    asos = [ti.ASOS[a] for a in ("F18", "F14", "F10")]
+   371	    sites = j.enumerate_sites(genome, genes, asos, max_mismatch=0)
+   372	    for aso_id, length in [("F18", 18), ("F14", 14), ("F10", 10)]:
+   373	        selected = [s for s in sites if s.aso_id == aso_id and s.start1 in (70076584, 70952004)]
+   374	        assert {(s.gene_id, s.start1, s.end1) for s in selected} == {
+   375	            ("SMN2", 70076584, 70076584 + length - 1),
+   376	            ("SMN1", 70952004, 70952004 + length - 1)}
+   377	        assert len({s.site_id for s in selected}) == 2
+   378	        assert all(s.paralog_ambiguity for s in selected)
+   379	    sharded = [s for shard in j.make_shards(genes, window_size=100)
+   380	               for s in j.enumerate_sites(genome, genes, asos, max_mismatch=0, shard=shard)]
+   381	    assert sharded == sorted(sites, key=j.site_sort_key)
+
+ succeeded in 57ms:
+24:ASSEMBLY = "GRCh38"
+25:ANNOTATION = "GENCODE v50"
+44:MAX_SLICE_BASES = 100_000
+59:class GenomeAccessError(RuntimeError):
+76:def reverse_complement(seq: str) -> str:
+81:class InMemoryGenome:
+99:class FaiFastaReader:
+176:class ASO:
+501:    the sequences are identical (SMN1 vs SMN2)."""
+744:ASOS: Dict[str, ASO] = {
+745:    "F18": ASO("F18", "TCACTTTCATAATGCTGG", note="ISS-N1 core"),
+746:    "F14": ASO("F14", "TTTCATAATGCTGG", note="ISS-N1 3-prime anchored"),
+747:    "F10": ASO("F10", "ATAATGCTGG", note="ISS-N1 3-prime anchored"),
+751:# Anchor window: feng/src/feng/titration/ladder.py (chr5:70076584-70076601, +).
+752:ANCHOR_WINDOW = (70076584, 70076601)
+755:# Exon 7 first base 70076521 and all SMN1 coordinates are DERIVED here (54-nt exon,
+758:    "SMN2_exon7": Locus(
+759:        locus_id="SMN2_exon7", gene="SMN2", paralog_group="SMN", role="reference",
+764:    "SMN1_exon7": Locus(
+765:        locus_id="SMN1_exon7", gene="SMN1", paralog_group="SMN", role="alternate",
+766:        chrom="chr5", strand="+", search_start=70951841, search_end=70952094,
+767:        exon_label="exon7", exon_start=70951941, exon_end=70951994,
+768:        note="derived by exact-sequence offset from SMN2_exon7; never joined to it",
+838:    p.add_argument("--locus", default="SMN2_exon7")
+     1	"""Complete seed-and-extend candidate scanning for the clean-room Feng arm.
+     2	
+     3	The scanner reports sequence-similarity candidates only. It does not estimate
+     4	hybridization thermodynamics or splice activity. Coordinates are zero-based,
+     5	half-open offsets into each supplied reference sequence, and the caller must supply
+     6	the query in the orientation expected to match the reference.
+     7	
+     8	The default seed policy partitions a query into ``budget + 1`` nonempty, balanced
+     9	blocks. An alignment with at most ``budget`` substitutions (Hamming mode) or edit
+    10	operations (edit mode) must leave at least one block exactly matched by the
+    11	pigeonhole principle, so extending every occurrence of every block cannot miss an
+    12	eligible interval. When a nonempty exact seed cannot be guaranteed, the scanner
+    13	falls back to exhaustive extension rather than sacrificing completeness.
+    14	"""
+    15	
+    16	from __future__ import annotations
+    17	
+    18	from collections.abc import Mapping
+    19	from dataclasses import dataclass
+    20	from enum import Enum
+    21	
+    22	
+    23	_CANONICAL_BASES = frozenset("ACGT")
+    24	_IUPAC_BASES = frozenset("ACGTRYSWKMBDHVN")
+    25	
+    26	
+    27	class SeedLengthPolicy(str, Enum):
+    28	    """Completeness-preserving policies for selecting candidate intervals."""
+    29	
+    30	    BALANCED = "balanced"
+    31	    EXHAUSTIVE = "exhaustive"
+    32	
+    33	
+    34	@dataclass(frozen=True, order=True, slots=True)
+    35	class HybridizationHit:
+    36	    """One sequence candidate in a named reference.
+    37	
+    38	    ``mismatches`` is the Hamming count in fixed-window mode. In edit mode it is
+    39	    the substitution count in the minimum-edit alignment, with fewer substitutions
+    40	    used as the deterministic tie-break between equally short alignments.
+    41	    """
+    42	
+    43	    reference_name: str
+    44	    start: int
+    45	    end: int
+    46	    mismatches: int
+    47	    edit_distance: int
+    48	
+    49	
+    50	def seed_and_extend(
+    51	    query: str,
+    52	    reference: str | Mapping[str, str],
+    53	    *,
+    54	    max_mismatch: int | None = None,
+    55	    max_edit: int | None = None,
+    56	    seed_policy: SeedLengthPolicy | str = SeedLengthPolicy.BALANCED,
+    57	    reference_name: str = "reference",
+    58	) -> tuple[HybridizationHit, ...]:
+    59	    """Return every reference interval within the declared sequence budget.
+    60	
+    61	    Args:
+    62	        query: Nonempty oligo sequence in reference-matching orientation. ``U`` and
+    63	            ``T`` compare as equivalent. IUPAC ambiguity symbols are valid input but
+    64	            count as mismatches rather than as wildcards.
+    65	        reference: One sequence or a mapping of reference names to sequences.
+    66	        max_mismatch: Maximum substitutions. When ``max_edit`` is absent this selects
+    67	            fixed-length Hamming mode and defaults to zero. In edit mode it is an
+    68	            optional cap on substitutions in the optimal alignment.
+    69	        max_edit: When provided, select variable-length edit mode and require
+    70	            Levenshtein distance at most this value.
+    71	        seed_policy: ``balanced`` uses the pigeonhole-complete partition described in
+    72	            the module docstring; ``exhaustive`` disables seeding for audit use.
+    73	        reference_name: Name assigned when ``reference`` is a single sequence.
+    74	
+    75	    Returns:
+    76	        A deterministically sorted tuple of unique :class:`HybridizationHit` values.
+    77	
+    78	    Raises:
+    79	        TypeError: If sequences, names, or budgets have invalid types.
+    80	        ValueError: If the query is empty, a sequence contains a non-IUPAC symbol, a
+    81	            budget is negative, a reference name is empty, or the policy is unknown.
+    82	
+    83	    Hamming mode evaluates query-length windows. Edit mode evaluates every nonempty
+    84	    window whose length differs from the query by at most ``max_edit``. Seeding only
+    85	    prunes which of those windows require extension; it never changes eligibility.
+    86	    """
+    87	    normalized_query = _normalize_sequence(query, label="query", allow_empty=False)
+    88	    references = _normalize_references(reference, reference_name)
+    89	    mismatch_budget = _validate_budget(max_mismatch, "max_mismatch")
+    90	    edit_budget = _validate_budget(max_edit, "max_edit")
+    91	    try:
+    92	        policy = SeedLengthPolicy(seed_policy)
+    93	    except (TypeError, ValueError) as error:
+    94	        choices = ", ".join(item.value for item in SeedLengthPolicy)
+    95	        raise ValueError(f"seed_policy must be one of: {choices}") from error
+    96	
+    97	    if edit_budget is None:
+    98	        effective_mismatch_budget = 0 if mismatch_budget is None else mismatch_budget
+    99	        hits = _scan_hamming(
+   100	            normalized_query,
+   101	            references,
+   102	            effective_mismatch_budget,
+   103	            policy,
+   104	        )
+   105	    else:
+   106	        hits = _scan_edit(
+   107	            normalized_query,
+   108	            references,
+   109	            mismatch_budget,
+   110	            edit_budget,
+   111	            policy,
+   112	        )
+   113	    return tuple(sorted(hits))
+   114	
+   115	
+   116	def _normalize_sequence(sequence: str, *, label: str, allow_empty: bool) -> str:
+   117	    if not isinstance(sequence, str):
+   118	        raise TypeError(f"{label} must be a string")
+   119	    normalized = sequence.upper().replace("U", "T")
+   120	    if not normalized and not allow_empty:
+   121	        raise ValueError(f"{label} must not be empty")
+   122	    invalid = sorted(set(normalized) - _IUPAC_BASES)
+   123	    if invalid:
+   124	        raise ValueError(f"{label} contains non-IUPAC symbols: {''.join(invalid)}")
+   125	    return normalized
+   126	
+   127	
+   128	def _normalize_references(
+   129	    reference: str | Mapping[str, str],
+   130	    reference_name: str,
+   131	) -> tuple[tuple[str, str], ...]:
+   132	    if isinstance(reference, str):
+   133	        items = ((reference_name, reference),)
+   134	    elif isinstance(reference, Mapping):
+   135	        items = tuple(reference.items())
+   136	    else:
+   137	        raise TypeError("reference must be a sequence string or a name-to-sequence mapping")
+   138	
+   139	    normalized: list[tuple[str, str]] = []
+   140	    for name, sequence in items:
+   141	        if not isinstance(name, str):
+   142	            raise TypeError("reference names must be strings")
+   143	        if not name:
+   144	            raise ValueError("reference names must not be empty")
+   145	        normalized.append(
+   146	            (name, _normalize_sequence(sequence, label=f"reference {name!r}", allow_empty=True))
+   147	        )
+   148	    return tuple(normalized)
+   149	
+   150	
+   151	def _validate_budget(value: int | None, label: str) -> int | None:
+   152	    if value is None:
+   153	        return None
+   154	    if type(value) is not int:
+   155	        raise TypeError(f"{label} must be an integer")
+   156	    if value < 0:
+   157	        raise ValueError(f"{label} must be nonnegative")
+   158	    return value
+   159	
+   160	
+   161	def _bases_match(left: str, right: str) -> bool:
+   162	    return left in _CANONICAL_BASES and right in _CANONICAL_BASES and left == right
+   163	
+   164	
+   165	def _hamming_distance(query: str, target: str) -> int:
+   166	    return sum(not _bases_match(left, right) for left, right in zip(query, target, strict=True))
+   167	
+   168	
+   169	def _alignment_cost(query: str, target: str) -> tuple[int, int]:
+   170	    """Return minimum edit distance and its minimum substitution tie-break."""
+   171	    previous = [(column, 0) for column in range(len(target) + 1)]
+   172	    for row, query_base in enumerate(query, start=1):
+   173	        current = [(row, 0)]
+   174	        for column, target_base in enumerate(target, start=1):
+   175	            deletion = (previous[column][0] + 1, previous[column][1])
+   176	            insertion = (current[column - 1][0] + 1, current[column - 1][1])
+   177	            if _bases_match(query_base, target_base):
+   178	                diagonal = previous[column - 1]
+   179	            else:
+   180	                diagonal = (previous[column - 1][0] + 1, previous[column - 1][1] + 1)
+   181	            current.append(min(deletion, insertion, diagonal))
+   182	        previous = current
+   183	    return previous[-1]
+   184	
+   185	
+   186	def _balanced_seeds(query: str, budget: int) -> tuple[tuple[int, str], ...]:
+   187	    if budget >= len(query):
+   188	        return ()
+   189	    block_count = budget + 1
+   190	    short_length, longer_blocks = divmod(len(query), block_count)
+   191	    offset = 0
+   192	    seeds: list[tuple[int, str]] = []
+   193	    for index in range(block_count):
+   194	        length = short_length + (index < longer_blocks)
+   195	        seeds.append((offset, query[offset : offset + length]))
+   196	        offset += length
+   197	    return tuple(seeds)
+   198	
+   199	
+   200	def _exact_occurrences(reference: str, seed: str) -> tuple[int, ...]:
+   201	    if any(base not in _CANONICAL_BASES for base in seed):
+   202	        return ()
+   203	    positions: list[int] = []
+   204	    position = reference.find(seed)
+   205	    while position != -1:
+   206	        positions.append(position)
+   207	        position = reference.find(seed, position + 1)
+   208	    return tuple(positions)
+   209	
+   210	
+   211	def _hamming_candidate_starts(
+   212	    query: str,
+   213	    reference: str,
+   214	    budget: int,
+   215	    policy: SeedLengthPolicy,
+   216	) -> set[int]:
+   217	    final_start = len(reference) - len(query)
+   218	    if final_start < 0:
+   219	        return set()
+   220	    seeds = () if policy is SeedLengthPolicy.EXHAUSTIVE else _balanced_seeds(query, budget)
+   221	    if not seeds:
+   222	        return set(range(final_start + 1))
+   223	    starts: set[int] = set()
+   224	    for query_offset, seed in seeds:
+   225	        for occurrence in _exact_occurrences(reference, seed):
+   226	            start = occurrence - query_offset
+   227	            if 0 <= start <= final_start:
+   228	                starts.add(start)
+   229	    return starts
+   230	
+   231	
+   232	def _scan_hamming(
+   233	    query: str,
+   234	    references: tuple[tuple[str, str], ...],
+   235	    budget: int,
+   236	    policy: SeedLengthPolicy,
+   237	) -> set[HybridizationHit]:
+   238	    hits: set[HybridizationHit] = set()
+   239	    for name, sequence in references:
+   240	        for start in _hamming_candidate_starts(query, sequence, budget, policy):
+   241	            end = start + len(query)
+   242	            mismatches = _hamming_distance(query, sequence[start:end])
+   243	            if mismatches <= budget:
+   244	                hits.add(HybridizationHit(name, start, end, mismatches, mismatches))
+   245	    return hits
+   246	
+   247	
+   248	def _edit_candidate_intervals(
+   249	    query: str,
+   250	    reference: str,
+   251	    budget: int,
+   252	    policy: SeedLengthPolicy,
+   253	) -> set[tuple[int, int]]:
+   254	    minimum_length = max(1, len(query) - budget)
+   255	    maximum_length = len(query) + budget
+   256	    seeds = () if policy is SeedLengthPolicy.EXHAUSTIVE else _balanced_seeds(query, budget)
+   257	
+   258	    if not seeds:
+   259	        return {
+   260	            (start, start + length)
+---
+name: verification-before-completion
+description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+---
+
+# Verification Before Completion
+
+## Overview
+
+**Core principle:** Evidence before claims, always.
+
+**Violating the letter of this rule is violating the spirit of this rule.**
+
+## The Iron Law
+
+```
+NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+```
+
+If you haven't run the verification command in this message, you cannot claim it passes.
+
+## The Gate Function
+
+```
+BEFORE claiming any status or expressing satisfaction:
+
+1. IDENTIFY: What command proves this claim?
+2. RUN: Execute the FULL command (fresh, complete)
+3. READ: Full output, check exit code, count failures
+4. VERIFY: Does output confirm the claim?
+   - If NO: State actual status with evidence
+   - If YES: State claim WITH evidence
+5. ONLY THEN: Make the claim
+
+Skip any step = lying, not verifying
+```
+
+## Common Failures
+
+| Claim | Requires | Not Sufficient |
+|-------|----------|----------------|
+| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
+| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
+| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
+| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
+| Regression test works | Red-green cycle verified | Test passes once |
+| Agent completed | VCS diff shows changes | Agent reports "success" |
+| Requirements met | Line-by-line checklist | Tests passing |
+
+## Red Flags - STOP
+
+- Using "should", "probably", "seems to"
+- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
+- About to commit/push/PR without verification
+- Trusting agent success reports
+- Relying on partial verification
+- Thinking "just this once"
+- Tired and wanting work over
+- **ANY wording implying success without having run verification**
+
+## Rationalization Prevention
+
+| Excuse | Reality |
+|--------|---------|
+| "Should work now" | RUN the verification |
+| "I'm confident" | Confidence ≠ evidence |
+| "Just this once" | No exceptions |
+| "Linter passed" | Linter ≠ compiler |
+| "Agent said success" | Verify independently |
+| "I'm tired" | Exhaustion ≠ excuse |
+| "Partial check is enough" | Partial proves nothing |
+| "Different words so rule doesn't apply" | Spirit over letter |
+
+## Key Patterns
+
+**Tests:**
+```
+✅ [Run test command] [See: 34/34 pass] "All tests pass"
+❌ "Should pass now" / "Looks correct"
+```
+
+**Regression tests (TDD Red-Green):**
+```
+✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
+❌ "I've written a regression test" (without red-green verification)
+```
+
+**Build:**
+```
+✅ [Run build] [See: exit 0] "Build passes"
+❌ "Linter passed" (linter doesn't check compilation)
+```
+
+**Requirements:**
+```
+✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
+❌ "Tests pass, phase complete"
+```
+
+**Agent delegation:**
+```
+✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
+❌ Trust agent report
+```
+
+## When To Apply
+
+**ALWAYS before:**
+- ANY variation of success/completion claims
+- ANY expression of satisfaction
+- ANY positive statement about work state
+- Committing, PR creation, task completion
+- Moving to next task
+- Delegating to agents
+
+**Rule applies to:**
+- Exact phrases
+- Paraphrases and synonyms
+- Implications of success
+- ANY communication suggesting completion/correctness
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "rg -n 'SMN1|SMN2|70076584|70952004|ISS.N1|F18|F14|F10' conference/model_v2/f1* conference/model_v2/F1*" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc 'PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m conference.model_v2.j6_site_universe --fasta /tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/tiny.fa --gtf /tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/genes.gtf --output-dir /tmp/j6-review-cli --region chrT:1-8 --max-mismatch 0 --window-size 4' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "nl -ba conference/model_v2/trans_intervention.py | sed -n '30,245p'; nl -ba conference/model_v2/tests/test_j6_site_universe.py | sed -n '325,390p'" in /home/dashii/smt-isef
+ succeeded in 139ms:
+    30	    "proxy",
+    31	    "model_assumption",
+    32	    "unlabeled",
+    33	    "not_available",
+    34	)
+    35	STATUSES = ("placed", "needs_human_confirmation", "no_match", "mismatch")
+    36	ROLES = ("reference", "alternate")
+    37	STRANDS = ("+", "-")
+    38	IDENTIFIABILITY = ("identifiable", "unidentifiable")
+    39	REGIONS = ("exonic", "intronic", "exon_intron_spanning")
+    40	END_REGIONS = ("exonic", "intronic_upstream", "intronic_downstream")
+    41	
+    42	DEFAULT_FASTA = "~/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa"
+    43	FASTA_ENV = "TRANS_INTERVENTION_FASTA"
+    44	MAX_SLICE_BASES = 100_000
+    45	SCHEMA_DIR = Path(__file__).resolve().parent / "schema"
+    46	SCHEMA_FILENAME = "trans_intervention.schema.json"
+    47	
+    48	_COMP = str.maketrans("ACGTN", "TGCAN")
+    49	
+    50	
+    51	class SchemaError(ValueError):
+    52	    """Structural or invariant violation in an intervention record."""
+    53	
+    54	
+    55	class ParalogJoinError(ValueError):
+    56	    """Attempt to join placements that belong to different loci."""
+    57	
+    58	
+    59	class GenomeAccessError(RuntimeError):
+    60	    """Fasta / index unavailable or a slice request is out of bounds."""
+    61	
+    62	
+    63	def _req(cond: bool, msg: str) -> None:
+    64	    if not cond:
+    65	        raise SchemaError(msg)
+    66	
+    67	
+    68	def normalize_sequence(seq: str) -> str:
+    69	    """Upper-case DNA alphabet (U -> T); only A/C/G/T accepted."""
+    70	    out = str(seq).strip().upper().replace("U", "T")
+    71	    _req(len(out) > 0, "empty sequence")
+    72	    _req(set(out) <= set("ACGT"), f"non-ACGT characters in sequence: {seq!r}")
+    73	    return out
+    74	
+    75	
+    76	def reverse_complement(seq: str) -> str:
+    77	    return seq.upper().translate(_COMP)[::-1]
+    78	
+    79	
+    80	# --------------------------------------------------------------------------- genome access
+    81	class InMemoryGenome:
+    82	    """Tiny sequence source for tests: {chrom: plus-strand sequence}."""
+    83	
+    84	    def __init__(self, sequences: Mapping[str, str]):
+    85	        self._seqs = {k: v.upper() for k, v in sequences.items()}
+    86	
+    87	    def length(self, chrom: str) -> int:
+    88	        if chrom not in self._seqs:
+    89	            raise GenomeAccessError(f"unknown contig {chrom!r}")
+    90	        return len(self._seqs[chrom])
+    91	
+    92	    def fetch(self, chrom: str, start: int, end: int) -> str:
+    93	        n = self.length(chrom)
+    94	        if not (1 <= start <= end <= n):
+    95	            raise GenomeAccessError(f"slice {chrom}:{start}-{end} outside 1..{n}")
+    96	        return self._seqs[chrom][start - 1 : end]
+    97	
+    98	
+    99	class FaiFastaReader:
+   100	    """Pure-python random access via the ``.fai`` index (read-only, small slices)."""
+   101	
+   102	    def __init__(self, fasta_path: Optional[str] = None):
+   103	        raw = fasta_path or os.environ.get(FASTA_ENV) or DEFAULT_FASTA
+   104	        self.path = Path(os.path.expanduser(str(raw)))
+   105	        self.fai_path = Path(str(self.path) + ".fai")
+   106	        if not self.path.is_file():
+   107	            raise GenomeAccessError(f"genome fasta not found: {self.path}")
+   108	        if not self.fai_path.is_file():
+   109	            raise GenomeAccessError(f"fasta index not found: {self.fai_path}")
+   110	        self._index: Dict[str, Tuple[int, int, int, int]] = {}
+   111	        with open(self.fai_path, "r", encoding="ascii") as fh:
+   112	            for line in fh:
+   113	                parts = line.rstrip("\n").split("\t")
+   114	                if len(parts) < 5:
+   115	                    continue
+   116	                self._index[parts[0]] = (int(parts[1]), int(parts[2]), int(parts[3]), int(parts[4]))
+   117	
+   118	    def length(self, chrom: str) -> int:
+   119	        if chrom not in self._index:
+   120	            raise GenomeAccessError(f"unknown contig {chrom!r}")
+   121	        return self._index[chrom][0]
+   122	
+   123	    def _offset(self, chrom: str, pos0: int) -> int:
+   124	        _, off, line_bases, line_width = self._index[chrom]
+   125	        return off + (pos0 // line_bases) * line_width + (pos0 % line_bases)
+   126	
+   127	    def fetch(self, chrom: str, start: int, end: int) -> str:
+   128	        n = self.length(chrom)
+   129	        if not (1 <= start <= end <= n):
+   130	            raise GenomeAccessError(f"slice {chrom}:{start}-{end} outside 1..{n}")
+   131	        if end - start + 1 > MAX_SLICE_BASES:
+   132	            raise GenomeAccessError(f"slice larger than {MAX_SLICE_BASES} bases refused")
+   133	        first = self._offset(chrom, start - 1)
+   134	        last = self._offset(chrom, end - 1)
+   135	        with open(self.path, "rb") as fh:
+   136	            fh.seek(first)
+   137	            raw = fh.read(last - first + 1)
+   138	        seq = raw.replace(b"\n", b"").replace(b"\r", b"").decode("ascii").upper()
+   139	        if len(seq) != end - start + 1:
+   140	            raise GenomeAccessError(f"short read for {chrom}:{start}-{end}")
+   141	        return seq
+   142	
+   143	
+   144	# --------------------------------------------------------------------------- data model
+   145	@dataclass(frozen=True)
+   146	class Modification:
+   147	    position: int  # 1-based from the ASO 5' end
+   148	    sugar: str = "unknown"
+   149	    backbone: str = "unknown"
+   150	    base: str = "unknown"
+   151	
+   152	    def __post_init__(self) -> None:
+   153	        _req(isinstance(self.position, int) and self.position >= 1, "modification position must be >= 1")
+   154	
+   155	
+   156	@dataclass(frozen=True)
+   157	class Chemistry:
+   158	    family: str = "unknown"
+   159	    modifications: Tuple[Modification, ...] = ()
+   160	    evidence: str = "not_available"
+   161	
+   162	    def __post_init__(self) -> None:
+   163	        _req(self.evidence in EVIDENCE_CLASSES, f"bad evidence class {self.evidence!r}")
+   164	        _req(bool(self.family), "chemistry family must be non-empty ('unknown' allowed)")
+   165	        if self.family == "unknown":
+   166	            _req(self.evidence in ("not_available", "unlabeled"), "unknown chemistry must be not_available/unlabeled")
+   167	            _req(len(self.modifications) == 0, "unknown chemistry cannot list modifications")
+   168	        else:
+   169	            _req(self.evidence != "not_available", "known chemistry needs an evidence class")
+   170	        pos = [m.position for m in self.modifications]
+   171	        _req(len(pos) == len(set(pos)), "duplicate modification positions")
+   172	        _req(pos == sorted(pos), "modifications must be sorted by position")
+   173	
+   174	
+   175	@dataclass(frozen=True)
+   176	class ASO:
+   177	    aso_id: str
+   178	    sequence_5to3: str
+   179	    chemistry: Chemistry = Chemistry()
+   180	    requires_human_confirmation: bool = False
+   181	    sequence_evidence: str = "unlabeled"
+   182	    note: str = ""
+   183	
+   184	    def __post_init__(self) -> None:
+   185	        _req(bool(self.aso_id), "aso_id required")
+   186	        object.__setattr__(self, "sequence_5to3", normalize_sequence(self.sequence_5to3))
+   187	        _req(self.sequence_evidence in EVIDENCE_CLASSES, f"bad evidence class {self.sequence_evidence!r}")
+   188	        for m in self.chemistry.modifications:
+   189	            _req(m.position <= self.length, f"modification position {m.position} beyond ASO length {self.length}")
+   190	
+   191	    @property
+   192	    def length(self) -> int:
+   193	        return len(self.sequence_5to3)
+   194	
+   195	    @property
+   196	    def target_sequence(self) -> str:
+   197	        """Transcript-sense DNA the ASO base-pairs with."""
+   198	        return reverse_complement(self.sequence_5to3)
+   199	
+   200	
+   201	@dataclass(frozen=True)
+   202	class Locus:
+   203	    """One exon-centred pre-mRNA locus. Paralogs are distinct loci, never merged."""
+   204	
+   205	    locus_id: str
+   206	    gene: str
+   207	    paralog_group: str
+   208	    role: str
+   209	    chrom: str
+   210	    strand: str
+   211	    search_start: int
+   212	    search_end: int
+   213	    exon_label: str
+   214	    exon_start: int  # genomic, 1-based inclusive
+   215	    exon_end: int
+   216	    coords_evidence: str = "derived"
+   217	    assembly: str = ASSEMBLY
+   218	    annotation: str = ANNOTATION
+   219	    note: str = ""
+   220	
+   221	    def __post_init__(self) -> None:
+   222	        _req(bool(self.locus_id), "locus_id required")
+   223	        _req(self.role in ROLES, f"bad role {self.role!r}")
+   224	        _req(self.strand in STRANDS, f"bad strand {self.strand!r}")
+   225	        _req(self.coords_evidence in EVIDENCE_CLASSES, f"bad evidence class {self.coords_evidence!r}")
+   226	        _req(1 <= self.search_start <= self.search_end, "bad search window")
+   227	        _req(self.search_start <= self.exon_start <= self.exon_end <= self.search_end, "exon outside search window")
+   228	
+   229	    @property
+   230	    def sign(self) -> int:
+   231	        return 1 if self.strand == "+" else -1
+   232	
+   233	    @property
+   234	    def donor_last_exonic_base(self) -> int:
+   235	        return self.exon_end if self.strand == "+" else self.exon_start
+   236	
+   237	    @property
+   238	    def donor_first_intronic_base(self) -> int:
+   239	        return self.donor_last_exonic_base + self.sign
+   240	
+   241	    @property
+   242	    def acceptor_first_exonic_base(self) -> int:
+   243	        return self.exon_start if self.strand == "+" else self.exon_end
+   244	
+   245	    @property
+   325	@pytest.mark.parametrize("damage", [None, "missing", "target", "duplicate_id", "checksum"])
+   326	def test_sentinel_checker_requires_six_committed_exact_anchor_records(tmp_path, damage):
+   327	    import pyarrow as pa
+   328	    import pyarrow.parquet as pq
+   329	    j = module()
+   330	    for name, start in [("SMN2", 70076584), ("SMN1", 70952004)]:
+   331	        rows = []
+   332	        for aso, seq in [("F18", "CCAGCATTATGAAAGTGA"), ("F14", "CCAGCATTATGAAA"),
+   333	                         ("F10", "CCAGCATTAT")]:
+   334	            rows.append(dict(site_id=name + aso, aso_id=aso, chrom="chr5", start1=start,
+   335	                             end1=start + len(seq) - 1, strand="+", gene_name=name,
+   336	                             gene_id=name, target_sequence=seq, mismatch_count=0,
+   337	                             mismatch_positions=[], paralog_ambiguity=True,
+   338	                             evidence_class="derived"))
+   339	        if name == "SMN1":
+   340	            if damage == "missing":
+   341	                rows.pop()
+   342	            elif damage == "target":
+   343	                rows[0]["target_sequence"] = "A" * 18
+   344	            elif damage == "duplicate_id":
+   345	                rows[0]["site_id"] = "SMN2F18"
+   346	        path = tmp_path / f"{name}.parquet"
+   347	        pq.write_table(pa.Table.from_pylist(rows), path)
+   348	        sha = hashlib.sha256(path.read_bytes()).hexdigest()
+   349	        path.with_suffix(".done").write_text(json.dumps(dict(rows=len(rows), sha256=sha)))
+   350	    if damage == "checksum":
+   351	        (tmp_path / "SMN1.parquet").write_bytes(b"invalid")
+   352	    if damage is None:
+   353	        assert j.check_smn_anchors(tmp_path) == 6
+   354	        # Old output files cannot satisfy acceptance for an empty current run.
+   355	        with pytest.raises(ValueError, match="missing sentinel anchors"):
+   356	            j.check_smn_anchors(tmp_path, paths=[])
+   357	    else:
+   358	        with pytest.raises(ValueError):
+   359	            j.check_smn_anchors(tmp_path)
+   360	
+   361	
+   362	def test_real_GRCh38_SMN1_SMN2_exact_hits_and_paralog_ambiguity():
+   363	    j = module()
+   364	    try:
+   365	        genome = ti.FaiFastaReader()
+   366	    except ti.GenomeAccessError as exc:
+   367	        pytest.skip(str(exc))
+   368	    genes = [j.Gene("SMN2", "chr5", 70076521, 70076674, "+", "SMN2"),
+   369	             j.Gene("SMN1", "chr5", 70951941, 70952094, "+", "SMN1")]
+   370	    asos = [ti.ASOS[a] for a in ("F18", "F14", "F10")]
+   371	    sites = j.enumerate_sites(genome, genes, asos, max_mismatch=0)
+   372	    for aso_id, length in [("F18", 18), ("F14", 14), ("F10", 10)]:
+   373	        selected = [s for s in sites if s.aso_id == aso_id and s.start1 in (70076584, 70952004)]
+   374	        assert {(s.gene_id, s.start1, s.end1) for s in selected} == {
+   375	            ("SMN2", 70076584, 70076584 + length - 1),
+   376	            ("SMN1", 70952004, 70952004 + length - 1)}
+   377	        assert len({s.site_id for s in selected}) == 2
+   378	        assert all(s.paralog_ambiguity for s in selected)
+   379	    sharded = [s for shard in j.make_shards(genes, window_size=100)
+   380	               for s in j.enumerate_sites(genome, genes, asos, max_mismatch=0, shard=shard)]
+   381	    assert sharded == sorted(sites, key=j.site_sort_key)
+
+ exited 2 in 166ms:
+rg: conference/model_v2/f1*: No such file or directory (os error 2)
+rg: conference/model_v2/F1*: No such file or directory (os error 2)
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+ succeeded in 852ms:
+/tmp/j6-review-cli/chrT.000000000001-000000000004.parquet
+/tmp/j6-review-cli/chrT.000000000005-000000000008.parquet
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+The first test run returned 42 passed and 1 failed: the CLI subprocess received SIGINT. Its exact command succeeds when run directly, so I’ll check whether that failure repeats. I’m also checking restart coverage and whether the FASTA is actually verified as GRCh38.
+exec
+/usr/bin/bash -lc 'PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py::test_cli_with_synthetic_fai_gtf_and_idempotent_restart -q' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from conference.model_v2 import j6_site_universe as j
+from conference.model_v2 import trans_intervention as ti
+import pyarrow.parquet as pq
+with TemporaryDirectory(prefix='j6-review-') as td:
+ p=Path(td); genome=ti.InMemoryGenome({'chrT':'A'*12}); genes=[j.Gene('g','chrT',1,12,'+')]; asos=[ti.ASO('q','TTTT')]
+ for ws in (4,6):
+  paths=[j.run_shard(genome=genome,genes=genes,asos=asos,shard=s,output_dir=p,max_mismatch=0,identities={'fasta':{'test':'fixture'},'gtf':{'test':'fixture'}}) for s in j.make_shards(genes,window_size=ws)]
+  all_rows=[r for done in p.glob('*.done') for r in pq.read_table(done.with_suffix('.parquet')).to_pylist()]
+  print('window',ws,'current_paths',len(paths),'committed_files',len(list(p.glob('*.done'))),'committed_rows',len(all_rows),'unique_sites',len({r['site_id'] for r in all_rows}))
+# Per-region paralog flags: same genomic site changes meaning with input-region filtering.
+genome=ti.InMemoryGenome({'chr1':'AACCGG','chr2':'AACCGG'})
+genes=[j.Gene('g1','chr1',1,6,'+','SMN1'),j.Gene('g2','chr2',1,6,'+','SMN2')]
+for gs in (genes,genes[:1]):
+ rows=j.enumerate_sites(genome,gs,[ti.ASO('q','CCGGTT')],max_mismatch=0)
+ print('gene_universe',len(gs),'SMN1_ambiguity',rows[0].paralog_ambiguity,'site_id',rows[0].site_id)
+PY" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "git diff --stat -- conference/model_v2/j6_site_universe.py conference/model_v2/tests/test_j6_site_universe.py conference/model_v2/jobs/j6_sentinel.sbatch; rg -n 'SMN1|SMN2|70076584|70952004|F18|F14|F10' conference/model_v2/trans_intervention.py | head -55; cat conference/model_v2/ops/briefs/J6_RESULT.md" in /home/dashii/smt-isef
+ succeeded in 455ms:
+ conference/model_v2/j6_site_universe.py            |  66 ++++++++++-
+ conference/model_v2/jobs/j6_sentinel.sbatch        |   3 +-
+ conference/model_v2/tests/test_j6_site_universe.py | 122 +++++++++++++++++++++
+ 3 files changed, 189 insertions(+), 2 deletions(-)
+501:    the sequences are identical (SMN1 vs SMN2)."""
+745:    "F18": ASO("F18", "TCACTTTCATAATGCTGG", note="ISS-N1 core"),
+746:    "F14": ASO("F14", "TTTCATAATGCTGG", note="ISS-N1 3-prime anchored"),
+747:    "F10": ASO("F10", "ATAATGCTGG", note="ISS-N1 3-prime anchored"),
+751:# Anchor window: feng/src/feng/titration/ladder.py (chr5:70076584-70076601, +).
+752:ANCHOR_WINDOW = (70076584, 70076601)
+755:# Exon 7 first base 70076521 and all SMN1 coordinates are DERIVED here (54-nt exon,
+758:    "SMN2_exon7": Locus(
+759:        locus_id="SMN2_exon7", gene="SMN2", paralog_group="SMN", role="reference",
+764:    "SMN1_exon7": Locus(
+765:        locus_id="SMN1_exon7", gene="SMN1", paralog_group="SMN", role="alternate",
+768:        note="derived by exact-sequence offset from SMN2_exon7; never joined to it",
+838:    p.add_argument("--locus", default="SMN2_exon7")
+# J6 RESULT — derived exact/near-match ASO site universe
+- `conference/model_v2/j6_site_universe.py:266`: read-only Feng seed/extend; Hamming K=3 default, K=0..3 tested; edits unsupported/off.
+- `conference/model_v2/j6_site_universe.py:169`: GRCh38 / GENCODE v50 header fence; streams only gene records from the named GTF.
+- Coverage: full contiguous pre-mRNA gene bodies (exons AND introns), correct gene strand; no intergenic or splice-concatenated targets; never an exonic-union universe.
+- `conference/model_v2/j6_site_universe.py:205`: stable chromosome/window IDs; leftmost-start ownership and right halo; region bounds constrain starts, not ends.
+- `conference/model_v2/j6_site_universe.py:232`: same ASO/site/gene collapses across transcripts; sorted transcript list and alternative region classes when supplied; different genes stay separate.
+- `conference/model_v2/j6_site_universe.py:381`: locked atomic Parquet -> .done; rows, SHA256, parameters, FASTA/GTF identities, implementation/scanner hashes; validated restart.
+- `conference/model_v2/tests/test_j6_site_universe.py:55`: independent random/planted oracle, N, overlaps, edges, strands, ASO mismatch positions, shard union and restart/crash tests.
+- `conference/model_v2/tests/test_j6_site_universe.py:362`: real FASTA F18/F14/F10 SMN2 starts 70076584 / SMN1 starts 70952004; ends +17/+13/+9; distinct IDs, ambiguity true.
+- `conference/model_v2/jobs/j6_sentinel.sbatch:1`: mit_quicktest, 10 min, --requeue; chr5:70000000-71100000; F18/F14/F10; verifies six exact committed anchors.
+- Submit command (NOT executed): `sbatch /home/dashii/smt-isef/conference/model_v2/jobs/j6_sentinel.sbatch`
+- Gate: `PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/ -q`
+- Exact gate counts: 81 passed, 0 skipped, 0 failed (includes 43 J6 tests and 38 F1 tests).
+- `bash -n conference/model_v2/jobs/j6_sentinel.sbatch`: passed.
+- Open: gene-only GTF input cannot derive exon/intron/UTR classes or transcript lists: region_class=not_available, transcript_ids=null; optional Transcript API supports them without inventing annotation.
+- Open: source identities are path/size/mtime_ns/inode plus FAI SHA256, not full FASTA/GTF hashes; immutable inputs required, identity changes checked before reuse and commit.
+- Open: SMN ambiguity checks the opposite paralog only within supplied gene universe; full-genome runtime and 10-minute sentinel runtime remain unmeasured (job not submitted).
+- Scope exception: this explicitly requested report is outside the owner-file list; no other non-owner file edited by this task. No commit or job submission performed.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+ exited 134 in 1452ms:
+terminate called after throwing an instance of 'std::system_error'
+  what():  Resource temporarily unavailable
+/usr/bin/bash: line 18:    15 Aborted                 (core dumped) PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -  <<'PY'
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from conference.model_v2 import j6_site_universe as j
+from conference.model_v2 import trans_intervention as ti
+import pyarrow.parquet as pq
+with TemporaryDirectory(prefix='j6-review-') as td:
+ p=Path(td); genome=ti.InMemoryGenome({'chrT':'A'*12}); genes=[j.Gene('g','chrT',1,12,'+')]; asos=[ti.ASO('q','TTTT')]
+ for ws in (4,6):
+  paths=[j.run_shard(genome=genome,genes=genes,asos=asos,shard=s,output_dir=p,max_mismatch=0,identities={'fasta':{'test':'fixture'},'gtf':{'test':'fixture'}}) for s in j.make_shards(genes,window_size=ws)]
+  all_rows=[r for done in p.glob('*.done') for r in pq.read_table(done.with_suffix('.parquet')).to_pylist()]
+  print('window',ws,'current_paths',len(paths),'committed_files',len(list(p.glob('*.done'))),'committed_rows',len(all_rows),'unique_sites',len({r['site_id'] for r in all_rows}))
+# Per-region paralog flags: same genomic site changes meaning with input-region filtering.
+genome=ti.InMemoryGenome({'chr1':'AACCGG','chr2':'AACCGG'})
+genes=[j.Gene('g1','chr1',1,6,'+','SMN1'),j.Gene('g2','chr2',1,6,'+','SMN2')]
+for gs in (genes,genes[:1]):
+ rows=j.enumerate_sites(genome,gs,[ti.ASO('q','CCGGTT')],max_mismatch=0)
+ print('gene_universe',len(gs),'SMN1_ambiguity',rows[0].paralog_ambiguity,'site_id',rows[0].site_id)
+PY
+
+
+ exited 1 in 1494ms:
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_cli_with_synthetic_fai_gtf_and_idempotent_restart ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-dashii/pytest-17/test_cli_with_synthetic_fai_gt0')
+
+    def test_cli_with_synthetic_fai_gtf_and_idempotent_restart(tmp_path):
+        import os
+        import pyarrow.parquet as pq
+        fasta = tmp_path / "tiny.fa"
+        fasta.write_text(">chrT\nAACCGGTT\n")
+        fasta.with_suffix(".fa.fai").write_text("chrT\t8\t6\t8\t9\n")
+        gtf = tmp_path / "genes.gtf"
+        gtf.write_text('##description: genome (GRCh38), version 50\n'
+                       'chrT\tt\tgene\t1\t8\t.\t+\t.\tgene_id "g";\n')
+        out = tmp_path / "output"
+        cmd = [sys.executable, "-m", "conference.model_v2.j6_site_universe",
+               "--fasta", str(fasta), "--gtf", str(gtf), "--output-dir", str(out),
+               "--region", "chrT:1-8", "--max-mismatch", "0", "--window-size", "4"]
+        env = dict(os.environ, PYTHONPATH=str(ROOT / "feng/src"))
+>       subprocess.run(cmd, check=True, env=env, cwd=ROOT, capture_output=True, text=True)
+
+conference/model_v2/tests/test_j6_site_universe.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = True, timeout = None, check = True
+popenargs = (['/home/dashii/orcd/pool/smt-isef-env/bin/python', '-m', 'conference.model_v2.j6_site_universe', '--fasta', '/tmp/pytest-of-dashii/pytest-17/test_cli_with_synthetic_fai_gt0/tiny.fa', '--gtf', ...],)
+kwargs = {'env': {'PYTHONPATH': '/home/dashii/smt-isef/feng/src', 'NoDefaultCurrentDirectoryInExePath': '1', 'NO_COLOR': '1', 'LC_ALL': 'C.UTF-8', ...}, 'cwd': PosixPath('/home/dashii/smt-isef'), 'text': True, 'stdout': -1, ...}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/home/dashii/orcd/pool/smt-isef-env/bin/python', '-m', 'conference.model_v2.j6_site_universe', '--fasta', '/tmp/pytest-of-dashii/pytest-17/test_cli_with_synthetic_fai_gt0/tiny.fa', '--gtf', '/tmp/pytest-of-dashii/pytest-17/test_cli_with_synthetic_fai_gt0/genes.gtf', '--output-dir', '/tmp/pytest-of-dashii/pytest-17/test_cli_with_synthetic_fai_gt0/output', '--region', 'chrT:1-8', '--max-mismatch', '0', '--window-size', '4']' died with <Signals.SIGINT: 2>.
+
+../orcd/pool/smt-isef-env/lib/python3.11/subprocess.py:571: CalledProcessError
+=========================== short test summary info ============================
+FAILED conference/model_v2/tests/test_j6_site_universe.py::test_cli_with_synthetic_fai_gtf_and_idempotent_restart
+1 failed in 0.69s
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "bash -n conference/model_v2/jobs/j6_sentinel.sbatch; nl -ba conference/model_v2/trans_intervention.py | sed -n '750,770p'; git diff -- conference/model_v2/j6_site_universe.py conference/model_v2/tests/test_j6_site_universe.py conference/model_v2/jobs/j6_sentinel.sbatch" in /home/dashii/smt-isef
+ succeeded in 69ms:
+   750	
+   751	# Anchor window: feng/src/feng/titration/ladder.py (chr5:70076584-70076601, +).
+   752	ANCHOR_WINDOW = (70076584, 70076601)
+   753	
+   754	# Exon 7 last base 70076574 / first intron-7 base 70076575: feng/titration/gpu_scores.py.
+   755	# Exon 7 first base 70076521 and all SMN1 coordinates are DERIVED here (54-nt exon,
+   756	# flanking AG/GT, exact-match offset +875420), not read from the GENCODE GTF.
+   757	LOCI: Dict[str, Locus] = {
+   758	    "SMN2_exon7": Locus(
+   759	        locus_id="SMN2_exon7", gene="SMN2", paralog_group="SMN", role="reference",
+   760	        chrom="chr5", strand="+", search_start=70076421, search_end=70076674,
+   761	        exon_label="exon7", exon_start=70076521, exon_end=70076574,
+   762	        note="exon end from repo; exon start derived (54 nt)",
+   763	    ),
+   764	    "SMN1_exon7": Locus(
+   765	        locus_id="SMN1_exon7", gene="SMN1", paralog_group="SMN", role="alternate",
+   766	        chrom="chr5", strand="+", search_start=70951841, search_end=70952094,
+   767	        exon_label="exon7", exon_start=70951941, exon_end=70951994,
+   768	        note="derived by exact-sequence offset from SMN2_exon7; never joined to it",
+   769	    ),
+   770	}
+diff --git a/conference/model_v2/j6_site_universe.py b/conference/model_v2/j6_site_universe.py
+index 9e207a9..b12d421 100644
+--- a/conference/model_v2/j6_site_universe.py
++++ b/conference/model_v2/j6_site_universe.py
+@@ -32,7 +32,6 @@ CLI (from repo root, with PYTHONPATH=feng/src):
+ from __future__ import annotations
+ 
+ import argparse
+-from collections import defaultdict
+ from dataclasses import asdict, dataclass
+ import fcntl
+ import hashlib
+@@ -352,6 +351,12 @@ def file_identity(path):
+     return result
+ 
+ 
++def _check_identities(identities):
++    for identity in identities.values():
++        if "path" in identity and file_identity(identity["path"]) != identity:
++            raise ValueError("reference input identity changed during run")
++
++
+ def _schema():
+     import pyarrow as pa
+     return pa.schema([
+@@ -402,6 +407,7 @@ def run_shard(*, genome, genes, asos, shard, output_dir, identities: Mapping,
+     expected = json.loads(_json(dict(params=params, identities=identities)))
+     with path.with_suffix(".lock").open("a") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX)
++        _check_identities(identities)
+         try:
+             manifest = json.loads(done.read_text())
+             if (all(manifest.get(k) == v for k, v in expected.items()) and
+@@ -414,6 +420,7 @@ def run_shard(*, genome, genes, asos, shard, output_dir, identities: Mapping,
+         done.unlink(missing_ok=True)
+         _fsync_dir(output_dir)
+         sites = enumerate_sites(genome, genes, asos, max_mismatch=max_mismatch, shard=shard)
++        _check_identities(identities)
+         table = pa.Table.from_pylist([asdict(s) for s in sites], schema=_schema())
+         temps = []
+         try:
+@@ -427,6 +434,7 @@ def run_shard(*, genome, genes, asos, shard, output_dir, identities: Mapping,
+             os.replace(temp, path)
+             _fsync_dir(output_dir)
+             manifest = dict(**expected, rows=table.num_rows, sha256=sha)
++            _check_identities(identities)
+             fd, temp = tempfile.mkstemp(prefix=shard.shard_id + ".", suffix=".tmp", dir=output_dir)
+             temps.append(Path(temp))
+             with os.fdopen(fd, "w") as handle:
+@@ -454,6 +462,55 @@ def _region(text):
+         raise argparse.ArgumentTypeError(str(exc)) from exc
+ 
+ 
++def check_smn_anchors(output_dir, *, paths=None) -> int:
++    """Sentinel acceptance: six exact F18/F14/F10 records, two distinct genes.
++
++    Inspect only committed shards in this specific output directory; verify each
++    checksum before reading. No new genomic search or reference traversal.
++    """
++    import pyarrow as pa
++    import pyarrow.parquet as pq
++    expected = {(gene, aso): (start, start + length - 1, target)
++                for gene, start in (("SMN2", 70076584), ("SMN1", 70952004))
++                for aso, length, target in (("F18", 18, "CCAGCATTATGAAAGTGA"),
++                                            ("F14", 14, "CCAGCATTATGAAA"),
++                                            ("F10", 10, "CCAGCATTAT"))}
++    found = {}
++    markers = (Path(output_dir).glob("*.done") if paths is None else
++               (Path(path).with_suffix(".done") for path in paths))
++    for done in sorted(markers):
++        path = done.with_suffix(".parquet")
++        try:
++            manifest = json.loads(done.read_text())
++            if manifest["sha256"] != _sha256(path):
++                raise ValueError(f"sentinel checksum mismatch: {path}")
++            if manifest["rows"] != pq.read_metadata(path).num_rows:
++                raise ValueError(f"sentinel row-count mismatch: {path}")
++            rows = pq.read_table(path, filters=[("start1", "in", [70076584, 70952004])]).to_pylist()
++        except (OSError, KeyError, TypeError, pa.ArrowException) as exc:
++            raise ValueError(f"invalid committed sentinel shard: {path}") from exc
++        for row in rows:
++            key = row["gene_name"], row["aso_id"]
++            if key not in expected or row["start1"] != expected[key][0]:
++                continue
++            if (row["chrom"] != "chr5" or row["strand"] != "+" or
++                    (row["start1"], row["end1"], row["target_sequence"]) != expected[key] or
++                    row["mismatch_count"] != 0 or row["mismatch_positions"] != [] or
++                    row["paralog_ambiguity"] is not True or row["evidence_class"] != "derived"):
++                raise ValueError(f"invalid sentinel anchor: {key}")
++            if key in found:
++                raise ValueError(f"duplicate sentinel anchor: {key}")
++            found[key] = row
++    if set(found) != set(expected):
++        raise ValueError(f"missing sentinel anchors: {sorted(set(expected) - set(found))}")
++    if len({r["site_id"] for r in found.values()}) != 6:
++        raise ValueError("sentinel site IDs collapse distinct ASOs/paralogs")
++    if {found[("SMN1", a)]["gene_id"] for a in ("F18", "F14", "F10")} & {
++            found[("SMN2", a)]["gene_id"] for a in ("F18", "F14", "F10")}:
++        raise ValueError("sentinel gene IDs collapse paralogs")
++    return 6
++
++
+ def main(argv=None):
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument("--fasta", default=DEFAULT_FASTA)
+@@ -465,10 +522,13 @@ def main(argv=None):
+     parser.add_argument("--window-size", type=int, default=DEFAULT_WINDOW)
+     parser.add_argument("--shard-index", type=int, default=0)
+     parser.add_argument("--shard-count", type=int, default=1)
++    parser.add_argument("--check-smn-anchors", action="store_true")
+     args = parser.parse_args(argv)
+     _budget(args.max_mismatch)
+     if not 0 <= args.shard_index < args.shard_count:
+         parser.error("require 0 <= shard-index < shard-count")
++    if args.check_smn_anchors and args.shard_count != 1:
++        parser.error("sentinel acceptance requires a single complete shard worker")
+     genome = FaiFastaReader(args.fasta)
+     identities = dict(fasta=file_identity(genome.path), gtf=file_identity(args.gtf))
+     genes = read_gene_bodies(args.gtf, region=args.region)
+@@ -478,6 +538,7 @@ def main(argv=None):
+         parser.error("no gene bodies overlap the requested universe")
+     asos = [ASOS[name] for name in args.asos]
+     shards = make_shards(genes, window_size=args.window_size, region=args.region)
++    completed = []
+     for index, shard in enumerate(shards):
+         if index % args.shard_count != args.shard_index:
+             continue
+@@ -487,7 +548,10 @@ def main(argv=None):
+         path = run_shard(genome=genome, genes=genes, asos=asos, shard=shard,
+                          output_dir=args.output_dir, identities=identities,
+                          max_mismatch=args.max_mismatch)
++        completed.append(path)
+         print(path, flush=True)
++    if args.check_smn_anchors:
++        print(f"verified_smn_anchors={check_smn_anchors(args.output_dir, paths=completed)}", flush=True)
+     return 0
+ 
+ 
+diff --git a/conference/model_v2/jobs/j6_sentinel.sbatch b/conference/model_v2/jobs/j6_sentinel.sbatch
+index 085db52..948e42e 100644
+--- a/conference/model_v2/jobs/j6_sentinel.sbatch
++++ b/conference/model_v2/jobs/j6_sentinel.sbatch
+@@ -14,4 +14,5 @@ exec /home/dashii/orcd/pool/smt-isef-env/bin/python \
+   --fasta "$HOME/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa" \
+   --gtf "$HOME/orcd/scratch/feng/gencode/v50/gencode.v50.primary_assembly.annotation.gtf" \
+   --output-dir "$HOME/orcd/scratch/feng/model_v2/j6_sentinel" \
+-  --region chr5:70000000-71100000 --asos F18 F14 F10 --max-mismatch 3
++  --region chr5:70000000-71100000 --asos F18 F14 F10 --max-mismatch 3 \
++  --check-smn-anchors
+diff --git a/conference/model_v2/tests/test_j6_site_universe.py b/conference/model_v2/tests/test_j6_site_universe.py
+index 2ac4bb1..3dd8ada 100644
+--- a/conference/model_v2/tests/test_j6_site_universe.py
++++ b/conference/model_v2/tests/test_j6_site_universe.py
+@@ -3,6 +3,7 @@ import dataclasses
+ import hashlib
+ import json
+ import random
++import subprocess
+ import sys
+ from pathlib import Path
+ 
+@@ -221,6 +222,77 @@ def test_empty_shard_has_typed_schema(tmp_path):
+     assert "mismatch_positions" in table.column_names
+ 
+ 
++def test_crash_between_parquet_and_marker_leaves_no_valid_commit(tmp_path, monkeypatch):
++    j, kwargs = tiny_job(tmp_path)
++    replace = j.os.replace
++
++    def crash_at_done(source, dest):
++        if str(dest).endswith(".done"):
++            raise OSError("simulated interruption")
++        return replace(source, dest)
++
++    monkeypatch.setattr(j.os, "replace", crash_at_done)
++    with pytest.raises(OSError, match="simulated interruption"):
++        j.run_shard(**kwargs)
++    assert len(list(tmp_path.glob("*.parquet"))) == 1
++    assert not list(tmp_path.glob("*.done"))
++    assert not list(tmp_path.glob("*.tmp"))
++    monkeypatch.setattr(j.os, "replace", replace)
++    path = j.run_shard(**kwargs)
++    assert path.with_suffix(".done").is_file()
++
++
++def test_stale_real_input_identity_cannot_resume(tmp_path):
++    j, kwargs = tiny_job(tmp_path / "output")
++    fasta = tmp_path / "reference.fa"
++    fasta.write_text(">chrT\nAACCGGTT\n")
++    kwargs["identities"]["fasta"] = j.file_identity(fasta)
++    j.run_shard(**kwargs)
++    fasta.write_text(">chrT\nAACCGGTTAAAA\n")
++    with pytest.raises(ValueError, match="identity changed"):
++        j.run_shard(**kwargs)
++
++
++def test_reference_mutation_during_enumeration_cannot_commit(tmp_path):
++    j, kwargs = tiny_job(tmp_path / "output")
++    fasta = tmp_path / "reference.fa"
++    fasta.write_text(">chrT\nAACCGGTT\n")
++    kwargs["identities"]["fasta"] = j.file_identity(fasta)
++
++    class ChangingGenome(ti.InMemoryGenome):
++        def fetch(self, chrom, start, end):
++            fasta.write_text(">chrT\nAACCGGTTAAAA\n")
++            return super().fetch(chrom, start, end)
++
++    kwargs["genome"] = ChangingGenome({"chrT": "AACCGGTT"})
++    with pytest.raises(ValueError, match="identity changed"):
++        j.run_shard(**kwargs)
++    assert not list((tmp_path / "output").glob("*.done"))
++
++
++def test_cli_with_synthetic_fai_gtf_and_idempotent_restart(tmp_path):
++    import os
++    import pyarrow.parquet as pq
++    fasta = tmp_path / "tiny.fa"
++    fasta.write_text(">chrT\nAACCGGTT\n")
++    fasta.with_suffix(".fa.fai").write_text("chrT\t8\t6\t8\t9\n")
++    gtf = tmp_path / "genes.gtf"
++    gtf.write_text('##description: genome (GRCh38), version 50\n'
++                   'chrT\tt\tgene\t1\t8\t.\t+\t.\tgene_id "g";\n')
++    out = tmp_path / "output"
++    cmd = [sys.executable, "-m", "conference.model_v2.j6_site_universe",
++           "--fasta", str(fasta), "--gtf", str(gtf), "--output-dir", str(out),
++           "--region", "chrT:1-8", "--max-mismatch", "0", "--window-size", "4"]
++    env = dict(os.environ, PYTHONPATH=str(ROOT / "feng/src"))
++    subprocess.run(cmd, check=True, env=env, cwd=ROOT, capture_output=True, text=True)
++    files = list(out.glob("*.done"))
++    assert len(files) == 2
++    mtimes = {p.name: p.stat().st_mtime_ns for p in files}
++    subprocess.run(cmd, check=True, env=env, cwd=ROOT, capture_output=True, text=True)
++    assert {p.name: p.stat().st_mtime_ns for p in files} == mtimes
++    assert sum(pq.read_metadata(p).num_rows for p in out.glob("*.parquet")) == 0
++
++
+ @pytest.mark.parametrize("bad", [-1, 1.5, True])
+ def test_invalid_budgets_fail_closed(bad):
+     j, kwargs = tiny_job(Path("unused"))
+@@ -237,6 +309,56 @@ def test_duplicate_ASO_ids_and_conflicting_gene_ids_fail_closed():
+             dataclasses.replace(kw["genes"][0], strand="-")], kw["asos"])
+ 
+ 
++def test_paralog_flag_requires_identical_sequence_on_correct_gene_strand():
++    j = module()
++    genes = [j.Gene("g1", "chr1", 1, 6, "+", "SMN1"),
++             j.Gene("g2", "chr2", 1, 6, "-", "SMN2")]
++    genome = ti.InMemoryGenome({"chr1": "AACCGG", "chr2": "CCGGTT"})
++    asos = [ti.ASO("q", "CCGGTT")]
++    sites = j.enumerate_sites(genome, genes, asos, max_mismatch=0)
++    assert len(sites) == 2 and all(s.paralog_ambiguity for s in sites)
++    genome = ti.InMemoryGenome({"chr1": "AACCGG", "chr2": "CCGGTA"})
++    sites = j.enumerate_sites(genome, genes, asos, max_mismatch=1)
++    assert len(sites) == 2 and not any(s.paralog_ambiguity for s in sites)
++
++
++@pytest.mark.parametrize("damage", [None, "missing", "target", "duplicate_id", "checksum"])
++def test_sentinel_checker_requires_six_committed_exact_anchor_records(tmp_path, damage):
++    import pyarrow as pa
++    import pyarrow.parquet as pq
++    j = module()
++    for name, start in [("SMN2", 70076584), ("SMN1", 70952004)]:
++        rows = []
++        for aso, seq in [("F18", "CCAGCATTATGAAAGTGA"), ("F14", "CCAGCATTATGAAA"),
++                         ("F10", "CCAGCATTAT")]:
++            rows.append(dict(site_id=name + aso, aso_id=aso, chrom="chr5", start1=start,
++                             end1=start + len(seq) - 1, strand="+", gene_name=name,
++                             gene_id=name, target_sequence=seq, mismatch_count=0,
++                             mismatch_positions=[], paralog_ambiguity=True,
++                             evidence_class="derived"))
++        if name == "SMN1":
++            if damage == "missing":
++                rows.pop()
++            elif damage == "target":
++                rows[0]["target_sequence"] = "A" * 18
++            elif damage == "duplicate_id":
++                rows[0]["site_id"] = "SMN2F18"
++        path = tmp_path / f"{name}.parquet"
++        pq.write_table(pa.Table.from_pylist(rows), path)
++        sha = hashlib.sha256(path.read_bytes()).hexdigest()
++        path.with_suffix(".done").write_text(json.dumps(dict(rows=len(rows), sha256=sha)))
++    if damage == "checksum":
++        (tmp_path / "SMN1.parquet").write_bytes(b"invalid")
++    if damage is None:
++        assert j.check_smn_anchors(tmp_path) == 6
++        # Old output files cannot satisfy acceptance for an empty current run.
++        with pytest.raises(ValueError, match="missing sentinel anchors"):
++            j.check_smn_anchors(tmp_path, paths=[])
++    else:
++        with pytest.raises(ValueError):
++            j.check_smn_anchors(tmp_path)
++
++
+ def test_real_GRCh38_SMN1_SMN2_exact_hits_and_paralog_ambiguity():
+     j = module()
+     try:
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from conference.model_v2 import j6_site_universe as j
+from conference.model_v2 import trans_intervention as ti
+import pyarrow as pa
+import pyarrow.parquet as pq
+pa.set_cpu_count(1); pa.set_io_thread_count(1)
+with TemporaryDirectory(prefix='j6-review-') as td:
+ p=Path(td); genome=ti.InMemoryGenome({'chrT':'A'*12}); genes=[j.Gene('g','chrT',1,12,'+')]; asos=[ti.ASO('q','TTTT')]
+ for ws in (4,6):
+  paths=[j.run_shard(genome=genome,genes=genes,asos=asos,shard=s,output_dir=p,max_mismatch=0,identities={'fasta':{'test':'fixture'},'gtf':{'test':'fixture'}}) for s in j.make_shards(genes,window_size=ws)]
+  all_rows=[r for done in p.glob('*.done') for r in pq.ParquetFile(done.with_suffix('.parquet')).read(use_threads=False).to_pylist()]
+  print('window',ws,'current_paths',len(paths),'committed_files',len(list(p.glob('*.done'))),'committed_rows',len(all_rows),'unique_sites',len({r['site_id'] for r in all_rows}))
+genome=ti.InMemoryGenome({'chr1':'AACCGG','chr2':'AACCGG'})
+genes=[j.Gene('g1','chr1',1,6,'+','SMN1'),j.Gene('g2','chr2',1,6,'+','SMN2')]
+for gs in (genes,genes[:1]):
+ rows=j.enumerate_sites(genome,gs,[ti.ASO('q','CCGGTT')],max_mismatch=0)
+ print('gene_universe',len(gs),'SMN1_ambiguity',rows[0].paralog_ambiguity,'site_id',rows[0].site_id)
+PY" in /home/dashii/smt-isef
+ succeeded in 874ms:
+window 4 current_paths 3 committed_files 3 committed_rows 9 unique_sites 9
+window 6 current_paths 2 committed_files 5 committed_rows 18 unique_sites 9
+gene_universe 2 SMN1_ambiguity True site_id j6-3bd52a7ba6a8f3a81b496265817fd8178c04f6ecad98de769f2f5a87115b8fc8
+gene_universe 1 SMN1_ambiguity False site_id j6-3bd52a7ba6a8f3a81b496265817fd8178c04f6ecad98de769f2f5a87115b8fc8
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc 'OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py -q' in /home/dashii/smt-isef
+ succeeded in 2167ms:
+...........................................                              [100%]
+43 passed in 1.60s
+
+codex
+A tiny restart probe confirmed that changing the window size leaves both sets of `.done` files: the directory contains 18 rows for 9 distinct sites. A second probe showed the same SMN site’s ambiguity flag changing from true to false when the other paralog is omitted from the supplied gene set. I’ll include those findings with the reference-validation and scaling concerns.
+hook: PostToolUse
+exec
+/usr/bin/bash -lc "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from conference.model_v2 import j6_site_universe as j
+from conference.model_v2 import trans_intervention as ti
+with TemporaryDirectory(prefix='j6-review-manifest-') as td:
+ kw=dict(genome=ti.InMemoryGenome({'chrT':'AACCGGTT'}),genes=[j.Gene('g','chrT',1,8,'+')],asos=[ti.ASO('a','CCGG')],shard=j.Shard('chrT',1,8),output_dir=Path(td),max_mismatch=0,identities={'fasta':{'test':'fixture'},'gtf':{'test':'fixture'}})
+ p=j.run_shard(**kw)
+ for marker in ('[]','null'):
+  p.with_suffix('.done').write_text(marker)
+  try:
+   j.run_shard(**kw)
+  except Exception as exc:
+   print('marker',marker,'restart',type(exc).__name__,str(exc))
+PY" in /home/dashii/smt-isef
+hook: PostToolUse Completed
+ succeeded in 690ms:
+marker [] restart AttributeError 'list' object has no attribute 'get'
+marker null restart AttributeError 'NoneType' object has no attribute 'get'
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+import subprocess, sys
+import pyarrow.parquet
+cmd=[sys.executable,'-m','conference.model_v2.j6_site_universe','--fasta','/tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/tiny.fa','--gtf','/tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/genes.gtf','--output-dir','/tmp/j6-review-cli-stderr','--region','chrT:1-8','--max-mismatch','0','--window-size','4']
+r=subprocess.run(cmd,capture_output=True,text=True)
+print('child_returncode',r.returncode)
+print('child_stderr_tail',r.stderr[-4500:])
+PY" in /home/dashii/smt-isef
+ succeeded in 524ms:
+child_returncode 1
+child_stderr_tail Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/dashii/smt-isef/conference/model_v2/j6_site_universe.py", line 559, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/dashii/smt-isef/conference/model_v2/j6_site_universe.py", line 532, in main
+    genome = FaiFastaReader(args.fasta)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dashii/smt-isef/conference/model_v2/trans_intervention.py", line 107, in __init__
+    raise GenomeAccessError(f"genome fasta not found: {self.path}")
+conference.model_v2.trans_intervention.GenomeAccessError: genome fasta not found: /tmp/pytest-of-dashii/pytest-14/test_cli_with_synthetic_fai_gt0/tiny.fa
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+import subprocess, sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
+import pyarrow.parquet
+with TemporaryDirectory(prefix='j6-review-stderr-') as td:
+ p=Path(td); f=p/'tiny.fa'; f.write_text('>chrT\\nAACCGGTT\\n'); Path(str(f)+'.fai').write_text('chrT\\t8\\t6\\t8\\t9\\n'); g=p/'tiny.gtf'; g.write_text('##description: genome (GRCh38), version 50\\nchrT\\tt\\tgene\\t1\\t8\\t.\\t+\\t.\\tgene_id \"g\";\\n')
+ r=subprocess.run([sys.executable,'-m','conference.model_v2.j6_site_universe','--fasta',str(f),'--gtf',str(g),'--output-dir',str(p/'out'),'--region','chrT:1-8','--max-mismatch','0','--window-size','4'],capture_output=True,text=True)
+ print('child_returncode',r.returncode)
+ print('child_stderr_tail',r.stderr[-5000:])
+PY" in /home/dashii/smt-isef
+ succeeded in 1201ms:
+child_returncode 0
+child_stderr_tail 
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc 'git status --short -- conference/model_v2; sha256sum conference/model_v2/j6_site_universe.py conference/model_v2/tests/test_j6_site_universe.py conference/model_v2/jobs/j6_sentinel.sbatch' in /home/dashii/smt-isef
+ succeeded in 51ms:
+ M conference/model_v2/j6_site_universe.py
+ M conference/model_v2/jobs/j6_sentinel.sbatch
+ M conference/model_v2/ops/JOBS.jsonl
+ M conference/model_v2/ops/NEXT_ACTION.json
+ M conference/model_v2/ops/USAGE_LEDGER.jsonl
+ M conference/model_v2/ops/logs/J6_codex.out
+ M conference/model_v2/tests/test_j6_site_universe.py
+?? conference/model_v2/gpu_perturbation_atlas.py
+?? conference/model_v2/jobs/j3_plan.md
+?? conference/model_v2/jobs/j4_sentinel.sbatch
+?? conference/model_v2/ops/briefs/J3.md
+?? conference/model_v2/ops/briefs/J4b_astra.md
+?? conference/model_v2/ops/briefs/J6_RESULT.md
+?? conference/model_v2/ops/briefs/J6_review.md
+?? conference/model_v2/ops/logs/J3_codex.out
+?? conference/model_v2/ops/logs/J4b_astra.out
+?? conference/model_v2/ops/logs/J6_review_codex.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_0.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_1.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_10.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_11.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_12.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_13.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_14.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_15.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_16.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_17.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_18.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_19.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_2.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_20.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_21.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_22.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_23.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_24.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_25.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_26.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_27.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_28.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_29.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_3.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_30.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_31.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_4.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_5.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_6.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_7.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_8.out
+?? conference/model_v2/ops/logs/mv2-j2-array-29163480_9.out
+?? conference/model_v2/ops/logs/mv2-j6-sentinel-29164482.out
+?? conference/model_v2/tests/test_gpu_perturbation_atlas.py
+?? conference/model_v2/tests/test_j3_scoring.py
+a7ad673fd7d6ac29c7cdc0b2542a371014585d3c5491394186d82aeb3a7882e9  conference/model_v2/j6_site_universe.py
+70181e0782df3de81a42698d1dbbac976704f1e29032cb7fd0bffe14785ec780  conference/model_v2/tests/test_j6_site_universe.py
+c8dcf7840924ca05dee922e6e468cbbab0beb0f4051214e2b8e7e4a49cc15ad5  conference/model_v2/jobs/j6_sentinel.sbatch
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+The thread-limited rerun passed all 43 tests. I also confirmed that a `.done` file containing `[]` or `null` crashes restart with `AttributeError` instead of triggering a rebuild. I’m using verification-before-completion to check the report’s line count and contents; the verdict is DO-NOT-ADVANCE, with two HIGH and three MED findings.
+apply patch
+patch: completed
+/home/dashii/smt-isef/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+diff --git a/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md b/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..194d1f0d747bf1cbbc62c352ed2ae52cb38c9023
+--- /dev/null
++++ b/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+@@ -0,0 +1,16 @@
++Verdict: **DO-NOT-ADVANCE** — 2 HIGH, 3 MED. Reviewed current working-tree files against SCIENTIFIC_LOCK.md and J6.md; no source edits.
++Paths below are relative to `conference/model_v2/`.
++
++- HIGH — `j6_site_universe.py:532`: FASTA identity records provenance but never verifies assembly; supplying a GRCh37 FASTA with the v50 GTF for an in-bounds chr5 region silently searches wrong coordinates and stamps results GRCh38. Fix: require a trusted GRCh38 reference manifest/signature before production enumeration; isolate synthetic-reference mode and add a mismatched-assembly rejection test.
++- HIGH — `j6_site_universe.py:399` / `j6_site_universe.py:540`: output-directory generations are not fenced; rerunning with another window size/region leaves obsolete, individually valid `.done` shards available for double counting or including out-of-universe sites. Tiny reproduction: window 4 then 6 on 12 A bases yields 5 committed files, 18 rows, only 9 unique sites. Fix: immutable run configuration plus an atomic manifest listing the exact expected/current shards, or reject incompatible directory reuse; test changed-window and changed-region restarts.
++- MED — `j6_site_universe.py:315` / `j6_site_universe.py:534`: region-filtered genes exclude the other SMN paralog, so an unchecked ambiguity becomes false. Reproduced: identical SMN1/SMN2 targets give true with both genes, false for the same site ID with SMN1 alone. Fix: retain both paralogs for ambiguity checks independently of output-region filtering, or represent unverified ambiguity as null/not_available; add a single-paralog-region test.
++- MED — `j6_site_universe.py:405`: every shard recursively serializes/hashes the entire gene universe; `:393` and `:274` also sort all genes per shard and `:285` scans them all. Full-genome work therefore incurs O(windows × genes) metadata processing even for empty outputs; unsharded `:281` additionally retains all output sites, contradicting the memory-bound claim at :270. Fix: cache immutable universe/hash and chromosome interval lookup once per worker, and expose streamed unsharded output; verify scaling with bounded synthetic data before production.
++- MED — `j6_site_universe.py:413` / `tests/test_j6_site_universe.py:182`: a `.done` containing valid JSON `[]` or `null` raises uncaught AttributeError on `manifest.get`, preventing restart recovery; both reproduced. Fix: validate manifest object/schema before access and rebuild invalid markers; extend corruption tests beyond malformed JSON.
++
++Requested command: `PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py -q`.
++Exact requested-run counts: **42 passed, 0 skipped, 1 failed** (CLI subprocess SIGINT); isolated CLI-test retry: 0 passed, 0 skipped, 1 failed (same signal).
++Thread-limited full rerun, same command prefixed with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1`: **43 passed, 0 skipped, 0 failed**, 1.60 s.
++Environment limitation: a separate uncapped tiny Parquet probe aborted with `Resource temporarily unavailable`; direct CLI probes succeeded. A deterministic source cause for the uncapped test failure was not established.
++`jobs/j6_sentinel.sbatch:1`: `bash -n` passed; mit_quicktest, 10-minute limit, --requeue, bounded region and six-anchor acceptance are present. No job submitted; runtime/resource fit remains unmeasured.
++No defect reproduced in canonical/N strand handling, ASO 5' mismatch positions, halo/chromosome-edge coverage, or distinct-gene deduplication; no outcome joins, fabricated negative labels, or unsupported performance metrics found in reviewed code.
++All five findings remain unfixed: review-only scope. Tiny tests/probes only; no full-genome compute, reference-tree traversal, commits, or sealed-data access. Explicit conference scope overrides the standing feng-only default.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc 'wc -l conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md; nl -ba conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md; sha256sum conference/model_v2/j6_site_universe.py conference/model_v2/tests/test_j6_site_universe.py conference/model_v2/jobs/j6_sentinel.sbatch' in /home/dashii/smt-isef
+ succeeded in 142ms:
+16 conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+     1	Verdict: **DO-NOT-ADVANCE** — 2 HIGH, 3 MED. Reviewed current working-tree files against SCIENTIFIC_LOCK.md and J6.md; no source edits.
+     2	Paths below are relative to `conference/model_v2/`.
+     3	
+     4	- HIGH — `j6_site_universe.py:532`: FASTA identity records provenance but never verifies assembly; supplying a GRCh37 FASTA with the v50 GTF for an in-bounds chr5 region silently searches wrong coordinates and stamps results GRCh38. Fix: require a trusted GRCh38 reference manifest/signature before production enumeration; isolate synthetic-reference mode and add a mismatched-assembly rejection test.
+     5	- HIGH — `j6_site_universe.py:399` / `j6_site_universe.py:540`: output-directory generations are not fenced; rerunning with another window size/region leaves obsolete, individually valid `.done` shards available for double counting or including out-of-universe sites. Tiny reproduction: window 4 then 6 on 12 A bases yields 5 committed files, 18 rows, only 9 unique sites. Fix: immutable run configuration plus an atomic manifest listing the exact expected/current shards, or reject incompatible directory reuse; test changed-window and changed-region restarts.
+     6	- MED — `j6_site_universe.py:315` / `j6_site_universe.py:534`: region-filtered genes exclude the other SMN paralog, so an unchecked ambiguity becomes false. Reproduced: identical SMN1/SMN2 targets give true with both genes, false for the same site ID with SMN1 alone. Fix: retain both paralogs for ambiguity checks independently of output-region filtering, or represent unverified ambiguity as null/not_available; add a single-paralog-region test.
+     7	- MED — `j6_site_universe.py:405`: every shard recursively serializes/hashes the entire gene universe; `:393` and `:274` also sort all genes per shard and `:285` scans them all. Full-genome work therefore incurs O(windows × genes) metadata processing even for empty outputs; unsharded `:281` additionally retains all output sites, contradicting the memory-bound claim at :270. Fix: cache immutable universe/hash and chromosome interval lookup once per worker, and expose streamed unsharded output; verify scaling with bounded synthetic data before production.
+     8	- MED — `j6_site_universe.py:413` / `tests/test_j6_site_universe.py:182`: a `.done` containing valid JSON `[]` or `null` raises uncaught AttributeError on `manifest.get`, preventing restart recovery; both reproduced. Fix: validate manifest object/schema before access and rebuild invalid markers; extend corruption tests beyond malformed JSON.
+     9	
+    10	Requested command: `PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py -q`.
+    11	Exact requested-run counts: **42 passed, 0 skipped, 1 failed** (CLI subprocess SIGINT); isolated CLI-test retry: 0 passed, 0 skipped, 1 failed (same signal).
+    12	Thread-limited full rerun, same command prefixed with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1`: **43 passed, 0 skipped, 0 failed**, 1.60 s.
+    13	Environment limitation: a separate uncapped tiny Parquet probe aborted with `Resource temporarily unavailable`; direct CLI probes succeeded. A deterministic source cause for the uncapped test failure was not established.
+    14	`jobs/j6_sentinel.sbatch:1`: `bash -n` passed; mit_quicktest, 10-minute limit, --requeue, bounded region and six-anchor acceptance are present. No job submitted; runtime/resource fit remains unmeasured.
+    15	No defect reproduced in canonical/N strand handling, ASO 5' mismatch positions, halo/chromosome-edge coverage, or distinct-gene deduplication; no outcome joins, fabricated negative labels, or unsupported performance metrics found in reviewed code.
+    16	All five findings remain unfixed: review-only scope. Tiny tests/probes only; no full-genome compute, reference-tree traversal, commits, or sealed-data access. Explicit conference scope overrides the standing feng-only default.
+a7ad673fd7d6ac29c7cdc0b2542a371014585d3c5491394186d82aeb3a7882e9  conference/model_v2/j6_site_universe.py
+70181e0782df3de81a42698d1dbbac976704f1e29032cb7fd0bffe14785ec780  conference/model_v2/tests/test_j6_site_universe.py
+c8dcf7840924ca05dee922e6e468cbbab0beb0f4051214e2b8e7e4a49cc15ad5  conference/model_v2/jobs/j6_sentinel.sbatch
+
+hook: PostToolUse
+hook: PostToolUse Completed
+diff --git a/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md b/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..194d1f0d747bf1cbbc62c352ed2ae52cb38c9023
+--- /dev/null
++++ b/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+@@ -0,0 +1,16 @@
++Verdict: **DO-NOT-ADVANCE** — 2 HIGH, 3 MED. Reviewed current working-tree files against SCIENTIFIC_LOCK.md and J6.md; no source edits.
++Paths below are relative to `conference/model_v2/`.
++
++- HIGH — `j6_site_universe.py:532`: FASTA identity records provenance but never verifies assembly; supplying a GRCh37 FASTA with the v50 GTF for an in-bounds chr5 region silently searches wrong coordinates and stamps results GRCh38. Fix: require a trusted GRCh38 reference manifest/signature before production enumeration; isolate synthetic-reference mode and add a mismatched-assembly rejection test.
++- HIGH — `j6_site_universe.py:399` / `j6_site_universe.py:540`: output-directory generations are not fenced; rerunning with another window size/region leaves obsolete, individually valid `.done` shards available for double counting or including out-of-universe sites. Tiny reproduction: window 4 then 6 on 12 A bases yields 5 committed files, 18 rows, only 9 unique sites. Fix: immutable run configuration plus an atomic manifest listing the exact expected/current shards, or reject incompatible directory reuse; test changed-window and changed-region restarts.
++- MED — `j6_site_universe.py:315` / `j6_site_universe.py:534`: region-filtered genes exclude the other SMN paralog, so an unchecked ambiguity becomes false. Reproduced: identical SMN1/SMN2 targets give true with both genes, false for the same site ID with SMN1 alone. Fix: retain both paralogs for ambiguity checks independently of output-region filtering, or represent unverified ambiguity as null/not_available; add a single-paralog-region test.
++- MED — `j6_site_universe.py:405`: every shard recursively serializes/hashes the entire gene universe; `:393` and `:274` also sort all genes per shard and `:285` scans them all. Full-genome work therefore incurs O(windows × genes) metadata processing even for empty outputs; unsharded `:281` additionally retains all output sites, contradicting the memory-bound claim at :270. Fix: cache immutable universe/hash and chromosome interval lookup once per worker, and expose streamed unsharded output; verify scaling with bounded synthetic data before production.
++- MED — `j6_site_universe.py:413` / `tests/test_j6_site_universe.py:182`: a `.done` containing valid JSON `[]` or `null` raises uncaught AttributeError on `manifest.get`, preventing restart recovery; both reproduced. Fix: validate manifest object/schema before access and rebuild invalid markers; extend corruption tests beyond malformed JSON.
++
++Requested command: `PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py -q`.
++Exact requested-run counts: **42 passed, 0 skipped, 1 failed** (CLI subprocess SIGINT); isolated CLI-test retry: 0 passed, 0 skipped, 1 failed (same signal).
++Thread-limited full rerun, same command prefixed with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1`: **43 passed, 0 skipped, 0 failed**, 1.60 s.
++Environment limitation: a separate uncapped tiny Parquet probe aborted with `Resource temporarily unavailable`; direct CLI probes succeeded. A deterministic source cause for the uncapped test failure was not established.
++`jobs/j6_sentinel.sbatch:1`: `bash -n` passed; mit_quicktest, 10-minute limit, --requeue, bounded region and six-anchor acceptance are present. No job submitted; runtime/resource fit remains unmeasured.
++No defect reproduced in canonical/N strand handling, ASO 5' mismatch positions, halo/chromosome-edge coverage, or distinct-gene deduplication; no outcome joins, fabricated negative labels, or unsupported performance metrics found in reviewed code.
++All five findings remain unfixed: review-only scope. Tiny tests/probes only; no full-genome compute, reference-tree traversal, commits, or sealed-data access. Explicit conference scope overrides the standing feng-only default.
+
+codex
+**DO-NOT-ADVANCE:** 2 HIGH, 3 MED findings in the [16-line review report](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md:1).
+
+- Requested tests: **42 passed, 0 skipped, 1 failed** (CLI SIGINT).
+- Thread-limited rerun: **43 passed, 0 skipped, 0 failed**.
+- Source unchanged; findings remain unfixed under review-only scope. No jobs submitted; full-genome runtime remains unverified.
+diff --git a/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md b/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..194d1f0d747bf1cbbc62c352ed2ae52cb38c9023
+--- /dev/null
++++ b/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md
+@@ -0,0 +1,16 @@
++Verdict: **DO-NOT-ADVANCE** — 2 HIGH, 3 MED. Reviewed current working-tree files against SCIENTIFIC_LOCK.md and J6.md; no source edits.
++Paths below are relative to `conference/model_v2/`.
++
++- HIGH — `j6_site_universe.py:532`: FASTA identity records provenance but never verifies assembly; supplying a GRCh37 FASTA with the v50 GTF for an in-bounds chr5 region silently searches wrong coordinates and stamps results GRCh38. Fix: require a trusted GRCh38 reference manifest/signature before production enumeration; isolate synthetic-reference mode and add a mismatched-assembly rejection test.
++- HIGH — `j6_site_universe.py:399` / `j6_site_universe.py:540`: output-directory generations are not fenced; rerunning with another window size/region leaves obsolete, individually valid `.done` shards available for double counting or including out-of-universe sites. Tiny reproduction: window 4 then 6 on 12 A bases yields 5 committed files, 18 rows, only 9 unique sites. Fix: immutable run configuration plus an atomic manifest listing the exact expected/current shards, or reject incompatible directory reuse; test changed-window and changed-region restarts.
++- MED — `j6_site_universe.py:315` / `j6_site_universe.py:534`: region-filtered genes exclude the other SMN paralog, so an unchecked ambiguity becomes false. Reproduced: identical SMN1/SMN2 targets give true with both genes, false for the same site ID with SMN1 alone. Fix: retain both paralogs for ambiguity checks independently of output-region filtering, or represent unverified ambiguity as null/not_available; add a single-paralog-region test.
++- MED — `j6_site_universe.py:405`: every shard recursively serializes/hashes the entire gene universe; `:393` and `:274` also sort all genes per shard and `:285` scans them all. Full-genome work therefore incurs O(windows × genes) metadata processing even for empty outputs; unsharded `:281` additionally retains all output sites, contradicting the memory-bound claim at :270. Fix: cache immutable universe/hash and chromosome interval lookup once per worker, and expose streamed unsharded output; verify scaling with bounded synthetic data before production.
++- MED — `j6_site_universe.py:413` / `tests/test_j6_site_universe.py:182`: a `.done` containing valid JSON `[]` or `null` raises uncaught AttributeError on `manifest.get`, preventing restart recovery; both reproduced. Fix: validate manifest object/schema before access and rebuild invalid markers; extend corruption tests beyond malformed JSON.
++
++Requested command: `PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j6_site_universe.py -q`.
++Exact requested-run counts: **42 passed, 0 skipped, 1 failed** (CLI subprocess SIGINT); isolated CLI-test retry: 0 passed, 0 skipped, 1 failed (same signal).
++Thread-limited full rerun, same command prefixed with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1`: **43 passed, 0 skipped, 0 failed**, 1.60 s.
++Environment limitation: a separate uncapped tiny Parquet probe aborted with `Resource temporarily unavailable`; direct CLI probes succeeded. A deterministic source cause for the uncapped test failure was not established.
++`jobs/j6_sentinel.sbatch:1`: `bash -n` passed; mit_quicktest, 10-minute limit, --requeue, bounded region and six-anchor acceptance are present. No job submitted; runtime/resource fit remains unmeasured.
++No defect reproduced in canonical/N strand handling, ASO 5' mismatch positions, halo/chromosome-edge coverage, or distinct-gene deduplication; no outcome joins, fabricated negative labels, or unsupported performance metrics found in reviewed code.
++All five findings remain unfixed: review-only scope. Tiny tests/probes only; no full-genome compute, reference-tree traversal, commits, or sealed-data access. Explicit conference scope overrides the standing feng-only default.
+
+hook: Stop
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+65,795
+**DO-NOT-ADVANCE:** 2 HIGH, 3 MED findings in the [16-line review report](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J6_REVIEW_RESULT.md:1).
+
+- Requested tests: **42 passed, 0 skipped, 1 failed** (CLI SIGINT).
+- Thread-limited rerun: **43 passed, 0 skipped, 0 failed**.
+- Source unchanged; findings remain unfixed under review-only scope. No jobs submitted; full-genome runtime remains unverified.

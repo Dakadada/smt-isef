@@ -3,3 +3,9 @@
 {"ts":"2026-11-15T07:17:18Z","event":"dispatch","task":"J6","worker":"codex gpt-6.1-sol high","note":"astra model_not_found via ChatGPT-account codex"}
 {"ts":"2026-11-15T07:17:18Z","event":"dispatch","task":"J4","worker":"fable","note":"quota per user report: fable weekly ~0%, 5h window ~50% used"}
 {"ts":"2026-11-15T07:18:09Z","worker":"fable","task":"J4","event":"failed","error":"Fable 5.2 safeguards flagged message [bio] (invalid_request, req_011Ch4JgJdYZvnXPvLUWDU5W); no output; auto model switch off","action":"no retry; J4 held for user decision"}
+{"ts":"2026-11-15T07:24:28Z","event":"dispatch","task":"J4b","worker":"codex gpt-6-astra high","note":"astra verified in catalog+probe OK; earlier ids (gpt-5.6-astra,astra,gpt-6.1-astra) were wrong"}
+{"ts":"2026-11-15T07:32:08Z","event":"dispatch","task":"J6_review","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-15T07:32:08Z","event":"dispatch","task":"J3","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-15T07:38:28Z","event":"dispatch","task":"J6_fix","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-15T07:42:36Z","event":"dispatch","task":"J4_review","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-15T07:48:38Z","event":"dispatch","task":"J4_fix","worker":"codex gpt-6-astra high"}

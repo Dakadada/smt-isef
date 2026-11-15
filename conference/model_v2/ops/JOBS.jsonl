@@ -3,3 +3,12 @@
 {"ts":"2026-11-15T07:17:36Z","job":"J2","kind":"idem_test","slurm_id":"29162809"}
 {"ts":"2026-11-15T07:17:46Z","job":"J2","kind":"loci_build","slurm_id":"29162822"}
 {"ts":"2026-11-15T07:23:03Z","job":"J2","kind":"array_phase1","slurm_id":"29163480","array":"0-31","loci_sha256":"0320754c...87fc3a","loci":11313,"sentinel":"29159943,29162809 idempotent+deterministic OK","est":"<=2h/shard, 3G"}
+{"ts":"2026-11-15T07:32:08Z","job":"J6","kind":"sentinel","slurm_id":"29164482"}
+{"ts":"2026-11-15T07:34:24Z","job":"J6","slurm_id":"29164482","state":"COMPLETED","elapsed":"50s","maxrss":"4.19GB (at 4G cap!)","anchors":"6/6 verified","out":"~/orcd/scratch/feng/model_v2/j6_sentinel","note":"scale gated on review + memory fix/profile"}
+{"ts":"2026-11-15T07:42:36Z","job":"J4","kind":"gpu_sentinel+tolerance","slurm_id":"29165682"}
+{"ts":"2026-11-15T07:46:37Z","job":"J2","kind":"phase1_result","slurm_id":"29163480","state":"32/32 COMPLETED","rows":59450148,"out":"~/orcd/scratch/feng/model_v2/j2_phase1 (525MB)","maxrss":"985MB","max_elapsed":"9m22s"}
+{"ts":"2026-11-15T07:46:37Z","job":"J2","kind":"loci_build_p2","slurm_id":"29166102"}
+{"ts":"2026-11-15T07:46:37Z","job":"J2","kind":"array_p2","slurm_id":"29166103","array":"0-127","dependency":"afterok:29166102"}
+{"ts":"2026-11-15T07:46:37Z","job":"J3","kind":"sentinel","slurm_id":"29166104"}
+{"ts":"2026-11-15T07:48:38Z","job":"J4","slurm_id":"29165682","state":"FAILED","cause":"relative_to symlink path mismatch gpu_perturbation_atlas.py:184 (before model load)","action":"J4_fix dispatched astra"}
+{"ts":"2026-11-15T07:51:31Z","job":"J3","slurm_id":"29166104","state":"COMPLETED","elapsed":"2m08s","maxrss":"223MB","rows":6145,"channels":"all ok x3, 0 failed","input":"J6 sentinel (pre-fix)","out":"~/orcd/scratch/feng/model_v2/j3_sentinel"}

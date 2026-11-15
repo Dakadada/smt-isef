@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orcd/home/002/dashii/smt-isef/conference/model_v2/gpu_perturbation_atlas.py", line 523, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/orcd/home/002/dashii/smt-isef/conference/model_v2/gpu_perturbation_atlas.py", line 509, in main
+    scorer = PangolinScorer()
+             ^^^^^^^^^^^^^^^^
+  File "/orcd/home/002/dashii/smt-isef/conference/model_v2/gpu_perturbation_atlas.py", line 184, in __init__
+    sources = {str(p.relative_to(root)): file_sha(p) for p in source_paths}
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orcd/home/002/dashii/smt-isef/conference/model_v2/gpu_perturbation_atlas.py", line 184, in <dictcomp>
+    sources = {str(p.relative_to(root)): file_sha(p) for p in source_paths}
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/home/dashii/orcd/pool/feng-gpu-env/lib/python3.11/pathlib.py", line 730, in relative_to
+    raise ValueError("{!r} is not in the subpath of {!r}"
+ValueError: '/home/dashii/smt-isef/feng/src/feng/titration/gpu_scores.py' is not in the subpath of '/orcd/home/002/dashii/smt-isef' OR one path is relative and the other is absolute.

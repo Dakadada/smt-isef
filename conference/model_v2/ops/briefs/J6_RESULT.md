@@ -1,0 +1,18 @@
+# J6 RESULT — derived exact/near-match ASO site universe
+- `conference/model_v2/j6_site_universe.py:266`: read-only Feng seed/extend; Hamming K=3 default, K=0..3 tested; edits unsupported/off.
+- `conference/model_v2/j6_site_universe.py:169`: GRCh38 / GENCODE v50 header fence; streams only gene records from the named GTF.
+- Coverage: full contiguous pre-mRNA gene bodies (exons AND introns), correct gene strand; no intergenic or splice-concatenated targets; never an exonic-union universe.
+- `conference/model_v2/j6_site_universe.py:205`: stable chromosome/window IDs; leftmost-start ownership and right halo; region bounds constrain starts, not ends.
+- `conference/model_v2/j6_site_universe.py:232`: same ASO/site/gene collapses across transcripts; sorted transcript list and alternative region classes when supplied; different genes stay separate.
+- `conference/model_v2/j6_site_universe.py:381`: locked atomic Parquet -> .done; rows, SHA256, parameters, FASTA/GTF identities, implementation/scanner hashes; validated restart.
+- `conference/model_v2/tests/test_j6_site_universe.py:55`: independent random/planted oracle, N, overlaps, edges, strands, ASO mismatch positions, shard union and restart/crash tests.
+- `conference/model_v2/tests/test_j6_site_universe.py:362`: real FASTA F18/F14/F10 SMN2 starts 70076584 / SMN1 starts 70952004; ends +17/+13/+9; distinct IDs, ambiguity true.
+- `conference/model_v2/jobs/j6_sentinel.sbatch:1`: mit_quicktest, 10 min, --requeue; chr5:70000000-71100000; F18/F14/F10; verifies six exact committed anchors.
+- Submit command (NOT executed): `sbatch /home/dashii/smt-isef/conference/model_v2/jobs/j6_sentinel.sbatch`
+- Gate: `PYTHONPATH=feng/src /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/ -q`
+- Exact gate counts: 81 passed, 0 skipped, 0 failed (includes 43 J6 tests and 38 F1 tests).
+- `bash -n conference/model_v2/jobs/j6_sentinel.sbatch`: passed.
+- Open: gene-only GTF input cannot derive exon/intron/UTR classes or transcript lists: region_class=not_available, transcript_ids=null; optional Transcript API supports them without inventing annotation.
+- Open: source identities are path/size/mtime_ns/inode plus FAI SHA256, not full FASTA/GTF hashes; immutable inputs required, identity changes checked before reuse and commit.
+- Open: SMN ambiguity checks the opposite paralog only within supplied gene universe; full-genome runtime and 10-minute sentinel runtime remain unmeasured (job not submitted).
+- Scope exception: this explicitly requested report is outside the owner-file list; no other non-owner file edited by this task. No commit or job submission performed.

@@ -9,9 +9,12 @@
 set -euo pipefail
 cd /home/dashii/smt-isef
 export PYTHONPATH=feng/src${PYTHONPATH:+:$PYTHONPATH}
-exec /home/dashii/orcd/pool/smt-isef-env/bin/python \
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1
+# The previous sentinel directory predates immutable run manifests; preserve it.
+exec /usr/bin/time -v /home/dashii/orcd/pool/smt-isef-env/bin/python \
   -m conference.model_v2.j6_site_universe \
   --fasta "$HOME/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa" \
   --gtf "$HOME/orcd/scratch/feng/gencode/v50/gencode.v50.primary_assembly.annotation.gtf" \
-  --output-dir "$HOME/orcd/scratch/feng/model_v2/j6_sentinel" \
-  --region chr5:70000000-71100000 --asos F18 F14 F10 --max-mismatch 3
+  --output-dir "$HOME/orcd/scratch/feng/model_v2/j6_sentinel_fix_v1" \
+  --region chr5:70000000-71100000 --asos F18 F14 F10 --max-mismatch 3 \
+  --check-smn-anchors --profile-memory
