@@ -34,6 +34,7 @@ from feng.honesty.states import ResultState  # noqa: E402
 from feng.titration.window import (  # noqa: E402
     AXIS_DEFINITIONS,
     FORMULA_VERSION,
+    normalize_window_rows,
     prereg_hash,
     prereg_payload,
 )
@@ -277,10 +278,11 @@ def build_arm_e_report(
             f"output directory contains non-package files: {[p.name for p in stale]}"
         )
 
-    frame = _row_frame(window_rows)
+    normalized_rows = normalize_window_rows(window_rows)
+    frame = _row_frame(normalized_rows)
 
     # DRAFT preregistration payload hash (no seal cut here).
-    payload = prereg_payload(window_rows, hypothesis=hypothesis)
+    payload = prereg_payload(normalized_rows, hypothesis=hypothesis)
     payload_hash = prereg_hash(payload)
 
     frame.to_csv(out_dir / TABLE_TSV, sep="\t", index=False, float_format="%.6g")
@@ -303,6 +305,7 @@ def build_arm_e_report(
         ),
         "directional_prediction": payload["directional_prediction"],
         "directional_prediction_axis": payload["directional_prediction_axis"],
+        "curve_complete": payload["curve_complete"],
         "n_rungs": int(len(frame)),
         "n_with_window": int(frame["therapeutic_window"].notna().sum()),
         "table_sha256": _sha256_file(out_dir / TABLE_PARQUET),

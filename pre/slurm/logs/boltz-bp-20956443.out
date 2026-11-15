@@ -1,0 +1,13 @@
+NVIDIA L40S, 46068 MiB
+Downloading the CCD data to /home/dashii/orcd/pool/boltz-cache/mols.tar. This may take a bit of time. You may change the cache directory with the --cache flag.
+Extracting the CCD data to /home/dashii/orcd/pool/boltz-cache/mols. This may take a bit of time. You may change the cache directory with the --cache flag.
+Downloading the Boltz-2 weights to /home/dashii/orcd/pool/boltz-cache/boltz2_conf.ckpt. You may change the cache directory with the --cache flag.
+Downloading the Boltz-2 affinity weights to /home/dashii/orcd/pool/boltz-cache/boltz2_aff.ckpt. You may change the cache directory with the --cache flag.
+Checking input data.
+Processing 4 inputs with 4 threads.
+Found explicit empty MSA for some proteins, will run these in single sequence mode. Keep in mind that the model predictions will be suboptimal without an MSA.
+Found explicit empty MSA for some proteins, will run these in single sequence mode. Keep in mind that the model predictions will be suboptimal without an MSA.
+Found explicit empty MSA for some proteins, will run these in single sequence mode. Keep in mind that the model predictions will be suboptimal without an MSA.
+Found explicit empty MSA for some proteins, will run these in single sequence mode. Keep in mind that the model predictions will be suboptimal without an MSA.
+Running structure prediction for 4 inputs.
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/4 [00:12<?, ?it/s]

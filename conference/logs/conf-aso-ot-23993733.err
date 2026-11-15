@@ -1,0 +1,15 @@
+
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 25.11.0
+    latest version: 26.7.2
+
+Please update conda by running
+
+    $ conda update -n base -c conda-forge conda
+
+
+Setting the index via positional argument will be deprecated in a future release. Please use -x option instead.
+/var/spool/slurmd/job23993733/slurm_script: line 75: 3035140 Killed                  "${TOOL_ENV}/bin/bowtie" -f -a -v 3 -p "${SLURM_CPUS_PER_TASK}" --suppress 5,6,7,8 "${INDEX_DIR}/grch38_v50" "${QUERY_FASTA}" -
+     3035141 Done                    | "${PROJECT_PYTHON}" -m conference.aso_pipeline.item3 count --aligner bowtie1-v3 --gene-table "${GENE_TABLE}" --query-fasta "${QUERY_FASTA}" --output "${output}"
+[2026-09-26T04:26:33.719] error: Detected 1 oom_kill event in StepId=23993733.batch. Some of the step tasks have been OOM Killed.

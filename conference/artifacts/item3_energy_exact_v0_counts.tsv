@@ -1,0 +1,16 @@
+state	aso_id	threshold_fold	exact_alignment_count	distinct_genes_any_strand	distinct_genes_transcript_compatible
+[candidate]	F18	1	2	2	2
+[candidate]	F18	3	2	2	2
+[candidate]	F18	10	3	3	2
+[candidate]	F18	30	9	9	5
+[candidate]	F18	100	17	16	11
+[candidate]	F14	1	53	45	19
+[candidate]	F14	3	470	410	222
+[candidate]	F14	10	910	773	421
+[candidate]	F14	30	1920	1571	844
+[candidate]	F14	100	4145	2965	1671
+[candidate]	F10	1	7778	4923	2785
+[candidate]	F10	3	35200	14446	9325
+[candidate]	F10	10	51663	18627	12532
+[candidate]	F10	30	260331	35498	27746
+[candidate]	F10	100	800427	48456	40488

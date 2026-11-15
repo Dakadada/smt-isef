@@ -1,0 +1,20 @@
+[candidate]
+IntaRNA 3.4.1
+ using Vienna RNA package 2.7.0 and boost 1.85.0
+/orcd/scratch/orcd/011/dashii/conference_smn2_aso/tools/bin/bowtie-align-s version 1.3.1
+64-bit
+Temperature: 37 C (310.15 K); RNA:RNA; IntaRNA default model
+IntaRNA columns/settings: E, one best interaction; ASO=query, isolated target variant=target
+Enumeration: complete unique Hamming ball <=3 substitutions; no indels/bulges
+Threshold: variant_dG <= on_target_dG + RT*ln(fold), R=0.00198720425864083 kcal mol^-1 K^-1
+Sweep folds: 1,3,10,30,100; primary=10; margins computed at 310.15 K
+No-duplex convention: IntaRNA 0.0 plus explicit flag; always non-viable
+Alignment: Bowtie 1 -f -a -v 0 -p 4; viable-100x union only
+Query orientation: reverse complement of genomic target variant
+Gene count: union across viable variants; GENCODE v50 gene spans; transcript-compatible strand
+Genome: /home/dashii/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa
+GTF: /home/dashii/orcd/scratch/feng/gencode/v50/gencode.v50.primary_assembly.annotation.gtf.gz
+Bowtie index: /orcd/scratch/orcd/011/dashii/conference_smn2_aso/indexes/grch38_v50
+Raw comparator: /home/dashii/smt-isef/conference/artifacts/item3_real_aso_gene_counts.tsv (Bowtie -a -v 3, previously completed)
+3UP8: excluded because the 8-mer <=3-mismatch search is saturated
+Prediction predeclared before scoring: at 10x, F10 has fewer viable variants and fewer filtered genes than F18

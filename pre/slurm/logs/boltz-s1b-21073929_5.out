@@ -1,0 +1,9 @@
+NVIDIA L40S, 46068 MiB
+MSA server enabled: https://api.colabfold.com
+MSA server authentication: no credentials provided
+Checking input data.
+Processing 4 inputs with 4 threads.
+Running structure prediction for 4 inputs.
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:  25%|██▌       | 1/4 [01:59<05:58,  0.01it/s]Predicting DataLoader 0:  50%|█████     | 2/4 [04:33<04:33,  0.01it/s]Predicting DataLoader 0:  75%|███████▌  | 3/4 [06:35<02:11,  0.01it/s]Predicting DataLoader 0: 100%|██████████| 4/4 [08:40<00:00,  0.01it/s]Number of failed examples: 0
+Predicting DataLoader 0: 100%|██████████| 4/4 [08:40<00:00,  0.01it/s]
+S1 part05 complete

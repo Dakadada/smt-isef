@@ -1,0 +1,24 @@
+{
+  "artifact": "arm_e_titration",
+  "curve_complete": false,
+  "directional_prediction": null,
+  "directional_prediction_axis": "therapeutic_window",
+  "formula_version": "armE-window-v2",
+  "hypothesis": "a shorter mer improves the therapeutic window: the predicted potency-over-off-target-burden ratio favours a length below the 18-nt nusinersen anchor",
+  "inputs": {
+    "genome_fasta": "/home/dashii/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa"
+  },
+  "n_rungs": 15,
+  "n_with_window": 0,
+  "prereg_hash": "b75de7356db19ad1a58b0e9c03e6443db6614a9f25e11612d4840eca7e2ba978",
+  "prereg_locked": false,
+  "prereg_note": "unsealed DRAFT; the real locked=true seal is a gated step pending the GPU potency axes and explicit sign-off",
+  "software": {
+    "matplotlib": "3.10.9",
+    "numpy": "1.26.4",
+    "pandas": "3.0.5",
+    "python": "3.11.16"
+  },
+  "state": "candidate",
+  "table_sha256": "f035b88dc83b6a6e5e63bd548904db6fe0a3462ca47d79631ad87b852a4e3c94"
+}

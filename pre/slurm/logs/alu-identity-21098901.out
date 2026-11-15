@@ -1,0 +1,30 @@
+## P -- Alu identity of the C2B34 flanking inverted repeats
+   (scanning flanks; ~3 min, per smt.kinetics.alu.scan_flanks)
+
+  hit 0 upstream   9465-9744 (280 nt)
+    length_ok=True  A-box mm=3  B-box mm=2  spacing_ok=False
+    dimer identity 0.400   3' A-tail 0.200
+    score 4.000  vs null 3.527+/-0.763  z = +0.62  (A8 energy z was -52.6)
+  hit 0 downstream 23240-23516 (277 nt)
+    length_ok=True  A-box mm=3  B-box mm=1  spacing_ok=False
+    dimer identity 0.472   3' A-tail 0.525
+    score 4.469  vs null 3.463+/-0.903  z = +1.12  (A8 energy z was -52.6)
+  hit 1 upstream   16205-16491 (287 nt)
+    length_ok=True  A-box mm=None  B-box mm=2  spacing_ok=False
+    dimer identity 0.405   3' A-tail 0.200
+    score 3.010  vs null 3.380+/-0.686  z = -0.54  (A8 energy z was -52.6)
+  hit 1 downstream 23225-23516 (292 nt)
+    length_ok=True  A-box mm=1  B-box mm=1  spacing_ok=True
+    dimer identity 0.459   3' A-tail 0.525
+    score 5.444  vs null 3.302+/-0.770  z = +2.78  (A8 energy z was -52.6)
+  hit 2 upstream   13668-13944 (277 nt)
+    length_ok=True  A-box mm=2  B-box mm=2  spacing_ok=False
+    dimer identity 0.418   3' A-tail 0.200
+    score 4.036  vs null 3.425+/-0.733  z = +0.84  (A8 energy z was -52.6)
+  hit 2 downstream 23252-23523 (272 nt)
+    length_ok=True  A-box mm=3  B-box mm=1  spacing_ok=False
+    dimer identity 0.378   3' A-tail 0.625
+    score 4.381  vs null 3.473+/-0.687  z = +1.32  (A8 energy z was -52.6)
+
+  A z near 0 means these are Alu-SCALE inverted repeats with the
+  subfamily UNRESOLVED -- still A8's finding, just not upgraded.

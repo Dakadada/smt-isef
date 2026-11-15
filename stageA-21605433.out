@@ -1,0 +1,56 @@
+stageA.targeted.json: OK
+all_runs.frozen.tsv: OK
+event_junctions.GRCh38.run.tsv: OK
+GSE167762_PRJNA705187.frozen.tsv: OK
+GSE307431_PRJNA1321660.frozen.tsv: OK
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+curl: option --retry-all-errors: is unknown
+curl: try 'curl --help' or 'curl --manual' for more information
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/dashii/smt-isef/src/rawread_reanalysis/__main__.py", line 3, in <module>
+    main()
+  File "/home/dashii/smt-isef/src/rawread_reanalysis/cli.py", line 56, in main
+    quantify.rebuild_combined(cfg,manifest)
+  File "/home/dashii/smt-isef/src/rawread_reanalysis/quantify.py", line 94, in rebuild_combined
+    if not rows: raise ValueError("no per-run counts exist; refusing empty combined counts")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: no per-run counts exist; refusing empty combined counts

@@ -1,0 +1,5 @@
+state	aso_id	chemistry	length_nt	aso_rna_5to3	target_rna_5to3	target_start_1based	target_end_1based	target_requires_human_confirmation	intarna_default_dg_kcal_mol	intarna_no_duplex	nn_reference_dg_kcal_mol	nn_salt_correction_kcal_mol	nn_buffer_dg_kcal_mol	nn_buffer_monovalent_molar	nn_buffer_divalent_molar	nn_buffer_effective_monovalent_molar	temperature_c
+[candidate]	F18	RNA:RNA	18	UCACUUUCAUAAUGCUGG	CCAGCAUUAUGAAAGUGA	10	27	False	-27.0	False	-27.9	3.1927406630684985	-24.7072593369315	0.05	0.0015	0.19696938456699067	37.0
+[candidate]	F14	RNA:RNA	14	UUUCAUAAUGCUGG	CCAGCAUUAUGAAA	10	23	False	-18.89	False	-19.2	2.2536992915777643	-16.946300708422235	0.05	0.0015	0.19696938456699067	37.0
+[candidate]	F10	RNA:RNA	10	AUAAUGCUGG	CCAGCAUUAU	10	19	False	-12.8	False	-12.8	1.6902744686833229	-11.109725531316677	0.05	0.0015	0.19696938456699067	37.0
+[candidate]	3UP8	RNA:RNA	8	GCUGGCAG	CUGCCAGC	7	14	True	-14.4	False	-14.4	1.314657920087029	-13.085342079912971	0.05	0.0015	0.19696938456699067	37.0

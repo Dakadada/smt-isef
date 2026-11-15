@@ -1,0 +1,23 @@
+FOLLOW-UP on the Stage-A 14-accession rescue (previous session 01a05548-f3c6-72c0-a081-0aeff93d157c, job task-mtgiqrgm-uf6t3m -- sending this as a NEW self-contained task rather than --resume because I found the companion CLI's "last thread for this repo" is currently a SHARED/contended resource: another concurrent job (task-mtgizzeb-bcs8rh) was actively resumed on that exact same session doing unrelated #16-panel-review work from a different driver stream. Resuming risked racing/polluting that thread, so treat this as a peer follow-up with full context restated below).
+
+REPO=/home/dashii/smt-isef. I reviewed your fix directly (not just your summary) before writing this. Three things to address:
+
+1. EVIDENCE FOR THE RACE DIAGNOSIS. Your report called the class-2 root cause "confirmed" as a shared-path race (concurrent fetch.py writers touching the same accession's .partial file between the md5-mismatch read and the rename-to-.corrupt). What I read in your report as evidence was "multiple Stage-A job heartbeats existed close together" and "retry/requeue tooling can launch different jobs" -- that's circumstantial, not a smoking gun (e.g. two PIDs both holding an open fd on the same <acc>_N.fastq.gz.partial at overlapping timestamps, or two SLURM job IDs with overlapping wall-clock windows both invoking fetch.run on the same accession). Do you have that direct evidence (specific log lines / PIDs / job IDs / timestamps), or is the race the best explanation given what's available and you should say so explicitly rather than "confirmed"? I'm not blocking the fix on this -- the fcntl.flock per-accession lock in fetch.py lines 13-21 is correct and sufficient defense regardless of whether it was a race or something else (e.g. a stale NFS/Lustre metadata glitch on /orcd/scratch during a large parallel write) -- but say plainly what's verified vs inferred so the postmortem docs don't overclaim.
+
+2. DEBRIS CLEANUP REACHABILITY GAP. For the 6 already-fetch-complete accessions (SRR35298700/701/703/706/715/717), fetch.py's _run_accession returns early at line 47 (the "if cp.valid(...): return" checkpoint check) before ever reaching the new debris-cleanup block at lines 75-77, because their fetch checkpoint is already valid. That means re-running fetch.run for them will NOT delete their pre-existing orphaned .partial.corrupt siblings -- those orphans stay on disk. Confirm this is harmless because quantify.py's fix (fastqs built from row['fastq_ftp'] manifest names, not a directory glob) never looks at them again -- or if you disagree, add explicit cleanup for it (e.g. sweep debris in quantify.run before reading, or a one-time reconciliation pass), since leaving multi-GB corrupt debris sitting in scratch forever is also a quota-hygiene issue on shared HPC.
+
+3. SLURM IS UP. Your result said "Slurmctld(primary) at slurm001 is DOWN" and no job ID was issued after 4 attempts. I just ran sinfo and squeue -u $USER myself and both returned normally (sinfo shows mit_normal partition nodes; squeue shows my other running jobs 21610101-3). So the outage looks transient/resolved now. Please retry:
+
+sbatch --parsable --partition=mit_data_transfer --export=ALL,REPO=/home/dashii/smt-isef,RUN_DIR=/orcd/scratch/orcd/011/dashii/smt-stageA-real,RESCUE_MANIFEST=/home/dashii/smt-isef/work/rescue_14.frozen.tsv scripts/real_run/rescue_stageA.sbatch
+
+and drive it to completion if slurm accepts it now: fetch -> quantify -> compute -> harmonize for the 14-accession scoped manifest, respecting checkpoint/requeue-safety and scratch quota (check ~/orcd/.quota, don't du; SCRATCH was 323.9/1024 GB used as of the last check). If slurm is flaky/still down, report exact error text this time (not just "DOWN") and don't retry more than a couple times -- report back and I'll coordinate on when to resubmit.
+
+Once fetch+quantify+harmonize actually complete for the recoverable accessions (or fail for real, honestly), re-run make smoke-test and give me:
+- corrected/confirmed evidence status for item 1
+- confirmation or fix for item 2
+- per-accession outcome table (14 rows: recovered / still-genuinely-failing + why)
+- example tidy_splicing.tsv rows showing PMO/OMe dPSI now populated (or still MISSING with why)
+- smoke-test pass count
+- sbatch job id + current state if still running when you wrap up
+
+Keep this tight -- this is a capped follow-up round, not an open-ended thread. I'll run a separate independent adversarial review of the full diff after this.

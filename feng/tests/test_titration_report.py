@@ -3,12 +3,58 @@
 from __future__ import annotations
 
 import json
+from decimal import Decimal
+from fractions import Fraction
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pytest
 
 from feng.titration import report as R
+from feng.titration.window import FORMULA_VERSION
+
+REPO_ARM_E_ARTIFACT = (
+    Path(__file__).resolve().parents[2] / "feng" / "artifacts" / "arm_e_titration"
+)
+
+_BOOLEAN_ENCODERS = (
+    pytest.param(lambda value: bool(value), id="python-bool"),
+    pytest.param(lambda value: np.bool_(value), id="numpy-bool-scalar"),
+    pytest.param(lambda value: np.array(value, dtype=bool), id="numpy-bool-0d"),
+    pytest.param(
+        lambda value: np.array([value, not value], dtype=bool),
+        id="numpy-bool-array",
+    ),
+)
+
+_MALFORMED_NUMERICS = (
+    pytest.param("2.0", id="string"),
+    pytest.param(b"2.0", id="bytes"),
+    pytest.param(Decimal("2.0"), id="decimal"),
+    pytest.param(Fraction(2, 1), id="fraction"),
+    pytest.param(None, id="none"),
+    pytest.param(2 + 0j, id="complex"),
+)
+
+
+class _MyInt(int):
+    pass
+
+
+class _MyFloat(float):
+    pass
+
+
+class _MyNumpyFloat(np.float64):
+    pass
+
+
+_SUBCLASS_NUMERICS = (
+    pytest.param(_MyInt(2), id="int-subclass"),
+    pytest.param(_MyFloat(2.0), id="float-subclass"),
+    pytest.param(_MyNumpyFloat(2.0), id="numpy-real-subclass"),
+)
 
 
 # --- synthetic fixtures ------------------------------------------------------
@@ -74,6 +120,147 @@ def test_build_writes_all_package_files(tmp_path, synthetic_rows):
         path = out / name
         assert path.exists(), f"missing artifact {name}"
         assert path.stat().st_size > 0, f"empty artifact {name}"
+
+
+def test_report_uses_same_fail_closed_window_normalization(tmp_path):
+    rows = []
+    for length in range(2, 31, 2):
+        rows.append(_base_row(
+            length,
+            off_target_hits=0,
+            off_target_burden=0,
+            therapeutic_window=float(length),
+            window_incomplete=False,
+        ))
+    rows[4]["off_target_burden"] = float("inf")
+    out = tmp_path / "arm_e_titration"
+    frame = R.build_arm_e_report(rows, out_dir=out)
+    bad = frame.loc[frame["length"] == 10].iloc[0]
+    assert pd.isna(bad["therapeutic_window"])
+    assert bool(bad["window_incomplete"])
+    provenance = json.loads((out / R.PROVENANCE).read_text())
+    assert provenance["curve_complete"] is False
+    assert provenance["directional_prediction"] is None
+
+
+def test_report_rejects_formula_mismatch_across_rounding_boundary(tmp_path):
+    potency = 50.00000049
+    rows = [
+        _base_row(
+            length,
+            potency=potency,
+            off_target_hits=0,
+            off_target_burden=0,
+            therapeutic_window=(50.00000051 if length == 16 else potency),
+            window_incomplete=False,
+        )
+        for length in range(2, 31, 2)
+    ]
+    out = tmp_path / "arm_e_titration"
+    frame = R.build_arm_e_report(rows, out_dir=out)
+    bad = frame.loc[frame["length"] == 16].iloc[0]
+    assert pd.isna(bad["therapeutic_window"])
+    assert bool(bad["window_incomplete"])
+    provenance = json.loads((out / R.PROVENANCE).read_text())
+    assert provenance["curve_complete"] is False
+    assert provenance["directional_prediction"] is None
+
+
+@pytest.mark.parametrize("encode_bool", _BOOLEAN_ENCODERS)
+def test_report_boolean_quantity_tuple_cannot_emit_verdict(tmp_path, encode_bool):
+    rows = [
+        _base_row(
+            length,
+            potency=encode_bool(length == 16),
+            off_target_hits=0,
+            off_target_burden=encode_bool(False),
+            therapeutic_window=encode_bool(length == 16),
+            window_incomplete=False,
+        )
+        for length in range(2, 31, 2)
+    ]
+    out = tmp_path / "arm_e_titration"
+    frame = R.build_arm_e_report(rows, out_dir=out)
+    assert frame["therapeutic_window"].isna().all()
+    provenance = json.loads((out / R.PROVENANCE).read_text())
+    assert provenance["curve_complete"] is False
+    assert provenance["directional_prediction"] is None
+
+
+@pytest.mark.parametrize("malformed", _MALFORMED_NUMERICS)
+def test_report_non_allowlisted_numeric_like_tuple_cannot_emit_verdict(
+    tmp_path, malformed
+):
+    rows = [
+        _base_row(
+            length,
+            potency=malformed,
+            off_target_hits=malformed,
+            off_target_burden=malformed,
+            therapeutic_window=malformed,
+            window_incomplete=False,
+        )
+        for length in range(2, 31, 2)
+    ]
+    out = tmp_path / "arm_e_titration"
+    frame = R.build_arm_e_report(rows, out_dir=out)
+    assert frame["therapeutic_window"].isna().all()
+    provenance = json.loads((out / R.PROVENANCE).read_text())
+    assert provenance["curve_complete"] is False
+    assert provenance["directional_prediction"] is None
+
+
+@pytest.mark.parametrize("subclass_value", _SUBCLASS_NUMERICS)
+def test_report_real_number_subclass_tuple_cannot_emit_verdict(
+    tmp_path, subclass_value
+):
+    rows = [
+        _base_row(
+            length,
+            potency=subclass_value,
+            off_target_hits=subclass_value,
+            off_target_burden=subclass_value,
+            therapeutic_window=subclass_value,
+            window_incomplete=False,
+        )
+        for length in range(2, 31, 2)
+    ]
+    out = tmp_path / "arm_e_titration"
+    frame = R.build_arm_e_report(rows, out_dir=out)
+    assert frame["therapeutic_window"].isna().all()
+    provenance = json.loads((out / R.PROVENANCE).read_text())
+    assert provenance["curve_complete"] is False
+    assert provenance["directional_prediction"] is None
+
+
+@pytest.mark.parametrize("encode_bool", _BOOLEAN_ENCODERS)
+def test_report_rejects_all_boolean_length_forms(tmp_path, encode_bool):
+    row = _base_row(
+        18,
+        off_target_hits=0,
+        off_target_burden=0,
+        therapeutic_window=18.0,
+        window_incomplete=False,
+    )
+    row["length"] = encode_bool(True)
+    with pytest.raises(ValueError, match="length"):
+        R.build_arm_e_report([row], out_dir=tmp_path / "arm_e_titration")
+
+
+def test_report_rejects_fractional_ladder_lengths_before_rendering(tmp_path):
+    rows = []
+    for length in range(2, 31, 2):
+        row = _base_row(
+            length,
+            off_target_hits=0,
+            off_target_burden=0,
+            therapeutic_window=float(length + 0.9),
+            window_incomplete=False,
+        )
+        row["length"] = length + 0.9
+        rows.append(row)
+    with pytest.raises(ValueError, match="length"):
+        R.build_arm_e_report(rows, out_dir=tmp_path / "arm_e_titration")
 
 
 def test_figure_files_render_nonempty(tmp_path, synthetic_rows):
@@ -164,6 +351,9 @@ def test_provenance_records_draft_unsealed(tmp_path, synthetic_rows):
     assert prov["prereg_locked"] is False
     assert "formula_version" in prov
     assert prov["state"] == "candidate"
+    assert prov["curve_complete"] is False
+    assert prov["directional_prediction"] is None
+    assert prov["directional_prediction_axis"] == "therapeutic_window"
 
 
 def test_stale_files_rejected(tmp_path, synthetic_rows):
@@ -172,3 +362,12 @@ def test_stale_files_rejected(tmp_path, synthetic_rows):
     (out / "rogue_file.txt").write_text("not part of the package")
     with pytest.raises(ValueError):
         R.build_arm_e_report(synthetic_rows, out_dir=out)
+
+
+def test_repo_candidate_artifact_has_no_incomplete_curve_verdict():
+    provenance = json.loads((REPO_ARM_E_ARTIFACT / R.PROVENANCE).read_text())
+    assert provenance["formula_version"] == FORMULA_VERSION
+    assert provenance["n_with_window"] == 0
+    assert provenance["curve_complete"] is False
+    assert provenance["directional_prediction"] is None
+    assert provenance["directional_prediction_axis"] == "therapeutic_window"

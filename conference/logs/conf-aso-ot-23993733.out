@@ -1,0 +1,6153 @@
+Retrieving notices: - \ done
+Channels:
+ - conda-forge
+ - bioconda
+Platform: linux-64
+Collecting package metadata (repodata.json): / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | done
+Solving environment: - \ done
+
+## Package Plan ##
+
+  environment location: /orcd/scratch/orcd/011/dashii/conference_smn2_aso/tools
+
+  added / updated specs:
+    - blast=2.16.0
+    - bowtie=1.3.1
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    blast-2.16.0               |       h66d330f_5       141.4 MB  bioconda
+    bowtie-1.3.1               |      hb82490e_11         734 KB  bioconda
+    c-ares-1.34.8              |       hebe6cf0_2         223 KB  conda-forge
+    curl-8.22.0                |       ha042cf0_0         192 KB  conda-forge
+    entrez-direct-22.4         |       he881be0_0        14.0 MB  bioconda
+    keyutils-1.6.3             |       h7cc23a3_1         132 KB  conda-forge
+    krb5-1.22.2                |       hbc21106_2         1.3 MB  conda-forge
+    libcurl-8.22.0             |       ha042cf0_0         488 KB  conda-forge
+    libedit-3.1.20250104       | pl5321h373387f_1         132 KB  conda-forge
+    libev-4.33                 |       h280c20c_3          42 KB  conda-forge
+    libexpat-2.8.5             |       hd2095e1_0          76 KB  conda-forge
+    libgcc-16.2.0              |       ha9f2e26_7         1.0 MB  conda-forge
+    libgcc-ng-16.2.0           |       h69a702a_7          28 KB  conda-forge
+    libgomp-16.2.0             |       he0feb66_7         626 KB  conda-forge
+    libhwloc-2.13.0            |default_he001693_1000         2.3 MB  conda-forge
+    libiconv-1.18              |       h0cb94f2_3         771 KB  conda-forge
+    libidn2-2.3.8              |       hfac485b_1         136 KB  conda-forge
+    libmpdec-4.0.0             |       hb03c661_2          91 KB  conda-forge
+    libnghttp2-1.68.1          |       h74cf4be_1         635 KB  conda-forge
+    libpsl-0.23.1              |       hd9e3e90_1          71 KB  conda-forge
+    libpython-3.14.7           |hdc7f604_106_cp314        10.0 MB  conda-forge
+    libssh2-1.11.1             |       h6154650_1         299 KB  conda-forge
+    libstdcxx-16.2.0           |       h934c35e_7         6.3 MB  conda-forge
+    libunistring-0.9.10        |       h7f98852_0         1.4 MB  conda-forge
+    libuuid-2.42.4             |       hcfc3c73_0          34 KB  conda-forge
+    libxml2-2.15.4             |       h7df9aa5_0          46 KB  conda-forge
+    libxml2-16-2.15.4          |       hf3af7cc_0         556 KB  conda-forge
+    ncbi-vdb-3.4.1             |       hd63eeec_0         8.8 MB  bioconda
+    pcre2-10.47                |       h8b3dc9c_1         1.2 MB  conda-forge
+    perl-5.32.1                |10_h7cc23a3_perl5        12.9 MB  conda-forge
+    perl-archive-tar-3.12      | pl5321hdfd78af_0          38 KB  bioconda
+    perl-carp-1.50             | pl5321hd8ed1ab_0          22 KB  conda-forge
+    perl-common-sense-3.75     | pl5321hd8ed1ab_0          20 KB  conda-forge
+    perl-compress-raw-bzip2-2.214| pl5321hda65f42_0          54 KB  conda-forge
+    perl-compress-raw-zlib-2.214| pl5321h4dac143_0          79 KB  conda-forge
+    perl-encode-3.24           | pl5321hb03c661_0         1.6 MB  conda-forge
+    perl-exporter-5.74         | pl5321hd8ed1ab_0          19 KB  conda-forge
+    perl-exporter-tiny-1.002002| pl5321hd8ed1ab_0          28 KB  conda-forge
+    perl-extutils-makemaker-7.70| pl5321hd8ed1ab_0         154 KB  conda-forge
+    perl-io-compress-2.216     | pl5321h503566f_0          85 KB  bioconda
+    perl-io-zlib-1.15          | pl5321hdfd78af_1          12 KB  bioconda
+    perl-json-4.11             | pl5321hdfd78af_0          52 KB  bioconda
+    perl-json-xs-4.04          | pl5321h9948957_0          69 KB  bioconda
+    perl-list-moreutils-0.430  | pl5321hdfd78af_0          32 KB  bioconda
+    perl-list-moreutils-xs-0.430| pl5321h7b50bb2_5          50 KB  bioconda
+    perl-parent-0.243          | pl5321hd8ed1ab_0          14 KB  conda-forge
+    perl-pathtools-3.75        | pl5321hb9d3cd8_2          49 KB  conda-forge
+    perl-scalar-list-utils-1.70| pl5321hb03c661_0          51 KB  conda-forge
+    perl-storable-3.15         | pl5321hb9d3cd8_2          70 KB  conda-forge
+    perl-types-serialiser-1.01 | pl5321hdfd78af_0          13 KB  bioconda
+    pip-26.2.1                 |     pyh145f28c_0         1.1 MB  conda-forge
+    python-3.14.7              |hcd007b5_106_cp314        25.3 MB  conda-forge
+    python_abi-3.14            |          9_cp314           7 KB  conda-forge
+    rpsbproc-0.5.1             |       hd6d6fdc_0         5.8 MB  bioconda
+    tbb-2023.1.0               |       hfd44327_0         183 KB  conda-forge
+    wget-1.25.0                |       h653f8fd_1         729 KB  conda-forge
+    zlib-1.3.2                 |       h25fd6f3_3          94 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:       241.5 MB
+
+The following NEW packages will be INSTALLED:
+
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  blast              bioconda/linux-64::blast-2.16.0-h66d330f_5 
+  bowtie             bioconda/linux-64::bowtie-1.3.1-hb82490e_11 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_10 
+  c-ares             conda-forge/linux-64::c-ares-1.34.8-hebe6cf0_2 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.7.22-hbd8a1cb_0 
+  curl               conda-forge/linux-64::curl-8.22.0-ha042cf0_0 
+  entrez-direct      bioconda/linux-64::entrez-direct-22.4-he881be0_0 
+  icu                conda-forge/linux-64::icu-78.3-py310h44b86e0_2 
+  keyutils           conda-forge/linux-64::keyutils-1.6.3-h7cc23a3_1 
+  krb5               conda-forge/linux-64::krb5-1.22.2-hbc21106_2 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.46.1-default_hbd61a6d_102 
+  libcurl            conda-forge/linux-64::libcurl-8.22.0-ha042cf0_0 
+  libedit            conda-forge/linux-64::libedit-3.1.20250104-pl5321h373387f_1 
+  libev              conda-forge/linux-64::libev-4.33-h280c20c_3 
+  libexpat           conda-forge/linux-64::libexpat-2.8.5-hd2095e1_0 
+  libffi             conda-forge/linux-64::libffi-3.7.0-h81df57d_1 
+  libgcc             conda-forge/linux-64::libgcc-16.2.0-ha9f2e26_7 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-16.2.0-h69a702a_7 
+  libgomp            conda-forge/linux-64::libgomp-16.2.0-he0feb66_7 
+  libhwloc           conda-forge/linux-64::libhwloc-2.13.0-default_he001693_1000 
+  libiconv           conda-forge/linux-64::libiconv-1.18-h0cb94f2_3 
+  libidn2            conda-forge/linux-64::libidn2-2.3.8-hfac485b_1 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_1 
+  libmpdec           conda-forge/linux-64::libmpdec-4.0.0-hb03c661_2 
+  libnghttp2         conda-forge/linux-64::libnghttp2-1.68.1-h74cf4be_1 
+  libpsl             conda-forge/linux-64::libpsl-0.23.1-hd9e3e90_1 
+  libpython          conda-forge/linux-64::libpython-3.14.7-hdc7f604_106_cp314 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.4-h13e7031_1 
+  libssh2            conda-forge/linux-64::libssh2-1.11.1-h6154650_1 
+  libstdcxx          conda-forge/linux-64::libstdcxx-16.2.0-h934c35e_7 
+  libunistring       conda-forge/linux-64::libunistring-0.9.10-h7f98852_0 
+  libuuid            conda-forge/linux-64::libuuid-2.42.4-hcfc3c73_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.38-h280c20c_0 
+  libxml2            conda-forge/linux-64::libxml2-2.15.4-h7df9aa5_0 
+  libxml2-16         conda-forge/linux-64::libxml2-16-2.15.4-hf3af7cc_0 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_3 
+  ncbi-vdb           bioconda/linux-64::ncbi-vdb-3.4.1-hd63eeec_0 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_1 
+  openssl            conda-forge/linux-64::openssl-3.6.4-h781a0a9_0 
+  pcre2              conda-forge/linux-64::pcre2-10.47-h8b3dc9c_1 
+  perl               conda-forge/linux-64::perl-5.32.1-10_h7cc23a3_perl5 
+  perl-archive-tar   bioconda/noarch::perl-archive-tar-3.12-pl5321hdfd78af_0 
+  perl-carp          conda-forge/noarch::perl-carp-1.50-pl5321hd8ed1ab_0 
+  perl-common-sense  conda-forge/noarch::perl-common-sense-3.75-pl5321hd8ed1ab_0 
+  perl-compress-raw~ conda-forge/linux-64::perl-compress-raw-bzip2-2.214-pl5321hda65f42_0 
+  perl-compress-raw~ conda-forge/linux-64::perl-compress-raw-zlib-2.214-pl5321h4dac143_0 
+  perl-encode        conda-forge/linux-64::perl-encode-3.24-pl5321hb03c661_0 
+  perl-exporter      conda-forge/noarch::perl-exporter-5.74-pl5321hd8ed1ab_0 
+  perl-exporter-tiny conda-forge/noarch::perl-exporter-tiny-1.002002-pl5321hd8ed1ab_0 
+  perl-extutils-mak~ conda-forge/noarch::perl-extutils-makemaker-7.70-pl5321hd8ed1ab_0 
+  perl-io-compress   bioconda/linux-64::perl-io-compress-2.216-pl5321h503566f_0 
+  perl-io-zlib       bioconda/noarch::perl-io-zlib-1.15-pl5321hdfd78af_1 
+  perl-json          bioconda/noarch::perl-json-4.11-pl5321hdfd78af_0 
+  perl-json-xs       bioconda/linux-64::perl-json-xs-4.04-pl5321h9948957_0 
+  perl-list-moreuti~ bioconda/noarch::perl-list-moreutils-0.430-pl5321hdfd78af_0 
+  perl-list-moreuti~ bioconda/linux-64::perl-list-moreutils-xs-0.430-pl5321h7b50bb2_5 
+  perl-parent        conda-forge/noarch::perl-parent-0.243-pl5321hd8ed1ab_0 
+  perl-pathtools     conda-forge/linux-64::perl-pathtools-3.75-pl5321hb9d3cd8_2 
+  perl-scalar-list-~ conda-forge/linux-64::perl-scalar-list-utils-1.70-pl5321hb03c661_0 
+  perl-storable      conda-forge/linux-64::perl-storable-3.15-pl5321hb9d3cd8_2 
+  perl-types-serial~ bioconda/noarch::perl-types-serialiser-1.01-pl5321hdfd78af_0 
+  pip                conda-forge/noarch::pip-26.2.1-pyh145f28c_0 
+  python             conda-forge/linux-64::python-3.14.7-hcd007b5_106_cp314 
+  python_abi         conda-forge/noarch::python_abi-3.14-9_cp314 
+  readline           conda-forge/linux-64::readline-8.3-hd6e31c0_1 
+  rpsbproc           bioconda/linux-64::rpsbproc-0.5.1-hd6d6fdc_0 
+  tbb                conda-forge/linux-64::tbb-2023.1.0-hfd44327_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h1df4ec4_4 
+  tzdata             conda-forge/noarch::tzdata-2026c-h151e31d_0 
+  wget               conda-forge/linux-64::wget-1.25.0-h653f8fd_1 
+  zlib               conda-forge/linux-64::zlib-1.3.2-h25fd6f3_3 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_7 
+
+
+
+Downloading and Extracting Packages: ...working...blast-2.16.0         | 141.4 MB  |            |   0% 
+python-3.14.7        | 25.3 MB   |            |   0% [A
+
+entrez-direct-22.4   | 14.0 MB   |            |   0% [A[A
+
+
+perl-5.32.1          | 12.9 MB   |            |   0% [A[A[A
+
+
+
+libpython-3.14.7     | 10.0 MB   |            |   0% [A[A[A[A
+
+
+
+
+ncbi-vdb-3.4.1       | 8.8 MB    |            |   0% [A[A[A[A[A
+
+
+
+
+
+libstdcxx-16.2.0     | 6.3 MB    |            |   0% [A[A[A[A[A[A
+
+
+
+
+
+
+rpsbproc-0.5.1       | 5.8 MB    |            |   0% [A[A[A[A[A[A[A
+
+
+
+
+
+
+
+libhwloc-2.13.0      | 2.3 MB    |            |   0% [A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+perl-encode-3.24     | 1.6 MB    |            |   0% [A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+libunistring-0.9.10  | 1.4 MB    |            |   0% [A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+krb5-1.22.2          | 1.3 MB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+pcre2-10.47          | 1.2 MB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+pip-26.2.1           | 1.1 MB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+libgcc-16.2.0        | 1.0 MB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libiconv-1.18        | 771 KB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bowtie-1.3.1         | 734 KB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wget-1.25.0          | 729 KB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libnghttp2-1.68.1    | 635 KB    |            |   0% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+libpython-3.14.7     | 10.0 MB   |            |   0% [A[A[A[A
+
+entrez-direct-22.4   | 14.0 MB   |            |   0% [A[Ablast-2.16.0         | 141.4 MB  |            |   0% 
+python-3.14.7        | 25.3 MB   |            |   0% [A
+
+
+perl-5.32.1          | 12.9 MB   |            |   0% [A[A[Ablast-2.16.0         | 141.4 MB  |            |   1% 
+
+
+
+libpython-3.14.7     | 10.0 MB   | #1         |  11% [A[A[A[A
+
+
+perl-5.32.1          | 12.9 MB   | #2         |  12% [A[A[A
+
+entrez-direct-22.4   | 14.0 MB   | 8          |   9% [A[A
+python-3.14.7        | 25.3 MB   | 4          |   4% [A
+
+entrez-direct-22.4   | 14.0 MB   | ##1        |  22% [A[A
+
+
+perl-5.32.1          | 12.9 MB   | ##9        |  29% [A[A[A
+python-3.14.7        | 25.3 MB   | #          |  11% [A
+
+
+
+libpython-3.14.7     | 10.0 MB   | ###1       |  32% [A[A[A[Ablast-2.16.0         | 141.4 MB  | 2          |   2% 
+python-3.14.7        | 25.3 MB   | #8         |  19% [A
+
+entrez-direct-22.4   | 14.0 MB   | ###6       |  36% [A[Ablast-2.16.0         | 141.4 MB  | 5          |   5% 
+
+
+perl-5.32.1          | 12.9 MB   | ####6      |  46% [A[A[A
+
+
+
+libpython-3.14.7     | 10.0 MB   | #####      |  50% [A[A[A[A
+python-3.14.7        | 25.3 MB   | ##4        |  24% [A
+
+entrez-direct-22.4   | 14.0 MB   | ####7      |  48% [A[Ablast-2.16.0         | 141.4 MB  | 7          |   8% 
+
+
+perl-5.32.1          | 12.9 MB   | ######5    |  66% [A[A[A
+
+
+
+libpython-3.14.7     | 10.0 MB   | #######8   |  78% [A[A[A[A
+python-3.14.7        | 25.3 MB   | ###5       |  36% [A
+
+entrez-direct-22.4   | 14.0 MB   | #######1   |  71% [A[Ablast-2.16.0         | 141.4 MB  | #          |  10% 
+
+
+perl-5.32.1          | 12.9 MB   | ########6  |  87% [A[A[A
+python-3.14.7        | 25.3 MB   | ####4      |  45% [A
+
+entrez-direct-22.4   | 14.0 MB   | #########  |  91% [A[Ablast-2.16.0         | 141.4 MB  | #3         |  13% 
+python-3.14.7        | 25.3 MB   | #####5     |  55% [Ablast-2.16.0         | 141.4 MB  | #6         |  17% 
+python-3.14.7        | 25.3 MB   | ######7    |  68% [Ablast-2.16.0         | 141.4 MB  | ##         |  21% 
+
+
+
+libpython-3.14.7     | 10.0 MB   | ########## | 100% [A[A[A[A
+
+
+
+libpython-3.14.7     | 10.0 MB   | ########## | 100% [A[A[A[A
+
+
+perl-5.32.1          | 12.9 MB   | ########## | 100% [A[A[A
+
+entrez-direct-22.4   | 14.0 MB   | ########## | 100% [A[A
+python-3.14.7        | 25.3 MB   | ########1  |  82% [Ablast-2.16.0         | 141.4 MB  | ##5        |  25% 
+
+
+
+
+ncbi-vdb-3.4.1       | 8.8 MB    |            |   0% [A[A[A[A[A
+
+
+
+
+
+
+rpsbproc-0.5.1       | 5.8 MB    |            |   0% [A[A[A[A[A[A[A
+
+
+
+
+ncbi-vdb-3.4.1       | 8.8 MB    | #4         |  14% [A[A[A[A[A
+python-3.14.7        | 25.3 MB   | #########3 |  93% [A
+
+
+
+
+
+
+rpsbproc-0.5.1       | 5.8 MB    | ###9       |  39% [A[A[A[A[A[A[A
+
+
+
+
+
+libstdcxx-16.2.0     | 6.3 MB    |            |   0% [A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | ##8        |  29% 
+
+
+
+
+ncbi-vdb-3.4.1       | 8.8 MB    | #####3     |  54% [A[A[A[A[A
+
+
+
+
+
+libstdcxx-16.2.0     | 6.3 MB    | #####6     |  57% [A[A[A[A[A[A
+
+
+
+
+
+
+rpsbproc-0.5.1       | 5.8 MB    | ########7  |  87% [A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | ###1       |  32% blast-2.16.0         | 141.4 MB  | ###5       |  36% blast-2.16.0         | 141.4 MB  | ####       |  41% blast-2.16.0         | 141.4 MB  | ####6      |  46% 
+
+
+
+
+ncbi-vdb-3.4.1       | 8.8 MB    | ########## | 100% [A[A[A[A[A
+
+
+
+
+ncbi-vdb-3.4.1       | 8.8 MB    | ########## | 100% [A[A[A[A[A
+python-3.14.7        | 25.3 MB   | ########## | 100% [A
+
+
+
+
+
+libstdcxx-16.2.0     | 6.3 MB    | ########## | 100% [A[A[A[A[A[A
+
+
+
+
+
+libstdcxx-16.2.0     | 6.3 MB    | ########## | 100% [A[A[A[A[A[A
+
+
+
+
+
+
+rpsbproc-0.5.1       | 5.8 MB    | ########## | 100% [A[A[A[A[A[A[A
+
+
+
+
+
+
+
+libhwloc-2.13.0      | 2.3 MB    |            |   1% [A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+perl-encode-3.24     | 1.6 MB    |            |   1% [A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | #####2     |  53% 
+
+
+
+
+
+
+
+
+
+
+krb5-1.22.2          | 1.3 MB    | 1          |   1% [A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+libunistring-0.9.10  | 1.4 MB    | 1          |   1% [A[A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | #####7     |  58% 
+
+
+
+
+
+
+
+
+
+libunistring-0.9.10  | 1.4 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+libunistring-0.9.10  | 1.4 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+krb5-1.22.2          | 1.3 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+krb5-1.22.2          | 1.3 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+perl-encode-3.24     | 1.6 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+perl-encode-3.24     | 1.6 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+libhwloc-2.13.0      | 2.3 MB    | ########## | 100% [A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+libhwloc-2.13.0      | 2.3 MB    | ########## | 100% [A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | ######5    |  66% 
+
+
+
+
+
+
+
+
+
+
+
+pcre2-10.47          | 1.2 MB    | 1          |   1% [A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+pip-26.2.1           | 1.1 MB    | 1          |   1% [A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libiconv-1.18        | 771 KB    | 2          |   2% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | #######1   |  71% 
+
+
+
+
+
+
+
+
+
+
+
+
+
+libgcc-16.2.0        | 1.0 MB    | 1          |   2% [A[A[A[A[A[A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | #######8   |  79% 
+
+
+
+
+
+
+
+
+
+
+
+pcre2-10.47          | 1.2 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+pcre2-10.47          | 1.2 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+pip-26.2.1           | 1.1 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+pip-26.2.1           | 1.1 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+libgcc-16.2.0        | 1.0 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+libgcc-16.2.0        | 1.0 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libiconv-1.18        | 771 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libiconv-1.18        | 771 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | ########4  |  85% 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bowtie-1.3.1         | 734 KB    | 2          |   2% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libnghttp2-1.68.1    | 635 KB    | 2          |   3% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wget-1.25.0          | 729 KB    | 2          |   2% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | #########  |  91% 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bowtie-1.3.1         | 734 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libnghttp2-1.68.1    | 635 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libnghttp2-1.68.1    | 635 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wget-1.25.0          | 729 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wget-1.25.0          | 729 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | #########8 |  98% blast-2.16.0         | 141.4 MB  | ########## | 100% 
+
+
+
+libpython-3.14.7     | 10.0 MB   | ########## | 100% [A[A[A[A
+
+entrez-direct-22.4   | 14.0 MB   | ########## | 100% [A[A
+
+
+
+
+ncbi-vdb-3.4.1       | 8.8 MB    | ########## | 100% [A[A[A[A[A
+
+
+
+
+
+libstdcxx-16.2.0     | 6.3 MB    | ########## | 100% [A[A[A[A[A[A
+
+
+
+
+
+
+rpsbproc-0.5.1       | 5.8 MB    | ########## | 100% [A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+libunistring-0.9.10  | 1.4 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+perl-encode-3.24     | 1.6 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+krb5-1.22.2          | 1.3 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+libhwloc-2.13.0      | 2.3 MB    | ########## | 100% [A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+pcre2-10.47          | 1.2 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+libgcc-16.2.0        | 1.0 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A
+python-3.14.7        | 25.3 MB   | ########## | 100% [A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libiconv-1.18        | 771 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+pip-26.2.1           | 1.1 MB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bowtie-1.3.1         | 734 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bowtie-1.3.1         | 734 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+libnghttp2-1.68.1    | 635 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+perl-5.32.1          | 12.9 MB   | ########## | 100% [A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wget-1.25.0          | 729 KB    | ########## | 100% [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Ablast-2.16.0         | 141.4 MB  | ########## | 100% 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A                                                     
+                                                     [A
+
+                                                     [A[A
+
+
+                                                     [A[A[A
+
+
+
+                                                     [A[A[A[A
+
+
+
+
+                                                     [A[A[A[A[A
+
+
+
+
+
+                                                     [A[A[A[A[A[A
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+[A
+
+[A[A
+
+
+[A[A[A
+
+
+
+[A[A[A[A
+
+
+
+
+[A[A[A[A[A
+
+
+
+
+
+[A[A[A[A[A[A
+
+
+
+
+
+
+[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+[A
+
+[A[A
+
+
+[A[A[A
+
+
+
+[A[A[A[A
+
+
+
+
+[A[A[A[A[A
+
+
+
+
+
+[A[A[A[A[A[A
+
+
+
+
+
+
+[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A done
+Preparing transaction: / - \ | / - \ | / - done
+Verifying transaction: | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ done
+Executing transaction: / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / done
+#
+# To activate this environment, use
+#
+#     $ conda activate /orcd/scratch/orcd/011/dashii/conference_smn2_aso/tools
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+Settings:
+  Output files: "/orcd/scratch/orcd/011/dashii/conference_smn2_aso/indexes/grch38_v50.*.ebwt"
+  Line rate: 6 (line is 64 bytes)
+  Lines per side: 1 (side is 64 bytes)
+  Offset rate: 5 (one in 32)
+  FTable chars: 10
+  Strings: unpacked
+  Max bucket size: default
+  Max bucket size, sqrt multiplier: default
+  Max bucket size, len divisor: 64
+  Difference-cover sample period: 1024
+  Endianness: little
+  Actual local endianness: little
+  Sanity checking: disabled
+  Assertions: disabled
+  Random seed: 0
+  Sizeofs: void*:8, int:4, long:8, size_t:8
+Input files DNA, FASTA:
+  /home/dashii/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa
+Reading reference sizes
+  Time reading reference sizes: 00:00:19
+Calculating joined length
+Writing header
+Reserving space for joined string
+Joining reference sequences
+  Time to join reference sequences: 00:00:11
+bmax according to bmaxDivN setting: 46072308
+Using parameters --bmax 34554231 --dcv 1024
+  Doing ahead-of-time memory usage test
+  Passed!  Constructing with these parameters: --bmax 34554231 --dcv 1024
+Constructing suffix-array element generator
+Building DifferenceCoverSample
+  Building sPrime
+  Building sPrimeOrder
+  V-Sorting samples
+  V-Sorting samples time: 00:00:36
+  Allocating rank array
+  Ranking v-sort output
+  Ranking v-sort output time: 00:00:26
+  Invoking Larsson-Sadakane on ranks
+  Invoking Larsson-Sadakane on ranks time: 00:00:37
+  Sanity-checking and returning
+Building samples
+Reserving space for 172 sample suffixes
+Generating random suffixes
+QSorting 172 sample offsets, eliminating duplicates
+Multikey QSorting 172 samples
+  (Using difference cover)
+  Multikey QSorting samples time: 00:00:00
+QSorting sample offsets, eliminating duplicates time: 00:00:00
+Calculating bucket sizes
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 21, merged 75; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 11, merged 11; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 6, merged 7; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 2, merged 3; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 1, merged 1; iterating...
+Avg bucket size: 2.52019e+07 (target: 34554230)
+Converting suffix-array elements to index image
+Allocating ftab, absorbFtab
+Entering Ebwt loop
+Getting block 1 of 117
+  Reserving size (34554231) for bucket 1
+  Calculating Z arrays for bucket 1
+Getting block 2 of 117
+  Reserving size (34554231) for bucket 2
+  Entering block accumulator loop for bucket 1:
+  Calculating Z arrays for bucket 2
+  Entering block accumulator loop for bucket 2:
+Getting block 3 of 117
+  Reserving size (34554231) for bucket 3
+  Calculating Z arrays for bucket 3
+Getting block 4 of 117
+  Reserving size (34554231) for bucket 4
+  Entering block accumulator loop for bucket 3:
+Getting block 5 of 117
+  Reserving size (34554231) for bucket 5
+Getting block 6 of 117
+  Reserving size (34554231) for bucket 6
+  Calculating Z arrays for bucket 4
+  Calculating Z arrays for bucket 5
+Getting block 7 of 117
+  Reserving size (34554231) for bucket 7
+  Calculating Z arrays for bucket 6
+  Entering block accumulator loop for bucket 5:
+  Entering block accumulator loop for bucket 4:
+  Calculating Z arrays for bucket 7
+Getting block 8 of 117
+  Reserving size (34554231) for bucket 8
+  Entering block accumulator loop for bucket 7:
+  Entering block accumulator loop for bucket 6:
+Getting block 9 of 117
+  Reserving size (34554231) for bucket 9
+Getting block 10 of 117
+  Reserving size (34554231) for bucket 10
+Getting block 11 of 117
+  Reserving size (34554231) for bucket 11
+  Calculating Z arrays for bucket 11
+  Entering block accumulator loop for bucket 11:
+Getting block 12 of 117
+  Reserving size (34554231) for bucket 12
+Getting block 13 of 117
+  Reserving size (34554231) for bucket 13
+  Calculating Z arrays for bucket 8
+  Calculating Z arrays for bucket 13
+  Entering block accumulator loop for bucket 8:
+  Calculating Z arrays for bucket 10
+  Entering block accumulator loop for bucket 10:
+  Calculating Z arrays for bucket 12
+  Entering block accumulator loop for bucket 12:
+Getting block 15 of 117
+  Reserving size (34554231) for bucket 15
+  Calculating Z arrays for bucket 15
+  Entering block accumulator loop for bucket 15:
+Getting block 16 of 117
+  Reserving size (34554231) for bucket 16
+Getting block 14 of 117
+  Reserving size (34554231) for bucket 14
+  Calculating Z arrays for bucket 9
+  Calculating Z arrays for bucket 14
+  Entering block accumulator loop for bucket 14:
+  Entering block accumulator loop for bucket 9:
+  Calculating Z arrays for bucket 16
+  Entering block accumulator loop for bucket 16:
+  Entering block accumulator loop for bucket 13:
+  bucket 1: 10%
+  bucket 3: 10%
+  bucket 2: 10%
+  bucket 7: 10%
+  bucket 4: 10%
+  bucket 5: 10%
+  bucket 9: 10%
+  bucket 8: 10%
+  bucket 6: 10%
+  bucket 13: 10%
+  bucket 14: 10%
+  bucket 10: 10%
+  bucket 15: 10%
+  bucket 12: 10%
+  bucket 11: 10%
+  bucket 16: 10%
+  bucket 1: 20%
+  bucket 2: 20%
+  bucket 3: 20%
+  bucket 7: 20%
+  bucket 4: 20%
+  bucket 5: 20%
+  bucket 9: 20%
+  bucket 6: 20%
+  bucket 8: 20%
+  bucket 13: 20%
+  bucket 14: 20%
+  bucket 10: 20%
+  bucket 15: 20%
+  bucket 12: 20%
+  bucket 11: 20%
+  bucket 16: 20%
+  bucket 1: 30%
+  bucket 2: 30%
+  bucket 3: 30%
+  bucket 7: 30%
+  bucket 4: 30%
+  bucket 5: 30%
+  bucket 9: 30%
+  bucket 6: 30%
+  bucket 8: 30%
+  bucket 14: 30%
+  bucket 13: 30%
+  bucket 10: 30%
+  bucket 15: 30%
+  bucket 11: 30%
+  bucket 12: 30%
+  bucket 16: 30%
+  bucket 1: 40%
+  bucket 2: 40%
+  bucket 3: 40%
+  bucket 4: 40%
+  bucket 7: 40%
+  bucket 5: 40%
+  bucket 9: 40%
+  bucket 6: 40%
+  bucket 8: 40%
+  bucket 14: 40%
+  bucket 13: 40%
+  bucket 15: 40%
+  bucket 12: 40%
+  bucket 10: 40%
+  bucket 11: 40%
+  bucket 1: 50%
+  bucket 2: 50%
+  bucket 16: 40%
+  bucket 3: 50%
+  bucket 4: 50%
+  bucket 7: 50%
+  bucket 5: 50%
+  bucket 8: 50%
+  bucket 9: 50%
+  bucket 6: 50%
+  bucket 14: 50%
+  bucket 13: 50%
+  bucket 10: 50%
+  bucket 15: 50%
+  bucket 1: 60%
+  bucket 11: 50%
+  bucket 12: 50%
+  bucket 2: 60%
+  bucket 3: 60%
+  bucket 4: 60%
+  bucket 16: 50%
+  bucket 7: 60%
+  bucket 8: 60%
+  bucket 5: 60%
+  bucket 9: 60%
+  bucket 6: 60%
+  bucket 14: 60%
+  bucket 13: 60%
+  bucket 1: 70%
+  bucket 10: 60%
+  bucket 15: 60%
+  bucket 2: 70%
+  bucket 3: 70%
+  bucket 11: 60%
+  bucket 12: 60%
+  bucket 4: 70%
+  bucket 7: 70%
+  bucket 16: 60%
+  bucket 8: 70%
+  bucket 9: 70%
+  bucket 6: 70%
+  bucket 5: 70%
+  bucket 1: 80%
+  bucket 14: 70%
+  bucket 13: 70%
+  bucket 3: 80%
+  bucket 2: 80%
+  bucket 10: 70%
+  bucket 15: 70%
+  bucket 4: 80%
+  bucket 11: 70%
+  bucket 12: 70%
+  bucket 7: 80%
+  bucket 16: 70%
+  bucket 8: 80%
+  bucket 1: 90%
+  bucket 6: 80%
+  bucket 9: 80%
+  bucket 5: 80%
+  bucket 3: 90%
+  bucket 2: 90%
+  bucket 14: 80%
+  bucket 13: 80%
+  bucket 4: 90%
+  bucket 10: 80%
+  bucket 15: 80%
+  bucket 12: 80%
+  bucket 11: 80%
+  bucket 7: 90%
+  bucket 16: 80%
+  bucket 1: 100%
+  Sorting block of length 21371706 for bucket 1
+  (Using difference cover)
+  bucket 8: 90%
+  bucket 6: 90%
+  bucket 3: 100%
+  Sorting block of length 24282776 for bucket 3
+  (Using difference cover)
+  bucket 9: 90%
+  bucket 2: 100%
+  Sorting block of length 28174653 for bucket 2
+  (Using difference cover)
+  bucket 5: 90%
+  bucket 14: 90%
+  bucket 13: 90%
+  bucket 4: 100%
+  Sorting block of length 26846803 for bucket 4
+  (Using difference cover)
+  bucket 10: 90%
+  bucket 15: 90%
+  bucket 7: 100%
+  Sorting block of length 26386690 for bucket 7
+  (Using difference cover)
+  bucket 12: 90%
+  bucket 11: 90%
+  bucket 16: 90%
+  bucket 8: 100%
+  Sorting block of length 14025199 for bucket 8
+  (Using difference cover)
+  bucket 6: 100%
+  Sorting block of length 26679521 for bucket 6
+  (Using difference cover)
+  bucket 9: 100%
+  Sorting block of length 21727157 for bucket 9
+  (Using difference cover)
+  bucket 5: 100%
+  Sorting block of length 32539072 for bucket 5
+  (Using difference cover)
+  bucket 14: 100%
+  Sorting block of length 17158619 for bucket 14
+  (Using difference cover)
+  bucket 13: 100%
+  Sorting block of length 28952529 for bucket 13
+  (Using difference cover)
+  bucket 10: 100%
+  Sorting block of length 22821624 for bucket 10
+  (Using difference cover)
+  bucket 15: 100%
+  Sorting block of length 19009059 for bucket 15
+  (Using difference cover)
+  bucket 11: 100%
+  Sorting block of length 24532882 for bucket 11
+  (Using difference cover)
+  bucket 12: 100%
+  Sorting block of length 20727055 for bucket 12
+  (Using difference cover)
+  bucket 16: 100%
+  Sorting block of length 33498246 for bucket 16
+  (Using difference cover)
+  Sorting block time: 00:00:11
+Returning block of 21371707 for bucket 1
+Getting block 17 of 117
+  Reserving size (34554231) for bucket 17
+  Calculating Z arrays for bucket 17
+  Entering block accumulator loop for bucket 17:
+  Sorting block time: 00:00:08
+Returning block of 14025200 for bucket 8
+Getting block 18 of 117
+  Reserving size (34554231) for bucket 18
+  Calculating Z arrays for bucket 18
+  Entering block accumulator loop for bucket 18:
+  Sorting block time: 00:00:13
+Returning block of 24282777 for bucket 3
+  Sorting block time: 00:00:10
+Returning block of 17158620 for bucket 14
+Getting block 19 of 117
+  Reserving size (34554231) for bucket 19
+  Calculating Z arrays for bucket 19
+  Entering block accumulator loop for bucket 19:
+Getting block 20 of 117
+  Reserving size (34554231) for bucket 20
+  Calculating Z arrays for bucket 20
+  Entering block accumulator loop for bucket 20:
+  bucket 17: 10%
+  Sorting block time: 00:00:15
+Returning block of 26846804 for bucket 4
+  Sorting block time: 00:00:13
+Returning block of 21727158 for bucket 9
+  Sorting block time: 00:00:16
+Returning block of 28174654 for bucket 2
+Getting block 21 of 117
+  Reserving size (34554231) for bucket 21
+  Calculating Z arrays for bucket 21
+  Entering block accumulator loop for bucket 21:
+Getting block 22 of 117
+  Reserving size (34554231) for bucket 22
+  Calculating Z arrays for bucket 22
+  Entering block accumulator loop for bucket 22:
+  Sorting block time: 00:00:13
+Returning block of 24532883 for bucket 11
+  Sorting block time: 00:00:16
+Returning block of 26386691 for bucket 7
+Getting block 23 of 117
+  Reserving size (34554231) for bucket 23
+  Calculating Z arrays for bucket 23
+  Entering block accumulator loop for bucket 23:
+  Sorting block time: 00:00:13
+Returning block of 19009060 for bucket 15
+  bucket 18: 10%
+Getting block 24 of 117
+  Reserving size (34554231) for bucket 24
+  Calculating Z arrays for bucket 24
+  Entering block accumulator loop for bucket 24:
+  Sorting block time: 00:00:13
+Returning block of 20727056 for bucket 12
+Getting block 25 of 117
+  Reserving size (34554231) for bucket 25
+  Calculating Z arrays for bucket 25
+  Entering block accumulator loop for bucket 25:
+Getting block 26 of 117
+  Reserving size (34554231) for bucket 26
+  Calculating Z arrays for bucket 26
+  Entering block accumulator loop for bucket 26:
+  Sorting block time: 00:00:14
+Returning block of 22821625 for bucket 10
+Getting block 27 of 117
+  Reserving size (34554231) for bucket 27
+  Calculating Z arrays for bucket 27
+  Entering block accumulator loop for bucket 27:
+Getting block 28 of 117
+  Reserving size (34554231) for bucket 28
+  Calculating Z arrays for bucket 28
+  Entering block accumulator loop for bucket 28:
+  Sorting block time: 00:00:16
+Returning block of 28952530 for bucket 13
+  bucket 19: 10%
+Getting block 29 of 117
+  Reserving size (34554231) for bucket 29
+  Calculating Z arrays for bucket 29
+  Entering block accumulator loop for bucket 29:
+  bucket 20: 10%
+  Sorting block time: 00:00:18
+Returning block of 26679522 for bucket 6
+  Sorting block time: 00:00:18
+Returning block of 32539073 for bucket 5
+Getting block 30 of 117
+  Reserving size (34554231) for bucket 30
+  Calculating Z arrays for bucket 30
+  Entering block accumulator loop for bucket 30:
+Getting block 31 of 117
+  Reserving size (34554231) for bucket 31
+  Calculating Z arrays for bucket 31
+  Entering block accumulator loop for bucket 31:
+  Sorting block time: 00:00:18
+Returning block of 33498247 for bucket 16
+  bucket 17: 20%
+Getting block 32 of 117
+  Reserving size (34554231) for bucket 32
+  Calculating Z arrays for bucket 32
+  Entering block accumulator loop for bucket 32:
+  bucket 23: 10%
+  bucket 21: 10%
+  bucket 22: 10%
+  bucket 24: 10%
+  bucket 25: 10%
+  bucket 18: 20%
+  bucket 27: 10%
+  bucket 26: 10%
+  bucket 28: 10%
+  bucket 29: 10%
+  bucket 20: 20%
+  bucket 30: 10%
+  bucket 19: 20%
+  bucket 31: 10%
+  bucket 17: 30%
+  bucket 23: 20%
+  bucket 22: 20%
+  bucket 32: 10%
+  bucket 21: 20%
+  bucket 25: 20%
+  bucket 24: 20%
+  bucket 27: 20%
+  bucket 26: 20%
+  bucket 18: 30%
+  bucket 29: 20%
+  bucket 28: 20%
+  bucket 20: 30%
+  bucket 17: 40%
+  bucket 19: 30%
+  bucket 30: 20%
+  bucket 31: 20%
+  bucket 23: 30%
+  bucket 21: 30%
+  bucket 22: 30%
+  bucket 24: 30%
+  bucket 25: 30%
+  bucket 27: 30%
+  bucket 32: 20%
+  bucket 19: 40%
+  bucket 17: 50%
+  bucket 28: 30%
+  bucket 29: 30%
+  bucket 20: 40%
+  bucket 26: 30%
+  bucket 18: 40%
+  bucket 30: 30%
+  bucket 21: 40%
+  bucket 23: 40%
+  bucket 31: 30%
+  bucket 22: 40%
+  bucket 32: 30%
+  bucket 19: 50%
+  bucket 27: 40%
+  bucket 29: 40%
+  bucket 24: 40%
+  bucket 17: 60%
+  bucket 20: 50%
+  bucket 25: 40%
+  bucket 18: 50%
+  bucket 26: 40%
+  bucket 28: 40%
+  bucket 30: 40%
+  bucket 21: 50%
+  bucket 23: 50%
+  bucket 31: 40%
+  bucket 22: 50%
+  bucket 19: 60%
+  bucket 27: 50%
+  bucket 17: 70%
+  bucket 32: 40%
+  bucket 24: 50%
+  bucket 20: 60%
+  bucket 29: 50%
+  bucket 25: 50%
+  bucket 18: 60%
+  bucket 21: 60%
+  bucket 26: 50%
+  bucket 28: 50%
+  bucket 30: 50%
+  bucket 23: 60%
+  bucket 19: 70%
+  bucket 31: 50%
+  bucket 22: 60%
+  bucket 27: 60%
+  bucket 32: 50%
+  bucket 17: 80%
+  bucket 20: 70%
+  bucket 29: 60%
+  bucket 24: 60%
+  bucket 21: 70%
+  bucket 18: 70%
+  bucket 25: 60%
+  bucket 28: 60%
+  bucket 26: 60%
+  bucket 30: 60%
+  bucket 23: 70%
+  bucket 19: 80%
+  bucket 22: 70%
+  bucket 31: 60%
+  bucket 17: 90%
+  bucket 27: 70%
+  bucket 20: 80%
+  bucket 29: 70%
+  bucket 32: 60%
+  bucket 24: 70%
+  bucket 30: 70%
+  bucket 26: 70%
+  bucket 21: 80%
+  bucket 25: 70%
+  bucket 28: 70%
+  bucket 18: 80%
+  bucket 23: 80%
+  bucket 27: 80%
+  bucket 17: 100%
+  Sorting block of length 24343258 for bucket 17
+  (Using difference cover)
+  bucket 22: 80%
+  bucket 20: 90%
+  bucket 30: 80%
+  bucket 26: 80%
+  bucket 31: 70%
+  bucket 19: 90%
+  bucket 32: 70%
+  bucket 29: 80%
+  bucket 24: 80%
+  bucket 28: 80%
+  bucket 27: 90%
+  bucket 25: 80%
+  bucket 21: 90%
+  bucket 18: 90%
+  bucket 30: 90%
+  bucket 23: 90%
+  bucket 26: 90%
+  bucket 22: 90%
+  bucket 20: 100%
+  Sorting block of length 12108995 for bucket 20
+  (Using difference cover)
+  bucket 27: 100%
+  Sorting block of length 12929575 for bucket 27
+  (Using difference cover)
+  Sorting block time: 00:00:12
+Returning block of 24343259 for bucket 17
+  bucket 19: 100%
+  Sorting block of length 24568798 for bucket 19
+  (Using difference cover)
+Getting block 33 of 117
+  Reserving size (34554231) for bucket 33
+  Calculating Z arrays for bucket 33
+  Entering block accumulator loop for bucket 33:
+  bucket 24: 90%
+  bucket 28: 90%
+  bucket 32: 80%
+  bucket 29: 90%
+  bucket 30: 100%
+  Sorting block of length 16638840 for bucket 30
+  (Using difference cover)
+  bucket 26: 100%
+  Sorting block of length 28982575 for bucket 26
+  (Using difference cover)
+  bucket 21: 100%
+  Sorting block of length 31760342 for bucket 21
+  (Using difference cover)
+  bucket 31: 80%
+  bucket 25: 90%
+  Sorting block time: 00:00:06
+Returning block of 12929576 for bucket 27
+  Sorting block time: 00:00:08
+Returning block of 12108996 for bucket 20
+Getting block 34 of 117
+  Reserving size (34554231) for bucket 34
+  Calculating Z arrays for bucket 34
+  Entering block accumulator loop for bucket 34:
+Getting block 35 of 117
+  Reserving size (34554231) for bucket 35
+  Calculating Z arrays for bucket 35
+  Entering block accumulator loop for bucket 35:
+  bucket 23: 100%
+  Sorting block of length 13989583 for bucket 23
+  (Using difference cover)
+  bucket 18: 100%
+  Sorting block of length 29620482 for bucket 18
+  (Using difference cover)
+  bucket 24: 100%
+  Sorting block of length 31677563 for bucket 24
+  (Using difference cover)
+  bucket 22: 100%
+  Sorting block of length 32059895 for bucket 22
+  (Using difference cover)
+  bucket 33: 10%
+  bucket 28: 100%
+  Sorting block of length 26000045 for bucket 28
+  (Using difference cover)
+  bucket 32: 90%
+  bucket 34: 10%
+  bucket 25: 100%
+  Sorting block of length 32302897 for bucket 25
+  (Using difference cover)
+  bucket 29: 100%
+  Sorting block of length 31314716 for bucket 29
+  (Using difference cover)
+  Sorting block time: 00:00:09
+Returning block of 16638841 for bucket 30
+  bucket 31: 90%
+Getting block 36 of 117
+  Reserving size (34554231) for bucket 36
+  Calculating Z arrays for bucket 36
+  Entering block accumulator loop for bucket 36:
+  bucket 35: 10%
+  Sorting block time: 00:00:07
+Returning block of 13989584 for bucket 23
+  Sorting block time: 00:00:14
+Returning block of 24568799 for bucket 19
+Getting block 37 of 117
+  Reserving size (34554231) for bucket 37
+  Calculating Z arrays for bucket 37
+  Entering block accumulator loop for bucket 37:
+Getting block 38 of 117
+  Reserving size (34554231) for bucket 38
+  Calculating Z arrays for bucket 38
+  Entering block accumulator loop for bucket 38:
+  bucket 33: 20%
+  bucket 32: 100%
+  Sorting block of length 25183472 for bucket 32
+  (Using difference cover)
+  bucket 34: 20%
+  bucket 35: 20%
+  bucket 36: 10%
+  bucket 31: 100%
+  Sorting block of length 24903258 for bucket 31
+  (Using difference cover)
+  bucket 38: 10%
+  bucket 37: 10%
+  bucket 33: 30%
+  bucket 34: 30%
+  bucket 35: 30%
+  Sorting block time: 00:00:18
+Returning block of 28982576 for bucket 26
+  bucket 36: 20%
+Getting block 39 of 117
+  Reserving size (34554231) for bucket 39
+  Calculating Z arrays for bucket 39
+  Entering block accumulator loop for bucket 39:
+  bucket 38: 20%
+  bucket 37: 20%
+  bucket 34: 40%
+  bucket 33: 40%
+  Sorting block time: 00:00:20
+Returning block of 31760343 for bucket 21
+Getting block 40 of 117
+  Reserving size (34554231) for bucket 40
+  Calculating Z arrays for bucket 40
+  Entering block accumulator loop for bucket 40:
+  Sorting block time: 00:00:16
+Returning block of 29620483 for bucket 18
+  Sorting block time: 00:00:13
+Returning block of 26000046 for bucket 28
+  bucket 35: 40%
+Getting block 41 of 117
+  Reserving size (34554231) for bucket 41
+  Calculating Z arrays for bucket 41
+  Entering block accumulator loop for bucket 41:
+Getting block 42 of 117
+  Reserving size (34554231) for bucket 42
+  Calculating Z arrays for bucket 42
+  Entering block accumulator loop for bucket 42:
+  bucket 36: 30%
+  bucket 39: 10%
+  bucket 38: 30%
+  bucket 34: 50%
+  Sorting block time: 00:00:18
+Returning block of 31677564 for bucket 24
+  bucket 37: 30%
+Getting block 43 of 117
+  Reserving size (34554231) for bucket 43
+  Calculating Z arrays for bucket 43
+  Entering block accumulator loop for bucket 43:
+  Sorting block time: 00:00:17
+Returning block of 31314717 for bucket 29
+  Sorting block time: 00:00:14
+Returning block of 25183473 for bucket 32
+  bucket 33: 50%
+Getting block 44 of 117
+  Reserving size (34554231) for bucket 44
+  Calculating Z arrays for bucket 44
+  Entering block accumulator loop for bucket 44:
+Getting block 45 of 117
+  Reserving size (34554231) for bucket 45
+  Calculating Z arrays for bucket 45
+  Entering block accumulator loop for bucket 45:
+  Sorting block time: 00:00:12
+Returning block of 24903259 for bucket 31
+Getting block 46 of 117
+  Reserving size (34554231) for bucket 46
+  Calculating Z arrays for bucket 46
+  Entering block accumulator loop for bucket 46:
+  Sorting block time: 00:00:19
+Returning block of 32302898 for bucket 25
+  bucket 40: 10%
+  Sorting block time: 00:00:22
+Returning block of 32059896 for bucket 22
+Getting block 47 of 117
+  Reserving size (34554231) for bucket 47
+  Calculating Z arrays for bucket 47
+  Entering block accumulator loop for bucket 47:
+  bucket 39: 20%
+  bucket 36: 40%
+Getting block 48 of 117
+  Reserving size (34554231) for bucket 48
+  Calculating Z arrays for bucket 48
+  Entering block accumulator loop for bucket 48:
+  bucket 35: 50%
+  bucket 34: 60%
+  bucket 41: 10%
+  bucket 42: 10%
+  bucket 38: 40%
+  bucket 33: 60%
+  bucket 37: 40%
+  bucket 44: 10%
+  bucket 43: 10%
+  bucket 45: 10%
+  bucket 39: 30%
+  bucket 36: 50%
+  bucket 46: 10%
+  bucket 34: 70%
+  bucket 47: 10%
+  bucket 48: 10%
+  bucket 40: 20%
+  bucket 35: 60%
+  bucket 41: 20%
+  bucket 42: 20%
+  bucket 38: 50%
+  bucket 39: 40%
+  bucket 33: 70%
+  bucket 37: 50%
+  bucket 34: 80%
+  bucket 43: 20%
+  bucket 36: 60%
+  bucket 45: 20%
+  bucket 44: 20%
+  bucket 46: 20%
+  bucket 47: 20%
+  bucket 48: 20%
+  bucket 41: 30%
+  bucket 35: 70%
+  bucket 37: 60%
+  bucket 38: 60%
+  bucket 40: 30%
+  bucket 39: 50%
+  bucket 42: 30%
+  bucket 33: 80%
+  bucket 34: 90%
+  bucket 44: 30%
+  bucket 43: 30%
+  bucket 36: 70%
+  bucket 45: 30%
+  bucket 47: 30%
+  bucket 46: 30%
+  bucket 48: 30%
+  bucket 35: 80%
+  bucket 41: 40%
+  bucket 38: 70%
+  bucket 33: 90%
+  bucket 37: 70%
+  bucket 39: 60%
+  bucket 34: 100%
+  Sorting block of length 17214450 for bucket 34
+  (Using difference cover)
+  bucket 40: 40%
+  bucket 43: 40%
+  bucket 45: 40%
+  bucket 42: 40%
+  bucket 44: 40%
+  bucket 47: 40%
+  bucket 36: 80%
+  bucket 48: 40%
+  bucket 35: 90%
+  bucket 46: 40%
+  bucket 41: 50%
+  bucket 38: 80%
+  bucket 45: 50%
+  Sorting block time: 00:00:09
+Returning block of 17214451 for bucket 34
+  bucket 39: 70%
+Getting block 49 of 117
+  Reserving size (34554231) for bucket 49
+  Calculating Z arrays for bucket 49
+  Entering block accumulator loop for bucket 49:
+  bucket 43: 50%
+  bucket 33: 100%
+  Sorting block of length 29872020 for bucket 33
+  (Using difference cover)
+  bucket 40: 50%
+  bucket 47: 50%
+  bucket 37: 80%
+  bucket 42: 50%
+  bucket 35: 100%
+  Sorting block of length 20135321 for bucket 35
+  (Using difference cover)
+  bucket 44: 50%
+  bucket 36: 90%
+  bucket 48: 50%
+  bucket 41: 60%
+  bucket 46: 50%
+  bucket 45: 60%
+  bucket 38: 90%
+  bucket 39: 80%
+  bucket 49: 10%
+  bucket 40: 60%
+  bucket 43: 60%
+  bucket 37: 90%
+  bucket 47: 60%
+  Sorting block time: 00:00:11
+Returning block of 20135322 for bucket 35
+  bucket 42: 60%
+Getting block 50 of 117
+  Reserving size (34554231) for bucket 50
+  Calculating Z arrays for bucket 50
+  Entering block accumulator loop for bucket 50:
+  bucket 44: 60%
+  Sorting block time: 00:00:16
+Returning block of 29872021 for bucket 33
+  bucket 36: 100%
+  Sorting block of length 31043390 for bucket 36
+  (Using difference cover)
+  bucket 45: 70%
+Getting block 51 of 117
+  Reserving size (34554231) for bucket 51
+  Calculating Z arrays for bucket 51
+  Entering block accumulator loop for bucket 51:
+  bucket 46: 60%
+  bucket 41: 70%
+  bucket 48: 60%
+  bucket 38: 100%
+  Sorting block of length 31496060 for bucket 38
+  (Using difference cover)
+  bucket 39: 90%
+  bucket 49: 20%
+  bucket 40: 70%
+  bucket 37: 100%
+  Sorting block of length 24789964 for bucket 37
+  (Using difference cover)
+  bucket 47: 70%
+  bucket 43: 70%
+  bucket 44: 70%
+  bucket 50: 10%
+  bucket 46: 70%
+  bucket 48: 70%
+  bucket 42: 70%
+  bucket 41: 80%
+  bucket 51: 10%
+  bucket 45: 80%
+  bucket 39: 100%
+  Sorting block of length 34406469 for bucket 39
+  (Using difference cover)
+  bucket 49: 30%
+  Sorting block time: 00:00:17
+Returning block of 31043391 for bucket 36
+Getting block 52 of 117
+  Reserving size (34554231) for bucket 52
+  Calculating Z arrays for bucket 52
+  Entering block accumulator loop for bucket 52:
+  bucket 47: 80%
+  bucket 40: 80%
+  Sorting block time: 00:00:16
+Returning block of 31496061 for bucket 38
+  bucket 48: 80%
+  bucket 43: 80%
+  Sorting block time: 00:00:14
+Returning block of 24789965 for bucket 37
+  bucket 44: 80%
+Getting block 53 of 117
+  Reserving size (34554231) for bucket 53
+  Calculating Z arrays for bucket 53
+  Entering block accumulator loop for bucket 53:
+  bucket 50: 20%
+Getting block 54 of 117
+  Reserving size (34554231) for bucket 54
+  Calculating Z arrays for bucket 54
+  Entering block accumulator loop for bucket 54:
+  bucket 46: 80%
+  bucket 41: 90%
+  bucket 45: 90%
+  bucket 51: 20%
+  bucket 49: 40%
+  bucket 42: 80%
+  bucket 47: 90%
+  bucket 52: 10%
+  bucket 48: 90%
+  bucket 44: 90%
+  bucket 54: 10%
+  bucket 50: 30%
+  bucket 41: 100%
+  Sorting block of length 23220156 for bucket 41
+  (Using difference cover)
+  bucket 53: 10%
+  bucket 40: 90%
+  bucket 43: 90%
+  bucket 46: 90%
+  Sorting block time: 00:00:20
+Returning block of 34406470 for bucket 39
+Getting block 55 of 117
+  Reserving size (34554231) for bucket 55
+  Calculating Z arrays for bucket 55
+  Entering block accumulator loop for bucket 55:
+  bucket 49: 50%
+  bucket 48: 100%
+  Sorting block of length 25702777 for bucket 48
+  (Using difference cover)
+  bucket 47: 100%
+  Sorting block of length 26520708 for bucket 47
+  (Using difference cover)
+  bucket 45: 100%
+  Sorting block of length 23646511 for bucket 45
+  (Using difference cover)
+  bucket 51: 30%
+  bucket 52: 20%
+  bucket 42: 90%
+  bucket 44: 100%
+  Sorting block of length 21491646 for bucket 44
+  (Using difference cover)
+  bucket 50: 40%
+  bucket 54: 20%
+  bucket 40: 100%
+  Sorting block of length 31469300 for bucket 40
+  (Using difference cover)
+  Sorting block time: 00:00:12
+Returning block of 23220157 for bucket 41
+  bucket 53: 20%
+Getting block 56 of 117
+  Reserving size (34554231) for bucket 56
+  Calculating Z arrays for bucket 56
+  Entering block accumulator loop for bucket 56:
+  bucket 43: 100%
+  Sorting block of length 14579070 for bucket 43
+  (Using difference cover)
+  bucket 46: 100%
+  Sorting block of length 22651306 for bucket 46
+  (Using difference cover)
+  bucket 55: 10%
+  bucket 49: 60%
+  bucket 51: 40%
+  Sorting block time: 00:00:11
+Returning block of 23646512 for bucket 45
+Getting block 57 of 117
+  Reserving size (34554231) for bucket 57
+  Calculating Z arrays for bucket 57
+  Entering block accumulator loop for bucket 57:
+  bucket 52: 30%
+  bucket 42: 100%
+  Sorting block of length 27285773 for bucket 42
+  (Using difference cover)
+  Sorting block time: 00:00:13
+Returning block of 26520709 for bucket 47
+Getting block 58 of 117
+  Reserving size (34554231) for bucket 58
+  Calculating Z arrays for bucket 58
+  Entering block accumulator loop for bucket 58:
+  Sorting block time: 00:00:08
+Returning block of 14579071 for bucket 43
+Getting block 59 of 117
+  Reserving size (34554231) for bucket 59
+  Calculating Z arrays for bucket 59
+  Entering block accumulator loop for bucket 59:
+  Sorting block time: 00:00:12
+Returning block of 21491647 for bucket 44
+  bucket 54: 30%
+  Sorting block time: 00:00:16
+Returning block of 25702778 for bucket 48
+Getting block 60 of 117
+  Reserving size (34554231) for bucket 60
+  Calculating Z arrays for bucket 60
+  Entering block accumulator loop for bucket 60:
+  bucket 53: 30%
+Getting block 61 of 117
+  Reserving size (34554231) for bucket 61
+  Calculating Z arrays for bucket 61
+  Entering block accumulator loop for bucket 61:
+  bucket 50: 50%
+  bucket 56: 10%
+  bucket 55: 20%
+  bucket 49: 70%
+  bucket 51: 50%
+  Sorting block time: 00:00:14
+Returning block of 22651307 for bucket 46
+  Sorting block time: 00:00:16
+Returning block of 31469301 for bucket 40
+Getting block 62 of 117
+  Reserving size (34554231) for bucket 62
+  Calculating Z arrays for bucket 62
+  Entering block accumulator loop for bucket 62:
+Getting block 63 of 117
+  Reserving size (34554231) for bucket 63
+  Calculating Z arrays for bucket 63
+  Entering block accumulator loop for bucket 63:
+  bucket 52: 40%
+  bucket 57: 10%
+  bucket 58: 10%
+  bucket 54: 40%
+  bucket 61: 10%
+  bucket 56: 20%
+  bucket 59: 10%
+  bucket 53: 40%
+  bucket 60: 10%
+  bucket 50: 60%
+  Sorting block time: 00:00:17
+Returning block of 27285774 for bucket 42
+Getting block 64 of 117
+  Reserving size (34554231) for bucket 64
+  Calculating Z arrays for bucket 64
+  Entering block accumulator loop for bucket 64:
+  bucket 55: 30%
+  bucket 49: 80%
+  bucket 51: 60%
+  bucket 62: 10%
+  bucket 63: 10%
+  bucket 57: 20%
+  bucket 54: 50%
+  bucket 58: 20%
+  bucket 52: 50%
+  bucket 50: 70%
+  bucket 61: 20%
+  bucket 59: 20%
+  bucket 53: 50%
+  bucket 51: 70%
+  bucket 56: 30%
+  bucket 49: 90%
+  bucket 55: 40%
+  bucket 62: 20%
+  bucket 60: 20%
+  bucket 54: 60%
+  bucket 64: 10%
+  bucket 57: 30%
+  bucket 58: 30%
+  bucket 63: 20%
+  bucket 52: 60%
+  bucket 50: 80%
+  bucket 61: 30%
+  bucket 51: 80%
+  bucket 59: 30%
+  bucket 53: 60%
+  bucket 49: 100%
+  Sorting block of length 13654348 for bucket 49
+  (Using difference cover)
+  bucket 62: 30%
+  bucket 55: 50%
+  bucket 54: 70%
+  bucket 56: 40%
+  bucket 58: 40%
+  bucket 63: 30%
+  bucket 57: 40%
+  bucket 60: 30%
+  bucket 52: 70%
+  bucket 64: 20%
+  bucket 50: 90%
+  bucket 51: 90%
+  Sorting block time: 00:00:08
+Returning block of 13654349 for bucket 49
+Getting block 65 of 117
+  Reserving size (34554231) for bucket 65
+  Calculating Z arrays for bucket 65
+  Entering block accumulator loop for bucket 65:
+  bucket 61: 40%
+  bucket 54: 80%
+  bucket 62: 40%
+  bucket 55: 60%
+  bucket 59: 40%
+  bucket 53: 70%
+  bucket 58: 50%
+  bucket 56: 50%
+  bucket 63: 40%
+  bucket 52: 80%
+  bucket 57: 50%
+  bucket 60: 40%
+  bucket 51: 100%
+  Sorting block of length 14641881 for bucket 51
+  (Using difference cover)
+  bucket 50: 100%
+  Sorting block of length 28359908 for bucket 50
+  (Using difference cover)
+  bucket 64: 30%
+  bucket 65: 10%
+  bucket 54: 90%
+  bucket 61: 50%
+  bucket 55: 70%
+  bucket 53: 80%
+  bucket 58: 60%
+  bucket 59: 50%
+  bucket 56: 60%
+  bucket 62: 50%
+  bucket 63: 50%
+  bucket 52: 90%
+  bucket 57: 60%
+  bucket 60: 50%
+  Sorting block time: 00:00:08
+Returning block of 14641882 for bucket 51
+Getting block 66 of 117
+  Reserving size (34554231) for bucket 66
+  Calculating Z arrays for bucket 66
+  Entering block accumulator loop for bucket 66:
+  bucket 54: 100%
+  Sorting block of length 23702987 for bucket 54
+  (Using difference cover)
+  bucket 65: 20%
+  bucket 64: 40%
+  bucket 61: 60%
+  bucket 55: 80%
+  bucket 53: 90%
+  bucket 62: 60%
+  bucket 58: 70%
+  bucket 52: 100%
+  Sorting block of length 30509109 for bucket 52
+  (Using difference cover)
+  Sorting block time: 00:00:14
+Returning block of 28359909 for bucket 50
+  bucket 63: 60%
+Getting block 67 of 117
+  Reserving size (34554231) for bucket 67
+  Calculating Z arrays for bucket 67
+  Entering block accumulator loop for bucket 67:
+  bucket 56: 70%
+  bucket 57: 70%
+  bucket 59: 60%
+  bucket 65: 30%
+  bucket 66: 10%
+  bucket 55: 90%
+  bucket 61: 70%
+  bucket 62: 70%
+  Sorting block time: 00:00:14
+Returning block of 23702988 for bucket 54
+  bucket 64: 50%
+Getting block 68 of 117
+  Reserving size (34554231) for bucket 68
+  Calculating Z arrays for bucket 68
+  Entering block accumulator loop for bucket 68:
+  bucket 60: 60%
+  bucket 53: 100%
+  Sorting block of length 21327235 for bucket 53
+  (Using difference cover)
+  bucket 63: 70%
+  bucket 58: 80%
+  bucket 65: 40%
+  bucket 67: 10%
+  bucket 57: 80%
+  bucket 62: 80%
+  bucket 56: 80%
+  bucket 59: 70%
+  bucket 55: 100%
+  Sorting block of length 33546496 for bucket 55
+  (Using difference cover)
+  bucket 66: 20%
+  Sorting block time: 00:00:18
+Returning block of 30509110 for bucket 52
+  bucket 61: 80%
+Getting block 69 of 117
+  Reserving size (34554231) for bucket 69
+  Calculating Z arrays for bucket 69
+  Entering block accumulator loop for bucket 69:
+  bucket 68: 10%
+  bucket 64: 60%
+  bucket 63: 80%
+  bucket 60: 70%
+  Sorting block time: 00:00:12
+Returning block of 21327236 for bucket 53
+Getting block 70 of 117
+  Reserving size (34554231) for bucket 70
+  Calculating Z arrays for bucket 70
+  Entering block accumulator loop for bucket 70:
+  bucket 58: 90%
+  bucket 65: 50%
+  bucket 57: 90%
+  bucket 56: 90%
+  bucket 66: 30%
+  bucket 62: 90%
+  bucket 67: 20%
+  bucket 59: 80%
+  bucket 69: 10%
+  bucket 68: 20%
+  bucket 61: 90%
+  bucket 64: 70%
+  bucket 57: 100%
+  Sorting block of length 15049621 for bucket 57
+  (Using difference cover)
+  bucket 65: 60%
+  bucket 63: 90%
+  bucket 60: 80%
+  Sorting block time: 00:00:19
+Returning block of 33546497 for bucket 55
+  bucket 58: 100%
+  Sorting block of length 31713957 for bucket 58
+  (Using difference cover)
+  bucket 70: 10%
+  bucket 69: 20%
+Getting block 71 of 117
+  Reserving size (34554231) for bucket 71
+  Calculating Z arrays for bucket 71
+  Entering block accumulator loop for bucket 71:
+  bucket 56: 100%
+  Sorting block of length 21855925 for bucket 56
+  (Using difference cover)
+  bucket 66: 40%
+  bucket 67: 30%
+  bucket 62: 100%
+  Sorting block of length 32249039 for bucket 62
+  (Using difference cover)
+  bucket 68: 30%
+  bucket 61: 100%
+  Sorting block of length 24734491 for bucket 61
+  (Using difference cover)
+  bucket 65: 70%
+  bucket 59: 90%
+  bucket 64: 80%
+  Sorting block time: 00:00:10
+Returning block of 15049622 for bucket 57
+  bucket 63: 100%
+  Sorting block of length 23333746 for bucket 63
+  (Using difference cover)
+Getting block 72 of 117
+  Reserving size (34554231) for bucket 72
+  Calculating Z arrays for bucket 72
+  Entering block accumulator loop for bucket 72:
+  bucket 70: 20%
+  bucket 69: 30%
+  bucket 60: 90%
+  bucket 66: 50%
+  bucket 67: 40%
+  bucket 71: 10%
+  bucket 65: 80%
+  bucket 59: 100%
+  Sorting block of length 28596053 for bucket 59
+  (Using difference cover)
+  bucket 68: 40%
+  Sorting block time: 00:00:12
+Returning block of 21855926 for bucket 56
+  bucket 64: 90%
+Getting block 73 of 117
+  Reserving size (34554231) for bucket 73
+  Calculating Z arrays for bucket 73
+  Entering block accumulator loop for bucket 73:
+  bucket 70: 30%
+  bucket 72: 10%
+  bucket 69: 40%
+  bucket 66: 60%
+  bucket 60: 100%
+  Sorting block of length 20096070 for bucket 60
+  (Using difference cover)
+  Sorting block time: 00:00:17
+Returning block of 31713958 for bucket 58
+  bucket 67: 50%
+  Sorting block time: 00:00:14
+Returning block of 24734492 for bucket 61
+Getting block 74 of 117
+  Reserving size (34554231) for bucket 74
+  Calculating Z arrays for bucket 74
+  Entering block accumulator loop for bucket 74:
+  bucket 65: 90%
+Getting block 75 of 117
+  Reserving size (34554231) for bucket 75
+  Calculating Z arrays for bucket 75
+  Entering block accumulator loop for bucket 75:
+  Sorting block time: 00:00:16
+Returning block of 32249040 for bucket 62
+  Sorting block time: 00:00:11
+Returning block of 23333747 for bucket 63
+  bucket 71: 20%
+Getting block 76 of 117
+  Reserving size (34554231) for bucket 76
+  Calculating Z arrays for bucket 76
+  Entering block accumulator loop for bucket 76:
+Getting block 77 of 117
+  Reserving size (34554231) for bucket 77
+  Calculating Z arrays for bucket 77
+  Entering block accumulator loop for bucket 77:
+  bucket 70: 40%
+  bucket 73: 10%
+  bucket 68: 50%
+  bucket 64: 100%
+  Sorting block of length 33036647 for bucket 64
+  (Using difference cover)
+  bucket 72: 20%
+  bucket 69: 50%
+  bucket 66: 70%
+  bucket 67: 60%
+  Sorting block time: 00:00:14
+Returning block of 28596054 for bucket 59
+  bucket 65: 100%
+  Sorting block of length 19498246 for bucket 65
+  (Using difference cover)
+  Sorting block time: 00:00:12
+Returning block of 20096071 for bucket 60
+Getting block 78 of 117
+  Reserving size (34554231) for bucket 78
+  Calculating Z arrays for bucket 78
+  Entering block accumulator loop for bucket 78:
+Getting block 79 of 117
+  Reserving size (34554231) for bucket 79
+  Calculating Z arrays for bucket 79
+  Entering block accumulator loop for bucket 79:
+  bucket 74: 10%
+  bucket 75: 10%
+  bucket 76: 10%
+  bucket 71: 30%
+  bucket 70: 50%
+  bucket 69: 60%
+  bucket 73: 20%
+  bucket 68: 60%
+  bucket 66: 80%
+  bucket 77: 10%
+  bucket 72: 30%
+  bucket 67: 70%
+  Sorting block time: 00:00:11
+Returning block of 19498247 for bucket 65
+Getting block 80 of 117
+  Reserving size (34554231) for bucket 80
+  Calculating Z arrays for bucket 80
+  Entering block accumulator loop for bucket 80:
+  Sorting block time: 00:00:17
+Returning block of 33036648 for bucket 64
+Getting block 81 of 117
+  Reserving size (34554231) for bucket 81
+  Calculating Z arrays for bucket 81
+  Entering block accumulator loop for bucket 81:
+  bucket 78: 10%
+  bucket 79: 10%
+  bucket 76: 20%
+  bucket 74: 20%
+  bucket 69: 70%
+  bucket 71: 40%
+  bucket 75: 20%
+  bucket 70: 60%
+  bucket 66: 90%
+  bucket 68: 70%
+  bucket 73: 30%
+  bucket 67: 80%
+  bucket 77: 20%
+  bucket 72: 40%
+  bucket 80: 10%
+  bucket 79: 20%
+  bucket 78: 20%
+  bucket 76: 30%
+  bucket 81: 10%
+  bucket 69: 80%
+  bucket 71: 50%
+  bucket 75: 30%
+  bucket 68: 80%
+  bucket 74: 30%
+  bucket 66: 100%
+  Sorting block of length 29121464 for bucket 66
+  (Using difference cover)
+  bucket 77: 30%
+  bucket 67: 90%
+  bucket 73: 40%
+  bucket 70: 70%
+  bucket 72: 50%
+  bucket 80: 20%
+  bucket 79: 30%
+  bucket 78: 30%
+  bucket 76: 40%
+  bucket 69: 90%
+  bucket 75: 40%
+  bucket 68: 90%
+  bucket 71: 60%
+  bucket 81: 20%
+  bucket 74: 40%
+  bucket 67: 100%
+  Sorting block of length 32047555 for bucket 67
+  (Using difference cover)
+  bucket 77: 40%
+  Sorting block time: 00:00:17
+Returning block of 29121465 for bucket 66
+  bucket 72: 60%
+Getting block 82 of 117
+  Reserving size (34554231) for bucket 82
+  Calculating Z arrays for bucket 82
+  Entering block accumulator loop for bucket 82:
+  bucket 73: 50%
+  bucket 70: 80%
+  bucket 80: 30%
+  bucket 79: 40%
+  bucket 78: 40%
+  bucket 76: 50%
+  bucket 68: 100%
+  Sorting block of length 33224535 for bucket 68
+  (Using difference cover)
+  bucket 69: 100%
+  Sorting block of length 14009657 for bucket 69
+  (Using difference cover)
+  bucket 75: 50%
+  bucket 71: 70%
+  bucket 74: 50%
+  bucket 77: 50%
+  bucket 72: 70%
+  bucket 81: 30%
+  bucket 82: 10%
+  Sorting block time: 00:00:17
+Returning block of 32047556 for bucket 67
+  bucket 70: 90%
+Getting block 83 of 117
+  Reserving size (34554231) for bucket 83
+  Calculating Z arrays for bucket 83
+  Entering block accumulator loop for bucket 83:
+  bucket 80: 40%
+  bucket 73: 60%
+  Sorting block time: 00:00:08
+Returning block of 14009658 for bucket 69
+Getting block 84 of 117
+  Reserving size (34554231) for bucket 84
+  Calculating Z arrays for bucket 84
+  Entering block accumulator loop for bucket 84:
+  bucket 79: 50%
+  bucket 78: 50%
+  bucket 76: 60%
+  bucket 71: 80%
+  bucket 75: 60%
+  bucket 74: 60%
+  bucket 77: 60%
+  bucket 72: 80%
+  bucket 81: 40%
+  bucket 82: 20%
+  bucket 73: 70%
+  bucket 70: 100%
+  Sorting block of length 24340745 for bucket 70
+  (Using difference cover)
+  bucket 80: 50%
+  bucket 83: 10%
+  bucket 84: 10%
+  bucket 78: 60%
+  bucket 76: 70%
+  bucket 74: 70%
+  bucket 79: 60%
+  bucket 71: 90%
+  bucket 75: 70%
+  Sorting block time: 00:00:18
+Returning block of 33224536 for bucket 68
+  bucket 77: 70%
+Getting block 85 of 117
+  Reserving size (34554231) for bucket 85
+  Calculating Z arrays for bucket 85
+  Entering block accumulator loop for bucket 85:
+  bucket 72: 90%
+  bucket 81: 50%
+  bucket 82: 30%
+  bucket 73: 80%
+  bucket 80: 60%
+  bucket 84: 20%
+  bucket 76: 80%
+  bucket 74: 80%
+  bucket 83: 20%
+  bucket 78: 70%
+  bucket 75: 80%
+  bucket 71: 100%
+  Sorting block of length 33059507 for bucket 71
+  (Using difference cover)
+  bucket 79: 70%
+  Sorting block time: 00:00:12
+Returning block of 24340746 for bucket 70
+  bucket 77: 80%
+  bucket 85: 10%
+Getting block 86 of 117
+  Reserving size (34554231) for bucket 86
+  Calculating Z arrays for bucket 86
+  Entering block accumulator loop for bucket 86:
+  bucket 72: 100%
+  Sorting block of length 32927805 for bucket 72
+  (Using difference cover)
+  bucket 81: 60%
+  bucket 82: 40%
+  bucket 76: 90%
+  bucket 73: 90%
+  bucket 84: 30%
+  bucket 74: 90%
+  bucket 80: 70%
+  bucket 75: 90%
+  bucket 79: 80%
+  bucket 83: 30%
+  bucket 78: 80%
+  bucket 85: 20%
+  bucket 81: 70%
+  bucket 77: 90%
+  bucket 76: 100%
+  Sorting block of length 23936435 for bucket 76
+  (Using difference cover)
+  bucket 86: 10%
+  bucket 82: 50%
+  bucket 73: 100%
+  Sorting block of length 31328279 for bucket 73
+  (Using difference cover)
+  bucket 84: 40%
+  bucket 74: 100%
+  Sorting block of length 32905417 for bucket 74
+  (Using difference cover)
+  bucket 75: 100%
+  Sorting block of length 19621383 for bucket 75
+  (Using difference cover)
+  bucket 80: 80%
+  bucket 79: 90%
+  bucket 78: 90%
+  bucket 83: 40%
+  Sorting block time: 00:00:18
+Returning block of 33059508 for bucket 71
+  bucket 85: 30%
+  bucket 81: 80%
+  bucket 77: 100%
+  Sorting block of length 28636377 for bucket 77
+  (Using difference cover)
+Getting block 87 of 117
+  Reserving size (34554231) for bucket 87
+  Calculating Z arrays for bucket 87
+  Entering block accumulator loop for bucket 87:
+  bucket 86: 20%
+  bucket 82: 60%
+  bucket 84: 50%
+  bucket 79: 100%
+  Sorting block of length 23324862 for bucket 79
+  (Using difference cover)
+  bucket 80: 90%
+  bucket 78: 100%
+  Sorting block of length 32601467 for bucket 78
+  (Using difference cover)
+  Sorting block time: 00:00:21
+Returning block of 32927806 for bucket 72
+  bucket 83: 50%
+Getting block 88 of 117
+  Reserving size (34554231) for bucket 88
+  Calculating Z arrays for bucket 88
+  Entering block accumulator loop for bucket 88:
+  Sorting block time: 00:00:10
+Returning block of 19621384 for bucket 75
+Getting block 89 of 117
+  Reserving size (34554231) for bucket 89
+  Calculating Z arrays for bucket 89
+  Entering block accumulator loop for bucket 89:
+  bucket 87: 10%
+  Sorting block time: 00:00:13
+Returning block of 23936436 for bucket 76
+Getting block 90 of 117
+  Reserving size (34554231) for bucket 90
+  Calculating Z arrays for bucket 90
+  Entering block accumulator loop for bucket 90:
+  bucket 85: 40%
+  bucket 86: 30%
+  bucket 81: 90%
+  bucket 82: 70%
+  bucket 84: 60%
+  Sorting block time: 00:00:12
+Returning block of 23324863 for bucket 79
+  Sorting block time: 00:00:16
+Returning block of 28636378 for bucket 77
+Getting block 91 of 117
+  Reserving size (34554231) for bucket 91
+  Calculating Z arrays for bucket 91
+  Entering block accumulator loop for bucket 91:
+  Sorting block time: 00:00:18
+Returning block of 32905418 for bucket 74
+Getting block 92 of 117
+  Reserving size (34554231) for bucket 92
+  Calculating Z arrays for bucket 92
+  Entering block accumulator loop for bucket 92:
+  bucket 88: 10%
+Getting block 93 of 117
+  Reserving size (34554231) for bucket 93
+  Calculating Z arrays for bucket 93
+  Entering block accumulator loop for bucket 93:
+  Sorting block time: 00:00:19
+Returning block of 31328280 for bucket 73
+Getting block 94 of 117
+  Reserving size (34554231) for bucket 94
+  Calculating Z arrays for bucket 94
+  Entering block accumulator loop for bucket 94:
+  bucket 89: 10%
+  bucket 87: 20%
+  bucket 80: 100%
+  Sorting block of length 23516490 for bucket 80
+  (Using difference cover)
+  bucket 90: 10%
+  bucket 85: 50%
+  Sorting block time: 00:00:20
+Returning block of 32601468 for bucket 78
+  bucket 83: 60%
+Getting block 95 of 117
+  Reserving size (34554231) for bucket 95
+  Calculating Z arrays for bucket 95
+  Entering block accumulator loop for bucket 95:
+  bucket 81: 100%
+  Sorting block of length 23793638 for bucket 81
+  (Using difference cover)
+  bucket 86: 40%
+  bucket 88: 20%
+  bucket 82: 80%
+  bucket 89: 20%
+  bucket 84: 70%
+  bucket 94: 10%
+  bucket 90: 20%
+  bucket 87: 30%
+  bucket 93: 10%
+  bucket 92: 10%
+  bucket 91: 10%
+  Sorting block time: 00:00:13
+Returning block of 23516491 for bucket 80
+Getting block 96 of 117
+  Reserving size (34554231) for bucket 96
+  Calculating Z arrays for bucket 96
+  Entering block accumulator loop for bucket 96:
+  bucket 85: 60%
+  bucket 86: 50%
+  bucket 90: 30%
+  bucket 88: 30%
+  bucket 95: 10%
+  bucket 89: 30%
+  bucket 83: 70%
+  Sorting block time: 00:00:14
+Returning block of 23793639 for bucket 81
+Getting block 97 of 117
+  Reserving size (34554231) for bucket 97
+  Calculating Z arrays for bucket 97
+  Entering block accumulator loop for bucket 97:
+  bucket 84: 80%
+  bucket 82: 90%
+  bucket 92: 20%
+  bucket 94: 20%
+  bucket 87: 40%
+  bucket 93: 20%
+  bucket 91: 20%
+  bucket 96: 10%
+  bucket 85: 70%
+  bucket 86: 60%
+  bucket 88: 40%
+  bucket 89: 40%
+  bucket 90: 40%
+  bucket 95: 20%
+  bucket 92: 30%
+  bucket 97: 10%
+  bucket 84: 90%
+  bucket 83: 80%
+  bucket 82: 100%
+  Sorting block of length 16364592 for bucket 82
+  (Using difference cover)
+  bucket 87: 50%
+  bucket 93: 30%
+  bucket 94: 30%
+  bucket 86: 70%
+  bucket 91: 30%
+  bucket 85: 80%
+  bucket 96: 20%
+  bucket 88: 50%
+  bucket 89: 50%
+  bucket 90: 50%
+  Sorting block time: 00:00:09
+Returning block of 16364593 for bucket 82
+Getting block 98 of 117
+  Reserving size (34554231) for bucket 98
+  Calculating Z arrays for bucket 98
+  Entering block accumulator loop for bucket 98:
+  bucket 92: 40%
+  bucket 95: 30%
+  bucket 84: 100%
+  Sorting block of length 9571137 for bucket 84
+  (Using difference cover)
+  bucket 97: 20%
+  bucket 93: 40%
+  bucket 87: 60%
+  bucket 83: 90%
+  Sorting block time: 00:00:04
+Returning block of 9571138 for bucket 84
+  bucket 94: 40%
+Getting block 99 of 117
+  Reserving size (34554231) for bucket 99
+  Calculating Z arrays for bucket 99
+  Entering block accumulator loop for bucket 99:
+  bucket 85: 90%
+  bucket 86: 80%
+  bucket 91: 40%
+  bucket 96: 30%
+  bucket 88: 60%
+  bucket 89: 60%
+  bucket 90: 60%
+  bucket 98: 10%
+  bucket 92: 50%
+  bucket 93: 50%
+  bucket 95: 40%
+  bucket 87: 70%
+  bucket 97: 30%
+  bucket 83: 100%
+  Sorting block of length 26803671 for bucket 83
+  (Using difference cover)
+  bucket 85: 100%
+  Sorting block of length 27406272 for bucket 85
+  (Using difference cover)
+  bucket 88: 70%
+  bucket 86: 90%
+  bucket 94: 50%
+  bucket 99: 10%
+  bucket 91: 50%
+  bucket 96: 40%
+  bucket 90: 70%
+  bucket 89: 70%
+  bucket 92: 60%
+  bucket 87: 80%
+  bucket 98: 20%
+  bucket 95: 50%
+  bucket 93: 60%
+  bucket 97: 40%
+  bucket 88: 80%
+  bucket 86: 100%
+  Sorting block of length 23527477 for bucket 86
+  (Using difference cover)
+  bucket 94: 60%
+  bucket 90: 80%
+  bucket 99: 20%
+  bucket 96: 50%
+  bucket 91: 60%
+  bucket 89: 80%
+  bucket 87: 90%
+  bucket 98: 30%
+  bucket 92: 70%
+  bucket 95: 60%
+  bucket 93: 70%
+  bucket 88: 90%
+  bucket 97: 50%
+  bucket 90: 90%
+  bucket 94: 70%
+  bucket 89: 90%
+  bucket 96: 60%
+  bucket 99: 30%
+  Sorting block time: 00:00:14
+Returning block of 27406273 for bucket 85
+  bucket 91: 70%
+Getting block 100 of 117
+  Reserving size (34554231) for bucket 100
+  Calculating Z arrays for bucket 100
+  Entering block accumulator loop for bucket 100:
+  Sorting block time: 00:00:15
+Returning block of 26803672 for bucket 83
+Getting block 101 of 117
+  Reserving size (34554231) for bucket 101
+  Calculating Z arrays for bucket 101
+  Entering block accumulator loop for bucket 101:
+  bucket 87: 100%
+  Sorting block of length 20039995 for bucket 87
+  (Using difference cover)
+  bucket 98: 40%
+  bucket 92: 80%
+  bucket 88: 100%
+  Sorting block of length 25162614 for bucket 88
+  (Using difference cover)
+  Sorting block time: 00:00:10
+Returning block of 23527478 for bucket 86
+  bucket 95: 70%
+Getting block 102 of 117
+  Reserving size (34554231) for bucket 102
+  Calculating Z arrays for bucket 102
+  Entering block accumulator loop for bucket 102:
+  bucket 90: 100%
+  Sorting block of length 22066157 for bucket 90
+  (Using difference cover)
+  bucket 93: 80%
+  bucket 97: 60%
+  bucket 89: 100%
+  Sorting block of length 27243493 for bucket 89
+  (Using difference cover)
+  bucket 94: 80%
+  bucket 96: 70%
+  bucket 91: 80%
+  bucket 99: 40%
+  bucket 100: 10%
+  bucket 101: 10%
+  bucket 92: 90%
+  bucket 98: 50%
+  Sorting block time: 00:00:12
+Returning block of 20039996 for bucket 87
+  bucket 102: 10%
+  bucket 95: 80%
+Getting block 103 of 117
+  Reserving size (34554231) for bucket 103
+  Calculating Z arrays for bucket 103
+  Entering block accumulator loop for bucket 103:
+  bucket 97: 70%
+  bucket 93: 90%
+  bucket 94: 90%
+  Sorting block time: 00:00:11
+Returning block of 22066158 for bucket 90
+  bucket 101: 20%
+Getting block 104 of 117
+  Reserving size (34554231) for bucket 104
+  Calculating Z arrays for bucket 104
+  Entering block accumulator loop for bucket 104:
+  bucket 100: 20%
+  bucket 96: 80%
+  bucket 91: 90%
+  bucket 99: 50%
+  Sorting block time: 00:00:15
+Returning block of 25162615 for bucket 88
+Getting block 105 of 117
+  Reserving size (34554231) for bucket 105
+  Calculating Z arrays for bucket 105
+  Entering block accumulator loop for bucket 105:
+  bucket 92: 100%
+  Sorting block of length 26538359 for bucket 92
+  (Using difference cover)
+  Sorting block time: 00:00:15
+Returning block of 27243494 for bucket 89
+  bucket 93: 100%
+  Sorting block of length 29826075 for bucket 93
+  (Using difference cover)
+Getting block 106 of 117
+  Reserving size (34554231) for bucket 106
+  Calculating Z arrays for bucket 106
+  Entering block accumulator loop for bucket 106:
+  bucket 98: 60%
+  bucket 103: 10%
+  bucket 95: 90%
+  bucket 97: 80%
+  bucket 102: 20%
+  bucket 101: 30%
+  bucket 104: 10%
+  bucket 100: 30%
+  bucket 96: 90%
+  bucket 94: 100%
+  Sorting block of length 33544012 for bucket 94
+  (Using difference cover)
+  bucket 91: 100%
+  Sorting block of length 32957809 for bucket 91
+  (Using difference cover)
+  bucket 99: 60%
+  bucket 105: 10%
+  bucket 103: 20%
+  bucket 95: 100%
+  Sorting block of length 30544107 for bucket 95
+  (Using difference cover)
+  bucket 106: 10%
+  Sorting block time: 00:00:18
+Returning block of 26538360 for bucket 92
+Getting block 107 of 117
+  Reserving size (34554231) for bucket 107
+  Calculating Z arrays for bucket 107
+  Entering block accumulator loop for bucket 107:
+  bucket 98: 70%
+  bucket 97: 90%
+  bucket 102: 30%
+  bucket 100: 40%
+  bucket 101: 40%
+  bucket 104: 20%
+  bucket 96: 100%
+  Sorting block of length 22974742 for bucket 96
+  (Using difference cover)
+  bucket 103: 30%
+  Sorting block time: 00:00:21
+Returning block of 29826076 for bucket 93
+  bucket 99: 70%
+Getting block 108 of 117
+  Reserving size (34554231) for bucket 108
+  Calculating Z arrays for bucket 108
+  Entering block accumulator loop for bucket 108:
+  Sorting block time: 00:00:17
+Returning block of 32957810 for bucket 91
+  bucket 105: 20%
+Getting block 109 of 117
+  Reserving size (34554231) for bucket 109
+  Calculating Z arrays for bucket 109
+  Entering block accumulator loop for bucket 109:
+  bucket 106: 20%
+  bucket 97: 100%
+  Sorting block of length 13926284 for bucket 97
+  (Using difference cover)
+  bucket 98: 80%
+  bucket 107: 10%
+  Sorting block time: 00:00:22
+Returning block of 33544013 for bucket 94
+  bucket 102: 40%
+Getting block 110 of 117
+  Reserving size (34554231) for bucket 110
+  Calculating Z arrays for bucket 110
+  Entering block accumulator loop for bucket 110:
+  Sorting block time: 00:00:18
+Returning block of 30544108 for bucket 95
+Getting block 111 of 117
+  Reserving size (34554231) for bucket 111
+  Calculating Z arrays for bucket 111
+  Entering block accumulator loop for bucket 111:
+  bucket 100: 50%
+  bucket 104: 30%
+  bucket 103: 40%
+  Sorting block time: 00:00:12
+Returning block of 22974743 for bucket 96
+Getting block 112 of 117
+  Reserving size (34554231) for bucket 112
+  Calculating Z arrays for bucket 112
+  Entering block accumulator loop for bucket 112:
+  bucket 101: 50%
+  bucket 108: 10%
+  Sorting block time: 00:00:07
+Returning block of 13926285 for bucket 97
+Getting block 113 of 117
+  Reserving size (34554231) for bucket 113
+  Calculating Z arrays for bucket 113
+  Entering block accumulator loop for bucket 113:
+  bucket 99: 80%
+  bucket 109: 10%
+  bucket 105: 30%
+  bucket 106: 30%
+  bucket 98: 90%
+  bucket 107: 20%
+  bucket 102: 50%
+  bucket 111: 10%
+  bucket 110: 10%
+  bucket 112: 10%
+  bucket 104: 40%
+  bucket 103: 50%
+  bucket 101: 60%
+  bucket 100: 60%
+  bucket 113: 10%
+  bucket 99: 90%
+  bucket 108: 20%
+  bucket 109: 20%
+  bucket 107: 30%
+  bucket 105: 40%
+  bucket 106: 40%
+  bucket 98: 100%
+  Sorting block of length 33459714 for bucket 98
+  (Using difference cover)
+  bucket 111: 20%
+  bucket 102: 60%
+  bucket 110: 20%
+  bucket 112: 20%
+  bucket 104: 50%
+  bucket 103: 60%
+  bucket 100: 70%
+  bucket 101: 70%
+  bucket 113: 20%
+  bucket 99: 100%
+  Sorting block of length 31883677 for bucket 99
+  (Using difference cover)
+  bucket 108: 30%
+  bucket 109: 30%
+  bucket 106: 50%
+  bucket 107: 40%
+  bucket 105: 50%
+  bucket 111: 30%
+  bucket 110: 30%
+  bucket 102: 70%
+  bucket 104: 60%
+  bucket 112: 30%
+  bucket 100: 80%
+  bucket 113: 30%
+  bucket 103: 70%
+  bucket 101: 80%
+  bucket 108: 40%
+  bucket 109: 40%
+  bucket 106: 60%
+  bucket 107: 50%
+  bucket 105: 60%
+  bucket 111: 40%
+  bucket 110: 40%
+  bucket 104: 70%
+  bucket 102: 80%
+  bucket 112: 40%
+  Sorting block time: 00:00:18
+Returning block of 33459715 for bucket 98
+Getting block 114 of 117
+  Reserving size (34554231) for bucket 114
+  Calculating Z arrays for bucket 114
+  Entering block accumulator loop for bucket 114:
+  bucket 100: 90%
+  Sorting block time: 00:00:18
+Returning block of 31883678 for bucket 99
+  bucket 113: 40%
+  bucket 103: 80%
+Getting block 115 of 117
+  Reserving size (34554231) for bucket 115
+  Calculating Z arrays for bucket 115
+  Entering block accumulator loop for bucket 115:
+  bucket 108: 50%
+  bucket 101: 90%
+  bucket 109: 50%
+  bucket 106: 70%
+  bucket 107: 60%
+  bucket 105: 70%
+  bucket 111: 50%
+  bucket 110: 50%
+  bucket 104: 80%
+  bucket 112: 50%
+  bucket 102: 90%
+  bucket 100: 100%
+  Sorting block of length 19403856 for bucket 100
+  (Using difference cover)
+  bucket 114: 10%
+  bucket 103: 90%
+  bucket 113: 50%
+  bucket 115: 10%
+  bucket 108: 60%
+  bucket 101: 100%
+  Sorting block of length 32075648 for bucket 101
+  (Using difference cover)
+  bucket 109: 60%
+  bucket 106: 80%
+  bucket 107: 70%
+  bucket 110: 60%
+  bucket 105: 80%
+  bucket 111: 60%
+  bucket 103: 100%
+  Sorting block of length 31530695 for bucket 103
+  (Using difference cover)
+  bucket 104: 90%
+  bucket 112: 60%
+  bucket 114: 20%
+  bucket 102: 100%
+  Sorting block of length 25509637 for bucket 102
+  (Using difference cover)
+  bucket 109: 70%
+  bucket 115: 20%
+  Sorting block time: 00:00:11
+Returning block of 19403857 for bucket 100
+  bucket 108: 70%
+Getting block 116 of 117
+  bucket 113: 60%
+  Reserving size (34554231) for bucket 116
+  Calculating Z arrays for bucket 116
+  Entering block accumulator loop for bucket 116:
+  bucket 107: 80%
+  bucket 106: 90%
+  bucket 110: 70%
+  bucket 111: 70%
+  bucket 105: 90%
+  bucket 104: 100%
+  Sorting block of length 33221533 for bucket 104
+  (Using difference cover)
+  bucket 109: 80%
+  bucket 114: 30%
+  bucket 112: 70%
+  bucket 116: 10%
+  Sorting block time: 00:00:12
+Returning block of 25509638 for bucket 102
+  bucket 113: 70%
+  bucket 106: 100%
+  Sorting block of length 30597535 for bucket 106
+  (Using difference cover)
+  Sorting block time: 00:00:18
+Returning block of 32075649 for bucket 101
+  bucket 115: 30%
+Getting block 117 of 117
+  Reserving size (34554231) for bucket 117
+  Calculating Z arrays for bucket 117
+  Entering block accumulator loop for bucket 117:
+  bucket 107: 90%
+  bucket 108: 80%
+  bucket 110: 80%
+  Sorting block time: 00:00:18
+Returning block of 31530696 for bucket 103
+  bucket 109: 90%
+  bucket 111: 80%
+  bucket 105: 100%
+  Sorting block of length 31754324 for bucket 105
+  (Using difference cover)
+  bucket 112: 80%
+  bucket 116: 20%
+  bucket 117: 10%
+  bucket 107: 100%
+  Sorting block of length 12650029 for bucket 107
+  (Using difference cover)
+  bucket 114: 40%
+  Sorting block time: 00:00:16
+Returning block of 33221534 for bucket 104
+  bucket 113: 80%
+  bucket 115: 40%
+  bucket 108: 90%
+  bucket 109: 100%
+  Sorting block of length 25467867 for bucket 109
+  (Using difference cover)
+  Sorting block time: 00:00:16
+Returning block of 30597536 for bucket 106
+  Sorting block time: 00:00:07
+Returning block of 12650030 for bucket 107
+  bucket 116: 30%
+  bucket 110: 90%
+  bucket 117: 20%
+  bucket 112: 90%
+  bucket 111: 90%
+  Sorting block time: 00:00:16
+Returning block of 31754325 for bucket 105
+  bucket 116: 40%
+  bucket 113: 90%
+  bucket 114: 50%
+  bucket 115: 50%
+  bucket 117: 30%
+  bucket 108: 100%
+  Sorting block of length 33413269 for bucket 108
+  (Using difference cover)
+  bucket 112: 100%
+  Sorting block of length 8671111 for bucket 112
+  (Using difference cover)
+  Sorting block time: 00:00:15
+Returning block of 25467868 for bucket 109
+  bucket 110: 100%
+  Sorting block of length 33379753 for bucket 110
+  (Using difference cover)
+  bucket 111: 100%
+  Sorting block of length 9363481 for bucket 111
+  (Using difference cover)
+  Sorting block time: 00:00:05
+Returning block of 8671112 for bucket 112
+  bucket 116: 50%
+  bucket 117: 40%
+  bucket 115: 60%
+  bucket 113: 100%
+  Sorting block of length 32542549 for bucket 113
+  (Using difference cover)
+  Sorting block time: 00:00:05
+Returning block of 9363482 for bucket 111
+  bucket 114: 60%
+  bucket 117: 50%
+  bucket 116: 60%
+  Sorting block time: 00:00:20
+Returning block of 33413270 for bucket 108
+  Sorting block time: 00:00:18
+Returning block of 33379754 for bucket 110
+  bucket 115: 70%
+  bucket 117: 60%
+  Sorting block time: 00:00:12
+Returning block of 32542550 for bucket 113
+  bucket 116: 70%
+  bucket 114: 70%
+  bucket 117: 70%
+  bucket 116: 80%
+  bucket 115: 80%
+  bucket 114: 80%
+  bucket 117: 80%
+  bucket 116: 90%
+  bucket 115: 90%
+  bucket 117: 90%
+  bucket 114: 90%
+  bucket 116: 100%
+  Sorting block of length 20523488 for bucket 116
+  (Using difference cover)
+  bucket 117: 100%
+  Sorting block of length 16302953 for bucket 117
+  (Using difference cover)
+  bucket 115: 100%
+  Sorting block of length 29225132 for bucket 115
+  (Using difference cover)
+  bucket 114: 100%
+  Sorting block of length 22210411 for bucket 114
+  (Using difference cover)
+  Sorting block time: 00:00:06
+Returning block of 16302954 for bucket 117
+  Sorting block time: 00:00:09
+Returning block of 20523489 for bucket 116
+  Sorting block time: 00:00:09
+Returning block of 22210412 for bucket 114
+  Sorting block time: 00:00:15
+Returning block of 29225133 for bucket 115
+Exited Ebwt loop
+fchr[A]: 0
+fchr[C]: 870384190
+fchr[G]: 1471627168
+fchr[T]: 2075457683
+fchr[$]: 2948627755
+Exiting Ebwt::buildToDisk()
+Returning from initFromVector
+Wrote 846679177 bytes to primary EBWT file: /orcd/scratch/orcd/011/dashii/conference_smn2_aso/indexes/grch38_v50.1.ebwt
+Wrote 368578476 bytes to secondary EBWT file: /orcd/scratch/orcd/011/dashii/conference_smn2_aso/indexes/grch38_v50.2.ebwt
+Re-opening _in1 and _in2 as input streams
+Returning from Ebwt constructor
+Headers:
+    len: 2948627755
+    bwtLen: 2948627756
+    sz: 737156939
+    bwtSz: 737156939
+    lineRate: 6
+    linesPerSide: 1
+    offRate: 5
+    offMask: 0xffffffe0
+    isaRate: -1
+    isaMask: 0xffffffff
+    ftabChars: 10
+    eftabLen: 20
+    eftabSz: 80
+    ftabLen: 1048577
+    ftabSz: 4194308
+    offsLen: 92144618
+    offsSz: 368578472
+    isaLen: 0
+    isaSz: 0
+    lineSz: 64
+    sideSz: 64
+    sideBwtSz: 56
+    sideBwtLen: 224
+    numSidePairs: 6581759
+    numSides: 13163518
+    numLines: 13163518
+    ebwtTotLen: 842465152
+    ebwtTotSz: 842465152
+    reverse: 0
+Total time for call to driver() for forward index: 00:16:43
+Reading reference sizes
+  Time reading reference sizes: 00:00:14
+Calculating joined length
+Writing header
+Reserving space for joined string
+Joining reference sequences
+  Time to join reference sequences: 00:00:14
+bmax according to bmaxDivN setting: 46072308
+Using parameters --bmax 34554231 --dcv 1024
+  Doing ahead-of-time memory usage test
+  Passed!  Constructing with these parameters: --bmax 34554231 --dcv 1024
+Constructing suffix-array element generator
+Building DifferenceCoverSample
+  Building sPrime
+  Building sPrimeOrder
+  V-Sorting samples
+  V-Sorting samples time: 00:00:35
+  Allocating rank array
+  Ranking v-sort output
+  Ranking v-sort output time: 00:00:25
+  Invoking Larsson-Sadakane on ranks
+  Invoking Larsson-Sadakane on ranks time: 00:00:37
+  Sanity-checking and returning
+Building samples
+Reserving space for 172 sample suffixes
+Generating random suffixes
+QSorting 172 sample offsets, eliminating duplicates
+Multikey QSorting 172 samples
+  (Using difference cover)
+  Multikey QSorting samples time: 00:00:00
+QSorting sample offsets, eliminating duplicates time: 00:00:00
+Calculating bucket sizes
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 22, merged 71; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 14, merged 15; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 3, merged 7; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 1, merged 2; iterating...
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Avg bucket size: 2.52019e+07 (target: 34554230)
+Converting suffix-array elements to index image
+Allocating ftab, absorbFtab
+Entering Ebwt loop
+Getting block 1 of 117
+  Reserving size (34554231) for bucket 1
+Getting block 2 of 117
+  Reserving size (34554231) for bucket 2
+  Calculating Z arrays for bucket 1
+Getting block 3 of 117
+  Reserving size (34554231) for bucket 3
+Getting block 4 of 117
+  Reserving size (34554231) for bucket 4
+  Calculating Z arrays for bucket 3
+  Entering block accumulator loop for bucket 1:
+  Calculating Z arrays for bucket 2
+Getting block 5 of 117
+  Reserving size (34554231) for bucket 5
+  Entering block accumulator loop for bucket 3:
+  Entering block accumulator loop for bucket 2:
+  Calculating Z arrays for bucket 4
+Getting block 6 of 117
+  Reserving size (34554231) for bucket 6
+Getting block 7 of 117
+  Reserving size (34554231) for bucket 7
+  Calculating Z arrays for bucket 6
+Getting block 8 of 117
+  Reserving size (34554231) for bucket 8
+  Entering block accumulator loop for bucket 4:
+Getting block 10 of 117
+  Reserving size (34554231) for bucket 10
+Getting block 11 of 117
+  Reserving size (34554231) for bucket 11
+  Entering block accumulator loop for bucket 6:
+Getting block 9 of 117
+Getting block 12 of 117
+  Reserving size (34554231) for bucket 12
+Getting block 13 of 117
+  Reserving size (34554231) for bucket 13
+  Calculating Z arrays for bucket 12
+  Calculating Z arrays for bucket 8
+Getting block 14 of 117
+  Reserving size (34554231) for bucket 14
+  Entering block accumulator loop for bucket 12:
+  Calculating Z arrays for bucket 13
+  Calculating Z arrays for bucket 10
+  Reserving size (34554231) for bucket 9
+  Calculating Z arrays for bucket 11
+Getting block 15 of 117
+  Reserving size (34554231) for bucket 15
+  Entering block accumulator loop for bucket 8:
+  Entering block accumulator loop for bucket 13:
+  Entering block accumulator loop for bucket 11:
+  Calculating Z arrays for bucket 9
+Getting block 16 of 117
+  Reserving size (34554231) for bucket 16
+  Entering block accumulator loop for bucket 9:
+  Entering block accumulator loop for bucket 10:
+  Calculating Z arrays for bucket 5
+  Calculating Z arrays for bucket 14
+  Calculating Z arrays for bucket 7
+  Entering block accumulator loop for bucket 5:
+  Entering block accumulator loop for bucket 7:
+  Entering block accumulator loop for bucket 14:
+  Calculating Z arrays for bucket 16
+  Entering block accumulator loop for bucket 16:
+  Calculating Z arrays for bucket 15
+  Entering block accumulator loop for bucket 15:
+  bucket 1: 10%
+  bucket 3: 10%
+  bucket 2: 10%
+  bucket 7: 10%
+  bucket 5: 10%
+  bucket 4: 10%
+  bucket 6: 10%
+  bucket 10: 10%
+  bucket 9: 10%
+  bucket 8: 10%
+  bucket 11: 10%
+  bucket 13: 10%
+  bucket 16: 10%
+  bucket 15: 10%
+  bucket 12: 10%
+  bucket 14: 10%
+  bucket 1: 20%
+  bucket 3: 20%
+  bucket 7: 20%
+  bucket 5: 20%
+  bucket 4: 20%
+  bucket 6: 20%
+  bucket 9: 20%
+  bucket 10: 20%
+  bucket 8: 20%
+  bucket 2: 20%
+  bucket 11: 20%
+  bucket 13: 20%
+  bucket 16: 20%
+  bucket 14: 20%
+  bucket 1: 30%
+  bucket 3: 30%
+  bucket 12: 20%
+  bucket 7: 30%
+  bucket 15: 20%
+  bucket 4: 30%
+  bucket 5: 30%
+  bucket 6: 30%
+  bucket 9: 30%
+  bucket 10: 30%
+  bucket 8: 30%
+  bucket 2: 30%
+  bucket 11: 30%
+  bucket 1: 40%
+  bucket 16: 30%
+  bucket 13: 30%
+  bucket 14: 30%
+  bucket 3: 40%
+  bucket 7: 40%
+  bucket 12: 30%
+  bucket 4: 40%
+  bucket 6: 40%
+  bucket 15: 30%
+  bucket 5: 40%
+  bucket 9: 40%
+  bucket 10: 40%
+  bucket 1: 50%
+  bucket 2: 40%
+  bucket 8: 40%
+  bucket 11: 40%
+  bucket 16: 40%
+  bucket 14: 40%
+  bucket 13: 40%
+  bucket 3: 50%
+  bucket 7: 50%
+  bucket 4: 50%
+  bucket 12: 40%
+  bucket 1: 60%
+  bucket 5: 50%
+  bucket 6: 50%
+  bucket 2: 50%
+  bucket 15: 40%
+  bucket 9: 50%
+  bucket 10: 50%
+  bucket 8: 50%
+  bucket 11: 50%
+  bucket 14: 50%
+  bucket 3: 60%
+  bucket 16: 50%
+  bucket 13: 50%
+  bucket 7: 60%
+  bucket 4: 60%
+  bucket 1: 70%
+  bucket 5: 60%
+  bucket 2: 60%
+  bucket 6: 60%
+  bucket 12: 50%
+  bucket 10: 60%
+  bucket 9: 60%
+  bucket 15: 50%
+  bucket 8: 60%
+  bucket 3: 70%
+  bucket 11: 60%
+  bucket 14: 60%
+  bucket 7: 70%
+  bucket 1: 80%
+  bucket 16: 60%
+  bucket 13: 60%
+  bucket 4: 70%
+  bucket 2: 70%
+  bucket 5: 70%
+  bucket 6: 70%
+  bucket 12: 60%
+  bucket 10: 70%
+  bucket 9: 70%
+  bucket 3: 80%
+  bucket 8: 70%
+  bucket 15: 60%
+  bucket 1: 90%
+  bucket 11: 70%
+  bucket 14: 70%
+  bucket 4: 80%
+  bucket 2: 80%
+  bucket 7: 80%
+  bucket 13: 70%
+  bucket 16: 70%
+  bucket 5: 80%
+  bucket 6: 80%
+  bucket 10: 80%
+  bucket 8: 80%
+  bucket 1: 100%
+  Sorting block of length 16840102 for bucket 1
+  (Using difference cover)
+  bucket 12: 70%
+  bucket 9: 80%
+  bucket 3: 90%
+  bucket 4: 90%
+  bucket 2: 90%
+  bucket 11: 80%
+  bucket 15: 70%
+  bucket 14: 80%
+  bucket 5: 90%
+  bucket 6: 90%
+  bucket 7: 90%
+  bucket 16: 80%
+  bucket 13: 80%
+  bucket 10: 90%
+  bucket 8: 90%
+  bucket 3: 100%
+  Sorting block of length 18287899 for bucket 3
+  (Using difference cover)
+  bucket 9: 90%
+  bucket 12: 80%
+  bucket 2: 100%
+  Sorting block of length 18105329 for bucket 2
+  (Using difference cover)
+  bucket 4: 100%
+  Sorting block of length 23684976 for bucket 4
+  (Using difference cover)
+  bucket 11: 90%
+  bucket 14: 90%
+  bucket 5: 100%
+  Sorting block of length 24189439 for bucket 5
+  (Using difference cover)
+  bucket 15: 80%
+  bucket 6: 100%
+  Sorting block of length 33262283 for bucket 6
+  (Using difference cover)
+  bucket 7: 100%
+  Sorting block of length 16713191 for bucket 7
+  (Using difference cover)
+  bucket 13: 90%
+  bucket 16: 90%
+  bucket 10: 100%
+  Sorting block of length 24000341 for bucket 10
+  (Using difference cover)
+  bucket 8: 100%
+  Sorting block of length 24298431 for bucket 8
+  (Using difference cover)
+  bucket 9: 100%
+  Sorting block of length 31709130 for bucket 9
+  (Using difference cover)
+  bucket 12: 90%
+  bucket 11: 100%
+  Sorting block of length 22174232 for bucket 11
+  (Using difference cover)
+  bucket 14: 100%
+  Sorting block of length 21928582 for bucket 14
+  (Using difference cover)
+  bucket 15: 90%
+  bucket 13: 100%
+  Sorting block of length 31844288 for bucket 13
+  (Using difference cover)
+  bucket 16: 100%
+  Sorting block of length 13729259 for bucket 16
+  (Using difference cover)
+  Sorting block time: 00:00:09
+Returning block of 16840103 for bucket 1
+  bucket 12: 100%
+  Sorting block of length 28622938 for bucket 12
+  (Using difference cover)
+Getting block 17 of 117
+  Reserving size (34554231) for bucket 17
+  Calculating Z arrays for bucket 17
+  Entering block accumulator loop for bucket 17:
+  bucket 15: 100%
+  Sorting block of length 25209389 for bucket 15
+  (Using difference cover)
+  Sorting block time: 00:00:09
+Returning block of 16713192 for bucket 7
+Getting block 18 of 117
+  Reserving size (34554231) for bucket 18
+  Calculating Z arrays for bucket 18
+  Entering block accumulator loop for bucket 18:
+  bucket 17: 10%
+  Sorting block time: 00:00:12
+Returning block of 18287900 for bucket 3
+Getting block 19 of 117
+  Reserving size (34554231) for bucket 19
+  Calculating Z arrays for bucket 19
+  Entering block accumulator loop for bucket 19:
+  Sorting block time: 00:00:14
+Returning block of 18105330 for bucket 2
+  Sorting block time: 00:00:14
+Returning block of 23684977 for bucket 4
+  Sorting block time: 00:00:08
+Returning block of 13729260 for bucket 16
+Getting block 20 of 117
+  Reserving size (34554231) for bucket 20
+  Calculating Z arrays for bucket 20
+  Entering block accumulator loop for bucket 20:
+Getting block 21 of 117
+  Reserving size (34554231) for bucket 21
+  Calculating Z arrays for bucket 21
+  Entering block accumulator loop for bucket 21:
+Getting block 22 of 117
+  Reserving size (34554231) for bucket 22
+  Calculating Z arrays for bucket 22
+  Entering block accumulator loop for bucket 22:
+  Sorting block time: 00:00:15
+Returning block of 24189440 for bucket 5
+  Sorting block time: 00:00:13
+Returning block of 22174233 for bucket 11
+Getting block 23 of 117
+  Reserving size (34554231) for bucket 23
+  Calculating Z arrays for bucket 23
+  Entering block accumulator loop for bucket 23:
+  Sorting block time: 00:00:14
+Returning block of 24298432 for bucket 8
+Getting block 24 of 117
+  Reserving size (34554231) for bucket 24
+  Calculating Z arrays for bucket 24
+  Entering block accumulator loop for bucket 24:
+  bucket 18: 10%
+  bucket 17: 20%
+Getting block 25 of 117
+  Reserving size (34554231) for bucket 25
+  Calculating Z arrays for bucket 25
+  Entering block accumulator loop for bucket 25:
+  bucket 19: 10%
+  bucket 22: 10%
+  Sorting block time: 00:00:18
+Returning block of 21928583 for bucket 14
+Getting block 26 of 117
+  Reserving size (34554231) for bucket 26
+  Calculating Z arrays for bucket 26
+  Entering block accumulator loop for bucket 26:
+  bucket 23: 10%
+  Sorting block time: 00:00:17
+Returning block of 28622939 for bucket 12
+  bucket 20: 10%
+  Sorting block time: 00:00:14
+Returning block of 25209390 for bucket 15
+Getting block 27 of 117
+  Reserving size (34554231) for bucket 27
+  Calculating Z arrays for bucket 27
+  Entering block accumulator loop for bucket 27:
+  bucket 24: 10%
+Getting block 28 of 117
+  Reserving size (34554231) for bucket 28
+  Calculating Z arrays for bucket 28
+  Entering block accumulator loop for bucket 28:
+  bucket 21: 10%
+  bucket 17: 30%
+  Sorting block time: 00:00:22
+Returning block of 24000342 for bucket 10
+  Sorting block time: 00:00:25
+Returning block of 33262284 for bucket 6
+  bucket 25: 10%
+  bucket 18: 20%
+Getting block 29 of 117
+  Reserving size (34554231) for bucket 29
+  Calculating Z arrays for bucket 29
+  Entering block accumulator loop for bucket 29:
+Getting block 30 of 117
+  Reserving size (34554231) for bucket 30
+  Calculating Z arrays for bucket 30
+  Entering block accumulator loop for bucket 30:
+  Sorting block time: 00:00:24
+Returning block of 31709131 for bucket 9
+Getting block 31 of 117
+  Reserving size (34554231) for bucket 31
+  Calculating Z arrays for bucket 31
+  Entering block accumulator loop for bucket 31:
+  bucket 22: 20%
+  bucket 19: 20%
+  Sorting block time: 00:00:24
+Returning block of 31844289 for bucket 13
+Getting block 32 of 117
+  Reserving size (34554231) for bucket 32
+  Calculating Z arrays for bucket 32
+  Entering block accumulator loop for bucket 32:
+  bucket 20: 20%
+  bucket 26: 10%
+  bucket 23: 20%
+  bucket 28: 10%
+  bucket 24: 20%
+  bucket 27: 10%
+  bucket 17: 40%
+  bucket 21: 20%
+  bucket 18: 30%
+  bucket 25: 20%
+  bucket 30: 10%
+  bucket 29: 10%
+  bucket 31: 10%
+  bucket 19: 30%
+  bucket 22: 30%
+  bucket 20: 30%
+  bucket 32: 10%
+  bucket 26: 20%
+  bucket 17: 50%
+  bucket 23: 30%
+  bucket 28: 20%
+  bucket 24: 30%
+  bucket 27: 20%
+  bucket 30: 20%
+  bucket 18: 40%
+  bucket 25: 30%
+  bucket 21: 30%
+  bucket 31: 20%
+  bucket 29: 20%
+  bucket 19: 40%
+  bucket 20: 40%
+  bucket 26: 30%
+  bucket 22: 40%
+  bucket 17: 60%
+  bucket 23: 40%
+  bucket 32: 20%
+  bucket 28: 30%
+  bucket 24: 40%
+  bucket 19: 50%
+  bucket 18: 50%
+  bucket 27: 30%
+  bucket 31: 30%
+  bucket 25: 40%
+  bucket 20: 50%
+  bucket 21: 40%
+  bucket 29: 30%
+  bucket 26: 40%
+  bucket 30: 30%
+  bucket 22: 50%
+  bucket 19: 60%
+  bucket 23: 50%
+  bucket 28: 40%
+  bucket 24: 50%
+  bucket 31: 40%
+  bucket 18: 60%
+  bucket 17: 70%
+  bucket 20: 60%
+  bucket 32: 30%
+  bucket 25: 50%
+  bucket 27: 40%
+  bucket 26: 50%
+  bucket 21: 50%
+  bucket 29: 40%
+  bucket 19: 70%
+  bucket 30: 40%
+  bucket 22: 60%
+  bucket 23: 60%
+  bucket 28: 50%
+  bucket 24: 60%
+  bucket 20: 70%
+  bucket 31: 50%
+  bucket 18: 70%
+  bucket 17: 80%
+  bucket 25: 60%
+  bucket 26: 60%
+  bucket 27: 50%
+  bucket 29: 50%
+  bucket 21: 60%
+  bucket 32: 40%
+  bucket 30: 50%
+  bucket 19: 80%
+  bucket 22: 70%
+  bucket 23: 70%
+  bucket 20: 80%
+  bucket 28: 60%
+  bucket 31: 60%
+  bucket 24: 70%
+  bucket 17: 90%
+  bucket 18: 80%
+  bucket 26: 70%
+  bucket 29: 60%
+  bucket 25: 70%
+  bucket 27: 60%
+  bucket 21: 70%
+  bucket 32: 50%
+  bucket 30: 60%
+  bucket 19: 90%
+  bucket 22: 80%
+  bucket 20: 90%
+  bucket 31: 70%
+  bucket 23: 80%
+  bucket 28: 70%
+  bucket 18: 90%
+  bucket 24: 80%
+  bucket 29: 70%
+  bucket 26: 80%
+  bucket 17: 100%
+  Sorting block of length 23132098 for bucket 17
+  (Using difference cover)
+  bucket 25: 80%
+  bucket 27: 70%
+  bucket 21: 80%
+  bucket 32: 60%
+  bucket 20: 100%
+  Sorting block of length 14810426 for bucket 20
+  (Using difference cover)
+  bucket 22: 90%
+  bucket 30: 70%
+  bucket 19: 100%
+  Sorting block of length 33861976 for bucket 19
+  (Using difference cover)
+  bucket 31: 80%
+  bucket 23: 90%
+  bucket 29: 80%
+  bucket 28: 80%
+  bucket 26: 90%
+  bucket 18: 100%
+  Sorting block of length 27959842 for bucket 18
+  (Using difference cover)
+  bucket 24: 90%
+  bucket 25: 90%
+  bucket 27: 80%
+  bucket 30: 80%
+  bucket 32: 70%
+  bucket 21: 90%
+  bucket 22: 100%
+  Sorting block of length 28065820 for bucket 22
+  (Using difference cover)
+  bucket 29: 90%
+  bucket 31: 90%
+  bucket 23: 100%
+  Sorting block of length 33497734 for bucket 23
+  (Using difference cover)
+  Sorting block time: 00:00:08
+Returning block of 14810427 for bucket 20
+Getting block 33 of 117
+  Reserving size (34554231) for bucket 33
+  Calculating Z arrays for bucket 33
+  Entering block accumulator loop for bucket 33:
+  bucket 26: 100%
+  Sorting block of length 31075798 for bucket 26
+  (Using difference cover)
+  bucket 28: 90%
+  bucket 24: 100%
+  Sorting block of length 20728838 for bucket 24
+  (Using difference cover)
+  bucket 30: 90%
+  bucket 27: 90%
+  bucket 25: 100%
+  Sorting block of length 28215115 for bucket 25
+  (Using difference cover)
+  bucket 32: 80%
+  bucket 29: 100%
+  Sorting block of length 32176090 for bucket 29
+  (Using difference cover)
+  bucket 21: 100%
+  Sorting block of length 32234925 for bucket 21
+  (Using difference cover)
+  bucket 31: 100%
+  Sorting block of length 12071739 for bucket 31
+  (Using difference cover)
+  bucket 33: 10%
+  Sorting block time: 00:00:18
+Returning block of 23132099 for bucket 17
+Getting block 34 of 117
+  Reserving size (34554231) for bucket 34
+  Calculating Z arrays for bucket 34
+  Entering block accumulator loop for bucket 34:
+  bucket 28: 100%
+  Sorting block of length 18795436 for bucket 28
+  (Using difference cover)
+  bucket 30: 100%
+  Sorting block of length 33099226 for bucket 30
+  (Using difference cover)
+  Sorting block time: 00:00:16
+Returning block of 27959843 for bucket 18
+  bucket 27: 100%
+  Sorting block of length 17570823 for bucket 27
+  (Using difference cover)
+  bucket 32: 90%
+Getting block 35 of 117
+  Reserving size (34554231) for bucket 35
+  Calculating Z arrays for bucket 35
+  Entering block accumulator loop for bucket 35:
+  bucket 33: 20%
+  Sorting block time: 00:00:07
+Returning block of 12071740 for bucket 31
+Getting block 36 of 117
+  Reserving size (34554231) for bucket 36
+  Calculating Z arrays for bucket 36
+  Entering block accumulator loop for bucket 36:
+  Sorting block time: 00:00:12
+Returning block of 20728839 for bucket 24
+  Sorting block time: 00:00:21
+Returning block of 33861977 for bucket 19
+Getting block 37 of 117
+  Reserving size (34554231) for bucket 37
+  Calculating Z arrays for bucket 37
+  Entering block accumulator loop for bucket 37:
+Getting block 38 of 117
+  Reserving size (34554231) for bucket 38
+  Calculating Z arrays for bucket 38
+  Entering block accumulator loop for bucket 38:
+  Sorting block time: 00:00:17
+Returning block of 28065821 for bucket 22
+Getting block 39 of 117
+  Reserving size (34554231) for bucket 39
+  Calculating Z arrays for bucket 39
+  Entering block accumulator loop for bucket 39:
+  bucket 34: 10%
+  bucket 35: 10%
+  bucket 32: 100%
+  Sorting block of length 33782122 for bucket 32
+  (Using difference cover)
+  Sorting block time: 00:00:11
+Returning block of 18795437 for bucket 28
+Getting block 40 of 117
+  Reserving size (34554231) for bucket 40
+  Calculating Z arrays for bucket 40
+  Entering block accumulator loop for bucket 40:
+  Sorting block time: 00:00:20
+Returning block of 33497735 for bucket 23
+Getting block 41 of 117
+  Reserving size (34554231) for bucket 41
+  Calculating Z arrays for bucket 41
+  Entering block accumulator loop for bucket 41:
+  Sorting block time: 00:00:10
+Returning block of 17570824 for bucket 27
+  Sorting block time: 00:00:20
+Returning block of 31075799 for bucket 26
+  Sorting block time: 00:00:17
+Returning block of 28215116 for bucket 25
+Getting block 42 of 117
+  Reserving size (34554231) for bucket 42
+  Calculating Z arrays for bucket 42
+  Entering block accumulator loop for bucket 42:
+  bucket 36: 10%
+Getting block 43 of 117
+  Reserving size (34554231) for bucket 43
+  Calculating Z arrays for bucket 43
+  Entering block accumulator loop for bucket 43:
+Getting block 44 of 117
+  Reserving size (34554231) for bucket 44
+  Calculating Z arrays for bucket 44
+  Entering block accumulator loop for bucket 44:
+  bucket 33: 30%
+  bucket 37: 10%
+  Sorting block time: 00:00:18
+Returning block of 32234926 for bucket 21
+  Sorting block time: 00:00:19
+Returning block of 32176091 for bucket 29
+Getting block 45 of 117
+  Reserving size (34554231) for bucket 45
+  Calculating Z arrays for bucket 45
+  Entering block accumulator loop for bucket 45:
+Getting block 46 of 117
+  Reserving size (34554231) for bucket 46
+  Calculating Z arrays for bucket 46
+  Entering block accumulator loop for bucket 46:
+  bucket 38: 10%
+  bucket 34: 20%
+  bucket 39: 10%
+  bucket 41: 10%
+  bucket 40: 10%
+  Sorting block time: 00:00:20
+Returning block of 33099227 for bucket 30
+  bucket 42: 10%
+  bucket 44: 10%
+Getting block 47 of 117
+  Reserving size (34554231) for bucket 47
+  Calculating Z arrays for bucket 47
+  Entering block accumulator loop for bucket 47:
+  bucket 35: 20%
+  bucket 43: 10%
+  bucket 36: 20%
+  bucket 34: 30%
+  bucket 37: 20%
+  bucket 46: 10%
+  bucket 45: 10%
+  bucket 33: 40%
+  bucket 38: 20%
+  bucket 44: 20%
+  bucket 41: 20%
+  bucket 42: 20%
+  bucket 39: 20%
+  Sorting block time: 00:00:19
+Returning block of 33782123 for bucket 32
+Getting block 48 of 117
+  Reserving size (34554231) for bucket 48
+  Calculating Z arrays for bucket 48
+  Entering block accumulator loop for bucket 48:
+  bucket 40: 20%
+  bucket 47: 10%
+  bucket 34: 40%
+  bucket 43: 20%
+  bucket 44: 30%
+  bucket 36: 30%
+  bucket 42: 30%
+  bucket 41: 30%
+  bucket 35: 30%
+  bucket 37: 30%
+  bucket 46: 20%
+  bucket 38: 30%
+  bucket 40: 30%
+  bucket 34: 50%
+  bucket 45: 20%
+  bucket 39: 30%
+  bucket 47: 20%
+  bucket 48: 10%
+  bucket 33: 50%
+  bucket 44: 40%
+  bucket 42: 40%
+  bucket 41: 40%
+  bucket 34: 60%
+  bucket 36: 40%
+  bucket 39: 40%
+  bucket 40: 40%
+  bucket 43: 30%
+  bucket 38: 40%
+  bucket 37: 40%
+  bucket 46: 30%
+  bucket 44: 50%
+  bucket 45: 30%
+  bucket 35: 40%
+  bucket 42: 50%
+  bucket 47: 30%
+  bucket 33: 60%
+  bucket 34: 70%
+  bucket 48: 20%
+  bucket 37: 50%
+  bucket 40: 50%
+  bucket 44: 60%
+  bucket 41: 50%
+  bucket 36: 50%
+  bucket 38: 50%
+  bucket 39: 50%
+  bucket 42: 60%
+  bucket 46: 40%
+  bucket 34: 80%
+  bucket 43: 40%
+  bucket 45: 40%
+  bucket 35: 50%
+  bucket 47: 40%
+  bucket 44: 70%
+  bucket 33: 70%
+  bucket 37: 60%
+  bucket 40: 60%
+  bucket 42: 70%
+  bucket 36: 60%
+  bucket 38: 60%
+  bucket 41: 60%
+  bucket 39: 60%
+  bucket 34: 90%
+  bucket 48: 30%
+  bucket 35: 60%
+  bucket 46: 50%
+  bucket 44: 80%
+  bucket 37: 70%
+  bucket 42: 80%
+  bucket 45: 50%
+  bucket 33: 80%
+  bucket 40: 70%
+  bucket 43: 50%
+  bucket 47: 50%
+  bucket 35: 70%
+  bucket 38: 70%
+  bucket 44: 90%
+  bucket 34: 100%
+  Sorting block of length 9568848 for bucket 34
+  (Using difference cover)
+  bucket 41: 70%
+  bucket 37: 80%
+  bucket 39: 70%
+  bucket 42: 90%
+  bucket 36: 70%
+  bucket 48: 40%
+  bucket 46: 60%
+  bucket 40: 80%
+  Sorting block time: 00:00:05
+Returning block of 9568849 for bucket 34
+Getting block 49 of 117
+  Reserving size (34554231) for bucket 49
+  Calculating Z arrays for bucket 49
+  Entering block accumulator loop for bucket 49:
+  bucket 35: 80%
+  bucket 44: 100%
+  Sorting block of length 20651641 for bucket 44
+  (Using difference cover)
+  bucket 45: 60%
+  bucket 42: 100%
+  Sorting block of length 32843294 for bucket 42
+  (Using difference cover)
+  bucket 37: 90%
+  bucket 33: 90%
+  bucket 43: 60%
+  bucket 38: 80%
+  bucket 41: 80%
+  bucket 39: 80%
+  bucket 35: 90%
+  bucket 47: 60%
+  bucket 36: 80%
+  bucket 40: 90%
+  bucket 46: 70%
+  bucket 37: 100%
+  Sorting block of length 32022016 for bucket 37
+  (Using difference cover)
+  bucket 48: 50%
+  Sorting block time: 00:00:11
+Returning block of 20651642 for bucket 44
+Getting block 50 of 117
+  Reserving size (34554231) for bucket 50
+  Calculating Z arrays for bucket 50
+  Entering block accumulator loop for bucket 50:
+  bucket 49: 10%
+  bucket 35: 100%
+  Sorting block of length 26675470 for bucket 35
+  (Using difference cover)
+  bucket 38: 90%
+  bucket 45: 70%
+  bucket 43: 70%
+  bucket 33: 100%
+  Sorting block of length 27928758 for bucket 33
+  (Using difference cover)
+  bucket 40: 100%
+  Sorting block of length 34194211 for bucket 40
+  (Using difference cover)
+  bucket 41: 90%
+  bucket 39: 90%
+  bucket 36: 90%
+  bucket 46: 80%
+  bucket 47: 70%
+  Sorting block time: 00:00:16
+Returning block of 32843295 for bucket 42
+  bucket 50: 10%
+  bucket 49: 20%
+Getting block 51 of 117
+  Reserving size (34554231) for bucket 51
+  Calculating Z arrays for bucket 51
+  Entering block accumulator loop for bucket 51:
+  bucket 48: 60%
+  bucket 38: 100%
+  Sorting block of length 33559909 for bucket 38
+  (Using difference cover)
+  bucket 45: 80%
+  bucket 43: 80%
+  bucket 41: 100%
+  Sorting block of length 29284909 for bucket 41
+  (Using difference cover)
+  bucket 39: 100%
+  Sorting block of length 9165559 for bucket 39
+  (Using difference cover)
+  bucket 36: 100%
+  Sorting block of length 33852962 for bucket 36
+  (Using difference cover)
+  bucket 46: 90%
+  bucket 47: 80%
+  Sorting block time: 00:00:13
+Returning block of 26675471 for bucket 35
+  bucket 50: 20%
+Getting block 52 of 117
+  Reserving size (34554231) for bucket 52
+  Calculating Z arrays for bucket 52
+  Entering block accumulator loop for bucket 52:
+  bucket 51: 10%
+  Sorting block time: 00:00:18
+Returning block of 32022017 for bucket 37
+  Sorting block time: 00:00:05
+Returning block of 9165560 for bucket 39
+Getting block 53 of 117
+  Reserving size (34554231) for bucket 53
+  Calculating Z arrays for bucket 53
+  Entering block accumulator loop for bucket 53:
+  bucket 49: 30%
+Getting block 54 of 117
+  Reserving size (34554231) for bucket 54
+  Calculating Z arrays for bucket 54
+  Entering block accumulator loop for bucket 54:
+  bucket 48: 70%
+  bucket 45: 90%
+  bucket 43: 90%
+  bucket 46: 100%
+  Sorting block of length 30021083 for bucket 46
+  (Using difference cover)
+  bucket 47: 90%
+  bucket 50: 30%
+  bucket 52: 10%
+  bucket 51: 20%
+  bucket 49: 40%
+  bucket 45: 100%
+  Sorting block of length 33578416 for bucket 45
+  (Using difference cover)
+  bucket 53: 10%
+  bucket 48: 80%
+  bucket 54: 10%
+  bucket 43: 100%
+  Sorting block of length 28072728 for bucket 43
+  (Using difference cover)
+  Sorting block time: 00:00:18
+Returning block of 27928759 for bucket 33
+  Sorting block time: 00:00:17
+Returning block of 34194212 for bucket 40
+Getting block 55 of 117
+  Reserving size (34554231) for bucket 55
+  Calculating Z arrays for bucket 55
+  Entering block accumulator loop for bucket 55:
+Getting block 56 of 117
+  Reserving size (34554231) for bucket 56
+  Calculating Z arrays for bucket 56
+  Entering block accumulator loop for bucket 56:
+  bucket 47: 100%
+  Sorting block of length 23602603 for bucket 47
+  (Using difference cover)
+  Sorting block time: 00:00:15
+Returning block of 29284910 for bucket 41
+  bucket 50: 40%
+Getting block 57 of 117
+  Reserving size (34554231) for bucket 57
+  Calculating Z arrays for bucket 57
+  Entering block accumulator loop for bucket 57:
+  bucket 52: 20%
+  bucket 49: 50%
+  bucket 51: 30%
+  bucket 48: 90%
+  bucket 53: 20%
+  bucket 54: 20%
+  Sorting block time: 00:00:22
+Returning block of 33559910 for bucket 38
+Getting block 58 of 117
+  Reserving size (34554231) for bucket 58
+  Calculating Z arrays for bucket 58
+  Entering block accumulator loop for bucket 58:
+  bucket 55: 10%
+  bucket 56: 10%
+  bucket 50: 50%
+  bucket 57: 10%
+  bucket 52: 30%
+  Sorting block time: 00:00:22
+Returning block of 33852963 for bucket 36
+Getting block 59 of 117
+  Reserving size (34554231) for bucket 59
+  Calculating Z arrays for bucket 59
+  Entering block accumulator loop for bucket 59:
+  bucket 49: 60%
+  Sorting block time: 00:00:16
+Returning block of 33578417 for bucket 45
+  bucket 51: 40%
+  bucket 48: 100%
+  Sorting block of length 33055430 for bucket 48
+  (Using difference cover)
+  bucket 54: 30%
+  bucket 53: 30%
+Getting block 60 of 117
+  Reserving size (34554231) for bucket 60
+  Calculating Z arrays for bucket 60
+  Entering block accumulator loop for bucket 60:
+  Sorting block time: 00:00:19
+Returning block of 30021084 for bucket 46
+Getting block 61 of 117
+  Reserving size (34554231) for bucket 61
+  Calculating Z arrays for bucket 61
+  Entering block accumulator loop for bucket 61:
+  bucket 58: 10%
+  Sorting block time: 00:00:15
+Returning block of 23602604 for bucket 47
+  bucket 55: 20%
+Getting block 62 of 117
+  Reserving size (34554231) for bucket 62
+  Calculating Z arrays for bucket 62
+  Entering block accumulator loop for bucket 62:
+  bucket 56: 20%
+  Sorting block time: 00:00:20
+Returning block of 28072729 for bucket 43
+  bucket 52: 40%
+Getting block 63 of 117
+  Reserving size (34554231) for bucket 63
+  Calculating Z arrays for bucket 63
+  Entering block accumulator loop for bucket 63:
+  bucket 57: 20%
+  bucket 50: 60%
+  bucket 59: 10%
+  bucket 49: 70%
+  bucket 53: 40%
+  bucket 54: 40%
+  bucket 51: 50%
+  bucket 60: 10%
+  bucket 61: 10%
+  bucket 58: 20%
+  bucket 62: 10%
+  bucket 56: 30%
+  bucket 52: 50%
+  bucket 55: 30%
+  bucket 57: 30%
+  bucket 59: 20%
+  bucket 63: 10%
+  bucket 50: 70%
+  bucket 49: 80%
+  bucket 53: 50%
+  bucket 54: 50%
+  bucket 51: 60%
+  bucket 60: 20%
+  bucket 61: 20%
+  bucket 52: 60%
+  bucket 62: 20%
+  bucket 59: 30%
+  bucket 56: 40%
+  bucket 58: 30%
+  bucket 57: 40%
+  bucket 63: 20%
+  bucket 55: 40%
+  Sorting block time: 00:00:21
+Returning block of 33055431 for bucket 48
+  bucket 49: 90%
+  bucket 50: 80%
+Getting block 64 of 117
+  Reserving size (34554231) for bucket 64
+  Calculating Z arrays for bucket 64
+  Entering block accumulator loop for bucket 64:
+  bucket 53: 60%
+  bucket 51: 70%
+  bucket 60: 30%
+  bucket 54: 60%
+  bucket 59: 40%
+  bucket 61: 30%
+  bucket 57: 50%
+  bucket 52: 70%
+  bucket 62: 30%
+  bucket 58: 40%
+  bucket 56: 50%
+  bucket 63: 30%
+  bucket 49: 100%
+  Sorting block of length 31791955 for bucket 49
+  (Using difference cover)
+  bucket 50: 90%
+  bucket 55: 50%
+  bucket 64: 10%
+  bucket 53: 70%
+  bucket 59: 50%
+  bucket 51: 80%
+  bucket 60: 40%
+  bucket 61: 40%
+  bucket 57: 60%
+  bucket 54: 70%
+  bucket 62: 40%
+  bucket 52: 80%
+  bucket 63: 40%
+  bucket 58: 50%
+  bucket 56: 60%
+  bucket 53: 80%
+  bucket 50: 100%
+  Sorting block of length 23293752 for bucket 50
+  (Using difference cover)
+  bucket 55: 60%
+  bucket 59: 60%
+  bucket 64: 20%
+  Sorting block time: 00:00:13
+Returning block of 31791956 for bucket 49
+Getting block 65 of 117
+  Reserving size (34554231) for bucket 65
+  Calculating Z arrays for bucket 65
+  Entering block accumulator loop for bucket 65:
+  bucket 60: 50%
+  bucket 51: 90%
+  bucket 61: 50%
+  bucket 57: 70%
+  bucket 63: 50%
+  bucket 62: 50%
+  bucket 52: 90%
+  bucket 58: 60%
+  bucket 54: 80%
+  bucket 53: 90%
+  bucket 56: 70%
+  bucket 59: 70%
+  bucket 65: 10%
+  bucket 64: 30%
+  bucket 51: 100%
+  Sorting block of length 24204437 for bucket 51
+  (Using difference cover)
+  bucket 60: 60%
+  Sorting block time: 00:00:15
+Returning block of 23293753 for bucket 50
+Getting block 66 of 117
+  Reserving size (34554231) for bucket 66
+  Calculating Z arrays for bucket 66
+  Entering block accumulator loop for bucket 66:
+  bucket 57: 80%
+  bucket 63: 60%
+  bucket 55: 70%
+  bucket 62: 60%
+  bucket 61: 60%
+  bucket 52: 100%
+  Sorting block of length 16244834 for bucket 52
+  (Using difference cover)
+  bucket 65: 20%
+  bucket 53: 100%
+  Sorting block of length 19882326 for bucket 53
+  (Using difference cover)
+  bucket 58: 70%
+  bucket 56: 80%
+  bucket 54: 90%
+  bucket 64: 40%
+  bucket 59: 80%
+  bucket 60: 70%
+  bucket 63: 70%
+  bucket 66: 10%
+  bucket 62: 70%
+  bucket 57: 90%
+  bucket 65: 30%
+  Sorting block time: 00:00:09
+Returning block of 16244835 for bucket 52
+  bucket 55: 80%
+Getting block 67 of 117
+  Reserving size (34554231) for bucket 67
+  Calculating Z arrays for bucket 67
+  Entering block accumulator loop for bucket 67:
+  Sorting block time: 00:00:14
+Returning block of 24204438 for bucket 51
+Getting block 68 of 117
+  Reserving size (34554231) for bucket 68
+  Calculating Z arrays for bucket 68
+  Entering block accumulator loop for bucket 68:
+  bucket 61: 70%
+  bucket 64: 50%
+  bucket 56: 90%
+  bucket 58: 80%
+  bucket 54: 100%
+  Sorting block of length 29719262 for bucket 54
+  (Using difference cover)
+  Sorting block time: 00:00:12
+Returning block of 19882327 for bucket 53
+  bucket 63: 80%
+Getting block 69 of 117
+  Reserving size (34554231) for bucket 69
+  Calculating Z arrays for bucket 69
+  Entering block accumulator loop for bucket 69:
+  bucket 59: 90%
+  bucket 62: 80%
+  bucket 60: 80%
+  bucket 66: 20%
+  bucket 57: 100%
+  Sorting block of length 19926142 for bucket 57
+  (Using difference cover)
+  bucket 65: 40%
+  bucket 67: 10%
+  bucket 68: 10%
+  bucket 64: 60%
+  bucket 55: 90%
+  bucket 56: 100%
+  Sorting block of length 25781821 for bucket 56
+  (Using difference cover)
+  bucket 63: 90%
+  bucket 58: 90%
+  bucket 62: 90%
+  bucket 61: 80%
+  bucket 59: 100%
+  Sorting block of length 8916408 for bucket 59
+  (Using difference cover)
+  bucket 69: 10%
+  bucket 60: 90%
+  bucket 66: 30%
+  bucket 64: 70%
+  bucket 67: 20%
+  bucket 68: 20%
+  bucket 65: 50%
+  Sorting block time: 00:00:04
+Returning block of 8916409 for bucket 59
+Getting block 70 of 117
+  Reserving size (34554231) for bucket 70
+  Calculating Z arrays for bucket 70
+  Entering block accumulator loop for bucket 70:
+  bucket 63: 100%
+  Sorting block of length 28222096 for bucket 63
+  (Using difference cover)
+  Sorting block time: 00:00:11
+Returning block of 19926143 for bucket 57
+  Sorting block time: 00:00:16
+Returning block of 29719263 for bucket 54
+  bucket 62: 100%
+  Sorting block of length 24930735 for bucket 62
+  (Using difference cover)
+Getting block 71 of 117
+  Reserving size (34554231) for bucket 71
+  Calculating Z arrays for bucket 71
+  Entering block accumulator loop for bucket 71:
+Getting block 72 of 117
+  Reserving size (34554231) for bucket 72
+  Calculating Z arrays for bucket 72
+  Entering block accumulator loop for bucket 72:
+  bucket 58: 100%
+  Sorting block of length 33709720 for bucket 58
+  (Using difference cover)
+  bucket 55: 100%
+  Sorting block of length 25575533 for bucket 55
+  (Using difference cover)
+  bucket 69: 20%
+  bucket 60: 100%
+  Sorting block of length 33626035 for bucket 60
+  (Using difference cover)
+  bucket 66: 40%
+  bucket 61: 90%
+  bucket 64: 80%
+  bucket 67: 30%
+  Sorting block time: 00:00:15
+Returning block of 25781822 for bucket 56
+Getting block 73 of 117
+  Reserving size (34554231) for bucket 73
+  Calculating Z arrays for bucket 73
+  Entering block accumulator loop for bucket 73:
+  bucket 68: 30%
+  bucket 70: 10%
+  bucket 65: 60%
+  bucket 72: 10%
+  bucket 71: 10%
+  bucket 61: 100%
+  Sorting block of length 33588817 for bucket 61
+  (Using difference cover)
+  bucket 69: 30%
+  bucket 64: 90%
+  bucket 66: 50%
+  bucket 68: 40%
+  bucket 67: 40%
+  bucket 73: 10%
+  Sorting block time: 00:00:15
+Returning block of 24930736 for bucket 62
+Getting block 74 of 117
+  Reserving size (34554231) for bucket 74
+  Calculating Z arrays for bucket 74
+  Entering block accumulator loop for bucket 74:
+  bucket 70: 20%
+  Sorting block time: 00:00:16
+Returning block of 28222097 for bucket 63
+  bucket 71: 20%
+  bucket 72: 20%
+  bucket 65: 70%
+Getting block 75 of 117
+  Reserving size (34554231) for bucket 75
+  Calculating Z arrays for bucket 75
+  Entering block accumulator loop for bucket 75:
+  bucket 64: 100%
+  Sorting block of length 25366356 for bucket 64
+  (Using difference cover)
+  bucket 69: 40%
+  bucket 66: 60%
+  bucket 68: 50%
+  Sorting block time: 00:00:19
+Returning block of 25575534 for bucket 55
+  Sorting block time: 00:00:18
+Returning block of 33626036 for bucket 60
+  bucket 73: 20%
+  bucket 67: 50%
+Getting block 76 of 117
+  Reserving size (34554231) for bucket 76
+  Calculating Z arrays for bucket 76
+  Entering block accumulator loop for bucket 76:
+Getting block 77 of 117
+  Reserving size (34554231) for bucket 77
+  Calculating Z arrays for bucket 77
+  Entering block accumulator loop for bucket 77:
+  bucket 74: 10%
+  bucket 70: 30%
+  bucket 71: 30%
+  Sorting block time: 00:00:21
+Returning block of 33709721 for bucket 58
+  bucket 72: 30%
+Getting block 78 of 117
+  Reserving size (34554231) for bucket 78
+  Calculating Z arrays for bucket 78
+  Entering block accumulator loop for bucket 78:
+  bucket 75: 10%
+  bucket 65: 80%
+  bucket 66: 70%
+  bucket 69: 50%
+  bucket 68: 60%
+  Sorting block time: 00:00:18
+Returning block of 33588818 for bucket 61
+Getting block 79 of 117
+  Reserving size (34554231) for bucket 79
+  Calculating Z arrays for bucket 79
+  Entering block accumulator loop for bucket 79:
+  bucket 73: 30%
+  bucket 74: 20%
+  bucket 67: 60%
+  bucket 70: 40%
+  Sorting block time: 00:00:12
+Returning block of 25366357 for bucket 64
+  bucket 76: 10%
+Getting block 80 of 117
+  Reserving size (34554231) for bucket 80
+  Calculating Z arrays for bucket 80
+  Entering block accumulator loop for bucket 80:
+  bucket 71: 40%
+  bucket 75: 20%
+  bucket 72: 40%
+  bucket 77: 10%
+  bucket 78: 10%
+  bucket 66: 80%
+  bucket 65: 90%
+  bucket 69: 60%
+  bucket 68: 70%
+  bucket 79: 10%
+  bucket 74: 30%
+  bucket 75: 30%
+  bucket 73: 40%
+  bucket 67: 70%
+  bucket 70: 50%
+  bucket 80: 10%
+  bucket 76: 20%
+  bucket 71: 50%
+  bucket 72: 50%
+  bucket 78: 20%
+  bucket 77: 20%
+  bucket 65: 100%
+  Sorting block of length 33091453 for bucket 65
+  (Using difference cover)
+  bucket 66: 90%
+  bucket 75: 40%
+  bucket 68: 80%
+  bucket 74: 40%
+  bucket 69: 70%
+  bucket 70: 60%
+  bucket 73: 50%
+  bucket 79: 20%
+  bucket 80: 20%
+  bucket 67: 80%
+  bucket 71: 60%
+  bucket 72: 60%
+  bucket 76: 30%
+  bucket 75: 50%
+  bucket 78: 30%
+  bucket 66: 100%
+  Sorting block of length 9075022 for bucket 66
+  (Using difference cover)
+  bucket 77: 30%
+  bucket 74: 50%
+  bucket 68: 90%
+  bucket 80: 30%
+  bucket 70: 70%
+  bucket 73: 60%
+  bucket 69: 80%
+  Sorting block time: 00:00:16
+Returning block of 33091454 for bucket 65
+  Sorting block time: 00:00:05
+Returning block of 9075023 for bucket 66
+  bucket 67: 90%
+Getting block 81 of 117
+  Reserving size (34554231) for bucket 81
+  Calculating Z arrays for bucket 81
+  Entering block accumulator loop for bucket 81:
+Getting block 82 of 117
+  Reserving size (34554231) for bucket 82
+  Calculating Z arrays for bucket 82
+  Entering block accumulator loop for bucket 82:
+  bucket 79: 30%
+  bucket 71: 70%
+  bucket 72: 70%
+  bucket 76: 40%
+  bucket 75: 60%
+  bucket 78: 40%
+  bucket 74: 60%
+  bucket 70: 80%
+  bucket 77: 40%
+  bucket 68: 100%
+  Sorting block of length 33174158 for bucket 68
+  (Using difference cover)
+  bucket 80: 40%
+  bucket 73: 70%
+  bucket 79: 40%
+  bucket 82: 10%
+  bucket 69: 90%
+  bucket 71: 80%
+  bucket 67: 100%
+  Sorting block of length 29583147 for bucket 67
+  (Using difference cover)
+  bucket 81: 10%
+  bucket 72: 80%
+  bucket 76: 50%
+  bucket 78: 50%
+  bucket 75: 70%
+  bucket 74: 70%
+  bucket 77: 50%
+  bucket 70: 90%
+  bucket 73: 80%
+  bucket 80: 50%
+  bucket 79: 50%
+  bucket 69: 100%
+  Sorting block of length 24910241 for bucket 69
+  (Using difference cover)
+  bucket 71: 90%
+  bucket 72: 90%
+  bucket 82: 20%
+  bucket 76: 60%
+  bucket 81: 20%
+  bucket 78: 60%
+  Sorting block time: 00:00:17
+Returning block of 33174159 for bucket 68
+Getting block 83 of 117
+  Reserving size (34554231) for bucket 83
+  Calculating Z arrays for bucket 83
+  Entering block accumulator loop for bucket 83:
+  bucket 75: 80%
+  bucket 70: 100%
+  Sorting block of length 26226602 for bucket 70
+  (Using difference cover)
+  bucket 74: 80%
+  bucket 77: 60%
+  bucket 80: 60%
+  bucket 79: 60%
+  bucket 71: 100%
+  Sorting block of length 23132120 for bucket 71
+  (Using difference cover)
+  bucket 72: 100%
+  Sorting block of length 21240469 for bucket 72
+  (Using difference cover)
+  bucket 73: 90%
+  Sorting block time: 00:00:21
+Returning block of 29583148 for bucket 67
+Getting block 84 of 117
+  Reserving size (34554231) for bucket 84
+  Calculating Z arrays for bucket 84
+  Entering block accumulator loop for bucket 84:
+  bucket 76: 70%
+  bucket 75: 90%
+  Sorting block time: 00:00:14
+Returning block of 24910242 for bucket 69
+  bucket 78: 70%
+  bucket 81: 30%
+  bucket 83: 10%
+Getting block 85 of 117
+  Reserving size (34554231) for bucket 85
+  Calculating Z arrays for bucket 85
+  Entering block accumulator loop for bucket 85:
+  bucket 74: 90%
+  bucket 82: 30%
+  bucket 79: 70%
+  bucket 77: 70%
+  bucket 80: 70%
+  bucket 75: 100%
+  Sorting block of length 30705125 for bucket 75
+  (Using difference cover)
+  bucket 84: 10%
+  bucket 73: 100%
+  Sorting block of length 32358397 for bucket 73
+  (Using difference cover)
+  bucket 81: 40%
+  Sorting block time: 00:00:14
+Returning block of 26226603 for bucket 70
+  bucket 76: 80%
+  bucket 78: 80%
+Getting block 86 of 117
+  Reserving size (34554231) for bucket 86
+  Calculating Z arrays for bucket 86
+  Entering block accumulator loop for bucket 86:
+  bucket 83: 20%
+  bucket 85: 10%
+  bucket 74: 100%
+  Sorting block of length 17886192 for bucket 74
+  (Using difference cover)
+  Sorting block time: 00:00:13
+Returning block of 21240470 for bucket 72
+Getting block 87 of 117
+  Reserving size (34554231) for bucket 87
+  Calculating Z arrays for bucket 87
+  Entering block accumulator loop for bucket 87:
+  Sorting block time: 00:00:14
+Returning block of 23132121 for bucket 71
+  bucket 79: 80%
+Getting block 88 of 117
+  Reserving size (34554231) for bucket 88
+  Calculating Z arrays for bucket 88
+  Entering block accumulator loop for bucket 88:
+  bucket 82: 40%
+  bucket 80: 80%
+  bucket 77: 80%
+  bucket 84: 20%
+  Sorting block time: 00:00:08
+Returning block of 17886193 for bucket 74
+Getting block 89 of 117
+  Reserving size (34554231) for bucket 89
+  Calculating Z arrays for bucket 89
+  Entering block accumulator loop for bucket 89:
+  bucket 81: 50%
+  bucket 85: 20%
+  bucket 78: 90%
+  bucket 86: 10%
+  bucket 76: 90%
+  bucket 83: 30%
+  bucket 79: 90%
+  bucket 87: 10%
+  bucket 80: 90%
+  bucket 88: 10%
+  Sorting block time: 00:00:18
+Returning block of 30705126 for bucket 75
+Getting block 90 of 117
+  Reserving size (34554231) for bucket 90
+  Calculating Z arrays for bucket 90
+  Entering block accumulator loop for bucket 90:
+  bucket 84: 30%
+  Sorting block time: 00:00:18
+Returning block of 32358398 for bucket 73
+  bucket 82: 50%
+Getting block 91 of 117
+  Reserving size (34554231) for bucket 91
+  Calculating Z arrays for bucket 91
+  Entering block accumulator loop for bucket 91:
+  bucket 77: 90%
+  bucket 89: 10%
+  bucket 78: 100%
+  Sorting block of length 14552882 for bucket 78
+  (Using difference cover)
+  bucket 85: 30%
+  bucket 86: 20%
+  bucket 81: 60%
+  bucket 80: 100%
+  Sorting block of length 10627518 for bucket 80
+  (Using difference cover)
+  bucket 83: 40%
+  bucket 79: 100%
+  Sorting block of length 31511555 for bucket 79
+  (Using difference cover)
+  bucket 76: 100%
+  Sorting block of length 26108170 for bucket 76
+  (Using difference cover)
+  bucket 88: 20%
+  bucket 87: 20%
+  bucket 90: 10%
+  bucket 89: 20%
+  bucket 84: 40%
+  bucket 82: 60%
+  bucket 91: 10%
+  bucket 77: 100%
+  Sorting block of length 25813105 for bucket 77
+  (Using difference cover)
+  Sorting block time: 00:00:06
+Returning block of 10627519 for bucket 80
+Getting block 92 of 117
+  Reserving size (34554231) for bucket 92
+  Calculating Z arrays for bucket 92
+  Entering block accumulator loop for bucket 92:
+  Sorting block time: 00:00:10
+Returning block of 14552883 for bucket 78
+Getting block 93 of 117
+  Reserving size (34554231) for bucket 93
+  Calculating Z arrays for bucket 93
+  Entering block accumulator loop for bucket 93:
+  bucket 85: 40%
+  bucket 86: 30%
+  bucket 81: 70%
+  bucket 83: 50%
+  bucket 88: 30%
+  bucket 87: 30%
+  bucket 89: 30%
+  bucket 90: 20%
+  bucket 91: 20%
+  Sorting block time: 00:00:15
+Returning block of 26108171 for bucket 76
+Getting block 94 of 117
+  Reserving size (34554231) for bucket 94
+  Calculating Z arrays for bucket 94
+  Entering block accumulator loop for bucket 94:
+  bucket 84: 50%
+  bucket 93: 10%
+  Sorting block time: 00:00:13
+Returning block of 25813106 for bucket 77
+Getting block 95 of 117
+  Reserving size (34554231) for bucket 95
+  Calculating Z arrays for bucket 95
+  Entering block accumulator loop for bucket 95:
+  bucket 81: 80%
+  Sorting block time: 00:00:20
+Returning block of 31511556 for bucket 79
+  bucket 85: 50%
+  bucket 92: 10%
+  bucket 83: 60%
+  bucket 86: 40%
+  bucket 88: 40%
+  bucket 82: 70%
+Getting block 96 of 117
+  Reserving size (34554231) for bucket 96
+  Calculating Z arrays for bucket 96
+  Entering block accumulator loop for bucket 96:
+  bucket 87: 40%
+  bucket 94: 10%
+  bucket 91: 30%
+  bucket 84: 60%
+  bucket 89: 40%
+  bucket 93: 20%
+  bucket 90: 30%
+  bucket 83: 70%
+  bucket 81: 90%
+  bucket 95: 10%
+  bucket 86: 50%
+  bucket 94: 20%
+  bucket 88: 50%
+  bucket 85: 60%
+  bucket 87: 50%
+  bucket 82: 80%
+  bucket 92: 20%
+  bucket 91: 40%
+  bucket 96: 10%
+  bucket 84: 70%
+  bucket 89: 50%
+  bucket 93: 30%
+  bucket 83: 80%
+  bucket 90: 40%
+  bucket 81: 100%
+  Sorting block of length 34515714 for bucket 81
+  (Using difference cover)
+  bucket 95: 20%
+  bucket 94: 30%
+  bucket 85: 70%
+  bucket 88: 60%
+  bucket 87: 60%
+  bucket 86: 60%
+  bucket 91: 50%
+  bucket 92: 30%
+  bucket 82: 90%
+  bucket 96: 20%
+  bucket 84: 80%
+  bucket 83: 90%
+  bucket 89: 60%
+  bucket 93: 40%
+  bucket 94: 40%
+  bucket 85: 80%
+  bucket 95: 30%
+  bucket 90: 50%
+  bucket 88: 70%
+  bucket 86: 70%
+  bucket 91: 60%
+  bucket 96: 30%
+  bucket 84: 90%
+  bucket 83: 100%
+  Sorting block of length 10967970 for bucket 83
+  (Using difference cover)
+  bucket 82: 100%
+  Sorting block of length 28838582 for bucket 82
+  (Using difference cover)
+  bucket 87: 70%
+  bucket 89: 70%
+  bucket 92: 40%
+  bucket 93: 50%
+  bucket 94: 50%
+  bucket 85: 90%
+  Sorting block time: 00:00:06
+Returning block of 10967971 for bucket 83
+Getting block 97 of 117
+  Reserving size (34554231) for bucket 97
+  Calculating Z arrays for bucket 97
+  Entering block accumulator loop for bucket 97:
+  Sorting block time: 00:00:22
+Returning block of 34515715 for bucket 81
+Getting block 98 of 117
+  Reserving size (34554231) for bucket 98
+  Calculating Z arrays for bucket 98
+  Entering block accumulator loop for bucket 98:
+  bucket 96: 40%
+  bucket 88: 80%
+  bucket 86: 80%
+  bucket 91: 70%
+  bucket 84: 100%
+  Sorting block of length 33311602 for bucket 84
+  (Using difference cover)
+  bucket 90: 60%
+  bucket 95: 40%
+  bucket 89: 80%
+  bucket 87: 80%
+  bucket 94: 60%
+  bucket 85: 100%
+  Sorting block of length 19045665 for bucket 85
+  (Using difference cover)
+  bucket 92: 50%
+  bucket 93: 60%
+  bucket 97: 10%
+  Sorting block time: 00:00:15
+Returning block of 28838583 for bucket 82
+  bucket 98: 10%
+Getting block 99 of 117
+  Reserving size (34554231) for bucket 99
+  Calculating Z arrays for bucket 99
+  Entering block accumulator loop for bucket 99:
+  bucket 96: 50%
+  bucket 88: 90%
+  bucket 91: 80%
+  bucket 89: 90%
+  bucket 94: 70%
+  bucket 86: 90%
+  Sorting block time: 00:00:10
+Returning block of 19045666 for bucket 85
+  bucket 87: 90%
+Getting block 100 of 117
+  Reserving size (34554231) for bucket 100
+  Calculating Z arrays for bucket 100
+  Entering block accumulator loop for bucket 100:
+  bucket 97: 20%
+  bucket 90: 70%
+  bucket 99: 10%
+  bucket 93: 70%
+  bucket 96: 60%
+  bucket 98: 20%
+  bucket 95: 50%
+  bucket 91: 90%
+  bucket 88: 100%
+  Sorting block of length 34187018 for bucket 88
+  (Using difference cover)
+  bucket 92: 60%
+  bucket 94: 80%
+  bucket 89: 100%
+  Sorting block of length 16491720 for bucket 89
+  (Using difference cover)
+  bucket 86: 100%
+  Sorting block of length 22043407 for bucket 86
+  (Using difference cover)
+  Sorting block time: 00:00:21
+Returning block of 33311603 for bucket 84
+  bucket 100: 10%
+  bucket 97: 30%
+Getting block 101 of 117
+  Reserving size (34554231) for bucket 101
+  Calculating Z arrays for bucket 101
+  Entering block accumulator loop for bucket 101:
+  bucket 87: 100%
+  Sorting block of length 33374719 for bucket 87
+  (Using difference cover)
+  bucket 90: 80%
+  bucket 99: 20%
+  bucket 96: 70%
+  bucket 93: 80%
+  bucket 98: 30%
+  bucket 95: 60%
+  bucket 91: 100%
+  Sorting block of length 13917653 for bucket 91
+  (Using difference cover)
+  bucket 94: 90%
+  bucket 100: 20%
+  bucket 97: 40%
+  Sorting block time: 00:00:10
+Returning block of 16491721 for bucket 89
+  bucket 92: 70%
+Getting block 102 of 117
+  Reserving size (34554231) for bucket 102
+  Calculating Z arrays for bucket 102
+  Entering block accumulator loop for bucket 102:
+  bucket 90: 90%
+  bucket 101: 10%
+  bucket 96: 80%
+  bucket 99: 30%
+  Sorting block time: 00:00:11
+Returning block of 22043408 for bucket 86
+Getting block 103 of 117
+  Reserving size (34554231) for bucket 103
+  Calculating Z arrays for bucket 103
+  Entering block accumulator loop for bucket 103:
+  bucket 93: 90%
+  Sorting block time: 00:00:08
+Returning block of 13917654 for bucket 91
+  bucket 98: 40%
+Getting block 104 of 117
+  Reserving size (34554231) for bucket 104
+  Calculating Z arrays for bucket 104
+  Entering block accumulator loop for bucket 104:
+  bucket 94: 100%
+  Sorting block of length 29025040 for bucket 94
+  (Using difference cover)
+  bucket 95: 70%
+  bucket 97: 50%
+  bucket 100: 30%
+  bucket 90: 100%
+  Sorting block of length 26027070 for bucket 90
+  (Using difference cover)
+  bucket 96: 90%
+  bucket 102: 10%
+  Sorting block time: 00:00:20
+Returning block of 34187019 for bucket 88
+  bucket 92: 80%
+Getting block 105 of 117
+  Reserving size (34554231) for bucket 105
+  Calculating Z arrays for bucket 105
+  Entering block accumulator loop for bucket 105:
+  bucket 101: 20%
+  bucket 99: 40%
+  bucket 98: 50%
+  bucket 103: 10%
+  bucket 93: 100%
+  Sorting block of length 27006328 for bucket 93
+  (Using difference cover)
+  bucket 104: 10%
+  Sorting block time: 00:00:20
+Returning block of 33374720 for bucket 87
+Getting block 106 of 117
+  Reserving size (34554231) for bucket 106
+  Calculating Z arrays for bucket 106
+  Entering block accumulator loop for bucket 106:
+  bucket 95: 80%
+  bucket 100: 40%
+  bucket 96: 100%
+  Sorting block of length 11726425 for bucket 96
+  (Using difference cover)
+  bucket 97: 60%
+  bucket 102: 20%
+  bucket 105: 10%
+  bucket 98: 60%
+  bucket 101: 30%
+  bucket 99: 50%
+  bucket 92: 90%
+  bucket 103: 20%
+  Sorting block time: 00:00:12
+Returning block of 26027071 for bucket 90
+  Sorting block time: 00:00:16
+Returning block of 29025041 for bucket 94
+  bucket 104: 20%
+Getting block 107 of 117
+  Reserving size (34554231) for bucket 107
+  Calculating Z arrays for bucket 107
+  Entering block accumulator loop for bucket 107:
+Getting block 108 of 117
+  Reserving size (34554231) for bucket 108
+  Calculating Z arrays for bucket 108
+  Entering block accumulator loop for bucket 108:
+  bucket 95: 90%
+  bucket 106: 10%
+  bucket 100: 50%
+  Sorting block time: 00:00:08
+Returning block of 11726426 for bucket 96
+Getting block 109 of 117
+  Reserving size (34554231) for bucket 109
+  Calculating Z arrays for bucket 109
+  Entering block accumulator loop for bucket 109:
+  bucket 102: 30%
+  bucket 97: 70%
+  bucket 98: 70%
+  bucket 105: 20%
+  Sorting block time: 00:00:14
+Returning block of 27006329 for bucket 93
+Getting block 110 of 117
+  Reserving size (34554231) for bucket 110
+  Calculating Z arrays for bucket 110
+  Entering block accumulator loop for bucket 110:
+  bucket 99: 60%
+  bucket 103: 30%
+  bucket 104: 30%
+  bucket 107: 10%
+  bucket 108: 10%
+  bucket 101: 40%
+  bucket 92: 100%
+  Sorting block of length 30520990 for bucket 92
+  (Using difference cover)
+  bucket 100: 60%
+  bucket 95: 100%
+  Sorting block of length 28502857 for bucket 95
+  (Using difference cover)
+  bucket 106: 20%
+  bucket 102: 40%
+  bucket 98: 80%
+  bucket 109: 10%
+  bucket 105: 30%
+  bucket 110: 10%
+  bucket 97: 80%
+  bucket 99: 70%
+  bucket 103: 40%
+  bucket 107: 20%
+  bucket 104: 40%
+  bucket 108: 20%
+  bucket 101: 50%
+  bucket 100: 70%
+  bucket 106: 30%
+  bucket 98: 90%
+  bucket 102: 50%
+  bucket 105: 40%
+  bucket 110: 20%
+  bucket 109: 20%
+  bucket 97: 90%
+  bucket 99: 80%
+  Sorting block time: 00:00:14
+Returning block of 28502858 for bucket 95
+Getting block 111 of 117
+  Reserving size (34554231) for bucket 111
+  Calculating Z arrays for bucket 111
+  Entering block accumulator loop for bucket 111:
+  bucket 103: 50%
+  bucket 104: 50%
+  bucket 108: 30%
+  Sorting block time: 00:00:17
+Returning block of 30520991 for bucket 92
+  bucket 107: 30%
+  bucket 100: 80%
+  bucket 101: 60%
+Getting block 112 of 117
+  Reserving size (34554231) for bucket 112
+  Calculating Z arrays for bucket 112
+  Entering block accumulator loop for bucket 112:
+  bucket 98: 100%
+  Sorting block of length 25146837 for bucket 98
+  (Using difference cover)
+  bucket 102: 60%
+  bucket 105: 50%
+  bucket 106: 40%
+  bucket 110: 30%
+  bucket 109: 30%
+  bucket 97: 100%
+  Sorting block of length 32904563 for bucket 97
+  (Using difference cover)
+  bucket 99: 90%
+  bucket 103: 60%
+  bucket 104: 60%
+  bucket 111: 10%
+  bucket 108: 40%
+  bucket 100: 90%
+  bucket 101: 70%
+  bucket 112: 10%
+  bucket 107: 40%
+  bucket 105: 60%
+  bucket 102: 70%
+  bucket 110: 40%
+  bucket 109: 40%
+  bucket 106: 50%
+  bucket 103: 70%
+  bucket 104: 70%
+  bucket 99: 100%
+  Sorting block of length 11462214 for bucket 99
+  (Using difference cover)
+  bucket 111: 20%
+  bucket 108: 50%
+  Sorting block time: 00:00:13
+Returning block of 25146838 for bucket 98
+  bucket 100: 100%
+  Sorting block of length 30896066 for bucket 100
+  (Using difference cover)
+Getting block 113 of 117
+  Reserving size (34554231) for bucket 113
+  Calculating Z arrays for bucket 113
+  Entering block accumulator loop for bucket 113:
+  bucket 101: 80%
+  bucket 105: 70%
+  bucket 112: 20%
+  bucket 107: 50%
+  bucket 102: 80%
+  Sorting block time: 00:00:06
+Returning block of 11462215 for bucket 99
+Getting block 114 of 117
+  Reserving size (34554231) for bucket 114
+  Calculating Z arrays for bucket 114
+  Entering block accumulator loop for bucket 114:
+  bucket 109: 50%
+  bucket 104: 80%
+  bucket 103: 80%
+  bucket 110: 50%
+  bucket 106: 60%
+  bucket 111: 30%
+  Sorting block time: 00:00:19
+Returning block of 32904564 for bucket 97
+Getting block 115 of 117
+  Reserving size (34554231) for bucket 115
+  Calculating Z arrays for bucket 115
+  Entering block accumulator loop for bucket 115:
+  bucket 113: 10%
+  bucket 108: 60%
+  bucket 105: 80%
+  bucket 101: 90%
+  bucket 104: 90%
+  bucket 103: 90%
+  bucket 114: 10%
+  bucket 102: 90%
+  bucket 112: 30%
+  bucket 110: 60%
+  bucket 107: 60%
+  bucket 109: 60%
+  Sorting block time: 00:00:18
+Returning block of 30896067 for bucket 100
+Getting block 116 of 117
+  Reserving size (34554231) for bucket 116
+  Calculating Z arrays for bucket 116
+  Entering block accumulator loop for bucket 116:
+  bucket 113: 20%
+  bucket 106: 70%
+  bucket 111: 40%
+  bucket 108: 70%
+  bucket 105: 90%
+  bucket 115: 10%
+  bucket 104: 100%
+  Sorting block of length 34255101 for bucket 104
+  (Using difference cover)
+  bucket 103: 100%
+  Sorting block of length 9658693 for bucket 103
+  (Using difference cover)
+  bucket 114: 20%
+  bucket 102: 100%
+  Sorting block of length 25361470 for bucket 102
+  (Using difference cover)
+  bucket 112: 40%
+  bucket 113: 30%
+  Sorting block time: 00:00:05
+Returning block of 9658694 for bucket 103
+Getting block 117 of 117
+  Reserving size (34554231) for bucket 117
+  Calculating Z arrays for bucket 117
+  Entering block accumulator loop for bucket 117:
+  bucket 108: 80%
+  bucket 105: 100%
+  Sorting block of length 14144496 for bucket 105
+  (Using difference cover)
+  bucket 110: 70%
+  bucket 116: 10%
+  bucket 101: 100%
+  Sorting block of length 17706651 for bucket 101
+  (Using difference cover)
+  bucket 109: 70%
+  bucket 111: 50%
+  bucket 117: 10%
+  bucket 115: 20%
+  Sorting block time: 00:00:07
+Returning block of 14144497 for bucket 105
+  bucket 113: 40%
+  bucket 106: 80%
+  bucket 107: 70%
+  bucket 108: 90%
+  bucket 114: 30%
+  bucket 117: 20%
+  bucket 112: 50%
+  Sorting block time: 00:00:14
+Returning block of 25361471 for bucket 102
+  bucket 110: 80%
+  Sorting block time: 00:00:11
+Returning block of 17706652 for bucket 101
+  Sorting block time: 00:00:20
+Returning block of 34255102 for bucket 104
+  bucket 116: 20%
+  bucket 117: 30%
+  bucket 113: 50%
+  bucket 108: 100%
+  Sorting block of length 31580620 for bucket 108
+  (Using difference cover)
+  bucket 111: 60%
+  bucket 115: 30%
+  bucket 109: 80%
+  bucket 117: 40%
+  bucket 106: 90%
+  bucket 107: 80%
+  bucket 114: 40%
+  bucket 113: 60%
+  bucket 117: 50%
+  bucket 110: 90%
+  bucket 112: 60%
+  bucket 116: 30%
+  bucket 117: 60%
+  bucket 115: 40%
+  bucket 111: 70%
+  bucket 113: 70%
+  bucket 109: 90%
+  Sorting block time: 00:00:17
+Returning block of 31580621 for bucket 108
+  bucket 106: 100%
+  Sorting block of length 23569612 for bucket 106
+  (Using difference cover)
+  bucket 107: 90%
+  bucket 114: 50%
+  bucket 117: 70%
+  bucket 110: 100%
+  Sorting block of length 22582744 for bucket 110
+  (Using difference cover)
+  bucket 116: 40%
+  bucket 112: 70%
+  bucket 109: 100%
+  Sorting block of length 32540544 for bucket 109
+  (Using difference cover)
+  bucket 107: 100%
+  Sorting block of length 33121689 for bucket 107
+  (Using difference cover)
+  bucket 113: 80%
+  bucket 115: 50%
+  bucket 111: 80%
+  bucket 117: 80%
+  bucket 114: 60%
+  bucket 112: 80%
+  Sorting block time: 00:00:14
+Returning block of 23569613 for bucket 106
+  bucket 111: 90%
+  bucket 116: 50%
+  bucket 117: 90%
+  bucket 114: 70%
+  Sorting block time: 00:00:13
+Returning block of 22582745 for bucket 110
+  bucket 113: 90%
+  bucket 115: 60%
+  bucket 112: 90%
+  Sorting block time: 00:00:16
+Returning block of 32540545 for bucket 109
+  Sorting block time: 00:00:16
+Returning block of 33121690 for bucket 107
+  bucket 111: 100%
+  Sorting block of length 22844019 for bucket 111
+  (Using difference cover)
+  bucket 114: 80%
+  bucket 117: 100%
+  Sorting block of length 18383346 for bucket 117
+  (Using difference cover)
+  bucket 116: 60%
+  bucket 112: 100%
+  Sorting block of length 31255952 for bucket 112
+  (Using difference cover)
+  bucket 115: 70%
+  bucket 114: 90%
+  bucket 113: 100%
+  Sorting block of length 5418579 for bucket 113
+  (Using difference cover)
+  Sorting block time: 00:00:10
+Returning block of 18383347 for bucket 117
+  Sorting block time: 00:00:12
+Returning block of 22844020 for bucket 111
+  Sorting block time: 00:00:03
+Returning block of 5418580 for bucket 113
+  bucket 114: 100%
+  Sorting block of length 34201928 for bucket 114
+  (Using difference cover)
+  bucket 116: 70%
+  bucket 115: 80%
+  Sorting block time: 00:00:16
+Returning block of 31255953 for bucket 112
+  bucket 116: 80%
+  bucket 115: 90%
+  Sorting block time: 00:00:17
+Returning block of 34201929 for bucket 114
+  bucket 116: 90%
+  bucket 115: 100%
+  Sorting block of length 33478109 for bucket 115
+  (Using difference cover)
+  bucket 116: 100%
+  Sorting block of length 30079607 for bucket 116
+  (Using difference cover)
+  Sorting block time: 00:00:20
+Returning block of 33478110 for bucket 115
+  Sorting block time: 00:00:19
+Returning block of 30079608 for bucket 116
+Exited Ebwt loop
+fchr[A]: 0
+fchr[C]: 870384190
+fchr[G]: 1471627168
+fchr[T]: 2075457683
+fchr[$]: 2948627755
+Exiting Ebwt::buildToDisk()
+Returning from initFromVector
+Wrote 846679177 bytes to primary EBWT file: /orcd/scratch/orcd/011/dashii/conference_smn2_aso/indexes/grch38_v50.rev.1.ebwt
+Wrote 368578476 bytes to secondary EBWT file: /orcd/scratch/orcd/011/dashii/conference_smn2_aso/indexes/grch38_v50.rev.2.ebwt
+Re-opening _in1 and _in2 as input streams
+Returning from Ebwt constructor
+Headers:
+    len: 2948627755
+    bwtLen: 2948627756
+    sz: 737156939
+    bwtSz: 737156939
+    lineRate: 6
+    linesPerSide: 1
+    offRate: 5
+    offMask: 0xffffffe0
+    isaRate: -1
+    isaMask: 0xffffffff
+    ftabChars: 10
+    eftabLen: 20
+    eftabSz: 80
+    ftabLen: 1048577
+    ftabSz: 4194308
+    offsLen: 92144618
+    offsSz: 368578472
+    isaLen: 0
+    isaSz: 0
+    lineSz: 64
+    sideSz: 64
+    sideBwtSz: 56
+    sideBwtLen: 224
+    numSidePairs: 6581759
+    numSides: 13163518
+    numLines: 13163518
+    ebwtTotLen: 842465152
+    ebwtTotSz: 842465152
+    reverse: 0
+Total time for backward call to driver() for mirror index: 00:16:34
+
+
+Building a new DB, current time: 09/26/2026 04:23:27
+New DB name:   /orcd/scratch/orcd/011/dashii/conference_smn2_aso/indexes/grch38_v50_blast
+New DB title:  /home/dashii/orcd/scratch/feng/gencode/v50/GRCh38.primary_assembly.genome.fa
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 3000000000B
+Adding sequences from FASTA; added 194 sequences in 34.2662 seconds.
+
+

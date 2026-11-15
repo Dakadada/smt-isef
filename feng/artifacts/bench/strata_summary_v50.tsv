@@ -1,0 +1,9 @@
+event_id	positive_exon_key	in_universe	detectable	eligible_background	n_selected	kill_gate_pass	kill_reason
+OT01_POLR2H_e2	chr3:184364965-184365049:+	True	True	14238	100	True	
+OT02_PITHD1_e2	chr1:23779437-23779481:+	True	True	6027	100	True	
+OT03_SERPINB7_e4	chr18:63793160-63793277:+	True	True	25896	100	True	
+OT04_RTTN_e4	chr18:70201893-70201983:-	True	True	34878	100	True	
+OT05_REV3L_e9	chr6:111388000-111388085:-	True	True	18135	100	True	
+OT06_PRKRA_e2	chr2:178450241-178450411:-	True	True	24507	100	True	
+OT07_GOLGA4_e4	chr3:37273535-37273601:+	True	True	17912	100	True	
+OT08_PAK1_e2	chr11:77392330-77392541:-	True	True	27456	100	True	

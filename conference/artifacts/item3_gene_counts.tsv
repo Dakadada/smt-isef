@@ -1,0 +1,9 @@
+state	query_id	aso_id	draw_id	is_real	sequence_rna_5to3	aligner	preflight_status	preflight_reason	expected_random_both_strand_hits_v3	raw_alignment_count	distinct_genes_any_strand	distinct_genes_transcript_compatible
+[candidate]	F18__real	F18		true	UCACUUUCAUAAUGCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3939	2746	1518
+[candidate]	F18__real	F18		true	UCACUUUCAUAAUGCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4197	2889	1588
+[candidate]	F14__real	F14		true	UUUCAUAAUGCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	787214	44093	37713
+[candidate]	F14__real	F14		true	UUUCAUAAUGCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1682	1320	684
+[candidate]	F10__real	F10		true	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__real	F10		true	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	3UP8__real	3UP8		true	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__real	3UP8		true	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			

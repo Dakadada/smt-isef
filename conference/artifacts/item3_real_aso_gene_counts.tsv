@@ -1,0 +1,4 @@
+state	aso_id	is_real	sequence_rna_5to3	bowtie1_v3_raw_alignments	bowtie1_v3_distinct_genes_any_strand	bowtie1_v3_distinct_genes	blastn_short_raw_alignments	blastn_short_distinct_genes_any_strand	blastn_short_distinct_genes
+[candidate]	F18	true	UCACUUUCAUAAUGCUGG	3939	2746	1518	4197	2889	1588
+[candidate]	F14	true	UUUCAUAAUGCUGG	787214	44093	37713	1682	1320	684
+[candidate]	F10	true	AUAAUGCUGG	25460836	75011	71148	0	0	0

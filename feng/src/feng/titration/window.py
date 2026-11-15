@@ -47,20 +47,49 @@ deep-splice), which this CPU-only curve does not yet include.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import fcntl
 import hashlib
 import json
+import math
+import os
 from pathlib import Path
+import tempfile
 from typing import Mapping, Sequence
+
+import numpy as np
 
 from feng.bench.scores import OLIGO_LENGTH
 from feng.honesty.states import ResultState
+from feng.titration import arm_e_hoff, arm_e_scan
 
 _CANDIDATE = ResultState.CANDIDATE.value
 
 # Candidate, pre-registration-eligible constants.
 OFF_TARGET_PSEUDOCOUNT = 1
-FORMULA_VERSION = "armE-window-v1"
+FORMULA_VERSION = "armE-window-v2"
+EXPECTED_LADDER_LENGTHS = tuple(range(2, 31, 2))
+MINIMUM_INFORMATIVE_LENGTH = arm_e_scan.MINIMUM_INFORMATIVE_LENGTH
+INFORMATIVE_LADDER_LENGTHS = tuple(
+    length for length in EXPECTED_LADDER_LENGTHS
+    if length >= MINIMUM_INFORMATIVE_LENGTH
+)
 _HASH_PRECISION = 6  # decimals floats are rounded to before canonical hashing
+POTENCY_BACKBONE = ("intarna_dg", "rnaup_dg")
+_ALLOWED_REAL_SCALAR_TYPES = frozenset({
+    int,
+    float,
+    np.float64,
+    np.float32,
+    np.float16,
+    np.int64,
+    np.int32,
+    np.int16,
+    np.int8,
+    np.uint64,
+    np.uint32,
+    np.uint16,
+    np.uint8,
+})
 
 # Human-readable record of every scoring choice, embedded verbatim in the
 # preregistration payload so the sealed hash covers the formulae, not just the
@@ -73,8 +102,10 @@ AXIS_DEFINITIONS = {
         "accessibility excluded from the backbone (secondary/diagnostic)"
     ),
     "off_target_burden": (
-        "count of near-complement off-target hits; None (not zero) when the "
-        "off-target scan was not run"
+        "count of canonical near-complement genomic sites (one best alignment "
+        "per stranded contiguous exonic-union locus); None (not zero) when the "
+        "scan/H-off artifact set is missing or incomplete. Universe excludes "
+        "exon-exon junction sequences and mature-transcript junction off-targets"
     ),
     "therapeutic_window": (
         "potency / (off_target_burden + OFF_TARGET_PSEUDOCOUNT); "
@@ -100,20 +131,117 @@ def _potency(row: Mapping) -> tuple[float | None, bool]:
     """
     energies: list[float] = []
 
-    dg = row.get("intarna_dg")
-    no_duplex = row.get("intarna_no_duplex")
-    if dg is not None and not no_duplex:
-        energies.append(float(dg))
-
-    rnaup = row.get("rnaup_dg")
-    if rnaup is not None:
-        energies.append(float(rnaup))
+    for axis in POTENCY_BACKBONE:
+        value = row.get(axis)
+        if value is None:
+            continue
+        if axis == "intarna_dg" and row.get("intarna_no_duplex"):
+            continue
+        numeric = _strict_finite_scalar(value)
+        if numeric is None:
+            return None, True
+        energies.append(numeric)
 
     if not energies:
         return None, True
     # Favourable binding is a negative energy; negate so a deeper duplex is a
     # larger positive potency.
-    return -sum(energies) / len(energies), False
+    potency = -sum(energies) / len(energies)
+    return (potency, False) if math.isfinite(potency) else (None, True)
+
+
+def _strict_finite_scalar(value) -> float | None:
+    """Return a finite scalar from the explicit real-number type allowlist.
+
+    Only the exact Python ``int``/``float`` and enumerated NumPy scalar types are
+    accepted. Everything else is rejected before ``float`` coercion, including
+    subclasses, booleans, strings, bytes, Decimal/Fraction, complex values, and
+    every ndarray.
+    """
+    if type(value) not in _ALLOWED_REAL_SCALAR_TYPES:
+        return None
+    numeric = float(value)
+    return numeric if math.isfinite(numeric) else None
+
+
+def _burden(value) -> int | None:
+    """Normalize an off-target count without inventing a zero."""
+    numeric = _strict_finite_scalar(value)
+    if numeric is None or numeric < 0 or not numeric.is_integer():
+        return None
+    return int(numeric)
+
+
+def _canonical_pseudocount(value) -> int:
+    """Validate the single formula-bound pseudocount without coercive equality."""
+    numeric = _strict_finite_scalar(value)
+    if numeric is None or numeric != OFF_TARGET_PSEUDOCOUNT:
+        raise ValueError(
+            "off_target_pseudocount is fixed at the canonical value "
+            f"{OFF_TARGET_PSEUDOCOUNT} (got {value!r})"
+        )
+    return OFF_TARGET_PSEUDOCOUNT
+
+
+def normalize_window_row(
+    row: Mapping, *, off_target_pseudocount: int = OFF_TARGET_PSEUDOCOUNT
+) -> dict:
+    """Fail closed unless potency, burden, and window are jointly valid.
+
+    This is the single public-input validator used by computation,
+    preregistration, and report generation. A caller cannot make a complete
+    curve by pairing a finite supplied window with a non-finite potency or
+    burden. The supplied window must also agree with the declared formula.
+    """
+    pseudocount = _canonical_pseudocount(off_target_pseudocount)
+    out = dict(row)
+    out["length"] = _canonical_ladder_length(row.get("length"))
+    potency = _strict_finite_scalar(row.get("potency"))
+    burden = _burden(row.get("off_target_burden"))
+    window = _strict_finite_scalar(row.get("therapeutic_window"))
+    expected = (
+        potency / (burden + pseudocount)
+        if potency is not None and burden is not None
+        else None
+    )
+    valid = (
+        expected is not None
+        and math.isfinite(expected)
+        and window is not None
+        # Consistency is deliberately exact and precedes any canonical-output
+        # rounding. Near-equal caller-supplied endpoints are not formula values.
+        and window == expected
+        and not bool(row.get("potency_incomplete", False))
+        and not bool(row.get("window_incomplete", True))
+    )
+    out["potency"] = potency
+    out["potency_incomplete"] = potency is None or bool(
+        row.get("potency_incomplete", False)
+    )
+    out["potency_unfavourable"] = potency is not None and potency < 0
+    out["off_target_burden"] = burden
+    if "off_target_hits" in out:
+        out["off_target_hits"] = burden
+    # Publish the recomputed endpoint, never the caller's copy.
+    out["therapeutic_window"] = expected if valid else None
+    out["window_incomplete"] = not valid
+    return out
+
+
+def normalize_window_rows(window_rows: Sequence[Mapping]) -> list[dict]:
+    """Normalize public/report window rows through the canonical validator."""
+    return [normalize_window_row(row) for row in window_rows]
+
+
+def _canonical_ladder_length(value) -> int:
+    """Return an exact canonical ladder rung; reject coercive aliases."""
+    numeric = _strict_finite_scalar(value)
+    if numeric is None or not numeric.is_integer():
+        raise ValueError(f"ladder length must be a finite non-boolean integer: {value!r}")
+    length = int(numeric)
+    if length not in EXPECTED_LADDER_LENGTHS:
+        raise ValueError(f"length is not a canonical ladder rung: {value!r}")
+    return length
 
 
 def compute_window(
@@ -126,12 +254,9 @@ def compute_window(
     Each input row (from :func:`evaluate_ladder`) is copied and extended with the
     keys in ``_WINDOW_KEYS``. The honesty ``state`` is preserved as ``candidate``.
     """
-    # The divide-by-zero guard relies on a >=1 pseudocount; enforce it rather than
-    # let a caller override to 0 and crash on a zero-off-target mer.
-    if off_target_pseudocount < 1:
-        raise ValueError(
-            f"off_target_pseudocount must be >= 1 (got {off_target_pseudocount})"
-        )
+    # The formula metadata binds one canonical pseudocount; accepting overrides
+    # here would make later prereg/report normalization interpret the rows differently.
+    pseudocount = _canonical_pseudocount(off_target_pseudocount)
     out: list[dict] = []
     for row in evaluated_rows:
         r = dict(row)
@@ -145,25 +270,150 @@ def compute_window(
         # as a real result.
         r["potency_unfavourable"] = potency is not None and potency < 0
 
-        burden = row.get("off_target_hits")
+        burden = _burden(row.get("off_target_hits"))
         r["off_target_burden"] = burden
 
         if potency is None or burden is None:
             r["therapeutic_window"] = None
             r["window_incomplete"] = True
         else:
-            r["therapeutic_window"] = potency / (burden + off_target_pseudocount)
-            r["window_incomplete"] = False
+            window = potency / (burden + pseudocount)
+            if math.isfinite(window):
+                r["therapeutic_window"] = window
+                r["window_incomplete"] = False
+            else:
+                r["therapeutic_window"] = None
+                r["window_incomplete"] = True
 
-        out.append(r)
+        out.append(normalize_window_row(r, off_target_pseudocount=pseudocount))
     return out
+
+
+def _artifact_json(path: Path, *, kind: str, schema_version: int,
+                   algorithm_version: str) -> dict | None:
+    if not path.is_file() or path.stat().st_size == 0:
+        return None
+    try:
+        payload = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{kind} artifact is not valid JSON: {path}") from exc
+    if payload.get("schema_version") != schema_version:
+        raise ValueError(f"{kind} artifact schema mismatch: {path}")
+    if payload.get("algorithm_version") != algorithm_version:
+        raise ValueError(f"{kind} artifact algorithm version mismatch: {path}")
+    digest = payload.get("input_digest")
+    if not isinstance(digest, str) or len(digest) != 64 or any(
+        char not in "0123456789abcdef" for char in digest
+    ):
+        raise ValueError(f"{kind} artifact input/config digest missing or malformed: {path}")
+    return payload
+
+
+def assemble_off_target_windows(
+    evaluated_rows: Sequence[Mapping], *, scan_dir: str | Path,
+    hoff_dir: str | Path,
+) -> list[dict]:
+    """Authenticate all 15 scan/H-off shards and compute the window curve.
+
+    Contract: input rows contain each canonical even rung exactly once. For each
+    rung, ``sites_Lxx.tsv``, ``burden_Lxx.json``, and
+    ``pangolin_hoff_Lxx.json`` are required. JSON schema/algorithm/config-digest,
+    rung/ASO identity, and both stored manifest hashes are checked against the
+    actual canonical manifest. Corruption raises. A missing or honestly terminal-
+    incomplete shard sets that rung's ``off_target_hits=None``; therefore the
+    downstream curve remains incomplete and preregistration emits prediction
+    ``None``. Only a complete matched pair contributes the scan's canonical-site
+    count. H-off is a required completeness gate, not a second hit count.
+    """
+    scan_dir, hoff_dir = Path(scan_dir), Path(hoff_dir)
+    rows_by_length: dict[int, Mapping] = {}
+    for row in evaluated_rows:
+        length = _canonical_ladder_length(row.get("length"))
+        if length in rows_by_length:
+            raise ValueError(f"duplicate evaluated ladder rung: {length}")
+        rows_by_length[length] = row
+    if sorted(rows_by_length) != list(EXPECTED_LADDER_LENGTHS):
+        raise ValueError("evaluated rows must contain exactly all 15 canonical ladder rungs")
+
+    assembled: list[dict] = []
+    for length in EXPECTED_LADDER_LENGTHS:
+        source = rows_by_length[length]
+        aso = source.get("aso_5to3")
+        manifest = scan_dir / f"sites_L{length:02d}.tsv"
+        scan_path = scan_dir / f"burden_L{length:02d}.json"
+        hoff_path = hoff_dir / f"pangolin_hoff_L{length:02d}.json"
+        scan_payload = _artifact_json(
+            scan_path, kind="scan", schema_version=arm_e_scan.SCAN_ARTIFACT_SCHEMA_VERSION,
+            algorithm_version=arm_e_scan.SCAN_ALGORITHM_VERSION,
+        )
+        hoff_payload = _artifact_json(
+            hoff_path, kind="H-off", schema_version=arm_e_hoff.HOFF_ARTIFACT_SCHEMA_VERSION,
+            algorithm_version=arm_e_hoff.HOFF_ALGORITHM_VERSION,
+        )
+        row = dict(source)
+        row["off_target_artifacts_terminal"] = False
+        row["off_target_artifacts_complete"] = False
+        row["off_target_artifact_reason"] = None
+        if scan_payload is None or hoff_payload is None or not manifest.is_file():
+            row["off_target_hits"] = None
+            row["off_target_artifact_reason"] = "missing terminal scan/H-off artifact"
+            assembled.append(row)
+            continue
+        row["off_target_artifacts_terminal"] = (
+            scan_payload.get("terminal") is True
+            and hoff_payload.get("terminal") is True
+        )
+        manifest_sha = hashlib.sha256(manifest.read_bytes()).hexdigest()
+        if (scan_payload.get("manifest_sha256") != manifest_sha
+                or hoff_payload.get("manifest_sha256") != manifest_sha):
+            raise ValueError(f"manifest SHA-256 mismatch for L={length}")
+        if scan_payload.get("length") != length or hoff_payload.get("length") != length:
+            raise ValueError(f"artifact rung mismatch for L={length}")
+        if scan_payload.get("aso_5to3") != aso or (
+            hoff_payload.get("aso_5to3") not in {aso, None}
+        ):
+            raise ValueError(f"artifact ASO mismatch for L={length}")
+        try:
+            manifest_rows = list(arm_e_scan.read_site_manifest(manifest))
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"canonical manifest schema invalid for L={length}") from exc
+        if any(
+            item["length"] != length or item["aso_5to3"] != aso
+            for item in manifest_rows
+        ):
+            raise ValueError(f"canonical manifest rung/ASO mismatch for L={length}")
+        complete = (
+            scan_payload.get("terminal") is True
+            and scan_payload.get("complete") is True
+            and hoff_payload.get("terminal") is True
+            and hoff_payload.get("pangolin_off_target_incomplete") is False
+        )
+        burden = _burden(scan_payload.get("off_target_hits")) if complete else None
+        if complete and burden is None:
+            raise ValueError(f"complete scan has invalid burden for L={length}")
+        hoff_burden = _strict_finite_scalar(hoff_payload.get("pangolin_off_target_burden"))
+        if complete and (burden != len(manifest_rows)
+                         or hoff_payload.get("n_sites") != len(manifest_rows)
+                         or hoff_burden is None or hoff_burden < 0):
+            raise ValueError(f"terminal artifact/site-count mismatch for L={length}")
+        row["off_target_hits"] = burden
+        row["off_target_artifacts_complete"] = complete
+        if not complete:
+            row["off_target_artifact_reason"] = (
+                scan_payload.get("reason") or hoff_payload.get("reason")
+                or "terminal artifact marked incomplete"
+            )
+        assembled.append(row)
+    return compute_window(assembled)
 
 
 def directional_verdict(curve: Sequence[tuple[int, float | None]]) -> str:
     """Does ``curve`` support, refute, or leave open "shorter is better"?
 
-    ``curve`` is a sequence of ``(length, value)`` pairs (``None`` values are
-    dropped). Returns:
+    ``curve`` must contain every preregistered even-length rung from 2 through
+    30 exactly once. Predetermined-uninformative L2/L4/L6 may be null; every
+    informative rung L>=8 must be finite. Missing, duplicate, extra, or null
+    informative rungs return ``"indeterminate"`` before classification. Returns:
 
     * ``"refutes_shorter_better"`` -- values are monotonically NON-DECREASING with
       length (a longer mer is never worse -> the drug 18-mer or longer wins). This
@@ -175,10 +425,28 @@ def directional_verdict(curve: Sequence[tuple[int, float | None]]) -> str:
     * ``"indeterminate"`` -- fewer than two usable points, or a non-monotonic curve
       whose peak is at/above 18 or whose sub-18 peak only ties a longer rung.
     """
-    pts = [(int(length), float(value)) for length, value in curve if value is not None]
-    if len(pts) < 2:
+    try:
+        pts = [
+            (_canonical_ladder_length(length), _strict_finite_scalar(value))
+            for length, value in curve
+        ]
+    except ValueError:
         return "indeterminate"
-    pts.sort()
+    raw_lengths = [length for length, _ in pts]
+    if (
+        len(raw_lengths) != len(set(raw_lengths))
+        or sorted(raw_lengths) != list(EXPECTED_LADDER_LENGTHS)
+        or any(
+            value is None
+            for length, value in pts
+            if length >= MINIMUM_INFORMATIVE_LENGTH
+        )
+    ):
+        return "indeterminate"
+    pts = sorted(
+        (length, value) for length, value in pts
+        if length >= MINIMUM_INFORMATIVE_LENGTH
+    )
     lengths = [ln for ln, _ in pts]
     values = [v for _, v in pts]
 
@@ -207,29 +475,53 @@ def prereg_payload(
 
     Captures the length-sorted window-vs-length curve, the axis definitions, the
     formula version, and the current directional prediction. The prediction is
-    read off the therapeutic-window curve when off-target burden is available for
-    at least one mer, else off the potency curve (CPU-only pass) -- the axis used
-    is recorded in ``directional_prediction_axis``.
+    read off the therapeutic-window curve only when every preregistered ladder
+    rung is present exactly once and has a usable window value. An incomplete
+    curve has an explicit ``None`` prediction; potency is never substituted for
+    the therapeutic-window endpoint.
     """
     curve = []
-    for row in sorted(window_rows, key=lambda r: int(r["length"])):
+    normalized_rows = sorted(
+        normalize_window_rows(window_rows), key=lambda r: int(r["length"])
+    )
+    for row in normalized_rows:
         curve.append(
             {
                 "length": int(row["length"]),
                 "potency": _round(row.get("potency")),
+                "off_target_burden": row.get("off_target_burden"),
                 "therapeutic_window": _round(row.get("therapeutic_window")),
                 "window_incomplete": bool(row.get("window_incomplete", True)),
             }
         )
 
-    window_curve = [(c["length"], c["therapeutic_window"]) for c in curve]
-    potency_curve = [(c["length"], c["potency"]) for c in curve]
-    if any(value is not None for _, value in window_curve):
-        prediction_axis = "therapeutic_window"
-        prediction = directional_verdict(window_curve)
-    else:
-        prediction_axis = "potency"
-        prediction = directional_verdict(potency_curve)
+    lengths = [int(row["length"]) for row in normalized_rows]
+    # Classify on exact normalized floats. Rounding is only a serialization
+    # concern and must never create or erase a directional inequality.
+    window_curve = [
+        (int(row["length"]), row.get("therapeutic_window"))
+        for row in normalized_rows
+    ]
+    terminal_artifacts_present = all(
+        row.get("off_target_artifacts_terminal") is True
+        for row in normalized_rows
+    ) if any("off_target_artifacts_terminal" in row for row in normalized_rows) else True
+    informative_curve = [
+        (length, value) for length, value in window_curve
+        if length >= MINIMUM_INFORMATIVE_LENGTH
+    ]
+    curve_complete = (
+        lengths == list(EXPECTED_LADDER_LENGTHS)
+        and terminal_artifacts_present
+        and all(value is not None for _, value in informative_curve)
+        and not any(
+            bool(row.get("window_incomplete", True))
+            for row in normalized_rows
+            if int(row["length"]) >= MINIMUM_INFORMATIVE_LENGTH
+        )
+    )
+    prediction_axis = "therapeutic_window"
+    prediction = directional_verdict(window_curve) if curve_complete else None
 
     return {
         "formula_version": formula_version,
@@ -238,6 +530,7 @@ def prereg_payload(
         "curve": curve,
         "directional_prediction": prediction,
         "directional_prediction_axis": prediction_axis,
+        "curve_complete": curve_complete,
         "state": _CANDIDATE,
     }
 
@@ -246,16 +539,18 @@ def _round(value):
     """Round a float to the hashing precision; pass ``None`` through."""
     if value is None:
         return None
-    return round(float(value), _HASH_PRECISION)
+    numeric = _strict_finite_scalar(value)
+    return round(numeric, _HASH_PRECISION) if numeric is not None else None
 
 
 def _canonicalize(obj):
     """Recursively round floats so the canonical JSON hash is reproducible."""
-    if isinstance(obj, float):
+    obj_type = type(obj)
+    if obj_type is float:
         return round(obj, _HASH_PRECISION)
-    if isinstance(obj, dict):
+    if obj_type is dict:
         return {key: _canonicalize(val) for key, val in obj.items()}
-    if isinstance(obj, (list, tuple)):
+    if obj_type in {list, tuple}:
         return [_canonicalize(item) for item in obj]
     return obj
 
@@ -280,18 +575,56 @@ def lock_prereg(payload: Mapping, path: str | Path, *, locked: bool = False) -> 
     of the curve -- so this function does not fire it by default; a caller passes
     ``locked=True`` only as that explicit gated action.
     """
-    record = {
-        "payload": dict(payload),
-        "hash": prereg_hash(payload),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "locked": bool(locked),
-        "state": _CANDIDATE,
-    }
-    Path(path).write_text(json.dumps(record, indent=2, sort_keys=True))
-    return record
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = path.with_name(f"{path.name}.lock")
+    with lock_path.open("a+", encoding="utf-8") as lock_handle:
+        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX)
+        try:
+            # Recheck only after acquiring the interprocess lock: another writer
+            # may have sealed the file while this caller was waiting.
+            if path.exists():
+                # A hash-valid historical unlocked draft may be migrated. A
+                # historical locked record without the v2 seal fails closed.
+                existing = verify_prereg(path, allow_legacy_draft=True)
+                if existing.get("locked") is True:
+                    raise FileExistsError(
+                        f"preregistration is durably sealed and cannot be overwritten: {path}"
+                    )
+            payload_digest = prereg_hash(payload)
+            record = {
+                "payload": dict(payload),
+                "hash": payload_digest,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "locked": bool(locked),
+                "state": _CANDIDATE,
+            }
+            record["seal_hash"] = prereg_hash(
+                {"payload_hash": payload_digest, "locked": record["locked"]}
+            )
+            fd, tmp_name = tempfile.mkstemp(
+                prefix=f"{path.name}.tmp.", dir=path.parent
+            )
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as tmp_handle:
+                    json.dump(record, tmp_handle, indent=2, sort_keys=True)
+                    tmp_handle.flush()
+                    os.fsync(tmp_handle.fileno())
+                os.replace(tmp_name, path)
+                dir_fd = os.open(path.parent, os.O_RDONLY)
+                try:
+                    os.fsync(dir_fd)
+                finally:
+                    os.close(dir_fd)
+            finally:
+                if os.path.exists(tmp_name):
+                    os.unlink(tmp_name)
+            return record
+        finally:
+            fcntl.flock(lock_handle.fileno(), fcntl.LOCK_UN)
 
 
-def verify_prereg(path: str | Path) -> dict:
+def verify_prereg(path: str | Path, *, allow_legacy_draft: bool = False) -> dict:
     """Read a lock file and re-verify its hash against the stored payload.
 
     Raises ``ValueError`` if the recomputed hash does not match -- i.e. the
@@ -304,4 +637,15 @@ def verify_prereg(path: str | Path) -> dict:
             "preregistration hash mismatch: payload tampered or format drift "
             f"(stored {record['hash']}, recomputed {recomputed})"
         )
+    if "seal_hash" not in record:
+        if allow_legacy_draft and record.get("locked") is False:
+            return record
+        if record.get("locked") is True:
+            raise ValueError("legacy locked preregistration lacks tamper-evident seal")
+        raise ValueError("preregistration seal metadata tampered or missing")
+    expected_seal_hash = prereg_hash(
+        {"payload_hash": record["hash"], "locked": record.get("locked")}
+    )
+    if record.get("seal_hash") != expected_seal_hash:
+        raise ValueError("preregistration seal metadata tampered or missing")
     return record

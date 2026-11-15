@@ -1,0 +1,45 @@
+gtf: 14.461697101593018
+There are 62700 distinct gene ID in the gtf file
+There are 117688 distinct transcript ID in the gtf file
+There are 44450 one-transcript genes in the gtf file
+There are 853744 exons in the gtf file
+There are 24612 one-exon transcripts in the gtf file
+There are 23462 one-transcript genes with only one exon in the transcript
+Average number of transcripts per gene is 1.877002
+Average number of exons per transcript is 7.254300
+Average number of exons per transcript excluding one-exon tx is 8.908118
+Average number of gene per geneGroup is 8.256547
+statistic: 0.017843246459960938
+
+read outcome totals across all BAMs
+USED: 254245467
+NOT_PAIRED: 0
+NOT_NH_1: 53941784
+NOT_EXPECTED_CIGAR: 2782483
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 5797594
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 536390
+CLIPPED: 45161740
+total: 362465458
+outcomes by BAM written to: /home/dashii/orcd/scratch/smt-rna/rmats/tmp/2026-08-22-09_49_24_816397_read_outcomes_by_bam.txt
+
+novel: 181.52213311195374
+The splicing graph and candidate read have been saved into /home/dashii/orcd/scratch/smt-rna/rmats/tmp/2026-08-22-09_49_24_816397_*.rmats
+save: 5.303817987442017
+loadsg: 0.17075705528259277
+
+==========
+Done processing each gene from dictionary to compile AS events
+Found 47692 exon skipping events
+Found 5831 exon MX events
+Found 7643 alt SS events
+There are 4872 alt 3 SS events and 2771 alt 5 SS events.
+Found 1333 RI events
+==========
+
+ase: 1.0750980377197266
+count: 7.374454975128174
+Processing count files.
+Done processing count files.
+rmats complete

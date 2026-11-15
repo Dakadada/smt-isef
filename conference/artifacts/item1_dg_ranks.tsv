@@ -1,0 +1,5 @@
+state	aso_id	intarna_rank_most_negative_first	nn_buffer_rank_most_negative_first	ranks_identical
+[candidate]	F18	1	1	True
+[candidate]	F14	2	2	True
+[candidate]	F10	4	4	True
+[candidate]	3UP8	3	3	True

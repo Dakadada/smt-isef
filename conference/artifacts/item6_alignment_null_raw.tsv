@@ -1,0 +1,801 @@
+state	query_id	aso_id	draw_id	is_real	sequence_rna_5to3	aligner	preflight_status	preflight_reason	expected_random_both_strand_hits_v3	raw_alignment_count	distinct_genes_any_strand	distinct_genes_transcript_compatible
+[candidate]	F18__shuffle_001	F18	1	false	UCAUGCUUUACUCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2611	1945	1001
+[candidate]	F18__shuffle_001	F18	1	false	UCAUGCUUUACUCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3220	2328	1200
+[candidate]	F18__shuffle_002	F18	2	false	UGGCUCAUCUUUACAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5712	4075	2232
+[candidate]	F18__shuffle_002	F18	2	false	UGGCUCAUCUUUACAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4893	3503	1905
+[candidate]	F18__shuffle_003	F18	3	false	UUGGCACUUCUAUCAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2473	1851	930
+[candidate]	F18__shuffle_003	F18	3	false	UUGGCACUUCUAUCAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2039	1641	863
+[candidate]	F18__shuffle_004	F18	4	false	UGCUCUUUCAUACAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3872	2770	1499
+[candidate]	F18__shuffle_004	F18	4	false	UGCUCUUUCAUACAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4455	3135	1840
+[candidate]	F18__shuffle_005	F18	5	false	UUCACUAAUGCUUCAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3410	2391	1287
+[candidate]	F18__shuffle_005	F18	5	false	UUCACUAAUGCUUCAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2573	1936	1055
+[candidate]	F18__shuffle_006	F18	6	false	UUGCUCAUACUCAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2097	1588	802
+[candidate]	F18__shuffle_006	F18	6	false	UUGCUCAUACUCAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	1595	1294	692
+[candidate]	F18__shuffle_007	F18	7	false	UUUCUACUGCAUCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3497	2449	1339
+[candidate]	F18__shuffle_007	F18	7	false	UUUCUACUGCAUCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3309	2292	1324
+[candidate]	F18__shuffle_008	F18	8	false	UUCAUCACUAAUUGGCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2838	2085	1091
+[candidate]	F18__shuffle_008	F18	8	false	UUCAUCACUAAUUGGCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2288	1730	953
+[candidate]	F18__shuffle_009	F18	9	false	UGGCAUAACUCUUUCAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2952	2192	1118
+[candidate]	F18__shuffle_009	F18	9	false	UGGCAUAACUCUUUCAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3516	2505	1343
+[candidate]	F18__shuffle_010	F18	10	false	UCUUGCUAUUCACAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3904	2706	1480
+[candidate]	F18__shuffle_010	F18	10	false	UCUUGCUAUUCACAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5028	3227	1929
+[candidate]	F18__shuffle_011	F18	11	false	UCAAUCUAUGCACUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	6692	4643	2410
+[candidate]	F18__shuffle_011	F18	11	false	UCAAUCUAUGCACUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2543	1880	1055
+[candidate]	F18__shuffle_012	F18	12	false	UAUCUGCAACUUUCAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3452	2519	1352
+[candidate]	F18__shuffle_012	F18	12	false	UAUCUGCAACUUUCAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3537	2597	1465
+[candidate]	F18__shuffle_013	F18	13	false	UCACUAUGGCAAUCUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2737	2042	1069
+[candidate]	F18__shuffle_013	F18	13	false	UCACUAUGGCAAUCUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2406	1763	974
+[candidate]	F18__shuffle_014	F18	14	false	UUGCAUUCACUCUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2853	2023	1085
+[candidate]	F18__shuffle_014	F18	14	false	UUGCAUUCACUCUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2976	2198	1206
+[candidate]	F18__shuffle_015	F18	15	false	UGGCACAUAAUCUUUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4646	3199	1707
+[candidate]	F18__shuffle_015	F18	15	false	UGGCACAUAAUCUUUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3863	2751	1549
+[candidate]	F18__shuffle_016	F18	16	false	UGCUAAUUCAUUCACUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3548	2609	1409
+[candidate]	F18__shuffle_016	F18	16	false	UGCUAAUUCAUUCACUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	6511	4363	2509
+[candidate]	F18__shuffle_017	F18	17	false	UGCUCACUAUUCAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3132	2234	1126
+[candidate]	F18__shuffle_017	F18	17	false	UGCUCACUAUUCAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2054	1538	879
+[candidate]	F18__shuffle_018	F18	18	false	UCUCUUUGGCACAUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4001	2869	1480
+[candidate]	F18__shuffle_018	F18	18	false	UCUCUUUGGCACAUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3862	2843	1551
+[candidate]	F18__shuffle_019	F18	19	false	UCUGCAAUACAUUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4174	2915	1606
+[candidate]	F18__shuffle_019	F18	19	false	UCUGCAAUACAUUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	8789	5065	3052
+[candidate]	F18__shuffle_020	F18	20	false	UCUAUGCAUUUCAACUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3662	2594	1418
+[candidate]	F18__shuffle_020	F18	20	false	UCUAUGCAUUUCAACUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4081	2904	1666
+[candidate]	F18__shuffle_021	F18	21	false	UCAUGGCAAUUUCUACUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3416	2513	1340
+[candidate]	F18__shuffle_021	F18	21	false	UCAUGGCAAUUUCUACUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3726	2677	1531
+[candidate]	F18__shuffle_022	F18	22	false	UGCACUUUAUCAAUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2905	2074	1046
+[candidate]	F18__shuffle_022	F18	22	false	UGCACUUUAUCAAUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2763	2009	1035
+[candidate]	F18__shuffle_023	F18	23	false	UUGGCACAUUCUCUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3181	2402	1239
+[candidate]	F18__shuffle_023	F18	23	false	UUGGCACAUUCUCUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3765	2793	1563
+[candidate]	F18__shuffle_024	F18	24	false	UUAUGGCUUCACAAUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3334	2518	1330
+[candidate]	F18__shuffle_024	F18	24	false	UUAUGGCUUCACAAUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3159	2361	1285
+[candidate]	F18__shuffle_025	F18	25	false	UGCAUAAUUCACUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3133	2377	1219
+[candidate]	F18__shuffle_025	F18	25	false	UGCAUAAUUCACUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3749	2651	1462
+[candidate]	F18__shuffle_026	F18	26	false	UUCAUAUCUGGCAACUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2979	2210	1098
+[candidate]	F18__shuffle_026	F18	26	false	UUCAUAUCUGGCAACUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2477	1867	1021
+[candidate]	F18__shuffle_027	F18	27	false	UGGCAUCUAAUUUCACUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4849	3321	1796
+[candidate]	F18__shuffle_027	F18	27	false	UGGCAUCUAAUUUCACUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3921	2730	1494
+[candidate]	F18__shuffle_028	F18	28	false	UGCUUCAACAUAUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4461	3128	1766
+[candidate]	F18__shuffle_028	F18	28	false	UGCUUCAACAUAUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	6079	3835	2199
+[candidate]	F18__shuffle_029	F18	29	false	UUGCACAUCUCUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3419	2576	1312
+[candidate]	F18__shuffle_029	F18	29	false	UUGCACAUCUCUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3541	2536	1437
+[candidate]	F18__shuffle_030	F18	30	false	UUGCUAUCUUCAACAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3272	2350	1286
+[candidate]	F18__shuffle_030	F18	30	false	UUGCUAUCUUCAACAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3356	2508	1424
+[candidate]	F18__shuffle_031	F18	31	false	UGGCUCAAUUAUCACUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2755	2076	1136
+[candidate]	F18__shuffle_031	F18	31	false	UGGCUCAAUUAUCACUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2396	1783	1023
+[candidate]	F18__shuffle_032	F18	32	false	UGGCAUUCAAUUACUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2848	2096	1126
+[candidate]	F18__shuffle_032	F18	32	false	UGGCAUUCAAUUACUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3619	2347	1422
+[candidate]	F18__shuffle_033	F18	33	false	UAACAUGCAUCUUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4324	3100	1636
+[candidate]	F18__shuffle_033	F18	33	false	UAACAUGCAUCUUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4179	3059	1593
+[candidate]	F18__shuffle_034	F18	34	false	UCUAUGGCAAUUUCACUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4276	3010	1715
+[candidate]	F18__shuffle_034	F18	34	false	UCUAUGGCAAUUUCACUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3424	2481	1439
+[candidate]	F18__shuffle_035	F18	35	false	UGCUUAUCUUCAACAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4099	2990	1571
+[candidate]	F18__shuffle_035	F18	35	false	UGCUUAUCUUCAACAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3841	2757	1568
+[candidate]	F18__shuffle_036	F18	36	false	UGCAUACAAUUCUCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5370	3709	1934
+[candidate]	F18__shuffle_036	F18	36	false	UGCAUACAAUUCUCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3686	2644	1441
+[candidate]	F18__shuffle_037	F18	37	false	UUCUGGCUCAUUACAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3275	2380	1282
+[candidate]	F18__shuffle_037	F18	37	false	UUCUGGCUCAUUACAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2850	2231	1153
+[candidate]	F18__shuffle_038	F18	38	false	UUACUGCAUUCAAUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3169	2324	1227
+[candidate]	F18__shuffle_038	F18	38	false	UUACUGCAUUCAAUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3163	2232	1239
+[candidate]	F18__shuffle_039	F18	39	false	UCACAUAAUUUCUGCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4026	2903	1520
+[candidate]	F18__shuffle_039	F18	39	false	UCACAUAAUUUCUGCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5908	3814	2086
+[candidate]	F18__shuffle_040	F18	40	false	UCAUAUGGCAACUUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3686	2691	1410
+[candidate]	F18__shuffle_040	F18	40	false	UCAUAUGGCAACUUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2452	1927	1044
+[candidate]	F18__shuffle_041	F18	41	false	UGCUCAUUCUUAACAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3998	2895	1509
+[candidate]	F18__shuffle_041	F18	41	false	UGCUCAUUCUUAACAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4075	2940	1535
+[candidate]	F18__shuffle_042	F18	42	false	UUCAUUGGCACUCUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2211	1698	860
+[candidate]	F18__shuffle_042	F18	42	false	UUCAUUGGCACUCUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	1384	1102	542
+[candidate]	F18__shuffle_043	F18	43	false	UGCAACUUCUUCAUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3865	2732	1460
+[candidate]	F18__shuffle_043	F18	43	false	UGCAACUUCUUCAUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5138	3282	1773
+[candidate]	F18__shuffle_044	F18	44	false	UGGCUUUACAAUCUCAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3317	2452	1348
+[candidate]	F18__shuffle_044	F18	44	false	UGGCUUUACAAUCUCAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2972	2146	1238
+[candidate]	F18__shuffle_045	F18	45	false	UUCAUAACUGGCUUCAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3752	2711	1392
+[candidate]	F18__shuffle_045	F18	45	false	UUCAUAACUGGCUUCAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2772	2078	1113
+[candidate]	F18__shuffle_046	F18	46	false	UUGCACUCAUUCUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2875	2077	1023
+[candidate]	F18__shuffle_046	F18	46	false	UUGCACUCAUUCUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3405	2376	1288
+[candidate]	F18__shuffle_047	F18	47	false	UGGCAUCAUAACUCUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3157	2453	1253
+[candidate]	F18__shuffle_047	F18	47	false	UGGCAUCAUAACUCUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2128	1630	853
+[candidate]	F18__shuffle_048	F18	48	false	UUCUGCAUUCUAACAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5429	3774	2010
+[candidate]	F18__shuffle_048	F18	48	false	UUCUGCAUUCUAACAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3760	2809	1517
+[candidate]	F18__shuffle_049	F18	49	false	UGCUUCACAUAAUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5796	3469	1799
+[candidate]	F18__shuffle_049	F18	49	false	UGCUUCACAUAAUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4324	3036	1712
+[candidate]	F18__shuffle_050	F18	50	false	UGCACAUCUUAAUCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2736	2088	1006
+[candidate]	F18__shuffle_050	F18	50	false	UGCACAUCUUAAUCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2975	2208	1133
+[candidate]	F18__shuffle_051	F18	51	false	UGCUAUCAAUCACUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3235	2357	1257
+[candidate]	F18__shuffle_051	F18	51	false	UGCUAUCAAUCACUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3446	2383	1377
+[candidate]	F18__shuffle_052	F18	52	false	UCACAUUAAUGCUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3416	2394	1265
+[candidate]	F18__shuffle_052	F18	52	false	UCACAUUAAUGCUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3078	2344	1226
+[candidate]	F18__shuffle_053	F18	53	false	UUGGCACUCAUUAAUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2840	2160	1069
+[candidate]	F18__shuffle_053	F18	53	false	UUGGCACUCAUUAAUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2565	1885	1026
+[candidate]	F18__shuffle_054	F18	54	false	UGCAAUCAUCUUUACUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2830	2111	1142
+[candidate]	F18__shuffle_054	F18	54	false	UGCAAUCAUCUUUACUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3470	2532	1435
+[candidate]	F18__shuffle_055	F18	55	false	UGGCACAAUUCUUCUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2915	2222	1187
+[candidate]	F18__shuffle_055	F18	55	false	UGGCACAAUUCUUCUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3228	2310	1270
+[candidate]	F18__shuffle_056	F18	56	false	UUGGCACUCAAUUCUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2696	1982	1072
+[candidate]	F18__shuffle_056	F18	56	false	UUGGCACUCAAUUCUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2311	1708	951
+[candidate]	F18__shuffle_057	F18	57	false	UCACUAAUCUGGCAUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3046	2299	1186
+[candidate]	F18__shuffle_057	F18	57	false	UCACUAAUCUGGCAUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2343	1900	1026
+[candidate]	F18__shuffle_058	F18	58	false	UCUGGCAUUUAUCAACUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4437	3180	1713
+[candidate]	F18__shuffle_058	F18	58	false	UCUGGCAUUUAUCAACUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4111	2952	1609
+[candidate]	F18__shuffle_059	F18	59	false	UCUAAUCUGGCACAUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2989	2185	1084
+[candidate]	F18__shuffle_059	F18	59	false	UCUAAUCUGGCACAUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2636	2104	1149
+[candidate]	F18__shuffle_060	F18	60	false	UGGCACUCAUUUCUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3404	2580	1372
+[candidate]	F18__shuffle_060	F18	60	false	UGGCACUCAUUUCUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4980	3428	1855
+[candidate]	F18__shuffle_061	F18	61	false	UGCAUUCAUAACUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3266	2515	1348
+[candidate]	F18__shuffle_061	F18	61	false	UGCAUUCAUAACUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3011	2289	1215
+[candidate]	F18__shuffle_062	F18	62	false	UGCUCAUUUCAUAACUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4141	3034	1597
+[candidate]	F18__shuffle_062	F18	62	false	UGCUCAUUUCAUAACUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5082	3339	1927
+[candidate]	F18__shuffle_063	F18	63	false	UCUCACUGCAUUUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3570	2666	1377
+[candidate]	F18__shuffle_063	F18	63	false	UCUCACUGCAUUUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5382	3737	2070
+[candidate]	F18__shuffle_064	F18	64	false	UGGCUCACAUAAUCUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4042	2979	1546
+[candidate]	F18__shuffle_064	F18	64	false	UGGCUCACAUAAUCUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3349	2491	1358
+[candidate]	F18__shuffle_065	F18	65	false	UUGGCUUCAUACAAUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3899	2711	1410
+[candidate]	F18__shuffle_065	F18	65	false	UUGGCUUCAUACAAUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2188	1690	906
+[candidate]	F18__shuffle_066	F18	66	false	UUCAUAACUGCUUCAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5898	2915	1627
+[candidate]	F18__shuffle_066	F18	66	false	UUCAUAACUGCUUCAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4453	2482	1379
+[candidate]	F18__shuffle_067	F18	67	false	UUUGGCUCUAUCACAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2837	2076	1064
+[candidate]	F18__shuffle_067	F18	67	false	UUUGGCUCUAUCACAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2472	1847	1032
+[candidate]	F18__shuffle_068	F18	68	false	UUCUAUUGGCUCAACAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2595	1918	1001
+[candidate]	F18__shuffle_068	F18	68	false	UUCUAUUGGCUCAACAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	1876	1406	752
+[candidate]	F18__shuffle_069	F18	69	false	UGCUUAUCUUCAACAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4099	2990	1571
+[candidate]	F18__shuffle_069	F18	69	false	UGCUUAUCUUCAACAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3841	2757	1568
+[candidate]	F18__shuffle_070	F18	70	false	UACAUCUUGGCUCAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2614	1991	1049
+[candidate]	F18__shuffle_070	F18	70	false	UACAUCUUGGCUCAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	12427	7783	4273
+[candidate]	F18__shuffle_071	F18	71	false	UCUGGCAAUUCUACAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3190	2316	1221
+[candidate]	F18__shuffle_071	F18	71	false	UCUGGCAAUUCUACAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3267	2449	1407
+[candidate]	F18__shuffle_072	F18	72	false	UGGCAAUACUCAUUUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4246	3093	1643
+[candidate]	F18__shuffle_072	F18	72	false	UGGCAAUACUCAUUUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3939	2821	1523
+[candidate]	F18__shuffle_073	F18	73	false	UUCAUAUGGCUCAACUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2845	2273	1237
+[candidate]	F18__shuffle_073	F18	73	false	UUCAUAUGGCUCAACUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	1794	1429	779
+[candidate]	F18__shuffle_074	F18	74	false	UGGCUCACUCAUUAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3295	2424	1299
+[candidate]	F18__shuffle_074	F18	74	false	UGGCUCACUCAUUAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3360	2442	1332
+[candidate]	F18__shuffle_075	F18	75	false	UGCUCACAAUCUUAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3921	1926	959
+[candidate]	F18__shuffle_075	F18	75	false	UGCUCACAAUCUUAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2416	1796	1014
+[candidate]	F18__shuffle_076	F18	76	false	UAUCAACAUGCUCUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3337	2422	1291
+[candidate]	F18__shuffle_076	F18	76	false	UAUCAACAUGCUCUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3186	2384	1328
+[candidate]	F18__shuffle_077	F18	77	false	UUGCAAUUCACUCUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2819	2149	1171
+[candidate]	F18__shuffle_077	F18	77	false	UUGCAAUUCACUCUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2361	1794	998
+[candidate]	F18__shuffle_078	F18	78	false	UCUUGGCUUCAAUACAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3180	2343	1239
+[candidate]	F18__shuffle_078	F18	78	false	UCUUGGCUUCAAUACAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3427	2562	1375
+[candidate]	F18__shuffle_079	F18	79	false	UCAUUUGGCUAUCAACUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2776	2078	1079
+[candidate]	F18__shuffle_079	F18	79	false	UCAUUUGGCUAUCAACUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	1992	1543	767
+[candidate]	F18__shuffle_080	F18	80	false	UACUGGCUCAAUUUCAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	6151	3745	1986
+[candidate]	F18__shuffle_080	F18	80	false	UACUGGCUCAAUUUCAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5501	3331	1790
+[candidate]	F18__shuffle_081	F18	81	false	UGCAACUCUUUCAUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3243	2263	1160
+[candidate]	F18__shuffle_081	F18	81	false	UGCAACUCUUUCAUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	4001	2795	1540
+[candidate]	F18__shuffle_082	F18	82	false	UUUCUGGCUAAUCACAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3412	2558	1335
+[candidate]	F18__shuffle_082	F18	82	false	UUUCUGGCUAAUCACAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2031	1653	849
+[candidate]	F18__shuffle_083	F18	83	false	UACUUCAUCAAUGCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2385	1883	948
+[candidate]	F18__shuffle_083	F18	83	false	UACUUCAUCAAUGCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2414	1870	1060
+[candidate]	F18__shuffle_084	F18	84	false	UUGGCAAUUCUCUACAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2755	2088	1126
+[candidate]	F18__shuffle_084	F18	84	false	UUGGCAAUUCUCUACAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2907	2201	1267
+[candidate]	F18__shuffle_085	F18	85	false	UUGCUUAUCACAAUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2617	1878	984
+[candidate]	F18__shuffle_085	F18	85	false	UUGCUUAUCACAAUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2530	1893	1052
+[candidate]	F18__shuffle_086	F18	86	false	UGGCACUAAUUCAUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2956	2253	1146
+[candidate]	F18__shuffle_086	F18	86	false	UGGCACUAAUUCAUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3981	2611	1372
+[candidate]	F18__shuffle_087	F18	87	false	UCAAUCUACAUGGCUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3190	2454	1289
+[candidate]	F18__shuffle_087	F18	87	false	UCAAUCUACAUGGCUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2116	1691	872
+[candidate]	F18__shuffle_088	F18	88	false	UGCUCUCAUUAACAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2728	2054	1025
+[candidate]	F18__shuffle_088	F18	88	false	UGCUCUCAUUAACAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3858	2784	1577
+[candidate]	F18__shuffle_089	F18	89	false	UGCAUCUCAUUUAACUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3154	2455	1301
+[candidate]	F18__shuffle_089	F18	89	false	UGCAUCUCAUUUAACUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	7023	4779	2763
+[candidate]	F18__shuffle_090	F18	90	false	UGGCUCAACAUAUUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2978	2275	1181
+[candidate]	F18__shuffle_090	F18	90	false	UGGCUCAACAUAUUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3680	2604	1492
+[candidate]	F18__shuffle_091	F18	91	false	UGCUCAAUCUUUACAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3047	2224	1203
+[candidate]	F18__shuffle_091	F18	91	false	UGCUCAAUCUUUACAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3082	2279	1259
+[candidate]	F18__shuffle_092	F18	92	false	UGCAAUCAUCUACUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2669	2052	1096
+[candidate]	F18__shuffle_092	F18	92	false	UGCAAUCAUCUACUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2966	2206	1216
+[candidate]	F18__shuffle_093	F18	93	false	UACUGCAAUCUUUCAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2578	1979	1051
+[candidate]	F18__shuffle_093	F18	93	false	UACUGCAAUCUUUCAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2988	2215	1221
+[candidate]	F18__shuffle_094	F18	94	false	UGGCAUCUUCAACUUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3213	2397	1274
+[candidate]	F18__shuffle_094	F18	94	false	UGGCAUCUUCAACUUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3409	2501	1364
+[candidate]	F18__shuffle_095	F18	95	false	UCAAUACUGCUUCAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	5279	3354	1716
+[candidate]	F18__shuffle_095	F18	95	false	UCAAUACUGCUUCAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3207	2390	1318
+[candidate]	F18__shuffle_096	F18	96	false	UCUCACAAUAUGCUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	11906	2361	1266
+[candidate]	F18__shuffle_096	F18	96	false	UCUCACAAUAUGCUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3257	2368	1274
+[candidate]	F18__shuffle_097	F18	97	false	UUCUUGGCACUAUCAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2881	2125	1131
+[candidate]	F18__shuffle_097	F18	97	false	UUCUUGGCACUAUCAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	1555	1232	679
+[candidate]	F18__shuffle_098	F18	98	false	UGCUCAAUUUAUCACUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3207	2365	1277
+[candidate]	F18__shuffle_098	F18	98	false	UGCUCAAUUUAUCACUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3720	2603	1496
+[candidate]	F18__shuffle_099	F18	99	false	UUCACAAUCUGGCUUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	3391	2575	1353
+[candidate]	F18__shuffle_099	F18	99	false	UUCACAAUCUGGCUUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2576	2030	1154
+[candidate]	F18__shuffle_100	F18	100	false	UUCUGGCACAAUCUUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	2908	2128	1112
+[candidate]	F18__shuffle_100	F18	100	false	UUCUGGCACAAUCUUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	2108.9556085399818	18413	10406	6129
+[candidate]	F14__shuffle_001	F14	1	false	UUGCAUCUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	321833	35008	27323
+[candidate]	F14__shuffle_001	F14	1	false	UUGCAUCUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1034	828	405
+[candidate]	F14__shuffle_002	F14	2	false	UCUAUUUGGCAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	387956	36652	29240
+[candidate]	F14__shuffle_002	F14	2	false	UCUAUUUGGCAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1996	1611	880
+[candidate]	F14__shuffle_003	F14	3	false	UGGCAUUCUAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	363613	35581	28233
+[candidate]	F14__shuffle_003	F14	3	false	UGGCAUUCUAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1218	879	453
+[candidate]	F14__shuffle_004	F14	4	false	UCUGCAAUUAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	376133	36532	29125
+[candidate]	F14__shuffle_004	F14	4	false	UCUGCAAUUAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1528	1183	619
+[candidate]	F14__shuffle_005	F14	5	false	UUUAAUCAUGCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	644249	42400	35987
+[candidate]	F14__shuffle_005	F14	5	false	UUUAAUCAUGCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1249	1014	536
+[candidate]	F14__shuffle_006	F14	6	false	UAAUUGCAUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	388172	36433	28858
+[candidate]	F14__shuffle_006	F14	6	false	UAAUUGCAUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1936	1498	720
+[candidate]	F14__shuffle_007	F14	7	false	UAUUCAAUGCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	311673	34362	27139
+[candidate]	F14__shuffle_007	F14	7	false	UAUUCAAUGCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1197	942	498
+[candidate]	F14__shuffle_008	F14	8	false	UCAUUGGCUAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	334375	34916	27409
+[candidate]	F14__shuffle_008	F14	8	false	UCAUUGGCUAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1295	1005	518
+[candidate]	F14__shuffle_009	F14	9	false	UUUGGCUAUCAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	308723	33983	26531
+[candidate]	F14__shuffle_009	F14	9	false	UUUGGCUAUCAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	807	630	330
+[candidate]	F14__shuffle_010	F14	10	false	UAAUGCUCAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	351943	35108	27672
+[candidate]	F14__shuffle_010	F14	10	false	UAAUGCUCAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2021	1575	849
+[candidate]	F14__shuffle_011	F14	11	false	UAUUGCUCAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	268121	32353	25283
+[candidate]	F14__shuffle_011	F14	11	false	UAUUGCUCAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1007	804	405
+[candidate]	F14__shuffle_012	F14	12	false	UUGGCAAUAUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	450498	38833	31879
+[candidate]	F14__shuffle_012	F14	12	false	UUGGCAAUAUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2037	1599	843
+[candidate]	F14__shuffle_013	F14	13	false	UGCUCAUAAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	343979	35276	27729
+[candidate]	F14__shuffle_013	F14	13	false	UGCUCAUAAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1724	1318	674
+[candidate]	F14__shuffle_014	F14	14	false	UGCUUAUUCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	319426	35058	27478
+[candidate]	F14__shuffle_014	F14	14	false	UGCUUAUUCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1138	871	467
+[candidate]	F14__shuffle_015	F14	15	false	UCUGGCAAUUUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	379242	36617	29050
+[candidate]	F14__shuffle_015	F14	15	false	UCUGGCAAUUUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1344	1091	534
+[candidate]	F14__shuffle_016	F14	16	false	UGGCUCAUUAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	337038	36279	28931
+[candidate]	F14__shuffle_016	F14	16	false	UGGCUCAUUAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1091	876	460
+[candidate]	F14__shuffle_017	F14	17	false	UAUUGCUUCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	356561	34418	27421
+[candidate]	F14__shuffle_017	F14	17	false	UAUUGCUUCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1297	984	508
+[candidate]	F14__shuffle_018	F14	18	false	UAUGCAAUCUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	355541	35585	27970
+[candidate]	F14__shuffle_018	F14	18	false	UAUGCAAUCUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1315	1047	565
+[candidate]	F14__shuffle_019	F14	19	false	UUUGCUCAAUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	380621	36428	28864
+[candidate]	F14__shuffle_019	F14	19	false	UUUGCUCAAUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1507	1139	579
+[candidate]	F14__shuffle_020	F14	20	false	UAUUUCUGCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	492858	38851	31712
+[candidate]	F14__shuffle_020	F14	20	false	UAUUUCUGCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2542	1844	986
+[candidate]	F14__shuffle_021	F14	21	false	UGCAUUCUUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	389157	38030	30646
+[candidate]	F14__shuffle_021	F14	21	false	UGCAUUCUUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1708	1342	674
+[candidate]	F14__shuffle_022	F14	22	false	UUAUGGCAAUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	298339	34407	26962
+[candidate]	F14__shuffle_022	F14	22	false	UUAUGGCAAUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	798	660	353
+[candidate]	F14__shuffle_023	F14	23	false	UGCAUUCUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	368044	35007	27789
+[candidate]	F14__shuffle_023	F14	23	false	UGCAUUCUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2171	1572	750
+[candidate]	F14__shuffle_024	F14	24	false	UAUUUGCAAUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	406681	36694	29509
+[candidate]	F14__shuffle_024	F14	24	false	UAUUUGCAAUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1926	1427	757
+[candidate]	F14__shuffle_025	F14	25	false	UUAAUCAUGCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	290320	34601	27255
+[candidate]	F14__shuffle_025	F14	25	false	UUAAUCAUGCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1124	903	433
+[candidate]	F14__shuffle_026	F14	26	false	UGCUUAUCAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	279779	33160	25665
+[candidate]	F14__shuffle_026	F14	26	false	UGCUUAUCAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	935	759	400
+[candidate]	F14__shuffle_027	F14	27	false	UAAUGCUCAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	351943	35108	27672
+[candidate]	F14__shuffle_027	F14	27	false	UAAUGCUCAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2021	1575	849
+[candidate]	F14__shuffle_028	F14	28	false	UUGGCUCAUUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	319520	35374	28154
+[candidate]	F14__shuffle_028	F14	28	false	UUGGCUCAUUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1036	883	445
+[candidate]	F14__shuffle_029	F14	29	false	UAAUUUGCUCAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	424957	37298	30092
+[candidate]	F14__shuffle_029	F14	29	false	UAAUUUGCUCAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2048	1563	771
+[candidate]	F14__shuffle_030	F14	30	false	UUCUUGGCAUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	416406	38003	30763
+[candidate]	F14__shuffle_030	F14	30	false	UUCUUGGCAUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1824	1405	678
+[candidate]	F14__shuffle_031	F14	31	false	UCAUGCUUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	289165	33116	25821
+[candidate]	F14__shuffle_031	F14	31	false	UCAUGCUUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1148	964	494
+[candidate]	F14__shuffle_032	F14	32	false	UUGCAUCUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	321833	35008	27323
+[candidate]	F14__shuffle_032	F14	32	false	UUGCAUCUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1034	828	405
+[candidate]	F14__shuffle_033	F14	33	false	UUAUGGCAAUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	298339	34407	26962
+[candidate]	F14__shuffle_033	F14	33	false	UUAUGGCAAUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	798	660	353
+[candidate]	F14__shuffle_034	F14	34	false	UUAAUGCAUCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	361058	35439	28077
+[candidate]	F14__shuffle_034	F14	34	false	UUAAUGCAUCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1671	1239	567
+[candidate]	F14__shuffle_035	F14	35	false	UGGCAAUCUAUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	347601	34925	27711
+[candidate]	F14__shuffle_035	F14	35	false	UGGCAAUCUAUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	786	638	345
+[candidate]	F14__shuffle_036	F14	36	false	UGGCUUAAUUCAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	378741	37008	29313
+[candidate]	F14__shuffle_036	F14	36	false	UGGCUUAAUUCAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1062	867	426
+[candidate]	F14__shuffle_037	F14	37	false	UGCUAAUCAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	360600	35270	27897
+[candidate]	F14__shuffle_037	F14	37	false	UGCUAAUCAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1425	1148	563
+[candidate]	F14__shuffle_038	F14	38	false	UGGCAAUCUAUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	347601	34925	27711
+[candidate]	F14__shuffle_038	F14	38	false	UGGCAAUCUAUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	786	638	345
+[candidate]	F14__shuffle_039	F14	39	false	UGGCAUUAAUUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	446073	37791	30138
+[candidate]	F14__shuffle_039	F14	39	false	UGGCAUUAAUUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1490	1144	560
+[candidate]	F14__shuffle_040	F14	40	false	UGCAUAAUUCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	352291	36341	28805
+[candidate]	F14__shuffle_040	F14	40	false	UGCAUAAUUCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1632	1275	638
+[candidate]	F14__shuffle_041	F14	41	false	UCAUUGGCUAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	334375	34916	27409
+[candidate]	F14__shuffle_041	F14	41	false	UCAUUGGCUAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1295	1005	518
+[candidate]	F14__shuffle_042	F14	42	false	UAUCAAUUGCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	327112	34172	26748
+[candidate]	F14__shuffle_042	F14	42	false	UAUCAAUUGCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1205	969	480
+[candidate]	F14__shuffle_043	F14	43	false	UUCUGGCAAUUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	436594	37607	30089
+[candidate]	F14__shuffle_043	F14	43	false	UUCUGGCAAUUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1173	927	467
+[candidate]	F14__shuffle_044	F14	44	false	UGGCAUCUUUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	383974	38044	30519
+[candidate]	F14__shuffle_044	F14	44	false	UGGCAUCUUUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1502	1216	628
+[candidate]	F14__shuffle_045	F14	45	false	UGCUCAAUAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	362956	36066	28581
+[candidate]	F14__shuffle_045	F14	45	false	UGCUCAAUAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2081	1534	863
+[candidate]	F14__shuffle_046	F14	46	false	UGGCAAUUCUUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	419671	36733	29405
+[candidate]	F14__shuffle_046	F14	46	false	UGGCAAUUCUUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1533	1276	613
+[candidate]	F14__shuffle_047	F14	47	false	UAUUGGCUUCAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	359447	35551	28226
+[candidate]	F14__shuffle_047	F14	47	false	UAUUGGCUUCAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1492	1028	518
+[candidate]	F14__shuffle_048	F14	48	false	UGCAAUUAUCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	396541	37377	30069
+[candidate]	F14__shuffle_048	F14	48	false	UGCAAUUAUCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1717	1297	719
+[candidate]	F14__shuffle_049	F14	49	false	UGGCUUUCAUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	462730	39213	31855
+[candidate]	F14__shuffle_049	F14	49	false	UGGCUUUCAUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1458	1188	563
+[candidate]	F14__shuffle_050	F14	50	false	UUUAUGCAAUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	389963	36005	28674
+[candidate]	F14__shuffle_050	F14	50	false	UUUAUGCAAUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1098	820	448
+[candidate]	F14__shuffle_051	F14	51	false	UUUGCUAUCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	333326	35027	27610
+[candidate]	F14__shuffle_051	F14	51	false	UUUGCUAUCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	902	744	416
+[candidate]	F14__shuffle_052	F14	52	false	UUAUCAAUGCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	294805	34558	27123
+[candidate]	F14__shuffle_052	F14	52	false	UUAUCAAUGCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1047	823	446
+[candidate]	F14__shuffle_053	F14	53	false	UUGCAAUUCUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	407610	35135	27988
+[candidate]	F14__shuffle_053	F14	53	false	UUGCAAUUCUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1418	940	519
+[candidate]	F14__shuffle_054	F14	54	false	UUUGCAAUCUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	358022	35184	27782
+[candidate]	F14__shuffle_054	F14	54	false	UUUGCAAUCUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	6009	3219	2105
+[candidate]	F14__shuffle_055	F14	55	false	UUGCUCAAUUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	315363	34165	26876
+[candidate]	F14__shuffle_055	F14	55	false	UUGCUCAAUUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	967	764	407
+[candidate]	F14__shuffle_056	F14	56	false	UUCUGCAAUUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	430232	37864	30549
+[candidate]	F14__shuffle_056	F14	56	false	UUCUGCAAUUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1468	1171	627
+[candidate]	F14__shuffle_057	F14	57	false	UGCAAUAUUCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	356663	36167	28719
+[candidate]	F14__shuffle_057	F14	57	false	UGCAAUAUUCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1709	1278	677
+[candidate]	F14__shuffle_058	F14	58	false	UGGCUUCAUAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	405647	37456	29747
+[candidate]	F14__shuffle_058	F14	58	false	UGGCUUCAUAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1348	1021	520
+[candidate]	F14__shuffle_059	F14	59	false	UUGCUAUCAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	276384	32605	25382
+[candidate]	F14__shuffle_059	F14	59	false	UUGCUAUCAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	778	607	331
+[candidate]	F14__shuffle_060	F14	60	false	UGCUUCAUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	328614	35245	27795
+[candidate]	F14__shuffle_060	F14	60	false	UGCUUCAUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1610	1233	621
+[candidate]	F14__shuffle_061	F14	61	false	UGCAUCUUUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	393105	38261	30812
+[candidate]	F14__shuffle_061	F14	61	false	UGCAUCUUUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1716	1349	675
+[candidate]	F14__shuffle_062	F14	62	false	UGGCAAUAUCUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	528065	40106	32820
+[candidate]	F14__shuffle_062	F14	62	false	UGGCAAUAUCUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1308	985	476
+[candidate]	F14__shuffle_063	F14	63	false	UGGCUCAUAAUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	396055	37357	30148
+[candidate]	F14__shuffle_063	F14	63	false	UGGCUCAUAAUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1187	948	493
+[candidate]	F14__shuffle_064	F14	64	false	UCAAUUGCUUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	347435	34444	27133
+[candidate]	F14__shuffle_064	F14	64	false	UCAAUUGCUUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1116	841	426
+[candidate]	F14__shuffle_065	F14	65	false	UUGCUAUUCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	306817	34085	26905
+[candidate]	F14__shuffle_065	F14	65	false	UUGCUAUUCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1005	783	419
+[candidate]	F14__shuffle_066	F14	66	false	UAAUCUGCAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	536506	37170	29931
+[candidate]	F14__shuffle_066	F14	66	false	UAAUCUGCAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	3405	2473	1300
+[candidate]	F14__shuffle_067	F14	67	false	UUGCAUAAUCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	526979	40694	34038
+[candidate]	F14__shuffle_067	F14	67	false	UUGCAUAAUCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2222	1834	921
+[candidate]	F14__shuffle_068	F14	68	false	UUGCUUCAUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	340683	35898	28637
+[candidate]	F14__shuffle_068	F14	68	false	UUGCUUCAUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1538	1211	605
+[candidate]	F14__shuffle_069	F14	69	false	UUCUUAUGCAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	351281	36005	28567
+[candidate]	F14__shuffle_069	F14	69	false	UUCUUAUGCAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1083	846	449
+[candidate]	F14__shuffle_070	F14	70	false	UGCAUCUUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	306551	34464	27147
+[candidate]	F14__shuffle_070	F14	70	false	UGCAUCUUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1271	1021	506
+[candidate]	F14__shuffle_071	F14	71	false	UGCUCAUAAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	343979	35276	27729
+[candidate]	F14__shuffle_071	F14	71	false	UGCUCAUAAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1724	1318	674
+[candidate]	F14__shuffle_072	F14	72	false	UAUUGCUCAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	268121	32353	25283
+[candidate]	F14__shuffle_072	F14	72	false	UAUUGCUCAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1007	804	405
+[candidate]	F14__shuffle_073	F14	73	false	UAAUUUGCAUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	431256	37126	29769
+[candidate]	F14__shuffle_073	F14	73	false	UAAUUUGCAUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2632	1928	962
+[candidate]	F14__shuffle_074	F14	74	false	UUGGCUAUUCAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	300733	34056	26820
+[candidate]	F14__shuffle_074	F14	74	false	UUGGCUAUUCAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1119	847	405
+[candidate]	F14__shuffle_075	F14	75	false	UGCUAUUCAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	304904	32849	25814
+[candidate]	F14__shuffle_075	F14	75	false	UGCUAUUCAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	910	672	376
+[candidate]	F14__shuffle_076	F14	76	false	UGCAAUCUAUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	339863	35354	27987
+[candidate]	F14__shuffle_076	F14	76	false	UGCAAUCUAUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1253	967	527
+[candidate]	F14__shuffle_077	F14	77	false	UGCUUUCAAUAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	408062	37087	29516
+[candidate]	F14__shuffle_077	F14	77	false	UGCUUUCAAUAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1864	1428	744
+[candidate]	F14__shuffle_078	F14	78	false	UAUUGGCAAUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	294578	33731	26216
+[candidate]	F14__shuffle_078	F14	78	false	UAUUGGCAAUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	850	732	399
+[candidate]	F14__shuffle_079	F14	79	false	UAAUGCAUUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	410896	37699	30563
+[candidate]	F14__shuffle_079	F14	79	false	UAAUGCAUUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	3425	2536	1381
+[candidate]	F14__shuffle_080	F14	80	false	UGGCUCAAUAUUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	460220	38545	31560
+[candidate]	F14__shuffle_080	F14	80	false	UGGCUCAAUAUUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1341	1040	572
+[candidate]	F14__shuffle_081	F14	81	false	UUCUAAUUGCAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	357782	35012	27631
+[candidate]	F14__shuffle_081	F14	81	false	UUCUAAUUGCAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1283	987	472
+[candidate]	F14__shuffle_082	F14	82	false	UUCUUAAUGGCAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	386404	37013	29675
+[candidate]	F14__shuffle_082	F14	82	false	UUCUUAAUGGCAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2338	1826	904
+[candidate]	F14__shuffle_083	F14	83	false	UUCUUGCAUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	351842	35631	28179
+[candidate]	F14__shuffle_083	F14	83	false	UUCUUGCAUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1117	891	434
+[candidate]	F14__shuffle_084	F14	84	false	UAUUCAAUGCUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	311673	34362	27139
+[candidate]	F14__shuffle_084	F14	84	false	UAUUCAAUGCUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1197	942	498
+[candidate]	F14__shuffle_085	F14	85	false	UGGCAAUUAUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	364082	36764	29378
+[candidate]	F14__shuffle_085	F14	85	false	UGGCAAUUAUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1275	987	526
+[candidate]	F14__shuffle_086	F14	86	false	UAUGGCAAUUCUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	354008	35115	27860
+[candidate]	F14__shuffle_086	F14	86	false	UAUGGCAAUUCUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1598	1260	674
+[candidate]	F14__shuffle_087	F14	87	false	UGCUAAUUUCAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	372020	36548	28975
+[candidate]	F14__shuffle_087	F14	87	false	UGCUAAUUUCAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1679	1302	657
+[candidate]	F14__shuffle_088	F14	88	false	UGCAUUAAUUCUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	381522	37125	29290
+[candidate]	F14__shuffle_088	F14	88	false	UGCAUUAAUUCUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1673	1264	638
+[candidate]	F14__shuffle_089	F14	89	false	UGGCAUAAUUUCUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	607218	41721	34672
+[candidate]	F14__shuffle_089	F14	89	false	UGGCAUAAUUUCUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1817	1370	703
+[candidate]	F14__shuffle_090	F14	90	false	UUGGCUAAUUCAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	435592	38961	31950
+[candidate]	F14__shuffle_090	F14	90	false	UUGGCUAAUUCAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1079	874	464
+[candidate]	F14__shuffle_091	F14	91	false	UGGCUUUCAAUAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	472992	39023	31910
+[candidate]	F14__shuffle_091	F14	91	false	UGGCUUUCAAUAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1397	1137	616
+[candidate]	F14__shuffle_092	F14	92	false	UCUUGCAUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	330942	34413	26939
+[candidate]	F14__shuffle_092	F14	92	false	UCUUGCAUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1411	1060	506
+[candidate]	F14__shuffle_093	F14	93	false	UCUUGCAUAAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	330942	34413	26939
+[candidate]	F14__shuffle_093	F14	93	false	UCUUGCAUAAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1411	1060	506
+[candidate]	F14__shuffle_094	F14	94	false	UUCUGGCAUAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	413111	36635	29049
+[candidate]	F14__shuffle_094	F14	94	false	UUCUGGCAUAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1280	1019	525
+[candidate]	F14__shuffle_095	F14	95	false	UGCAAUAUCUUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	371172	36367	28799
+[candidate]	F14__shuffle_095	F14	95	false	UGCAAUAUCUUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1568	1195	595
+[candidate]	F14__shuffle_096	F14	96	false	UUCUGCAUUAAUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	389392	36658	29400
+[candidate]	F14__shuffle_096	F14	96	false	UUCUGCAUUAAUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	2320	1624	809
+[candidate]	F14__shuffle_097	F14	97	false	UGGCUUUCAUAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	462730	39213	31855
+[candidate]	F14__shuffle_097	F14	97	false	UGGCUUUCAUAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1458	1188	563
+[candidate]	F14__shuffle_098	F14	98	false	UAAUUGCUCAUUGG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	309011	34418	26911
+[candidate]	F14__shuffle_098	F14	98	false	UAAUUGCUCAUUGG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1569	1206	579
+[candidate]	F14__shuffle_099	F14	99	false	UAUUGGCUUCAAUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	359447	35551	28226
+[candidate]	F14__shuffle_099	F14	99	false	UAUUGGCUUCAAUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	1492	1028	518
+[candidate]	F14__shuffle_100	F14	100	false	UGGCUAUUCAAUUG	bowtie1-v3	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	303789	33759	26575
+[candidate]	F14__shuffle_100	F14	100	false	UGGCUAUUCAAUUG	blastn-short	scheduled	below predeclared expected-hit saturation threshold	245970.52011720836	763	597	335
+[candidate]	F10__shuffle_001	F10	1	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_001	F10	1	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_002	F10	2	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_002	F10	2	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_003	F10	3	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_003	F10	3	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_004	F10	4	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_004	F10	4	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_005	F10	5	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_005	F10	5	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_006	F10	6	false	AAUAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	26653360	75464	71845
+[candidate]	F10__shuffle_006	F10	6	false	AAUAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_007	F10	7	false	AAUGCUAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23395989	74882	70429
+[candidate]	F10__shuffle_007	F10	7	false	AAUGCUAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_008	F10	8	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_008	F10	8	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_009	F10	9	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_009	F10	9	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_010	F10	10	false	AAUAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	26653360	75464	71845
+[candidate]	F10__shuffle_010	F10	10	false	AAUAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_011	F10	11	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_011	F10	11	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_012	F10	12	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_012	F10	12	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_013	F10	13	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_013	F10	13	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_014	F10	14	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_014	F10	14	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_015	F10	15	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_015	F10	15	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_016	F10	16	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_016	F10	16	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_017	F10	17	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_017	F10	17	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_018	F10	18	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_018	F10	18	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_019	F10	19	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_019	F10	19	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_020	F10	20	false	AAUGCUAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23395989	74882	70429
+[candidate]	F10__shuffle_020	F10	20	false	AAUGCUAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_021	F10	21	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_021	F10	21	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_022	F10	22	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_022	F10	22	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_023	F10	23	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_023	F10	23	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_024	F10	24	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_024	F10	24	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_025	F10	25	false	AAUGCUAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23395989	74882	70429
+[candidate]	F10__shuffle_025	F10	25	false	AAUGCUAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_026	F10	26	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_026	F10	26	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_027	F10	27	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_027	F10	27	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_028	F10	28	false	AAUAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24963512	75536	71402
+[candidate]	F10__shuffle_028	F10	28	false	AAUAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_029	F10	29	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_029	F10	29	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_030	F10	30	false	AAUAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24963512	75536	71402
+[candidate]	F10__shuffle_030	F10	30	false	AAUAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_031	F10	31	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_031	F10	31	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_032	F10	32	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_032	F10	32	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_033	F10	33	false	AAUGCUAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23395989	74882	70429
+[candidate]	F10__shuffle_033	F10	33	false	AAUGCUAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_034	F10	34	false	AAUAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24963512	75536	71402
+[candidate]	F10__shuffle_034	F10	34	false	AAUAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_035	F10	35	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_035	F10	35	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_036	F10	36	false	AAUAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	26653360	75464	71845
+[candidate]	F10__shuffle_036	F10	36	false	AAUAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_037	F10	37	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_037	F10	37	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_038	F10	38	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_038	F10	38	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_039	F10	39	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_039	F10	39	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_040	F10	40	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_040	F10	40	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_041	F10	41	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_041	F10	41	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_042	F10	42	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_042	F10	42	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_043	F10	43	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_043	F10	43	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_044	F10	44	false	AAUGCUAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23395989	74882	70429
+[candidate]	F10__shuffle_044	F10	44	false	AAUGCUAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_045	F10	45	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_045	F10	45	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_046	F10	46	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_046	F10	46	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_047	F10	47	false	AAUAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	26653360	75464	71845
+[candidate]	F10__shuffle_047	F10	47	false	AAUAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_048	F10	48	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_048	F10	48	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_049	F10	49	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_049	F10	49	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_050	F10	50	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_050	F10	50	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_051	F10	51	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_051	F10	51	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_052	F10	52	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_052	F10	52	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_053	F10	53	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_053	F10	53	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_054	F10	54	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_054	F10	54	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_055	F10	55	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_055	F10	55	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_056	F10	56	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_056	F10	56	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_057	F10	57	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_057	F10	57	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_058	F10	58	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_058	F10	58	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_059	F10	59	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_059	F10	59	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_060	F10	60	false	AAUGCUAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23395989	74882	70429
+[candidate]	F10__shuffle_060	F10	60	false	AAUGCUAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_061	F10	61	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_061	F10	61	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_062	F10	62	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_062	F10	62	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_063	F10	63	false	AAUGCUAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23395989	74882	70429
+[candidate]	F10__shuffle_063	F10	63	false	AAUGCUAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_064	F10	64	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_064	F10	64	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_065	F10	65	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_065	F10	65	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_066	F10	66	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_066	F10	66	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_067	F10	67	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_067	F10	67	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_068	F10	68	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_068	F10	68	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_069	F10	69	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_069	F10	69	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_070	F10	70	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_070	F10	70	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_071	F10	71	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_071	F10	71	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_072	F10	72	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_072	F10	72	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_073	F10	73	false	AAUAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	26653360	75464	71845
+[candidate]	F10__shuffle_073	F10	73	false	AAUAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_074	F10	74	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_074	F10	74	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_075	F10	75	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_075	F10	75	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_076	F10	76	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_076	F10	76	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_077	F10	77	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_077	F10	77	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_078	F10	78	false	AAUGGCUAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	23829564	74965	71233
+[candidate]	F10__shuffle_078	F10	78	false	AAUGGCUAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_079	F10	79	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_079	F10	79	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_080	F10	80	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_080	F10	80	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_081	F10	81	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_081	F10	81	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_082	F10	82	false	AAUAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	26653360	75464	71845
+[candidate]	F10__shuffle_082	F10	82	false	AAUAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_083	F10	83	false	AAUAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24963512	75536	71402
+[candidate]	F10__shuffle_083	F10	83	false	AAUAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_084	F10	84	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_084	F10	84	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_085	F10	85	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_085	F10	85	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_086	F10	86	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_086	F10	86	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_087	F10	87	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_087	F10	87	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_088	F10	88	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_088	F10	88	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_089	F10	89	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_089	F10	89	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_090	F10	90	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_090	F10	90	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_091	F10	91	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_091	F10	91	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_092	F10	92	false	AUAAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24879560	75276	71318
+[candidate]	F10__shuffle_092	F10	92	false	AUAAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_093	F10	93	false	AAUAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24963512	75536	71402
+[candidate]	F10__shuffle_093	F10	93	false	AAUAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_094	F10	94	false	AAUAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	26653360	75464	71845
+[candidate]	F10__shuffle_094	F10	94	false	AAUAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_095	F10	95	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_095	F10	95	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_096	F10	96	false	AAUAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24963512	75536	71402
+[candidate]	F10__shuffle_096	F10	96	false	AAUAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_097	F10	97	false	AUAAUGCUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	25460836	75011	71148
+[candidate]	F10__shuffle_097	F10	97	false	AUAAUGCUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_098	F10	98	false	AUGCUAAUGG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	21869111	74848	70706
+[candidate]	F10__shuffle_098	F10	98	false	AUGCUAAUGG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_099	F10	99	false	AUGGCUAAUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	22340513	74784	69986
+[candidate]	F10__shuffle_099	F10	99	false	AUGGCUAAUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	F10__shuffle_100	F10	100	false	AAUAUGGCUG	bowtie1-v3	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	24963512	75536	71402
+[candidate]	F10__shuffle_100	F10	100	false	AAUAUGGCUG	blastn-short	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	21653136.957832336	0	0	0
+[candidate]	3UP8__shuffle_001	3UP8	1	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_001	3UP8	1	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_002	3UP8	2	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_002	3UP8	2	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_003	3UP8	3	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_003	3UP8	3	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_004	3UP8	4	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_004	3UP8	4	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_005	3UP8	5	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_005	3UP8	5	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_006	3UP8	6	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_006	3UP8	6	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_007	3UP8	7	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_007	3UP8	7	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_008	3UP8	8	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_008	3UP8	8	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_009	3UP8	9	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_009	3UP8	9	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_010	3UP8	10	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_010	3UP8	10	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_011	3UP8	11	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_011	3UP8	11	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_012	3UP8	12	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_012	3UP8	12	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_013	3UP8	13	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_013	3UP8	13	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_014	3UP8	14	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_014	3UP8	14	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_015	3UP8	15	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_015	3UP8	15	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_016	3UP8	16	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_016	3UP8	16	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_017	3UP8	17	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_017	3UP8	17	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_018	3UP8	18	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_018	3UP8	18	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_019	3UP8	19	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_019	3UP8	19	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_020	3UP8	20	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_020	3UP8	20	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_021	3UP8	21	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_021	3UP8	21	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_022	3UP8	22	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_022	3UP8	22	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_023	3UP8	23	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_023	3UP8	23	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_024	3UP8	24	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_024	3UP8	24	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_025	3UP8	25	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_025	3UP8	25	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_026	3UP8	26	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_026	3UP8	26	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_027	3UP8	27	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_027	3UP8	27	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_028	3UP8	28	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_028	3UP8	28	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_029	3UP8	29	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_029	3UP8	29	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_030	3UP8	30	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_030	3UP8	30	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_031	3UP8	31	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_031	3UP8	31	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_032	3UP8	32	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_032	3UP8	32	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_033	3UP8	33	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_033	3UP8	33	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_034	3UP8	34	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_034	3UP8	34	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_035	3UP8	35	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_035	3UP8	35	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_036	3UP8	36	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_036	3UP8	36	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_037	3UP8	37	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_037	3UP8	37	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_038	3UP8	38	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_038	3UP8	38	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_039	3UP8	39	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_039	3UP8	39	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_040	3UP8	40	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_040	3UP8	40	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_041	3UP8	41	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_041	3UP8	41	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_042	3UP8	42	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_042	3UP8	42	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_043	3UP8	43	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_043	3UP8	43	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_044	3UP8	44	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_044	3UP8	44	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_045	3UP8	45	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_045	3UP8	45	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_046	3UP8	46	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_046	3UP8	46	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_047	3UP8	47	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_047	3UP8	47	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_048	3UP8	48	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_048	3UP8	48	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_049	3UP8	49	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_049	3UP8	49	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_050	3UP8	50	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_050	3UP8	50	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_051	3UP8	51	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_051	3UP8	51	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_052	3UP8	52	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_052	3UP8	52	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_053	3UP8	53	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_053	3UP8	53	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_054	3UP8	54	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_054	3UP8	54	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_055	3UP8	55	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_055	3UP8	55	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_056	3UP8	56	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_056	3UP8	56	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_057	3UP8	57	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_057	3UP8	57	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_058	3UP8	58	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_058	3UP8	58	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_059	3UP8	59	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_059	3UP8	59	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_060	3UP8	60	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_060	3UP8	60	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_061	3UP8	61	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_061	3UP8	61	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_062	3UP8	62	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_062	3UP8	62	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_063	3UP8	63	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_063	3UP8	63	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_064	3UP8	64	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_064	3UP8	64	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_065	3UP8	65	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_065	3UP8	65	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_066	3UP8	66	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_066	3UP8	66	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_067	3UP8	67	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_067	3UP8	67	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_068	3UP8	68	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_068	3UP8	68	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_069	3UP8	69	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_069	3UP8	69	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_070	3UP8	70	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_070	3UP8	70	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_071	3UP8	71	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_071	3UP8	71	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_072	3UP8	72	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_072	3UP8	72	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_073	3UP8	73	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_073	3UP8	73	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_074	3UP8	74	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_074	3UP8	74	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_075	3UP8	75	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_075	3UP8	75	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_076	3UP8	76	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_076	3UP8	76	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_077	3UP8	77	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_077	3UP8	77	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_078	3UP8	78	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_078	3UP8	78	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_079	3UP8	79	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_079	3UP8	79	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_080	3UP8	80	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_080	3UP8	80	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_081	3UP8	81	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_081	3UP8	81	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_082	3UP8	82	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_082	3UP8	82	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_083	3UP8	83	false	GGCAGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_083	3UP8	83	false	GGCAGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_084	3UP8	84	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_084	3UP8	84	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_085	3UP8	85	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_085	3UP8	85	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_086	3UP8	86	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_086	3UP8	86	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_087	3UP8	87	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_087	3UP8	87	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_088	3UP8	88	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_088	3UP8	88	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_089	3UP8	89	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_089	3UP8	89	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_090	3UP8	90	false	GCUGGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_090	3UP8	90	false	GCUGGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_091	3UP8	91	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_091	3UP8	91	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_092	3UP8	92	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_092	3UP8	92	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_093	3UP8	93	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_093	3UP8	93	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_094	3UP8	94	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_094	3UP8	94	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_095	3UP8	95	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_095	3UP8	95	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_096	3UP8	96	false	GCAGCUGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_096	3UP8	96	false	GCAGCUGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_097	3UP8	97	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_097	3UP8	97	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_098	3UP8	98	false	GCUGCAGG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_098	3UP8	98	false	GCUGCAGG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_099	3UP8	99	false	GGCUGCAG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_099	3UP8	99	false	GGCUGCAG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_100	3UP8	100	false	GCAGGCUG	bowtie1-v3	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			
+[candidate]	3UP8__shuffle_100	3UP8	100	false	GCAGGCUG	blastn-short	saturated	saturated / non-specific by construction - count uninformative	168607016.50772095			

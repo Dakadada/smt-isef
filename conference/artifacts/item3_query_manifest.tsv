@@ -1,0 +1,405 @@
+state	query_id	aso_id	draw_id	is_real	sequence_rna_5to3	unique_query_id	length_nt	expected_random_both_strand_hits_v3	preflight_status	preflight_reason	run_alignment
+[candidate]	F18__shuffle_001	F18	1	False	UCAUGCUUUACUCAAUGG	Q_298656ff14e464e0	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_002	F18	2	False	UGGCUCAUCUUUACAAUG	Q_9e515651daae640a	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_003	F18	3	False	UUGGCACUUCUAUCAAUG	Q_e4822b2cf8bdab9f	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_004	F18	4	False	UGCUCUUUCAUACAAUGG	Q_1c538b74b3d5dc1d	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_005	F18	5	False	UUCACUAAUGCUUCAUGG	Q_732060a5295d27f1	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_006	F18	6	False	UUGCUCAUACUCAAUUGG	Q_2200a70ebd2b33a7	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_007	F18	7	False	UUUCUACUGCAUCAAUGG	Q_41dd4c6695336627	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_008	F18	8	False	UUCAUCACUAAUUGGCUG	Q_65f73a63cfb50acd	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_009	F18	9	False	UGGCAUAACUCUUUCAUG	Q_55cef690b1820c0f	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_010	F18	10	False	UCUUGCUAUUCACAAUGG	Q_24b360675a71d1ac	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_011	F18	11	False	UCAAUCUAUGCACUUUGG	Q_2acdbc5f090d7099	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_012	F18	12	False	UAUCUGCAACUUUCAUGG	Q_3500f24e6c6a54a9	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_013	F18	13	False	UCACUAUGGCAAUCUUUG	Q_1d4622d43ac82067	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_014	F18	14	False	UUGCAUUCACUCUAAUGG	Q_402f450555032c55	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_015	F18	15	False	UGGCACAUAAUCUUUCUG	Q_ac0113325139f883	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_016	F18	16	False	UGCUAAUUCAUUCACUGG	Q_98f627b47438f32f	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_017	F18	17	False	UGCUCACUAUUCAAUUGG	Q_1d9a05310b41b26d	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_018	F18	18	False	UCUCUUUGGCACAUAAUG	Q_92e974558e8e29c0	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_019	F18	19	False	UCUGCAAUACAUUUCUGG	Q_93ffdeafe9715ee9	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_020	F18	20	False	UCUAUGCAUUUCAACUGG	Q_3ed009ffbdfd301c	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_021	F18	21	False	UCAUGGCAAUUUCUACUG	Q_bae37b83351c3563	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_022	F18	22	False	UGCACUUUAUCAAUCUGG	Q_ebd0e4d48ed75d6f	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_023	F18	23	False	UUGGCACAUUCUCUAAUG	Q_3c9c81f29bd4a856	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_024	F18	24	False	UUAUGGCUUCACAAUCUG	Q_59b89de047046b87	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_025	F18	25	False	UGCAUAAUUCACUUCUGG	Q_32f514b48024f45b	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_026	F18	26	False	UUCAUAUCUGGCAACUUG	Q_b9dac720dd52dd65	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_027	F18	27	False	UGGCAUCUAAUUUCACUG	Q_97621c5351a89db8	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_028	F18	28	False	UGCUUCAACAUAUUCUGG	Q_a97fc2d03b725a37	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_029	F18	29	False	UUGCACAUCUCUAAUUGG	Q_945d039f2cba8372	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_030	F18	30	False	UUGCUAUCUUCAACAUGG	Q_b32a5303a8410fa1	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_031	F18	31	False	UGGCUCAAUUAUCACUUG	Q_2639bd9a436bde66	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_032	F18	32	False	UGGCAUUCAAUUACUCUG	Q_7126b849a4c1c508	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_033	F18	33	False	UAACAUGCAUCUUUCUGG	Q_9de14e54f2ede081	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_034	F18	34	False	UCUAUGGCAAUUUCACUG	Q_8925035fc7ca99b2	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_035	F18	35	False	UGCUUAUCUUCAACAUGG	Q_4d2b5c292f5a9509	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_036	F18	36	False	UGCAUACAAUUCUCUUGG	Q_47da9988375b42bd	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_037	F18	37	False	UUCUGGCUCAUUACAAUG	Q_1786d0bc909c1d19	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_038	F18	38	False	UUACUGCAUUCAAUCUGG	Q_29ba396252536476	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_039	F18	39	False	UCACAUAAUUUCUGCUGG	Q_8ec182bae234a645	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_040	F18	40	False	UCAUAUGGCAACUUCUUG	Q_c0515ecba41459d7	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_041	F18	41	False	UGCUCAUUCUUAACAUGG	Q_97b96988befc7f29	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_042	F18	42	False	UUCAUUGGCACUCUAAUG	Q_781fd5c83787099b	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_043	F18	43	False	UGCAACUUCUUCAUAUGG	Q_8e168b5ebf5ed205	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_044	F18	44	False	UGGCUUUACAAUCUCAUG	Q_55fe663ea3f72f26	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_045	F18	45	False	UUCAUAACUGGCUUCAUG	Q_0e3b0cb2bd4a39a7	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_046	F18	46	False	UUGCACUCAUUCUAAUGG	Q_271442825f54d67a	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_047	F18	47	False	UGGCAUCAUAACUCUUUG	Q_3f015ceae9346ad2	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_048	F18	48	False	UUCUGCAUUCUAACAUGG	Q_330b3cea3e4d6ae5	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_049	F18	49	False	UGCUUCACAUAAUUCUGG	Q_b044b21da10695cb	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_050	F18	50	False	UGCACAUCUUAAUCUUGG	Q_360aae1556f3fbb6	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_051	F18	51	False	UGCUAUCAAUCACUUUGG	Q_0086dc74b6a83e1c	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_052	F18	52	False	UCACAUUAAUGCUUCUGG	Q_f2db8feb715b2aea	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_053	F18	53	False	UUGGCACUCAUUAAUCUG	Q_f1d636b574f7fbac	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_054	F18	54	False	UGCAAUCAUCUUUACUGG	Q_17b98b09dcefcebf	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_055	F18	55	False	UGGCACAAUUCUUCUAUG	Q_44812e6316951081	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_056	F18	56	False	UUGGCACUCAAUUCUAUG	Q_b5a28ba0dcf2df6c	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_057	F18	57	False	UCACUAAUCUGGCAUUUG	Q_4845a1e481a9b7c9	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_058	F18	58	False	UCUGGCAUUUAUCAACUG	Q_3bd8a82092d7d750	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_059	F18	59	False	UCUAAUCUGGCACAUUUG	Q_330b7b1e40a52480	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_060	F18	60	False	UGGCACUCAUUUCUAAUG	Q_12473c56b8fec39e	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_061	F18	61	False	UGCAUUCAUAACUUCUGG	Q_f94b24458a8547cb	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_062	F18	62	False	UGCUCAUUUCAUAACUGG	Q_9bf2c40b3cdc325c	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_063	F18	63	False	UCUCACUGCAUUUAAUGG	Q_16e8c8db96f52895	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_064	F18	64	False	UGGCUCACAUAAUCUUUG	Q_f1cbcb542c086561	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_065	F18	65	False	UUGGCUUCAUACAAUCUG	Q_3f63cab9277604ae	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_066	F18	66	False	UUCAUAACUGCUUCAUGG	Q_f64f05e9bd1b6083	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_067	F18	67	False	UUUGGCUCUAUCACAAUG	Q_08e77286283fd456	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_068	F18	68	False	UUCUAUUGGCUCAACAUG	Q_43ca92673ba88278	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_069	F18	69	False	UGCUUAUCUUCAACAUGG	Q_4d2b5c292f5a9509	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_070	F18	70	False	UACAUCUUGGCUCAAUUG	Q_fbebafa67e8b21a3	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_071	F18	71	False	UCUGGCAAUUCUACAUUG	Q_500d3271446e8d2a	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_072	F18	72	False	UGGCAAUACUCAUUUCUG	Q_4ea757614895ba19	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_073	F18	73	False	UUCAUAUGGCUCAACUUG	Q_ceded1a5d2b0bb1e	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_074	F18	74	False	UGGCUCACUCAUUAAUUG	Q_2df89fe08a72a105	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_075	F18	75	False	UGCUCACAAUCUUAUUGG	Q_8ef0e784e58dfc12	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_076	F18	76	False	UAUCAACAUGCUCUUUGG	Q_2bdb2b753b654cd7	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_077	F18	77	False	UUGCAAUUCACUCUAUGG	Q_cf7c903fd9414cc8	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_078	F18	78	False	UCUUGGCUUCAAUACAUG	Q_ed3c243ffe6740d4	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_079	F18	79	False	UCAUUUGGCUAUCAACUG	Q_b38a62ac6c1c2200	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_080	F18	80	False	UACUGGCUCAAUUUCAUG	Q_46b5fe8650e2a0bf	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_081	F18	81	False	UGCAACUCUUUCAUAUGG	Q_5f7fa482912ad241	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_082	F18	82	False	UUUCUGGCUAAUCACAUG	Q_5b91bf2ca395c988	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_083	F18	83	False	UACUUCAUCAAUGCUUGG	Q_4664d083c6a66858	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_084	F18	84	False	UUGGCAAUUCUCUACAUG	Q_3309f5ed4867fe86	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_085	F18	85	False	UUGCUUAUCACAAUCUGG	Q_25ddaac6ac0fc9c3	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_086	F18	86	False	UGGCACUAAUUCAUCUUG	Q_eb2d93eb26d634a6	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_087	F18	87	False	UCAAUCUACAUGGCUUUG	Q_01877e2ba0d74266	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_088	F18	88	False	UGCUCUCAUUAACAUUGG	Q_89151ab9707debaf	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_089	F18	89	False	UGCAUCUCAUUUAACUGG	Q_9e9e900848bdd0a1	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_090	F18	90	False	UGGCUCAACAUAUUCUUG	Q_8e6f49515aed0a61	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_091	F18	91	False	UGCUCAAUCUUUACAUGG	Q_46d4c0a3ca42e5fe	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_092	F18	92	False	UGCAAUCAUCUACUUUGG	Q_64b564fbd840af9c	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_093	F18	93	False	UACUGCAAUCUUUCAUGG	Q_2e3598cd3dc25675	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_094	F18	94	False	UGGCAUCUUCAACUUAUG	Q_88eb34158c349da3	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_095	F18	95	False	UCAAUACUGCUUCAUUGG	Q_ea9254d869c4b5f4	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_096	F18	96	False	UCUCACAAUAUGCUUUGG	Q_50c1248ffb43ba71	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_097	F18	97	False	UUCUUGGCACUAUCAAUG	Q_5c04080280989335	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_098	F18	98	False	UGCUCAAUUUAUCACUGG	Q_40ae974f0d6c9be3	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_099	F18	99	False	UUCACAAUCUGGCUUAUG	Q_ca77a5972418aedb	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__shuffle_100	F18	100	False	UUCUGGCACAAUCUUAUG	Q_9a0e99df0062ceeb	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F18__real	F18		True	UCACUUUCAUAAUGCUGG	Q_ae228a93455d9530	18	2108.9556085399818	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_001	F14	1	False	UUGCAUCUAAUUGG	Q_d237ffa74547f15a	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_002	F14	2	False	UCUAUUUGGCAAUG	Q_43bebdca73e83034	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_003	F14	3	False	UGGCAUUCUAAUUG	Q_c69796f1358f02ad	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_004	F14	4	False	UCUGCAAUUAUUGG	Q_da4ff5a7cf2cfc10	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_005	F14	5	False	UUUAAUCAUGCUGG	Q_d2b9a1fca47fadda	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_006	F14	6	False	UAAUUGCAUUCUGG	Q_216ad475f43fcedd	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_007	F14	7	False	UAUUCAAUGCUUGG	Q_ad05ff8ccf44f543	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_008	F14	8	False	UCAUUGGCUAAUUG	Q_bba1e149fa7d86fb	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_009	F14	9	False	UUUGGCUAUCAAUG	Q_261af192b750efd2	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_010	F14	10	False	UAAUGCUCAUUUGG	Q_be598e7c6a06ad2c	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_011	F14	11	False	UAUUGCUCAAUUGG	Q_58eb3a0eb5a6bb0f	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_012	F14	12	False	UUGGCAAUAUCUUG	Q_146221ba3d7f5f91	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_013	F14	13	False	UGCUCAUAAUUUGG	Q_0b70cac109f05086	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_014	F14	14	False	UGCUUAUUCAAUGG	Q_d4d016ae29810b63	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_015	F14	15	False	UCUGGCAAUUUAUG	Q_dcf9a667de298a61	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_016	F14	16	False	UGGCUCAUUAAUUG	Q_9cb533d111cd2b9e	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_017	F14	17	False	UAUUGCUUCAAUGG	Q_45ba1f24d669b926	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_018	F14	18	False	UAUGCAAUCUUUGG	Q_644b1dac5d5ad46a	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_019	F14	19	False	UUUGCUCAAUAUGG	Q_352e27fd326e258e	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_020	F14	20	False	UAUUUCUGCAAUGG	Q_b696248adbbfd4e4	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_021	F14	21	False	UGCAUUCUUAAUGG	Q_b32ade50c0327904	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_022	F14	22	False	UUAUGGCAAUCUUG	Q_7635d34a55899711	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_023	F14	23	False	UGCAUUCUAAUUGG	Q_51dee15db03fadfc	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_024	F14	24	False	UAUUUGCAAUCUGG	Q_57866f26088c6693	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_025	F14	25	False	UUAAUCAUGCUUGG	Q_be1de33b77483be7	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_026	F14	26	False	UGCUUAUCAAUUGG	Q_1430391679dd154c	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_027	F14	27	False	UAAUGCUCAUUUGG	Q_be598e7c6a06ad2c	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_028	F14	28	False	UUGGCUCAUUAAUG	Q_9079276c8f5f4c95	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_029	F14	29	False	UAAUUUGCUCAUGG	Q_a935439a7b5130c3	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_030	F14	30	False	UUCUUGGCAUAAUG	Q_36576d8aee880ee8	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_031	F14	31	False	UCAUGCUUAAUUGG	Q_4d4a8eb40daf949a	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_032	F14	32	False	UUGCAUCUAAUUGG	Q_d237ffa74547f15a	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_033	F14	33	False	UUAUGGCAAUCUUG	Q_7635d34a55899711	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_034	F14	34	False	UUAAUGCAUCUUGG	Q_7e19425cde57f560	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_035	F14	35	False	UGGCAAUCUAUUUG	Q_a9b3fbee39714f38	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_036	F14	36	False	UGGCUUAAUUCAUG	Q_86da84ca1ecaf650	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_037	F14	37	False	UGCUAAUCAUUUGG	Q_f7ef5bdfdd19a239	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_038	F14	38	False	UGGCAAUCUAUUUG	Q_a9b3fbee39714f38	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_039	F14	39	False	UGGCAUUAAUUCUG	Q_b47cc8de94591008	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_040	F14	40	False	UGCAUAAUUCUUGG	Q_f568d268cb9e6035	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_041	F14	41	False	UCAUUGGCUAAUUG	Q_bba1e149fa7d86fb	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_042	F14	42	False	UAUCAAUUGCUUGG	Q_9c3e4dddd29b1c3c	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_043	F14	43	False	UUCUGGCAAUUAUG	Q_76693e827f273d42	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_044	F14	44	False	UGGCAUCUUUAAUG	Q_1c751ca48a12a351	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_045	F14	45	False	UGCUCAAUAUUUGG	Q_6741f5b08d5959ee	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_046	F14	46	False	UGGCAAUUCUUAUG	Q_35065373b886ab4e	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_047	F14	47	False	UAUUGGCUUCAAUG	Q_0b41d404a245cce6	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_048	F14	48	False	UGCAAUUAUCUUGG	Q_786a0eb946ebe220	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_049	F14	49	False	UGGCUUUCAUAAUG	Q_f62786957a7a7ab2	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_050	F14	50	False	UUUAUGCAAUCUGG	Q_7e61ebdb7f6cf9f4	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_051	F14	51	False	UUUGCUAUCAAUGG	Q_e8b22b8c00001825	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_052	F14	52	False	UUAUCAAUGCUUGG	Q_4dc5bc804c211ff1	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_053	F14	53	False	UUGCAAUUCUAUGG	Q_cab410229a9a2d69	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_054	F14	54	False	UUUGCAAUCUAUGG	Q_6cc4bb4058a75b23	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_055	F14	55	False	UUGCUCAAUUAUGG	Q_0584b081e0ace674	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_056	F14	56	False	UUCUGCAAUUAUGG	Q_45e1b4385a7ba574	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_057	F14	57	False	UGCAAUAUUCUUGG	Q_cdfb408d8762f907	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_058	F14	58	False	UGGCUUCAUAAUUG	Q_cc53c9e71609a0fd	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_059	F14	59	False	UUGCUAUCAAUUGG	Q_dc5711f3b4a8d30e	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_060	F14	60	False	UGCUUCAUAAUUGG	Q_d0bd3f831946f6e5	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_061	F14	61	False	UGCAUCUUUAAUGG	Q_00b61ed37049fb07	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_062	F14	62	False	UGGCAAUAUCUUUG	Q_401c4b440934f329	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_063	F14	63	False	UGGCUCAUAAUUUG	Q_b696121227448404	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_064	F14	64	False	UCAAUUGCUUAUGG	Q_c6f15f3e61792438	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_065	F14	65	False	UUGCUAUUCAAUGG	Q_b6c18d4643752180	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_066	F14	66	False	UAAUCUGCAUUUGG	Q_66593b01610bbb89	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_067	F14	67	False	UUGCAUAAUCUUGG	Q_3cac50bcbc69c6fe	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_068	F14	68	False	UUGCUUCAUAAUGG	Q_2df7224cddbee7ec	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_069	F14	69	False	UUCUUAUGCAAUGG	Q_bc1f1933f096d272	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_070	F14	70	False	UGCAUCUUAAUUGG	Q_0da6513a18fff6c9	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_071	F14	71	False	UGCUCAUAAUUUGG	Q_0b70cac109f05086	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_072	F14	72	False	UAUUGCUCAAUUGG	Q_58eb3a0eb5a6bb0f	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_073	F14	73	False	UAAUUUGCAUCUGG	Q_0dce0ba7076d218f	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_074	F14	74	False	UUGGCUAUUCAAUG	Q_91d9c9a864aee9e3	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_075	F14	75	False	UGCUAUUCAAUUGG	Q_0b6dcd2e18bd54cc	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_076	F14	76	False	UGCAAUCUAUUUGG	Q_82245e8a09214c60	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_077	F14	77	False	UGCUUUCAAUAUGG	Q_523309ffef9746b4	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_078	F14	78	False	UAUUGGCAAUCUUG	Q_4246c31e5a10551d	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_079	F14	79	False	UAAUGCAUUUCUGG	Q_872edb41037a0b01	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_080	F14	80	False	UGGCUCAAUAUUUG	Q_358ad285aab4da52	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_081	F14	81	False	UUCUAAUUGCAUGG	Q_a85bdac03a5fbda7	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_082	F14	82	False	UUCUUAAUGGCAUG	Q_e5c1af2ac8eb6ad4	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_083	F14	83	False	UUCUUGCAUAAUGG	Q_a0ade1806b48d6b0	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_084	F14	84	False	UAUUCAAUGCUUGG	Q_ad05ff8ccf44f543	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_085	F14	85	False	UGGCAAUUAUCUUG	Q_c6b4b0199cd1e078	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_086	F14	86	False	UAUGGCAAUUCUUG	Q_f60b52cf4ad8ce32	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_087	F14	87	False	UGCUAAUUUCAUGG	Q_e0919dcdca7f3165	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_088	F14	88	False	UGCAUUAAUUCUGG	Q_51dd81099a7b5f9f	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_089	F14	89	False	UGGCAUAAUUUCUG	Q_b6461fb7b9348580	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_090	F14	90	False	UUGGCUAAUUCAUG	Q_39618f106e51c7b8	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_091	F14	91	False	UGGCUUUCAAUAUG	Q_2e25c85a3e1515cc	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_092	F14	92	False	UCUUGCAUAAUUGG	Q_75dd96a96689d085	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_093	F14	93	False	UCUUGCAUAAUUGG	Q_75dd96a96689d085	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_094	F14	94	False	UUCUGGCAUAAUUG	Q_db5577377d89e836	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_095	F14	95	False	UGCAAUAUCUUUGG	Q_f12cee0b78511f9a	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_096	F14	96	False	UUCUGCAUUAAUGG	Q_befed537ec3f2a23	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_097	F14	97	False	UGGCUUUCAUAAUG	Q_f62786957a7a7ab2	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_098	F14	98	False	UAAUUGCUCAUUGG	Q_48c480e85339b57b	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_099	F14	99	False	UAUUGGCUUCAAUG	Q_0b41d404a245cce6	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__shuffle_100	F14	100	False	UGGCUAUUCAAUUG	Q_023881302f9b7e7d	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F14__real	F14		True	UUUCAUAAUGCUGG	Q_bb4103045a730a65	14	245970.52011720836	scheduled	below predeclared expected-hit saturation threshold	True
+[candidate]	F10__shuffle_001	F10	1	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_002	F10	2	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_003	F10	3	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_004	F10	4	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_005	F10	5	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_006	F10	6	False	AAUAUGCUGG	Q_57bd6d93ad930540	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_007	F10	7	False	AAUGCUAUGG	Q_d77fdca5a0b86942	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_008	F10	8	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_009	F10	9	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_010	F10	10	False	AAUAUGCUGG	Q_57bd6d93ad930540	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_011	F10	11	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_012	F10	12	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_013	F10	13	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_014	F10	14	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_015	F10	15	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_016	F10	16	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_017	F10	17	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_018	F10	18	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_019	F10	19	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_020	F10	20	False	AAUGCUAUGG	Q_d77fdca5a0b86942	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_021	F10	21	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_022	F10	22	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_023	F10	23	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_024	F10	24	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_025	F10	25	False	AAUGCUAUGG	Q_d77fdca5a0b86942	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_026	F10	26	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_027	F10	27	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_028	F10	28	False	AAUAUGGCUG	Q_0473910c2c79296a	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_029	F10	29	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_030	F10	30	False	AAUAUGGCUG	Q_0473910c2c79296a	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_031	F10	31	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_032	F10	32	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_033	F10	33	False	AAUGCUAUGG	Q_d77fdca5a0b86942	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_034	F10	34	False	AAUAUGGCUG	Q_0473910c2c79296a	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_035	F10	35	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_036	F10	36	False	AAUAUGCUGG	Q_57bd6d93ad930540	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_037	F10	37	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_038	F10	38	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_039	F10	39	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_040	F10	40	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_041	F10	41	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_042	F10	42	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_043	F10	43	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_044	F10	44	False	AAUGCUAUGG	Q_d77fdca5a0b86942	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_045	F10	45	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_046	F10	46	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_047	F10	47	False	AAUAUGCUGG	Q_57bd6d93ad930540	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_048	F10	48	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_049	F10	49	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_050	F10	50	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_051	F10	51	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_052	F10	52	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_053	F10	53	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_054	F10	54	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_055	F10	55	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_056	F10	56	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_057	F10	57	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_058	F10	58	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_059	F10	59	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_060	F10	60	False	AAUGCUAUGG	Q_d77fdca5a0b86942	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_061	F10	61	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_062	F10	62	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_063	F10	63	False	AAUGCUAUGG	Q_d77fdca5a0b86942	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_064	F10	64	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_065	F10	65	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_066	F10	66	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_067	F10	67	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_068	F10	68	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_069	F10	69	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_070	F10	70	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_071	F10	71	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_072	F10	72	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_073	F10	73	False	AAUAUGCUGG	Q_57bd6d93ad930540	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_074	F10	74	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_075	F10	75	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_076	F10	76	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_077	F10	77	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_078	F10	78	False	AAUGGCUAUG	Q_f2900151c800a3f0	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_079	F10	79	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_080	F10	80	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_081	F10	81	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_082	F10	82	False	AAUAUGCUGG	Q_57bd6d93ad930540	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_083	F10	83	False	AAUAUGGCUG	Q_0473910c2c79296a	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_084	F10	84	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_085	F10	85	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_086	F10	86	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_087	F10	87	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_088	F10	88	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_089	F10	89	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_090	F10	90	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_091	F10	91	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_092	F10	92	False	AUAAUGGCUG	Q_f4db71aedcd1b79c	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_093	F10	93	False	AAUAUGGCUG	Q_0473910c2c79296a	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_094	F10	94	False	AAUAUGCUGG	Q_57bd6d93ad930540	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_095	F10	95	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_096	F10	96	False	AAUAUGGCUG	Q_0473910c2c79296a	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_097	F10	97	False	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_098	F10	98	False	AUGCUAAUGG	Q_df4b033cd8df7e48	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_099	F10	99	False	AUGGCUAAUG	Q_1cc12837fb71f3c4	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__shuffle_100	F10	100	False	AAUAUGGCUG	Q_0473910c2c79296a	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	F10__real	F10		True	AUAAUGCUGG	Q_7a27f0baa44c8332	10	21653136.957832336	scheduled_mandatory	mandatory F18/F10 family override for headline and null comparison	True
+[candidate]	3UP8__shuffle_001	3UP8	1	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_002	3UP8	2	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_003	3UP8	3	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_004	3UP8	4	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_005	3UP8	5	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_006	3UP8	6	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_007	3UP8	7	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_008	3UP8	8	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_009	3UP8	9	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_010	3UP8	10	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_011	3UP8	11	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_012	3UP8	12	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_013	3UP8	13	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_014	3UP8	14	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_015	3UP8	15	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_016	3UP8	16	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_017	3UP8	17	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_018	3UP8	18	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_019	3UP8	19	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_020	3UP8	20	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_021	3UP8	21	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_022	3UP8	22	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_023	3UP8	23	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_024	3UP8	24	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_025	3UP8	25	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_026	3UP8	26	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_027	3UP8	27	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_028	3UP8	28	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_029	3UP8	29	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_030	3UP8	30	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_031	3UP8	31	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_032	3UP8	32	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_033	3UP8	33	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_034	3UP8	34	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_035	3UP8	35	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_036	3UP8	36	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_037	3UP8	37	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_038	3UP8	38	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_039	3UP8	39	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_040	3UP8	40	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_041	3UP8	41	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_042	3UP8	42	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_043	3UP8	43	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_044	3UP8	44	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_045	3UP8	45	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_046	3UP8	46	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_047	3UP8	47	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_048	3UP8	48	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_049	3UP8	49	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_050	3UP8	50	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_051	3UP8	51	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_052	3UP8	52	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_053	3UP8	53	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_054	3UP8	54	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_055	3UP8	55	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_056	3UP8	56	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_057	3UP8	57	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_058	3UP8	58	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_059	3UP8	59	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_060	3UP8	60	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_061	3UP8	61	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_062	3UP8	62	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_063	3UP8	63	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_064	3UP8	64	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_065	3UP8	65	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_066	3UP8	66	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_067	3UP8	67	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_068	3UP8	68	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_069	3UP8	69	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_070	3UP8	70	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_071	3UP8	71	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_072	3UP8	72	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_073	3UP8	73	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_074	3UP8	74	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_075	3UP8	75	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_076	3UP8	76	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_077	3UP8	77	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_078	3UP8	78	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_079	3UP8	79	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_080	3UP8	80	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_081	3UP8	81	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_082	3UP8	82	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_083	3UP8	83	False	GGCAGCUG	Q_eafa2462ef9f46a5	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_084	3UP8	84	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_085	3UP8	85	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_086	3UP8	86	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_087	3UP8	87	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_088	3UP8	88	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_089	3UP8	89	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_090	3UP8	90	False	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_091	3UP8	91	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_092	3UP8	92	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_093	3UP8	93	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_094	3UP8	94	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_095	3UP8	95	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_096	3UP8	96	False	GCAGCUGG	Q_2ecd657f5834b806	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_097	3UP8	97	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_098	3UP8	98	False	GCUGCAGG	Q_5525cd142629756a	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_099	3UP8	99	False	GGCUGCAG	Q_427659983eeb0bc2	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__shuffle_100	3UP8	100	False	GCAGGCUG	Q_1b8fee55c5bd9b75	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False
+[candidate]	3UP8__real	3UP8		True	GCUGGCAG	Q_8aa96161c01f4919	8	168607016.50772095	saturated	saturated / non-specific by construction - count uninformative	False

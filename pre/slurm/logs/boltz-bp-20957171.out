@@ -1,0 +1,29 @@
+NVIDIA L40S, 46068 MiB
+MSA server enabled: https://api.colabfold.com
+MSA server authentication: no credentials provided
+Checking input data.
+Processing 4 inputs with 4 threads.
+Generating MSA for /home/dashii/orcd/pool/smt-isef-data/boltz_in_msa/8FTI.yaml with 1 protein entities.
+Calling MSA server for target 8FTI with 1 sequences
+MSA server URL: https://api.colabfold.com
+MSA pairing strategy: greedy
+No authentication provided for MSA server
+Generating MSA for /home/dashii/orcd/pool/smt-isef-data/boltz_in_msa/9LZU.yaml with 1 protein entities.
+Calling MSA server for target 9LZU with 1 sequences
+MSA server URL: https://api.colabfold.com
+MSA pairing strategy: greedy
+No authentication provided for MSA server
+Generating MSA for /home/dashii/orcd/pool/smt-isef-data/boltz_in_msa/6E9F.yaml with 1 protein entities.
+Calling MSA server for target 6E9F with 1 sequences
+MSA server URL: https://api.colabfold.com
+MSA pairing strategy: greedy
+No authentication provided for MSA server
+Generating MSA for /home/dashii/orcd/pool/smt-isef-data/boltz_in_msa/9M8Q.yaml with 1 protein entities.
+Calling MSA server for target 9M8Q with 1 sequences
+MSA server URL: https://api.colabfold.com
+MSA pairing strategy: greedy
+No authentication provided for MSA server
+Running structure prediction for 4 inputs.
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:  25%|██▌       | 1/4 [00:37<01:52,  0.03it/s]Predicting DataLoader 0:  50%|█████     | 2/4 [01:30<01:30,  0.02it/s]Predicting DataLoader 0:  75%|███████▌  | 3/4 [02:17<00:45,  0.02it/s]Predicting DataLoader 0: 100%|██████████| 4/4 [03:01<00:00,  0.02it/s]Number of failed examples: 0
+Predicting DataLoader 0: 100%|██████████| 4/4 [03:01<00:00,  0.02it/s]
+boltz back-prediction complete: /home/dashii/orcd/pool/smt-isef-data/boltz_out_msa

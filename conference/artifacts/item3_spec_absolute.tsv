@@ -1,0 +1,21 @@
+state	availability_state	aso_id	absolute_dg_cutoff_kcal_mol	raw_off_target_locus_count	distinct_transcript_compatible_gene_count
+[candidate]	available	F18	-8.0	3391	1327
+[candidate]	available	F18	-10.0	3359	1317
+[candidate]	available	F18	-12.0	3194	1257
+[candidate]	available	F18	-14.0	2557	1046
+[candidate]	available	F18	-16.0	1740	730
+[candidate]	available	F14	-8.0	255240	25266
+[candidate]	available	F14	-10.0	181517	23029
+[candidate]	available	F14	-12.0	88285	15716
+[candidate]	available	F14	-14.0	26543	7999
+[candidate]	available	F14	-16.0	4224	1700
+[candidate]	available	F10	-8.0	2150207	49439
+[candidate]	available	F10	-10.0	789231	40289
+[candidate]	available	F10	-12.0	37813	9907
+[candidate]	available	F10	-14.0	0	0
+[candidate]	available	F10	-16.0	0	0
+[candidate]	saturated	3UP8	-8.0		
+[candidate]	saturated	3UP8	-10.0		
+[candidate]	saturated	3UP8	-12.0		
+[candidate]	saturated	3UP8	-14.0		
+[candidate]	saturated	3UP8	-16.0		

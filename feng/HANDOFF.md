@@ -11,6 +11,254 @@ Entry point for anyone (Claude or Codex) picking up the `feng/` arm. The old
 > `feng/HANDOFF_ARCHIVE.md`. This file = LIVE state + evergreen orientation only.
 
 ---
+## ⏩ CONFERENCE POSTER — LIVE (2026-09-30)
+GOAL (user): get compute out. Keep HANDOFF current so /clear is always safe. Codex MCP still DOWN
+(CONNECTION_CLOSED) but the **CLI route WORKS** — see Codex route note below. sol-low rule stands.
+All prior monitors/heartbeat STOPPED (user paused, then resumed).
+- **★★★ 2026-10-28 — ITEM 2 (PSI efficacy) REANALYSIS: endogenous size series band identity SOLVED by
+  blind replicate validation. NOT yet adversarially reviewed (standing gate OPEN).**
+  Source data = the two endogenous size-series gels in repo root (untracked): `Singh Lab Quantified
+  Data - 7-27 truncated ASOs endogenous (including RT PCR) samples 1-9.csv` (audit "Gel 8") +
+  `...7-28 ASO size comparison w samples 1-9 on endogenous gene (+RT PCR).csv` ("Gel 9"). They are a
+  REPLICATE PAIR of the same size series → used as the independent (non-circular) scorer.
+  METHOD: blind brute force over all 6 band-pair hypotheses (product bands at Rf clusters ~0.40 /
+  ~0.48 / ~0.56 / ~0.58; inclusion = lower-Rf = larger amplicon), scored ONLY on cross-gel replicate
+  agreement — biology NEVER fed into selection, applied only as an after-the-fact check.
+  WINNER: **+E7 (inclusion) = ~0.56 band, ΔE7 (skipping) = ~0.58 band; the big ~0.40 band is a
+  non-product (gDNA/heteroduplex), excluded.** Pearson r=0.991 / Spearman ρ=0.967 (NOT ceiling-driven:
+  only lanes F18 & 3UP8 peg at 100%, dropping them r=0.995; max lane-to-lane |Δ|=4.0 pp). The lab
+  audit's PHOTO band call (+E7=upper0.40 / ΔE7=0.56) ranks DEAD LAST (r=0.030) → this reanalysis
+  OVERTURNS the workbook photo assignment in `psi25/SMN2_all_sources_PSI_band_assignment_audit.xlsx`.
+  RESULT under the FINAL-PSI loading order (lane2=WT,3=Scr18,4=F18,5=Scr14,6=F14,7=Scr10,8=F10,
+  9=Scr8,10=3UP8) — mean inclusion PSI% (G8/G9): F18 100(100/100), 3UP8 98(100/96), F14 95(94/96),
+  F10 91(90/93) | Scr18 74, Scr10 71, Scr8 67, WT 59, Scr14 57. All 4 actives (91-100) ≫ all 5
+  controls (57-74), clean bimodal gap; **F18>F14>F10 potency order correct** → CORROBORATES item 1 ΔG
+  rank (F18 -24.7 > F14 -17.0 > F10 -11.1): binding energy predicts inclusion.
+  CAVEATS (do NOT publish as measured): (1) RANK-only, not quantitative — F18/3UP8 peg at 100% ceiling
+  (skip band ~absent) + WT=59% baseline is biologically high (untreated SMN2 usually ~10-20%) ⇒
+  absolute PSI miscalibrated; safe claim = ORDERING only. (2) Band rule is replicate-VALIDATED but the
+  lane→ASO LABELS still assume the FINAL-PSI loading order (the 4-active/5-control split is forced by
+  the PSI gap, but which active=F18 vs F14 is not). (3) CONTRADICTS the gel photo → needs ONE
+  amplicon-size anchor (ladder MW or junction/seq call) to confirm 0.56=+E7 before publication.
+  7-17 POSITIONAL (E3 walk A-F) endogenous pair ATTEMPTED, FAILED validation: trial-1 lanes 5-8 are
+  single-band → PSI undefined → replicate anchor collapses (best r=-0.31). Too degenerate to blind-
+  validate from this export; NOT presenting a number. Only the size series survives.
+  Scripts (session scratchpad, SESSION-SCOPED — rebuildable from this entry if gone):
+  `/tmp/claude-264670/-home-dashii-smt-isef/1f0a4778-fd3f-44fb-94ee-1a8a1119f4cd/scratchpad/`
+  {brute.py (6-hypothesis blind search), psi_perm2.py (coherence), xlsxdump.py (audit reader)}.
+  NEXT: STANDING-GATE Codex sol adversarial review of this reanalysis BEFORE it feeds any artifact;
+  lab ask = (a) lane→ASO map + (b) one amplicon-size anchor. No artifact written yet.
+- **★★★ 2026-10-05/06 — ITEM 3 JOB 24817368 COMPLETED, B DEFECT CONFIRMED FIXED. REVIEW IN FLIGHT.**
+  `sacct`: **COMPLETED exit 0:0**, elapsed **1-11:57:02** (~36h, vs the 4.5h ETA — shards slowed from
+  ~1min to ~40min each late in the run), End 2026-10-05T22:07:21, MaxRSS 7.67G of 120G. **241/241**
+  accessibility shards `.done`. Tables rewritten 22:07 in `conference/artifacts/item3_spec_{occupancy,
+  gated,absolute}.tsv` + `item3_spec_provenance.txt`. NOTE job stdout/stderr logs are **0 bytes** (shard
+  loop prints nothing) — shard `.done` mtimes in
+  `/orcd/scratch/orcd/011/dashii/conference_smn2_aso/results/item3_spec_v1/accessibility_shards/` are
+  the real progress signal, NOT the logs.
+  **B IS REAL NOW:** applicable/evaluated/**failed** → F18 10/10/**0**, F14 1751/1751/**0**,
+  F10 320202/320202/**0** (was 100% failed). Accessible loci (genes): F18 3 (3), F14 1133 (1114),
+  F10 204838 (35268). Gate cuts everyone ~3-4× but **ordering unchanged** — @100nM `sum_theta_off`
+  ungated→gated: F18 16→3, F14 4144→1133, F10 577057→148952; burden F10/F18=**49,650.7×**,
+  F14/F18=377.7×; specificity ratio F10/F18=**1.995e-5**, F14/F18=2.648e-3; `theta_on_over_sum_theta_off`
+  F18 0.3333 / F14 8.826e-4 / F10 6.650e-6. Expression still `unavailable` (expected).
+  ⇒ **A, B, C now all agree: length DEGRADES specificity. No regime shows honest parity.** Headline
+  stands as "length degrades specificity; occupancy- AND accessibility-weighting confirm it".
+  **⚠ STANDING-GATE REVIEW NOT YET RUN — dispatched then CANCELLED by user 2026-10-06 within ~1 min.**
+  Task b7gcw4xm1 killed (`TaskStop` confirmed, no codex process left); `item3_review.out` 0 bytes, NO
+  verdict produced, sandbox was read-only so repo/artifacts untouched. **The gate is still OPEN — item 3
+  must NOT advance to README reframe until it runs.**
+  RE-FIRE verbatim (prompt file survives, no rebuild needed):
+  `cd /home/dashii/smt-isef && codex exec -m gpt-5.6-sol -c model_reasoning_effort="low" --sandbox
+  read-only --skip-git-repo-check "$(cat <scratchpad>/item3_review_prompt.txt)"`
+  where `<scratchpad>` = `/tmp/claude-264670/-home-dashii-smt-isef/6ccb40ba-d2c7-4718-8218-723d9b48c985/
+  scratchpad` (SESSION-SCOPED — if that dir is gone, the prompt must be rebuilt; its 9 attack points are
+  summarized next so it can be).
+  Scope was item3_spec.py + test_item3_spec.py + the 3 tables + provenance + sbatch. 9 attack points:
+  (1) does the U→T fix merely SILENCE the fail-closed check — could a WRONG locus now pass? (2) F10
+  theta_on=0.511@1nM vs ~1.0 for F18/F14 — bug, and is theta_on/sum_theta_off well-posed across ASOs
+  with differing theta_on? (3) mass-balance violation — ~149k simultaneously occupied sites from a
+  finite pool; does it inflate or deflate the F10-vs-F18 contrast? (4) F18's denominator-of-3
+  fragility; (5) is the accessibility gate applied SYMMETRICALLY to on- vs off-target? (6) 3UP8
+  saturated-empties not coerced to 0/NaN; (7) shard-merge integrity — header leakage, dupes, does
+  anything assert 241? (8) `query_id " [candidate]"` suffix severity + is query_id ever a join key?
+  (9) any other "confident number on absent evidence" (the B-was-all-failed class) recurrence.
+  **NEXT after review:** fix/log findings → item3 README reframe → then the `query_id " [candidate]"`
+  suffix cleanup (cosmetic, severity being re-confirmed by the review).
+- **CODEX ROUTE (2026-10-06):** MCP `codex mcp-server` still CONNECTION_CLOSED, but **CLI works** —
+  `codex-cli 0.159.2` at `~/.local/bin/codex`, auth OK, smoke-tested `ROUTE_OK`. Dispatch via
+  `codex exec -m gpt-5.6-sol -c model_reasoning_effort="low|medium" --sandbox read-only|workspace-write
+  --skip-git-repo-check`. ⚠ **`~/.codex/config.toml` default is now `gpt-6.1-sol` effort `low`** — newer
+  than the 5.6 named in CLAUDE.md's tiering table, so ALWAYS pass `-m` explicitly or you silently get
+  6.1. User DEFERRED deciding whether to move the tiering table to 6.1. Codex sandbox still CANNOT
+  reach the Slurm controller → Claude submits all jobs from the main shell.
+- **★★ 2026-10-04 — ITEM 3 "B" DEFECT ROOT-CAUSED + FIXED + RERUN LAUNCHED (job 24817368)** (SUPERSEDED
+  by the completion entry above; cause/fix detail retained).
+  Cause was NOT data: pure ALPHABET mismatch. `feng/src/feng/titration/evaluate.py:313` fail-closed
+  compares the rung target against a GENOMIC (DNA) fetch verbatim; conference targets are stored RNA (U).
+  genomic `CCAGCATTATGAAAGTGA` vs target `CCAGCAUUAUGAAAGUGA` — identical but for T/U → ViennaError
+  "padded window does not contain the rung target" for EVERY U-containing locus. Arm E passes
+  DNA-lettered rungs, so Arm E never hit this.
+  FIX (conference-local; shared feng/evaluate.py deliberately UNTOUCHED): `item3_spec.py`
+  `add_accessibility` now applies `target_5to3.upper().replace("U","T")` before the call, and records
+  `failed:<ExcName>` instead of a bare "failed" so the reason survives next time.
+  VERIFIED on real loci: 4 available (e.g. accessibility=0.4058) / 36 not_applicable / **0 failed**
+  (was 100% failed). `conference/tests/test_item3_spec.py` 6 passed.
+  Cleared 241 stale all-failed `*.accessible.tsv`(+`.done`) + the merged accessibility TSV; the 19h
+  bowtie/loci stage (`item3_spec_loci.tsv.done`) and `split.done` are REUSED (not recomputed).
+  **RESUBMITTED job 24817368** — RUNNING, verified healthy mid-flight: shard 1 gave 288 available /
+  9712 not_applicable / **0 failed** (was 100% failed); progress 27/241 shards in ~30min → ETA ~4.5h.
+  Loci TSV integrity checked: 0 malformed rows / 2,408,841. Known COSMETIC-only artifact: the
+  `query_id` VALUE has " [candidate]" appended inside it (e.g. `EV_F18_a0ae2d60de0b31fa [candidate]`);
+  no column shift, dg joins resolved fine — low-severity cleanup, only matters if query_id is used as
+  an external join key.
+  WATCHER: background task **brafl3zm5** (Bash until-loop, fires ONCE at terminal and prints the B/gated
+  accessibility columns). Replaced Monitor bwkpowgyo/byjyq7od4 etc — the Monitor tool caps at 30m here
+  and churned re-arms; a backgrounded until-loop is the right tool for a single completion signal.
+  ~322k applicable loci
+  now actually invoke RNAplfold (previously died instantly on the exception), so expect real runtime;
+  2-day limit + per-shard `.done` + requeue make it safe.
+  ON COMPLETE: re-read `item3_spec_gated.tsv` — B should finally carry real
+  accessible_off_target_locus_count / gated occupancy instead of degenerate 1.0 ratios. Then
+  standing-gate review + item3 README reframe.
+- **★ 2026-10-04 — ITEM 2: F14/F10 ARE usable, via CENSORED upper bounds.** Their inclusion peak was
+  never exported, so no point PSI exists; treat as left-censored: PSI < LOD/(LOD+skip). Gel7 skipping
+  volumes F18 239 / F14 217 / F10 159; F18 inclusion 65 → **F18 PSI = 21.4% (detected)**. With LOD=33
+  (faintest peak exported anywhere on Gel7): **F14 < 13.2%, F10 < 17.2%**. F18 exceeds BOTH bounds for
+  any LOD ≤ 50; at LOD ≥ ~58 the F14 bound crosses F18 and the ordering breaks. So the ordering
+  F18 > F14,F10 is real but ASSUMPTION-DEPENDENT — the workbook states no LOD was provided, so this must
+  NOT be presented as measured. ROBUST FIX = lab re-quantifies with a manual ROI box at the inclusion
+  Rf (~0.55) in the F14/F10 lanes. AWAITING user decision on which item-2 form to publish.
+- **ITEM 3 — spec replay job 24031068 COMPLETED** (19h19m, exit 0). Tables in conference/artifacts/
+  item3_spec_{occupancy,gated,absolute}.tsv. VERDICT: occupancy-weighting does NOT make shorter
+  "about the same" — it makes F10 WORSE. @100nM: off-target occupancy burden F10≈36,066× F18, F14≈259× F18;
+  specificity ratio F10≈2.7e-5 of F18. A(occupancy): F18 sum_theta_off=16, F14=4144, F10=577,057 @100nM.
+  C(absolute-dG): at loose bars F10≫F18 (−8: F10 49,439 genes vs F18 1,327); at strict −14/−16 F10=0
+  (artifact — F10 on-target only −10.3, can't bind anything that tight). No regime shows honest parity.
+  ⚠ **B (accessibility gate) DEFECTIVE**: accessibility_evaluated=0 for ALL loci (all "failed") →
+  accessible_count=0, gated ratios degenerate=1.0. RNAplfold stage produced nothing usable. NEEDS FIX
+  before B is reportable. Expression stayed unavailable (as expected).
+  NEXT item3: fix B accessibility stage; standing-gate review; then item3 README reframe (headline =
+  "length degrades specificity; occupancy-weighting confirms it" — NOT "about the same").
+- **ITEM 1 — REDO with user buffer (50 mM mono + 1.5 mM Mg2+) DONE (code+artifacts+tests+README).**
+  thermo.py: new `effective_monovalent_from_mixed_salt` (von Ahsen 2001 [Na+]eq=[mono]+120*sqrt([Mg]mM),
+  =0.197 M). item1.py: PRIMARY now the mono+Mg buffer; raw cols renamed nn_tbe_*→nn_buffer_* + added
+  monovalent/divalent/effective basis cols; provenance records buffer+equivalence. Artifacts REGENERATED
+  (item1_dg_raw/salt_sensitivity/ranks/provenance). NEW NN buffer dG: F18 −24.71, F14 −16.95, F10 −11.11,
+  3UP8 −13.09 (raw 1.021M refs unchanged; IntaRNA unchanged −27.0/−18.89/−12.8/−14.4). Ranking unchanged
+  F18>F14>3UP8>F10. README updated (method+von Ahsen cite+caveat). test_thermo.py 8 passed (added von Ahsen test).
+  CAVEAT: heuristic (DNA-param salt eq + Mg→Na on RNA; blocker #1 compounded). Uncommitted. NO commit (policy).
+- **ITEM 2 — band identity RESOLVED by user, but data-limited.** User rule: inclusion=TOP (faint, mostly
+  undetected), skipping=BOTTOM consistent line (Gel7 ~Rf0.60), top bands=noise. Inclusion band detected
+  ONLY in lanes 3&4 = Scr18, F18. So among F-series ONLY **F18 has quantifiable PSI** (~21% inclusion,
+  65/(65+239)); F14(lane6)/F10(lane8) show NO detected inclusion band → PSI below detection, NOT 0 (no LOD).
+  3UP8 not in Gel7. ⇒ **ΔG-vs-PSI correlation NOT possible from Gel7 (n=1 F-series point).** Super-minigene
+  (7-7/7-9) PSI still blank. NEEDS USER DECISION on how item 2 proceeds. Band source: psi25/
+  SMN2_all_sources_PSI_band_assignment_audit.xlsx (Gel 07 sheet).
+  Tracked in Task tool: #1 Item1 DONE, #2 Item2 pending(PSI-blocked), #3 Item3 in_progress, #4 Item6 DONE.
+- **NEW USER RULE:** dev Codex dispatches = **sol LOW only, never sol high** (memory [[sol-low-only]]).
+- **ITEM 3 REFRAME — thermodynamic specificity, tests A+B+C IN FLIGHT.** Raw bowtie -v3 AND energy-filtered
+  gene COUNTS both mislead (weight all loci equally; F10=12,532 energy-filtered genes @10x vs F18=2 —
+  genomic degeneracy of short seqs, not real bound load). Ordering never flips (F18≪F14≪F10 every
+  threshold), so counting can't show "shorter ≈ same". Building predicted-bound-LOAD metrics instead:
+  A=occupancy-weighted specificity ratio (theta=[A]/([A]+Kd), Kd=exp(dG/RT), sweep [A] 1nM-1uM);
+  B=expression+accessibility gate (EXPRESSION UNAVAILABLE in repo → accessibility-only via RNAplfold);
+  C=absolute-dG-threshold recount (sweep -8..-16). Equivalence margin for "F10≈F18" DEFERRED (compute
+  raw ratios first, decide later — NO pass/fail baked in). 3UP8 stays saturated.
+  **Codex task kjqzfaxmj DONE** (thread 01a0df31, gpt-5.6-sol LOW): built conference/aso_pipeline/item3_spec.py
+  + tests/test_item3_spec.py (6 passed) + conference/scripts/item3_spec_replay.sbatch + README/provenance +
+  3 tables (item3_spec_{occupancy,gated,absolute}.tsv) marked `pending_slurm` until the job runs. 3UP8=saturated.
+  **SUBMITTED replay: job 24031068** (mit_preemptable 32c/120G/2d, requeue+SIGTERM@180, preflights inputs
+  exit-2). MONITOR byjyq7od4 (30m — RE-ARM on expiry; job may queue/run long). Job atomically replaces the
+  pending tables with real F18/F14/F10 occupancy(A)+gated(B,accessibility-only)+absolute-dG(C) numbers.
+  NEXT: on COMPLETE → read A/B/C + F10/F18 ratios → user sets "about the same" margin → standing-gate
+  adversarial review (sol LOW, fresh thread) of item3_spec code+results → then item3 README reframe + blockers.
+- Energy-filter artifacts already landed (prior session): conference/artifacts/item3_energy_*.
+- (below: prior 03:16 checkpoint, superseded where it overlaps)
+
+## ⏩ CONFERENCE POSTER ITEMS 1/3/6 — earlier checkpoint (2026-09-26 03:16)
+GOAL: 4-ASO F-series poster deliverables (conference/PLAN.md scope). Items 1,3,6 dispatched; 2 blocked on PSI.
+- **ASO set** (5'->3', RNA:RNA @37°C assumed): F18=TCACTTTCATAATGCTGG, F14=TTTCATAATGCTGG,
+  F10=ATAATGCTGG, 3UP8=GCTGGCAG (3UP8 target site UNCERTAIN — flagged for confirm).
+- **★ ITEMS 1 + 6 DONE (k2n0udpyv, 22/0/0 tests).** Code in conference/aso_pipeline/, artifacts in
+  conference/artifacts/ (item1_dg_raw.tsv, item1_salt_sensitivity.tsv, item6_thermo_null_summary.tsv +
+  READMEs). ΔG both models rank F18>F14>3UP8>F10; NN@0.089M-TBE: F18 -23.17, F14 -15.86, 3UP8 -12.45,
+  F10 -10.29 kcal/mol. Item6 null: F18/F14 real enrichment (p=0.0099); F10/3UP8 nulls degenerate (only
+  8/6 unique dinuc shuffles) → not interpretable. RNG seed 20260926.
+- **★ ITEM 3 — job 23993733 OOM-KILLED at 40min** (bowtie -a -v3 -p16 on F10's 21.6M hits blew 64G).
+  FIX IN FLIGHT: **Codex task kithorcst** (thread 01a0dc93…) — bounded-RAM streaming gene-id dedup
+  (disk sort -u, not in-RAM set), drop -p to 4-8, per-ASO steps so F10 gets full headroom, --mem to
+  180-250G safety, keep requeue+ckpt. FIX DONE (kithorcst, 27/0/0, bounded-RAM proven: 100k dup hits <5MB).
+  **★ RESUBMITTED — job 23996546** (mit_preemptable, 8cpu/220G, disk sort -u dedup, per-ASO steps, F10 split
+  into 8 singleton passes -p1). **MONITOR bfwna3jmi** (re-arm on expiry). NOTE: Codex sandbox CANNOT reach
+  Slurm controller — Claude submits from main shell every time. Old job 23993733 (OOM) + monitors dead.
+  Preflight: F18 (2109), F10 HEADLINE (21.6M), F14 (246k), 3UP8 SATURATED (168M, skip).
+- **★ job 23996546 COMPLETED but OUTPUT DEFECTIVE (2 bugs).** (1) bowtie -v3 counts ALL ZERO despite
+  bowtie logging 21.8M/23.8M/24.9M alignments → counter drops all bowtie hits (blast path works, bug is
+  bowtie-specific: --suppress column layout / stdout parse mismatch). bowtie -v3 is THE headline metric.
+  (2) All rows keyed by opaque Q_<hash>, no map to (aso_id, real-vs-scramble) → summary unreadable. Also
+  blast E=1000 too permissive (thousands of genes, not ~445 ballpark) — flagged for user, not retuned.
+  FIX IN FLIGHT: **Codex task kvf7mmpd2** (thread 01a0dc93…) — fix bowtie→gene mapper w/ known-answer
+  regression test, persist Q_hash→ASO map, emit clean labeled summary (real F18/F14/F10 both aligners +
+  scramble-null dist separately), flag blast E-value. Will resubmit (Claude, main shell). Monitor bfwna3jmi ended.
+- **★ BOWTIE BUG ROOT CAUSE + FIX (kvf7mmpd2, 29/0/0):** trailing `-` in bowtie cmd = literal FILENAME
+  (dumped 846MiB to ./- , cleaned) not stdout → counter got nothing. Fixed bowtie_stream.sh; bowtie stage
+  versioned v2 so bad zero .done ignored; persists Q_hash→ASO map; emits item3_headline_f18_vs_f10.tsv +
+  item3_real_aso_gene_counts.tsv + item6_alignment_scramble_summary.tsv + item3_query_identity_map.tsv.
+  blast E=1000 flagged maximally-permissive in README; Codex rec = bowtie -v3 as headline, tighten blast
+  only w/ user sign-off. **★ RESUBMITTED job 23997871, MONITOR bbkmysq5v** (re-arm on expiry).
+- **★★ ITEM 3 COMPLETE (job 23997871 COMPLETED, bowtie counts now real).** Outputs in
+  conference/artifacts/: item3_headline_f18_vs_f10.tsv, item3_real_aso_gene_counts.tsv,
+  item3_query_identity_map.tsv, item6_alignment_scramble_summary.tsv. HEADLINE (bowtie -v3, distinct
+  transcript-compat genes): **F18=1518, F14=37713, F10=71148** → SHORTER mer hits MORE genes (F10 ~71k
+  ≈ whole genome). blastn-short E1000: F18=1588, F14=684, F10=0 (10-mer below blast-short threshold).
+  ⚠ **RESULT CONTRADICTS the poster's naive item-3 framing** ("18-mer hits ~445, 10-mer fewer"). At FIXED
+  ≤3 mismatches a 10-mer (7/10 fixed) matches ~everywhere; 18-mer (15/18) is specific. The 10-mer
+  specificity story is THERMODYNAMIC (item1: F10 ΔG -10 vs F18 -23 → only near-perfect sites bind stably
+  @37), NOT fixed-mismatch alignment count. Likely need an ENERGY-FILTERED off-target count to make the
+  point honestly. DECISION for user: reframe / add energy-filtered count / proceed to standing-gate review.
+- **STANDING-GATE ADVERSARIAL REVIEW DONE (sol high, task khrhb5be7) → DO-NOT-ADVANCE, 6 blockers**
+  (mostly honesty/framing, NOT broken compute). Tests 21/0/0 read-only (8 need writable tmp; live=29/0/0):
+  1. HIGH thermo.py:75 — SantaLucia DNA salt eq on Turner RNA energies + Tris-as-0.089M-monovalent = not
+     validated for RNA/TBE → F18 -23.17/F10 -10.29 are heuristic, not defensible quant TBE ΔG. RAW
+     IntaRNA/RNAduplex values still usable if separated from the salt interpretation. (Energy-filter task
+     uses IntaRNA not NN-salt → sidesteps.)
+  2. HIGH item3_README:44 — calls bowtie -v3 "defensible/directly interpretable" but 30% leniency (F10)
+     vs 16.7% (F18) means it CANNOT support specificity; must reframe as negative/saturation result +
+     point to energy-filtered analysis. (← kklvndnxf provides exactly this.)
+  3. HIGH offtarget.py:195 — F10 BLAST "0" is short-query non-detection, not zero off-targets; needs
+     below-threshold/unsupported state, not numeric 0 (false-negative fabrication risk).
+  4. MED item6 F10/3UP8 nulls degenerate (8/6 unique seqs, real appears 12/13x) but presented w/ precise
+     p-values as if valid → label non-interpretable. F18/F14 fine.
+  5. MED "off-target genes" = gene-span intersection incl whole introns, ignores expr/accessibility →
+     must be NAMED as annotated gene-span intersections.
+  6. MED sbatch reuses indexes by filename+.done, no FASTA/GTF/index HASHES in provenance → stale-index risk.
+  CLEAN: no_duplex flagged, raw/derived separated, no post-hoc tuning, seed/versions/tags recorded, 3UP8
+  saturation→missing not fabricated, psi_stub refuses, bowtie regression fixed w/ known-answer test.
+- **ENERGY-FILTERED off-target (item 3-thermo) IN FLIGHT — Codex task kklvndnxf** (thread 01a0de28, sol
+  high). Threshold = <=10x weaker equil binding vs on-target (ΔG<=ΔG_on+RT·ln10≈+1.42), sweep 1x-100x,
+  IntaRNA scorer, enumerate <=3-mm variants→score→viable-only exact-align→count genes. Resolves blockers
+  #1/#2 scientific core. NOTE: old Codex threads die on session restart — start FRESH each session.
+- **FIX PLAN for the 6 blockers:** ONE Codex fix task AFTER energy-filter lands (so item3 README reframe
+  can cite it). Mostly README honesty + code: false-neg-zero state (#3), degenerate-null labels (#4),
+  metric rename (#5), reference-hash provenance (#6), salt-model caveat (#1). Then terra re-review.
+- **⚠ TWO USER CONFIRMS NEEDED:** (1) 3UP8 target = CUGCCAGC (ctx pos 7-14, 3nt upstream of F18) — derived,
+  UNCONFIRMED. (2) chem model = RNA:RNA @37 assumed; DNA:RNA rerun needs a validated hybrid param file.
+- **CODEX thread 01a0dc93… — design APPROVED, IMPLEMENTING as task k2n0udpyv** (was k0c0duufr for the
+  design pass). Guardrail added: 8-mer 3UP8 at -v3 is combinatorially saturated → mark uninformative, don't
+  grind; HEADLINE = F18 vs F10 exhaustive. 3UP8 target derived = context pos ~7-14 CUGCCAGC (FLAG confirm).
+  NN model = RNAduplex Turner-2004 @37 + entropy salt correction, 1x TBE ≈ 0.089M monovalent + sensitivity grid.
+  No commits (repo policy). Direct MCP notifies on completion.
+- **(design pass) CODEX TASK k0c0duufr** (gpt-5.6-sol high, workspace-write, cwd repo root) — item 1 (ΔG two models:
+  IntaRNA-default + NN@37°C w/ 1x-TBE monovalent correction, side by side), item 3 (bowtie -v3 + BLASTn-short
+  gene-count 18 vs 10, sbatch on GRCh38 v50 FASTA @ ~/orcd/scratch/feng/gencode/v50/), item 6 (dinuc-preserving
+  scramble ×100 through BOTH pipelines). Direct MCP → notifies on completion. Item-3 alignment is a sub-sbatch.
+- **ITEM 2 (ΔG-vs-PSI correlation+regression): BLOCKED on user PSI table** (endogenous 7-27 truncated series,
+  replicate-level, 4 ASOs + no-ASO control). Codex leaving a plug-in stub. Fires when PSI lands.
+- **NEXT AFTER k0c0duufr:** standing-gate Codex sol adversarial review of the 1/3/6 deliverables before advancing.
+- User setting alarm was one-shot cron 0786df47 (fired). Guard rails checked: quota healthy, motd clean.
+
+---
 ## ⏩ RESUME AFTER /clear — LIVE: Phase-1 compute DONE, review in flight (2026-09-10)
 GOAL: get Phase-1 GPU compute out. Compute COMPLETE + validated. Remaining: review → seal → commit.
 
@@ -108,11 +356,24 @@ GOAL: get Phase-1 GPU compute out. Compute COMPLETE + validated. Remaining: revi
   recompile inert, body-tamper still caught), full-byte .py/.so/.pyd, re-seed pin. M2: committed
   feng/src/feng/pangolin_package_seed_provenance.json (manifest+interpreter+command+version, inside
   tree hash). Benign-recompile/body-tamper tests, per-file. Prereg DRAFT.
-- **NEXT after MINOR fix clean:** commit-1 (CODE, feng-arm, immutable sealed — file set HANDOFF
-  lines 79-88, ADD source_auth.py + pangolin_package_seed_provenance.json) → this MECHANICALLY
-  closes B2 → light post-commit verify (committed tree hash == pin authenticated, launcher runs
-  from commit) → **PAUSE for user launch go/no-go** (recompute ~20h GPU shared slice + freeze).
-  Launch via submit_arm_e_hoff.sh <commit-1> <run-id> → re-arm state monitor (L10 long pole).
+- **#3 MINOR FIX DONE (thread 01a09070…):** M1 strip 16-byte .pyc header (benign recompile inert,
+  body-tamper caught, truncated fails closed); M2 committed feng/src/feng/pangolin_package_seed_
+  provenance.json. NEW pin PINNED_PANGOLIN_PACKAGE_SHA256 =
+  0af9857403226c5e72719e42d52fa5babfcda8fde9957ce7824df277e0051234. Tests per-file GREEN
+  (test_source_auth 12/0/0, test_arm_e_launch 61/0/0, test_titration_gpu_scores 23/1/0).
+- **★ commit-1 LANDED = `83415d94a829b979c2ccbd4282a5d1569788bf1d`** (feng-arm, 2026-09-11). CODE
+  trust root: source_auth.py + pangolin_package_seed_provenance.json + titration/{arm_e_hoff,
+  arm_e_scan,gpu_scores} + bench/{scores,strata,match,permute} + gpu/checkpoint + scripts + tests +
+  PREREG (DRAFT). report/window/armc_* + artifacts deliberately EXCLUDED (not in H-off closure).
+- **FINAL RE-VERIFY DONE (task on thread 01a09154…, terra med) → LAUNCH-READY: YES.** B1+B2 both
+  CLOSED as committed; pin+manifest+count6+version1.0.2 match; launcher SHA-bound; digest binds
+  tree+commit+Pangolin identity; closure clean (no report/window dep); prereg DRAFT + TOCTOU retained.
+- **⏳ LAUNCH PENDING USER:** harness classifier blocked the sbatch submit from Claude. User fires:
+  `SCRATCH=/orcd/scratch/orcd/011/dashii RUN_ID=$(date -u +%Y%m%dT%H%M%SZ); bash feng/scripts/
+  submit_arm_e_hoff.sh 83415d94a829b979c2ccbd4282a5d1569788bf1d "$RUN_ID"`. MOTD clean, SCRATCH 81%
+  used (watch). On submit: capture RUN_ID + JOBID → re-arm state monitor (L10 ~20h long pole) →
+  verify old L02-L10 payloads superseded into run dir → on 15/15 VALIDATE (no burden read) →
+  **commit-2** flip prereg DRAFT→SEALED stamping commit-1 SHA + recompute job id + manifest sha.
 - **AUTH-FIX IMPLEMENTED (pending verify + fresh review):** whole `feng/src` is manifested from the selected
   commit's Git object store and re-hashed by a stdlib-only bootstrap in every parent/worker process
   before any `feng` import. Digest-bound identity is `source_tree_sha256` + `executed_git_commit`;

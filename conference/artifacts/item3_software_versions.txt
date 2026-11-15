@@ -1,0 +1,10 @@
+[candidate]
+/orcd/scratch/orcd/011/dashii/conference_smn2_aso/tools/bin/bowtie-align-s version 1.3.1
+64-bit
+blastn: 2.16.0+
+ Package: blast 2.16.0, build Mar 28 2025 16:30:45
+GENCODE v50 GRCh38 primary assembly
+Bowtie: -f -a -v 3; F18/F14 -p 4; each F10 unique query -p 1
+Bowtie count pipeline version: v2 (stdout boundary regression)
+BLAST: -task blastn-short -evalue 1000 -dust no -strand both
+Gene dedup: disk-backed GNU sort -u, 2G RAM ceiling per partition

@@ -1,0 +1,7 @@
+state	aso_id	aligner	scramble_n	scramble_mean	scramble_sd_population	scramble_q05	scramble_median	scramble_q95
+[candidate]	F18	bowtie1-v3	100	1321.26	287.31009797777733	982.75	1275.5	1805.7499999999998
+[candidate]	F18	blastn-short	100	1428.44	690.3118327248925	778.4000000000001	1330.0	2214.499999999999
+[candidate]	F14	bowtie1-v3	100	28679.92	1971.990018635997	25820.65	28226.0	31912.0
+[candidate]	F14	blastn-short	100	593.58	240.65174755235	352.6	526.5	923.05
+[candidate]	F10	bowtie1-v3	100	70861.63	558.7812748294274	69986.0	70927.0	71845.0
+[candidate]	F10	blastn-short	100	0.0	0.0	0.0	0.0	0.0

@@ -1,0 +1,13 @@
+{
+  "files": {
+    "detectable_universe_v50.parquet": {
+      "sha256": "69601961d1f6676a8408a139a0fdca388ff5986a3046fa7b41715aafd5494f36",
+      "size": 43169838
+    },
+    "detectable_universe_v50_README.md": {
+      "sha256": "891442f86c4a07e0dce2b4ebebd5fe65a0902de5accdc9d0bdb8771e8a4bfb1c",
+      "size": 7139
+    }
+  },
+  "schema_version": 1
+}

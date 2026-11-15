@@ -1,0 +1,9 @@
+	/home/dashii/orcd/pool/rna-env/bin/STAR-avx2 --genomeDir /home/dashii/orcd/scratch/smt-rna/star_index --readFilesIn /home/dashii/orcd/scratch/smt-rna/fastq/SRR35298708_1.fastq.gz /home/dashii/orcd/scratch/smt-rna/fastq/SRR35298708_2.fastq.gz --readFilesCommand zcat --runThreadN 8 --outFileNamePrefix /home/dashii/orcd/scratch/smt-rna/bam/SRR35298708. --outSAMtype BAM SortedByCoordinate --outTmpDir /home/dashii/orcd/scratch/smt-rna/_alntmp_SRR35298708_20973672
+	STAR version: 2.7.11b   compiled: 2025-11-14T12:06:42+0000 :/opt/conda/conda-bld/star_1763121846936/work/source
+Aug 22 09:39:27 ..... started STAR run
+Aug 22 09:39:27 ..... loading genome
+Aug 22 09:39:59 ..... started mapping
+Aug 22 09:44:05 ..... finished mapping
+Aug 22 09:44:07 ..... started sorting BAM
+Aug 22 09:44:26 ..... finished successfully
+SRR35298708 aligned

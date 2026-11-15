@@ -1,0 +1,16 @@
+length	chrom	start	end	strand	target_5to3	aso_5to3	intarna_dg	intarna_no_duplex	rnaduplex_dg	rnacofold_dg	rnaup_dg	rnaplfold_accessibility	rnafold_mfe	off_target_hits	off_target_burden	potency	potency_incomplete	therapeutic_window	window_incomplete	state
+2	chr5	70076592	70076593	+	AT	AT			4	0			0				True		True	candidate
+4	chr5	70076591	70076594	+	TATG	CATA			0.1	0	0.1		0				True		True	candidate
+6	chr5	70076590	70076595	+	TTATGA	TCATAA			-2.8	-2.8	-2.8		0				True		True	candidate
+8	chr5	70076589	70076596	+	ATTATGAA	TTCATAAT	-4.8	False	-4.8	-4.8	-4.8		0			4.8	False		True	candidate
+10	chr5	70076588	70076597	+	CATTATGAAA	TTTCATAATG	-8.29	False	-8.3	-8.3	-8.28		0			8.285	False		True	candidate
+12	chr5	70076587	70076598	+	GCATTATGAAAG	CTTTCATAATGC	-14.18	False	-14.2	-14.2	-14.18		0			14.18	False		True	candidate
+14	chr5	70076586	70076599	+	AGCATTATGAAAGT	ACTTTCATAATGCT	-17.46	False	-17.5	-17.5	-17.45		0			17.455	False		True	candidate
+16	chr5	70076585	70076600	+	CAGCATTATGAAAGTG	CACTTTCATAATGCTG	-22.4	False	-22.7	-22.7	-22.39		0			22.395	False		True	candidate
+18	chr5	70076584	70076601	+	CCAGCATTATGAAAGTGA	TCACTTTCATAATGCTGG	-27	False	-27.9	-27.9	-26.99		0			26.995	False		True	candidate
+20	chr5	70076583	70076602	+	GCCAGCATTATGAAAGTGAA	TTCACTTTCATAATGCTGGC	-31.27	False	-32.3	-32.3	-31.27		0			31.27	False		True	candidate
+22	chr5	70076582	70076603	+	TGCCAGCATTATGAAAGTGAAT	ATTCACTTTCATAATGCTGGCA	-33.84	False	-34.9	-34.9	-33.83		0			33.835	False		True	candidate
+24	chr5	70076581	70076604	+	CTGCCAGCATTATGAAAGTGAATC	GATTCACTTTCATAATGCTGGCAG	-38.94	False	-40.4	-40.4	-38.94		0			38.94	False		True	candidate
+26	chr5	70076580	70076605	+	TCTGCCAGCATTATGAAAGTGAATCT	AGATTCACTTTCATAATGCTGGCAGA	-42.19	False	-43.9	-43.9	-41.79		0			41.99	False		True	candidate
+28	chr5	70076579	70076606	+	GTCTGCCAGCATTATGAAAGTGAATCTT	AAGATTCACTTTCATAATGCTGGCAGAC	-45.67	False	-47.5	-47.5	-42.36		0			44.015	False		True	candidate
+30	chr5	70076578	70076607	+	AGTCTGCCAGCATTATGAAAGTGAATCTTA	TAAGATTCACTTTCATAATGCTGGCAGACT	-48.47	False	-50.4	-50.4	-42.27		0			45.37	False		True	candidate

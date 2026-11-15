@@ -1,0 +1,6 @@
+loading transcriptome index /home/dashii/orcd/pool/smt-isef-data/transcriptome/transcripts.jsonl
+  20035 transcripts
+length 15 @ 32083: aso=GUUUUACAAAAGUAA target=UUACUUUUGUAAAAC (0 infeasible skipped above it)
+  axis 1: exact=2 1mm=29
+  axis 2: 22/24 panel transcripts scored
+  -> /home/dashii/orcd/pool/smt-isef-data/goldilocks_offtarget/len_15.json

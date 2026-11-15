@@ -1,0 +1,8 @@
+NVIDIA L40S, 46068 MiB
+Checking input data.
+All inputs are already processed.
+Processing 0 inputs with 0 threads.
+Running structure prediction for 4 inputs.
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/4 [00:00<?, ?it/s]Predicting DataLoader 0:  25%|██▌       | 1/4 [01:19<03:57,  0.01it/s]Predicting DataLoader 0:  50%|█████     | 2/4 [02:06<02:06,  0.02it/s]Predicting DataLoader 0:  75%|███████▌  | 3/4 [02:41<00:53,  0.02it/s]Predicting DataLoader 0: 100%|██████████| 4/4 [03:35<00:00,  0.02it/s]Number of failed examples: 0
+Predicting DataLoader 0: 100%|██████████| 4/4 [03:35<00:00,  0.02it/s]
+boltz back-prediction complete: /home/dashii/orcd/pool/smt-isef-data/boltz_out

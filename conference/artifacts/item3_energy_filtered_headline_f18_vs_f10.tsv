@@ -1,0 +1,2 @@
+state	threshold_rule	temperature_c	primary_threshold_fold	primary_threshold_margin_kcal_mol	f18_raw_bowtie1_v3_distinct_genes	f10_raw_bowtie1_v3_distinct_genes	f18_viable_variant_count	f10_viable_variant_count	f18_energy_filtered_distinct_genes	f10_energy_filtered_distinct_genes	prediction	prediction_result
+[candidate]	variant_dG <= on_target_dG + RT*ln(max_fold)	37.0	10	1.4191554958664063	1518	71148	29	22	2	12532	F10 has fewer viable variants and fewer energy-filtered transcript-compatible genes than F18 at 10x	not_confirmed

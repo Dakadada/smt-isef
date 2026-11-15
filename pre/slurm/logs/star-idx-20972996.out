@@ -1,0 +1,17 @@
+	/home/dashii/orcd/pool/rna-env/bin/STAR-avx2 --runMode genomeGenerate --runThreadN 16 --genomeDir /home/dashii/orcd/scratch/smt-rna/star_index --genomeFastaFiles /home/dashii/orcd/pool/smt-isef-data/transcriptome/GRCh38.primary_assembly.genome.fa --sjdbGTFfile /home/dashii/orcd/pool/smt-isef-data/transcriptome/gencode.v44.basic.annotation.gtf --sjdbOverhang 99 --outTmpDir /home/dashii/orcd/scratch/smt-rna/_startmp_20972996
+	STAR version: 2.7.11b   compiled: 2025-11-14T12:06:42+0000 :/opt/conda/conda-bld/star_1763121846936/work/source
+Aug 22 09:13:02 ..... started STAR run
+Aug 22 09:13:02 ... starting to generate Genome files
+Aug 22 09:13:47 ..... processing annotations GTF
+Aug 22 09:13:56 ... starting to sort Suffix Array. This may take a long time...
+Aug 22 09:14:08 ... sorting Suffix Array chunks and saving them to disk...
+Aug 22 09:30:57 ... loading chunks from disk, packing SA...
+Aug 22 09:32:14 ... finished generating suffix array
+Aug 22 09:32:14 ... generating Suffix Array index
+Aug 22 09:35:41 ... completed Suffix Array index
+Aug 22 09:35:41 ..... inserting junctions into the genome indices
+Aug 22 09:37:56 ... writing Genome to disk ...
+Aug 22 09:38:00 ... writing Suffix Array to disk ...
+Aug 22 09:38:37 ... writing SAindex to disk
+Aug 22 09:38:41 ..... finished successfully
+STAR index complete

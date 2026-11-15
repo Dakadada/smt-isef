@@ -1,0 +1,19 @@
+NVIDIA L40S, 46068 MiB
+MSA server enabled: https://api.colabfold.com
+MSA server authentication: no credentials provided
+Checking input data.
+Processing 2 inputs with 2 threads.
+Generating MSA for /home/dashii/orcd/pool/smt-isef-data/boltz_s/s3gate_in/s3gate_6DCL.yaml with 1 protein entities.
+Calling MSA server for target s3gate_6DCL with 1 sequences
+MSA server URL: https://api.colabfold.com
+MSA pairing strategy: greedy
+No authentication provided for MSA server
+Generating MSA for /home/dashii/orcd/pool/smt-isef-data/boltz_s/s3gate_in/s3gate_8X0N.yaml with 1 protein entities.
+Calling MSA server for target s3gate_8X0N with 1 sequences
+MSA server URL: https://api.colabfold.com
+MSA pairing strategy: greedy
+No authentication provided for MSA server
+Running structure prediction for 2 inputs.
+Predicting: |          | 0/? [00:00<?, ?it/s]Predicting:   0%|          | 0/2 [00:00<?, ?it/s]Predicting DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]Predicting DataLoader 0:  50%|█████     | 1/2 [00:15<00:15,  0.07it/s]Predicting DataLoader 0: 100%|██████████| 2/2 [00:24<00:00,  0.08it/s]Number of failed examples: 0
+Predicting DataLoader 0: 100%|██████████| 2/2 [00:24<00:00,  0.08it/s]
+S3 task 0 complete

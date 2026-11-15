@@ -1,0 +1,25 @@
+{
+  "chemistry": "RNA:RNA",
+  "context_rna_5to3": "GUAAGUCUGCCAGCAUUAUGAAAGUGAAUCUU",
+  "divalent_equivalence": "von Ahsen 2001 Na+-equivalent: [Na+]_eq(mM)=[mono](mM)+120*sqrt([Mg2+](mM)); DNA-derived empirical rule applied to RNA:RNA -> heuristic salt-adjusted dG, not a validated RNA measurement",
+  "intarna_salt": "default; no explicit salt",
+  "intarna_version": "IntaRNA 3.4.1",
+  "nn_parameter_set": "ViennaRNA default Turner 2004",
+  "nn_reference_salt_molar": 1.021,
+  "primary_buffer": "50 mM monovalent + 1.5 mM Mg2+ (user-specified 2026-09-30)",
+  "primary_divalent_molar": 0.0015,
+  "primary_effective_monovalent_molar": 0.19696938456699067,
+  "primary_monovalent_molar": 0.05,
+  "ranks_identical_all_asos": true,
+  "rnaduplex_version": "RNAduplex 2.7.2",
+  "salt_correction": "SantaLucia entropy form: dS=0.368*(paired_bases-1)*ln([M+]/1.021 M); dG=-T*dS",
+  "salt_grid_molar": [
+    0.025,
+    0.05,
+    0.089,
+    0.1,
+    0.15
+  ],
+  "state": "[candidate]",
+  "temperature_c": 37.0
+}

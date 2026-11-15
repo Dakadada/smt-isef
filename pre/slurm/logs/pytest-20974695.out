@@ -1,0 +1,22 @@
+........................  RNA: 2.7.2
+.  Bio: 1.88
+.  freesasa: unknown
+.  gemmi: 0.7.5
+.  numpy: 2.4.6
+.  scipy: 1.17.1
+.  pandas: 3.0.5
+.......................................... [ 44%]
+........................................................................ [ 88%]
+......s............                                                      [100%]
+============================= slowest 10 durations =============================
+259.46s call     tests/test_minigene.py::test_compression_is_deterministic
+243.95s setup    tests/test_minigene.py::test_stmn2_cryptic_exon_survives_compression
+129.02s setup    tests/test_minigene.py::test_every_exon_survives_compression
+21.99s call     tests/test_env.py::test_scientific_stack
+8.97s call     tests/test_kinetics.py::test_gillespie_mean_converges_to_ode_at_high_copy_number
+8.39s call     tests/test_minigene.py::test_threshold_sweep_is_monotonic_in_retention
+5.42s setup    tests/test_cryptic.py::test_smn2_gc_core_regression_guard
+5.30s setup    tests/test_minigene.py::test_unc13a_cryptic_exon_region_survives_compression
+5.14s setup    tests/test_steric.py::test_mean_shadow_monotonic_rnp[8FTI]
+4.92s call     tests/test_cryptic.py::test_direct_overlap_is_refused_in_both_directions
+162 passed, 1 skipped in 780.97s (0:13:00)

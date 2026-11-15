@@ -1,0 +1,10 @@
+shard 0/800: 23 footprints x 5 spans
+  20 baselines precomputed
+  10/23
+  20/23
+shard 0: wrote /home/dashii/orcd/pool/smt-isef-data/cryptic_sweep/cryptic_sweep_0000_of_0800.csv
+shard 1/800: 23 footprints x 5 spans
+  20 baselines precomputed
+  10/23
+  20/23
+shard 1: wrote /home/dashii/orcd/pool/smt-isef-data/cryptic_sweep/cryptic_sweep_0001_of_0800.csv
