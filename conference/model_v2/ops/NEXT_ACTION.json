@@ -1,14 +1,15 @@
 {
- "ts": "2026-11-15T11:55Z",
- "state": "ACTIVE (limit reset); alarm bk5zw82qi armed (~12:48Z)",
- "running_slurm": "J4 equiv probe 29186247 -> J4 atlas wave1 29186278 (0-199%16, afterok) -> wave2 submitter 29186279 (afterany) -> tasks 200-318; J3 genome array 29186280 (0-255%64, 256 shards)",
+ "ts": "2026-11-15T15:50Z",
+ "state": "ACTIVE; alarm bgmki9z09 armed (~16:44Z)",
+ "running_slurm": "J4 atlas wave1 29186278 (181/200 done) -> wave2 submitter 29186279 -> tasks 200-318",
  "limits": "QOS submit caps: mit_preemptable 256, mit_normal 448, assoc 500 jobs/user",
  "next": [
-  "on equiv probe result: EQUIVALENCE_OK expected in ops/logs/mv2-j4-equiv-29186247.out; if MISMATCH cancel 29186278 (scancel) and diagnose",
-  "after J4 waves: python conference/model_v2/jobs/j4_scale_gate.py --deep --report ...",
-  "write+run J3 completeness gate (256 expected .done markers in j3_genome_v1) once array completes",
-  "J4 fixes re-review (independent), J3/J6 downstream: J7 splice geometry joins, J9 baselines M0-M4 (label rules!), J10 robustness, J11 report",
-  "3UP8 human confirm; GTF-confirm derived coords; feng cleanroom failure note",
-  "Astra gpt-6-astra via codex CLI; claude-opus-5 via claude -p (stdin prompt); Fable/Opus5.5 refused [bio]"
- ]
+  "after J4 wave2 submits: find its array id, run j4_scale_gate.py --deep (or submit dependent gate), then rebuild J9 (M5 for F14/F10) ",
+  "investigate the 92 J3 failures (likely N-containing targets) - document",
+  "J7 splice geometry/RBP joins; J10 robustness (alt fold windows already in J9); J11 report + FINAL_LAUNCH_AUDIT.md",
+  "independent re-review of J4 fixes + J9; 3UP8 human confirm; GTF-confirm coords"
+ ],
+ "done": "J2 p1+p2, J6 genome+gate, J3 genome+gate (11.0M, 92 failed explicit), J4 sentinel+equiv, J9 SMN2 descriptive v1",
+ "claude_gpt_only_until": "2026-11-15T20:39:56Z",
+ "wetlab": "exon3 workbook NOT yet present at conference/model_v2/data/wetlab/ (checked 2026-11-15); when present run briefs/WETLAB_exon3.md via codex sol (low priority; do not use Fable)"
 }

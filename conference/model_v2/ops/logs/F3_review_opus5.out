@@ -1,0 +1,15 @@
+**DO-NOT-ADVANCE.** 31-line report at `conference/model_v2/ops/briefs/F3_REVIEW_RESULT.md`. Suite reproduced green (122 passed, 1.24s). No source edits. Every finding reproduced with scripts in `/tmp/f3rev/`.
+
+Three HIGH findings each produce AUPRC/AUROC/FDR/accuracy without genuinely verified negatives:
+
+1. **`:252` — `negative_evidence.basis` is an optional denylist.** Holgersen responder-only row with `basis="no_hit"` validates as `verified_negative`. So do `screen_negative`, `literature_absence`, `unpublished`, `personal_communication` — and omitting `basis` entirely. Only 8 literals caught. Holgersen S4 is not a built-in registry, so the responder-only check fires only if the caller remembers to pass it.
+
+2. **`:750` vs `:943` — metric guard counts raw `independent_unit_id`; `effective_clusters` doesn't.** One positive ASO + one negative ASO at one window, re-keyed 10×: AUPRC 1.0 / AUROC 1.0 / FDR 0.0 / accuracy 1.0, `n_negative_units=10`. Same table: `effective_clusters` = **1**, `bootstrap_metric_ci` refuses. Module contradicts its own independence definition.
+
+3. **`:172` — `ObservationTable` is public and validates nothing.** Rows that `validate_table` rejects (no negative evidence, provenance = the July workbook path) give AUPRC 1.0 via `ObservationTable(tuple(rows))`. Bypasses the validator, negative-evidence and forbidden-source chain in one line.
+
+MEDIUM: purge is one-hop, so an independent component straddles train/test in LOO mode (test=[A], purged=[B], train=[C] where C is the identical ASO to B which overlaps A's window) and 5 folds are emitted from 4 components; leakage axes are exact string matches ("MOE" vs "2'-MOE", "chr7" vs "7", `strand_aware=True` splitting identical coordinates on opposite strands) — F3_RESULT's caveat 4 calls that cosmetic, it's a leakage path.
+
+LOW: `(^|/)psi25` lets `/orcd/pool/run_psi25/x.csv` through; no unicode folding; `run_ablation(source_paths=())` checks nothing.
+
+PU mode, bool coercion, tie handling, seed determinism, nested inner/outer exclusion, and label-alias 0/1 agreement all survived the attack.

@@ -1,0 +1,17 @@
+J8/J10 done. `40 passed` (J8 22, J10 18). Report at `conference/model_v2/ops/briefs/J8J10_RESULT.md`.
+
+**Draft verdict:** mostly correct. Verified every schema, `.done` marker, and coordinate convention against real shards — J6/J3/J2/J4/J9 column names, the `<config_id>/ablation_maps/shard_0.parquet` + `<config_id>/shard_0.done{ablation}` layout, 20,395 emitted configs == 20,395 atlas dirs, `load_loci` passing on the real 209,760-locus manifests. J2 transcript-orientation math matches `j2_fold.py` (`pos` = u-mer end in transcript frame).
+
+**Fixed:**
+- J3 ingest read all 43 columns to discard four bulk sequence/structure ones — now projected at read time, 357 MB → ~15 MB per shard; also dropped a duplicate `to_pylist()` per batch.
+- J10 hard-coded the `w120s60` label — now read from the J3 marker `params`, refusing unlabelled or undeclared windows.
+- J10 part (b) produced zero real nulls (all scorers `None`). Wired `j3_scoring.complementarity` in as the decoy scorer (pure sequence, no backend) behind a guard that the rescored observed footprint reproduces the committed J3 cell. Real sites now get p-values: 0.0196 (n=50), 0.025 (n=39); third site correctly refused at n=13 < 20.
+- Added `jobs/j8_full.sbatch`; trimmed both bounded walltimes.
+
+**Measured real, 1 core:** bounded J8 end-to-end 48.3 s / 1.57 GB RSS / 172 MB index / 344 rows, idempotent rerun 4.5 s with zero rewrites. J10 bounded 2.9 s / 1.62 GB / 152 KB. Join rate 1,542 rows/s.
+
+**Two things need your call:**
+1. Full genome needs **~37 GB index** — the 20 GiB default cap would abort it. `j8_full.sbatch` passes `--max-index-gib 48`. SCRATCH is at 88.4% (~119 GB free).
+2. **The J2 accessibility column is effectively empty genome-wide.** J2 folded u ∈ {8,12,18}; ASO footprints are 10/14/18 nt. Only F18 can match exactly — 0.01% of a 43,317-row J3 sample (F10 97.24%, F14 2.74%). Everything else is explicit `not_available`. Fix is a J2 re-run with `ulens=(10,14,18)`; out of my scope, not submitted. J3's own per-footprint accessibility channel is unaffected.
+
+No jobs submitted, no commits.

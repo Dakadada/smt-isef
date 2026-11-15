@@ -1,0 +1,1 @@
+{'shards': 256, 'bad': 0, 'rows': 11002701, 'expected_rows': 11002701, 'rows_match': True, 'channel_counts': {'accessibility': {'failed': 92, 'missing': 0, 'not_applicable': 0, 'ok': 11002609}, 'complementarity': {'failed': 0, 'missing': 0, 'not_applicable': 0, 'ok': 11002701}, 'duplex': {'failed': 92, 'missing': 0, 'not_applicable': 0, 'ok': 11002609}}, 'missing': []}

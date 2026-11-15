@@ -1,0 +1,10 @@
+{
+  "atlas_dir": "/home/dashii/orcd/scratch/feng/model_v2/j4_atlas_v1",
+  "complete": 20395,
+  "deep": true,
+  "emitted": 20395,
+  "gap_reasons": {},
+  "gap_rows": [],
+  "gaps": 0,
+  "manifest": "/home/dashii/orcd/scratch/feng/model_v2/j4_configs/j4_configs_manifest.tsv"
+}

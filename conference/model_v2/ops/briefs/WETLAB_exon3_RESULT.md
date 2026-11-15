@@ -1,0 +1,23 @@
+# WETLAB-EXON3 result — 2026-11-15
+- ADVANCE exploratory audit only; DO-NOT-ADVANCE validated PSI or model comparison.
+- `wetlab/exon3_parse.py:88`: read-only parser inventories 6 sheets, 54 raw rows and 13 lanes.
+- `ops/WETLAB_MANIFEST.json:1`: user-supplied receipt, metadata, sheet names, 19,452 bytes and SHA256 verified.
+- SHA256 unchanged: `33a9db88c8d936ffec1b0361c15c54f60c08c30aa40bbc8f6faf31ce46fd16b5`.
+- `wetlab/exon3_parse.py:25`: two missing control Band 2 rows remain null; workbook-only PSI=100 preserved.
+- Eleven ASO signal fractions independently recomputed; 22/22 defined PSI cells match formulas and caches.
+- All 26 PSI caches match their formulas; 11/11 exported ASO ratios match within 0.0005 pp rounding.
+- Label intervals all span 18 nt; sequence/strand/construct compatibility remains unverified.
+- Band order internally consistent in 11 pairs; identities and primer-derived product sizes unverified.
+- Export MW proxies shift between gels; pair separations 260.200–277.344; no length correction.
+- Biological and technical replicate IDs separately null; workbook reports one measurement per ASO.
+- Gel 7-9 lacks on-gel controls; no control-normalized effects estimated.
+- `wetlab/exon3_parse.py:241`: ten needs_human_confirmation items recorded in outputs and manifest.
+- `wetlab/README.md:90`: limitations and follow-up sequence, product-identity, linearity and replication checks.
+- Computational features: not comparable; no verified system/coordinate mapping, so no join attempted.
+- `wetlab/outputs/`: ignored JSON inventory/evidence schemas, two TSV tables, PNG/SVG positional figure.
+- DEVIATION: scratch creation failed (read-only filesystem); outputs are under the owned repo directory instead.
+- `wetlab/README.md:14`: command provided to regenerate at the requested scratch path when writable.
+- Synthetic tests: 20 passed, 0 skipped, 0 failed.
+- Feng gate: 581 passed, 5 skipped, 1 failed (242.36 s); repository gate NOT GREEN.
+- Unfixed/out of scope: `feng/tests/test_cleanroom.py:23` rejects `src/` in unchanged `feng/src/feng/source_auth.py:31,314,400`.
+- Exon-7 workbook not opened; original workbook unchanged; no commits, model fitting or Slurm actions.

@@ -17,3 +17,23 @@
 {"ts":"2026-11-15T08:56:17Z","event":"claude usage limit reached (Sonnet orchestrator); stop model dispatch; Slurm continues"}
 {"ts":"2026-11-15T10:49:29Z","event":"dispatch","task":"J4_driver_finish","worker":"claude -p claude-opus-5","note":"limit reset observed; alarm bp3tjhzkj fired 10:49Z"}
 {"ts":"2026-11-15T13:46:50Z","event":"dispatch","task":"J9_smn2","worker":"claude -p claude-opus-5"}
+{"ts":"2026-11-15T17:37:59Z","obs":"user: weekly Claude reset already hit (new weekly full); 5h window ~55% used, ~3h left; Fable weekly ~0%"}
+{"ts":"2026-11-15T17:37:59Z","event":"dispatch","task":"F3","worker":"fable (Agent)","note":"statistics module, deliberately neutral scope; no bio protocol content"}
+{"ts":"2026-11-15T17:48:13Z","worker":"fable","task":"F3","event":"return","tests":"122 passed (re-verified by orchestrator)","warnings":"none"}
+{"ts":"2026-11-15T17:48:13Z","event":"dispatch","task":"F3_review","worker":"claude -p claude-opus-5"}
+{"ts":"2026-11-15T18:23:56Z","obs":"user: Claude 5h window at 94%; GPT-only (codex) model work until ~2026-11-15T20:39:56Z; Claude F3 review killed; no Claude workers/Fable/subagents until then"}
+{"ts":"2026-11-15T18:23:56Z","event":"dispatch","task":"F3_review","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-15T18:42:11Z","event":"dispatch","task":"F3_fix","worker":"codex gpt-6-astra high","note":"F3 review (sol) = DO-NOT-ADVANCE 9 HIGH 4 MED"}
+{"ts":"2026-11-15T19:41:24Z","worker":"codex astra","task":"F3_fix","event":"return","tests":"209 passed model_v2 evaluation tests verified"}
+{"ts":"2026-11-15T19:41:24Z","event":"dispatch","task":"F3_rereview","worker":"codex gpt-6.1-terra medium"}
+{"ts":"2026-11-15T19:41:24Z","event":"dispatch","task":"WETLAB_exon3","worker":"codex gpt-6.1-sol medium"}
+{"ts":"2026-11-15T20:16:34Z","event":"dispatch","task":"F3_fix2","worker":"codex gpt-6-astra high","note":"re-review terra DO-NOT-ADVANCE 3H 2M"}
+{"ts":"2026-11-15T20:16:34Z","event":"dispatch","task":"WETLAB_exon3","worker":"codex gpt-6.1-sol medium","note":"first attempt failed: relative path wrong; now absolute"}
+{"ts":"2026-11-15T20:16:34Z","event":"session restart: background monitors lost; alarm brlwy47qp re-armed; heartbeat restarted on login009 (atq chain)"}
+{"ts":"2026-11-15T20:41:17Z","obs":"user: Claude capacity ready again"}
+{"ts":"2026-11-15T20:48:18Z","event":"dispatch","task":"J8J10","worker":"fable (Agent)","note":"user said use fable when it works; neutral data-eng/stats scope"}
+{"ts":"2026-11-15T20:49:44Z","worker":"fable","task":"J8J10","event":"failed","error":"Fable 5.2 safeguards [bio] req_011Ch5NZ84pTnRvznS2ACup2; no output; not retried; reroute to Codex was blocked by permission classifier, J8J10 held for user decision"}
+{"ts":"2026-11-15T21:01:16Z","event":"dispatch","task":"J8J10","worker":"codex gpt-6-astra high","note":"user directed reroute after Fable [bio] flag"}
+{"ts":"2026-11-15T21:15:34Z","obs":"CODEX/GPT usage limit hit; resets 6:24 PM (EST => ~23:24Z). Astra J8J10 worker stopped mid-task (partial j8_feature_join.py, j10_robustness.py). Claude available."}
+{"ts":"2026-11-15T21:39:34Z","event":"dispatch","task":"F3_fix2","worker":"codex gpt-6.1-sol medium","note":"re-review (terra) DO-NOT-ADVANCE 3H 2M"}
+{"ts":"2026-11-15T22:02:05Z","event":"dispatch","task":"J8J10","worker":"claude -p claude-opus-5","note":"user directed Opus 5; continues partial Astra draft"}

@@ -1,0 +1,26 @@
+PLAN shard=shard_0269.jsonl configs=64 batch_size=32
+LOAD model_load_seconds=6.0 (once per task)
+{"expected_rows": 216, "failures": 0, "run_id": "4eda370abd9b1895a608b9682f7e5deda2d73154ae3bc120f3f74dc1704fa759", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "0025dc78f8ad2abc104714bd58bf4fff8082d67ec019f2f236a38a82f321cd7f", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "604a27292132a577097d71350b5af3f0ddfe5b8b9204a31d67c5369b70195270", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "b37811725fe2501e024a68cdbbb3e5fd34fc70195af6360626c45d3db2f47683", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "5c5d3f38341b17007d2ccbb0902e4be2e49f647be37f1588263e31a05eaeecc1", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "669f2b36f5aad7fe72ffa1e5fb6fba7370a260e05ad961bc6f6525736e0170f9", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "4c3aa156992cd60098a0e962f091f4d3aafdda4ea630cdba85fe75b22280d8ea", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "b0fc0b9f7a7951e35b304bb7aefbb2b2ea0c65ff79644e443e2b8a3f8181b594", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "54a9e65e2915cc1aa7cbe9a47f6bfb6c9bd77abb3a6b7fd853f1014ac85f2d82", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "a89172ba01bc0ddb329d35d976970341f5a7d8703e08c68b1ba855549cbc5630", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "0e9d6ee496ffb65a741270a3ac4566cfda4bfba6a4214d51c9bf35001cb3941b", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "08aac641ddf569c8f1184dadac2b90dacac8f99343d7917a18522dcb8eb784fd", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "a5fab9e8ba156f7f4d5c81f8aa9379be6368513ee5a449feef08498ca4cda44f", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "c585f2524ff4acf72abb8c3c6f34a76894258440a6f884d06baf99284fd823e5", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "db0390a1b0b7b16ee18bee7e1963fe41ed2a5a334007cee53ab7698b71796679", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "739b9b5b3c42932caa44d8eca924ceaed2c05c048cc47d4ee8a8e7d6fa4b8db3", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "9d860d88fbd74ba4a13e021a93ad384ddf38e172073e7bbf6cf827069c0b9a74", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "28517f51aee0d21ada680780bfd7203f87bc6293754061b70b1328176a0fa0d6", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "037c83cbdede0382d200d9518c45e360ead5f702757ba1dab1acfd30f57d2b26", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "69d04e0cb4520dcff30df7eef4cda91b450e528fc7c46ac5d1dc7e60d50d701f", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "3e61ef41f6e1c88104976ea3bf4ad8ba593cf7b3d2fa6b199bbc3ad6479874ad", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "d7fd02fd6abe613595138ef1d774329be2a4583f776d89315c3d926a15054785", "status": "complete"}
+{"expected_rows": 216, "failures": 0, "run_id": "94e7c684f1eb427cf6517314676879581b0923d7cb0b656afa7ea69fce1663bd", "status": "complete"}
+SHARD 269 done=23 skipped=41 failed=0

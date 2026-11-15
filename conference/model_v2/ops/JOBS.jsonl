@@ -33,3 +33,13 @@
 {"ts":"2026-11-15T12:47:45Z","job":"J3","kind":"gate","slurm_id":"29190031","dependency":"afterok:29186280","checks":"256 shards, sha, rows==11002701, channel failure counts"}
 {"ts":"2026-11-15T12:47:45Z","job":"J4","slurm_id":"29186247","state":"COMPLETED","result":"EQUIVALENCE_OK real-model driver==CLI run_id+ablation sha on 3 configs"}
 {"ts":"2026-11-15T14:45:47Z","job":"J9","kind":"smn2_m2m3_real_vienna","slurm_id":"29198432","tests":"58 passed","scope":"descriptive N=3, no supervised claims"}
+{"ts":"2026-11-15T15:45:00Z","job":"J3","slurm_id":"29186280/29190031","state":"COMPLETED + GATE PASSED","rows":11002701,"rows_match":true,"failed":"duplex 92, accessibility 92 (explicit failed rows, not zero-filled); complementarity 0","out":"~/orcd/scratch/feng/model_v2/j3_genome_v1","class":"duplex=model_assumption (unmodified RNA), accessibility=proxy"}
+{"ts":"2026-11-15T15:45:00Z","job":"J9","slurm_id":"29198432","state":"COMPLETED","result":"M2/M3 now real ViennaRNA; descriptive ordering N=3: M2 dG F18>F14>F10 (stable over 3 fold windows), M3 accessibility F10>F14>F18; M5 covers F18 only until J4 atlas; NO significance/AUC claims"}
+{"ts":"2026-11-15T16:43:53Z","job":"J4","kind":"wave1_result","slurm_id":"29186278","state":"200/200 COMPLETED"}
+{"ts":"2026-11-15T16:43:53Z","job":"J4","kind":"wave2_array","slurm_id":"29204876","array":"200-318%16","submitted_by":"29186279"}
+{"ts":"2026-11-15T16:43:53Z","job":"J4","kind":"gate","slurm_id":"29207884","dependency":"afterany:29204876"}
+{"ts":"2026-11-15T19:41:24Z","job":"J4","slurm_id":"29204876/29207884","state":"COMPLETED + GATE PASSED","gate":"20395/20395 configs complete, 0 gaps (deep)","out":"~/orcd/scratch/feng/model_v2/j4_atlas_v1","class":"sequence_ablation_proxy; reference derived"}
+{"ts":"2026-11-15T19:41:24Z","job":"J9","kind":"rebuild_with_atlas_M5","slurm_id":"29223600"}
+{"ts":"2026-11-15T20:41:43Z","job":"J9","kind":"rebuild_full_atlas","slurm_id":"29228637","note":"v1 backed up to j9_smn2_v1_sentinelatlas_backup"}
+{"ts":"2026-11-15T21:15:34Z","job":"J9","kind":"rebuild_curated_atlas_dir","slurm_id":"29230958","note":"prev rebuild 29228637 pointed at atlas root (per-config subdirs) -> M5 not_available regression; now curated SMN2_exon7_issn1_fine dir (stride-1 lengths 8,10,14,18)"}
+{"ts":"2026-11-15T21:39:34Z","job":"WETLAB","result":"exon3 exploratory audit done (codex sol): 22/22 PSI cells recompute; sequence/strand/band identity/product sizes UNVERIFIED (10 needs_human_confirmation); not comparable to computational features; 20 tests","out":"conference/model_v2/wetlab/"}

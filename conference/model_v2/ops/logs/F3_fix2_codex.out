@@ -1,0 +1,25 @@
+WARNING: failed to clean up stale arg0 temp dirs: Directory not empty (os error 39)
+Reading additional input from stdin...
+OpenAI Codex v0.159.2
+--------
+workdir: /home/dashii/smt-isef
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1e126-be75-7be2-9a49-46c8812388c5
+--------
+user
+# TASK F3-FIX2 (Codex gpt-6.1-sol, medium). Owner ONLY: conference/model_v2/evaluation_core.py, conference/model_v2/tests/test_evaluation_core.py. Read conference/model_v2/ops/briefs/F3_REREVIEW_RESULT.md (5 remaining findings: 3 HIGH, 2 MED, each reproduced) and SCIENTIFIC_LOCK.md. Fix all five with regression tests from the repros: (1) merge_axes=() must not weaken uncertainty: sequence/window merging mandatory for CIs or refuse weakened axes; (2) GroupingConfig must validate finite nonnegative integer sequence_threshold/padding and all grouping controls (reject NaN/inf/negative/bool); (3) canonicalize GRCh38 chromosome names ('5' == 'chr5', chrM/MT, etc.) or reject noncanonical names before clustering; (4) exact assay-copy duplicates (identical sequence/window/label/score) must be rejected or deduplicated, or weighted by explicit independent-unit weights, for metrics and PU statistics; (5) min_independent_groups etc. positive integer at outer and inner split entry points (reject NaN/float/bool). Keep all existing tests passing (say if one encodes a bug). No other files; no submits/commits/sealed data.
+Test: PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_evaluation_core.py -q. Report <=15 lines ops/briefs/F3_FIX2_RESULT.md with exact counts.
+warning: clamping SessionEnd hook timeout to 3s in /home/dashii/.codex/plugins/cache/openai-codex/codex/1.0.6/hooks/hooks.json
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+hook: UserPromptSubmit Completed
+ERROR: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at 6:24 PM.
+ERROR: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at 6:24 PM.

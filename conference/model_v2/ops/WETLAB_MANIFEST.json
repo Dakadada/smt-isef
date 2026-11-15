@@ -1,0 +1,113 @@
+{
+  "received_utc": "2026-11-15T19:41:24Z",
+  "provenance": "user-supplied lab workbooks; originals unmodified",
+  "files": [
+    {
+      "name": "SMN2_Exon3_Complete_Data.xlsx",
+      "bytes": 19452,
+      "sha256": "33a9db88c8d936ffec1b0361c15c54f60c08c30aa40bbc8f6faf31ce46fd16b5",
+      "use": "separate exploratory positional analysis only (exon 3, July 7/9)",
+      "path": "/home/dashii/smt-isef/conference/model_v2/data/wetlab/SMN2_Exon3_Complete_Data.xlsx",
+      "sheet_names": [
+        "Read me",
+        "Summary",
+        "Quantification",
+        "Raw 7-7",
+        "Raw 7-9",
+        "Methods"
+      ],
+      "verification_date_utc": "2026-11-15",
+      "date_received": "2026-11-15T19:41:24Z",
+      "evidence_class": "observed_file_metadata_and_derived_sha256",
+      "experimental_metadata": {
+        "Read me!A1": "SMN2 exon 3 | data handoff",
+        "Read me!A2": "Gels 7-7 and 7-9 \u00b7 complete raw exports, quantification and microwalk summary \u00b7 no figures",
+        "Read me!A4": "Item",
+        "Read me!B4": "Details",
+        "Read me!A5": "Contents",
+        "Read me!B5": "Summary; Quantification; Raw 7-7; Raw 7-9; Methods. No figures or chart objects included.",
+        "Read me!A6": "Source records",
+        "Read me!B6": "7-7-26_labeled_export_-_Sheet1.pdf; 7-9-26-labeled-_export_-_Sheet1.pdf.",
+        "Read me!A7": "Assay",
+        "Read me!B7": "Alternative splicing of exon 3 on the human SMN2 super minigene (SMN2Sup). 18-mer ASO microwalk across exon 3, all treatments at 5 nM, so ASO target position is the single variable. cDNA RT-PCR products resolved by PAGE and quantified by densitometry in GelAnalyzer.",
+        "Read me!A8": "Gel layout",
+        "Read me!B8": "Gel 7-7: ladder, Super Minigene Only, ScrMOE (scrambled control), ASOs A\u2013E. Gel 7-9: ladder, ASOs F\u2013K.",
+        "Read me!A9": "Raw data completeness",
+        "Read me!B9": "All 9 original columns and every reported row are included: 27 rows for 7-7 and 27 for 7-9 (15 ladder rows plus sample rows on each). Labels and numeric values are retained as exported.",
+        "Read me!A10": "Confirmed absent bands",
+        "Read me!B10": "Experimenter confirmed the exports are complete. Super Minigene Only and ScrMOE have no Band 2 row, so excluded volume is 0 in calculations. No artificial band rows are added to the raw tables.",
+        "Read me!A11": "Calculation basis",
+        "Read me!B11": "\u03a8 (%) = 100 \u00d7 Band 1 / (Band 1 + Band 2) and \u03943 (%) = 100 \u00d7 Band 2 / (Band 1 + Band 2), using raw band volumes. Band 1 (upper band) = exon 3 included; Band 2 (lower band) = exon 3 skipped. \u03a8 + \u03943 = 100 in every lane.",
+        "Read me!A12": "Interpretation",
+        "Read me!B12": "Each ASO was run once (n = 1), so there are no replicate statistics. 100% refers to quantified signal, not to absence of other transcripts. See Methods for the cross-gel caveat.",
+        "Read me!A13": "Scope",
+        "Read me!B13": "Only the two uploaded exports are analyzed. ASOs A\u2013K cover nt 2\u2013168 of exon 3.",
+        "Methods!A1": "Methods and quality checks",
+        "Methods!A2": "Analysis definitions, provenance and limitations",
+        "Methods!A4": "Topic",
+        "Methods!B4": "Specification",
+        "Methods!A5": "Endpoint",
+        "Methods!B5": "\u03a8 (%) = 100 \u00d7 I/(I+E) and \u03943 (%) = 100 \u00d7 E/(I+E), using raw integrated band volumes from GelAnalyzer and the supplied band identities. No background re-estimation or fragment-length correction.",
+        "Methods!A6": "Band roles",
+        "Methods!B6": "Sample Band 1 (upper band) = exon 3 included. Band 2 (lower band) = exon 3 skipped (\u03943). Identities were supplied by the experimenter and are used as given. No product sizes are assumed in any calculation.",
+        "Methods!A7": "Absent excluded signal",
+        "Methods!B7": "Super Minigene Only and ScrMOE have no Band 2 row. The experimenter confirmed the exports are complete, so excluded volume is 0 (highlighted in Quantification). A 100% signal fraction does not exclude undetectable skipped transcript.",
+        "Methods!A8": "Export cross-check",
+        "Methods!B8": "Quantification column K compares each computed \u03a8 with the Band 1 Volume Ratio printed in the export. Differences are limited to rounding of the export's 3-decimal ratio.",
+        "Methods!A9": "Summary",
+        "Methods!B9": "Lane values only. Deltas are \u03a8 minus the ScrMOE lane and \u03a8 minus the Super Minigene Only lane, in percentage points. nt start and end come from the ASO labels.",
+        "Methods!A10": "Replication and testing",
+        "Methods!B10": "One gel per ASO, so n = 1: no mean, SD, paired tests or p-values are computed. Numeric exports alone cannot establish PCR linearity, signal saturation or sample provenance.",
+        "Methods!A11": "Cross-gel comparison",
+        "Methods!B11": "The Super Minigene Only and ScrMOE controls are on gel 7-7 only. ASOs F\u2013K (gel 7-9) have no on-gel control, so their deltas compare across gels, which differ in run conditions (band Rf and ladder spacing differ between the two gels). Treat F\u2013K deltas as provisional until a control is run beside them.",
+        "Methods!A12": "Ladder-estimated sizes",
+        "Methods!B12": "For reference only, not used in any calculation: the exports estimate Band 1 at about 548\u2013609 bp and Band 2 at about 286\u2013338 bp, with the two bands about 260\u2013277 bp apart. Estimates shift between gels 7-7 and 7-9.",
+        "Methods!A13": "SMN2 specificity",
+        "Methods!B13": "Product identity rests on the construct-specific primer design used in the experiment.",
+        "Methods!A14": "Exclusions",
+        "Methods!B14": "No reported band rows are dropped. Ladder rows stay in the raw tables and do not enter sample \u03a8. Gel 7-7 lane 2 does not appear in the export, so it is not represented.",
+        "Methods!A15": "Raw import",
+        "Methods!B15": "PDF table text parsed into the original columns. Cal.Volume dashes preserved as text. The Cal.Volume entry for ASO K Band 2 (7-9) was blank in the supplied text and is recorded as '-'. Raw 7-7 and Raw 7-9 retain all original values.",
+        "Methods!A16": "Formula storage",
+        "Methods!B16": "Live Excel formulas include cached values, enabling immediate display without recalculation."
+      },
+      "experimental_metadata_evidence_class": "observed_workbook_statement_not_independently_verified",
+      "needs_human_confirmation": [
+        "ASO A-K sequences, chemistry, 5-to-3 orientation and strand; labels alone do not establish binding",
+        "Full SMN2Sup construct sequence/version and exon-3 coordinate origin; verify labeled intervals against sequence",
+        "Primer sequences, binding sites and expected inclusion/skipping amplicon sizes; construct specificity unverified",
+        "Band identities via junction sequencing or product-size anchors; relative migration order is only internally consistent",
+        "Differing product lengths: within-lane size separation and between-gel MW shifts; calibration vs alternate products unresolved",
+        "Original gel images and PDF exports; workbook transcription and background/saturation/linear range unverified",
+        "Detection limits for absent/weak bands; absent export row cannot establish zero transcript",
+        "Biological versus technical experimental units, sample lineage, cell system, timing and replicate IDs; n=1 is workbook-reported only",
+        "Matched on-gel controls for gel 7-9; no cross-gel normalized effect estimated",
+        "Genome/transcript/construct alignment and assembly before any computational-feature comparison"
+      ],
+      "outputs": {
+        "requested": "/home/dashii/orcd/scratch/feng/model_v2/wetlab_exon3/",
+        "actual": "conference/model_v2/wetlab/outputs/",
+        "deviation": "requested scratch directory creation failed: Read-only file system",
+        "evidence_class": "observed_execution_and_output_paths"
+      }
+    },
+    {
+      "name": "SMN2_Exon7_7_27+28_Complete_Data.xlsx",
+      "bytes": 20358,
+      "sha256": "262c7f5ff7a8228bb19b2224d6420f4a198c5f677e415b57fd8f1f46522b1c94",
+      "use": "EXCLUDED from fitting/joins/analysis (previously viewed, not prospective)"
+    }
+  ],
+  "git": "data/ is git-ignored",
+  "sheets": {
+    "SMN2_Exon3_Complete_Data.xlsx": [
+      "Read me",
+      "Summary",
+      "Quantification",
+      "Raw 7-7",
+      "Raw 7-9",
+      "Methods"
+    ],
+    "SMN2_Exon7_7_27+28_Complete_Data.xlsx": "not inspected; excluded by task"
+  }
+}

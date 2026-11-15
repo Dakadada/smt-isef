@@ -1,0 +1,242 @@
+"""Synthetic contracts: coordinate orientation, coverage, conservation and restart."""
+import importlib
+import json
+from pathlib import Path
+
+import pyarrow as pa
+import pyarrow.parquet as pq
+import pytest
+
+
+def api():
+    name = 'conference.model_v2.j8_feature_join'
+    assert importlib.util.find_spec(name), 'J8 implementation absent'
+    return importlib.import_module(name)
+
+
+def site(**kw):
+    return dict(site_id='s', aso_id='a', chrom='chr1', start1=119, end1=122,
+                strand='+', assembly='GRCh38', annotation='GENCODE v50', **kw)
+
+
+def write(path, rows, metadata=None):
+    t = pa.Table.from_pylist(rows).replace_schema_metadata(metadata)
+    pq.write_table(t, path)
+    import hashlib
+    path.with_suffix('.done').write_text(json.dumps(dict(rows=len(rows), sha256=hashlib.sha256(path.read_bytes()).hexdigest())))
+    return path
+
+
+@pytest.mark.parametrize('strand,donor,acceptor', [('+', -9.5, 10.5), ('-', -10.5, 9.5)])
+def test_geometry_signed_midpoint_and_overlap(strand, donor, acceptor):
+    m = api()
+    row = site(); row['strand'] = strand
+    loci = [dict(locus_id='e', chrom='chr1', start1=10, end1=230, strand=strand)]
+    g = m.geometry(row, loci)
+    assert g['donor_distance'] == donor
+    assert g['acceptor_distance'] == acceptor
+    assert g['region_class'] == 'exonic'
+    assert g['anchor'] == 'footprint_midpoint'
+    row['start1'], row['end1'] = 108, 113
+    assert m.geometry(row, loci)['region_class'] == 'exon_intron_spanning'
+
+
+def test_geometry_does_not_join_other_strand_or_chrom():
+    m = api()
+    assert m.geometry(site(), [dict(locus_id='e', chrom='chr2', start1=10, end1=230, strand='+')])['status'] == 'not_available'
+
+
+def test_j2_exact_u_and_minus_coordinate():
+    m = api(); row = site(); row.update(strand='-', start1=119, end1=122)
+    locus = dict(locus_id='e', chrom='chr1', start1=10, end1=230, strand='-')
+    grids = [dict(locus_id='e', strand='-', pos_end_1b_transcript=112, W=80,L=40,u=4,p_unpaired=.2),
+             dict(locus_id='e', strand='-', pos_end_1b_transcript=112, W=80,L=40,u=8,p_unpaired=.9)]
+    result = m.accessibility(row, [locus], grids)
+    assert [x['value'] for x in result] == [.2]
+    assert m.accessibility(row, [locus], grids[1:])[0]['status'] == 'not_available'
+    grids[0]['p_unpaired'] = float('nan')
+    assert m.accessibility(row, [locus], grids[:1])[0]['value'] is None
+
+
+def test_atlas_partial_overlap_not_called_exact_and_failed_not_averaged():
+    m = api()
+    common = dict(locus='e', chrom='chr1', strand='+', site_kind='donor', site_position=130,
+                  tissue=0, config_id='c', model_evidence=True, evidence_class='sequence_ablation_proxy')
+    rows = [dict(common, footprint_start=120, footprint_end=123, status='ok', raw_model_delta=-.4),
+            dict(common, footprint_start=119, footprint_end=122, status='failed', raw_model_delta=None)]
+    r = m.atlas_summary(site(), rows)
+    assert r['exact_status'] == 'failed'
+    assert r['exact_mean'] is None
+    assert r['overlap_mean'] == -.4
+    assert r['n_failed'] == 1
+    assert r['evidence_label'] == 'sequence_ablation_proxy'
+
+
+def test_stream_join_conservation_missing_failure_evidence_and_idempotence(tmp_path):
+    m = api()
+    j6 = write(tmp_path/'j6.parquet', [site(), dict(site(), site_id='t', start1=150,end1=153)])
+    j3 = write(tmp_path/'j3.parquet', [dict(site(), duplex_status='failed', duplex_energy_kcal_mol=None)])
+    loci = tmp_path/'loci.tsv'; loci.write_text('e\tchr1\t10\t230\t+\n')
+    with m.FeatureIndex(tmp_path/'index.sqlite') as index:
+        index.ingest('j3', j3)
+        out = tmp_path/'out.parquet'
+        result = m.join_shard(j6, out, index, [loci], batch_size=1)
+        rows = pq.read_table(out).to_pylist()
+        assert result['rows'] == len(rows) == 2
+        assert json.loads(rows[0]['j3_channels'])['duplex_status'] == 'failed'
+        assert json.loads(rows[1]['j3_channels'])['status'] == 'not_available'
+        assert all(f.metadata.get(b'evidence_class') for f in pq.read_schema(out))
+        stamp = out.stat().st_mtime_ns
+        assert m.join_shard(j6, out, index, [loci])['rows'] == 2
+        assert out.stat().st_mtime_ns == stamp
+        assert len(result['inputs']) == 3
+        out.write_bytes(b'corrupt')
+        assert m.join_shard(j6, out, index, [loci])['rows'] == 2
+        loci.write_text('e\tchr1\t11\t231\t+\n')
+        with pytest.raises(ValueError, match='changed'):
+            m.join_shard(j6, out, index, [loci])
+
+
+@pytest.mark.parametrize('mutation', [{'assembly':'GRCh37'}, {'annotation':'GENCODE v49'}, {'strand':'?'}, {'start1':0}])
+def test_assembly_coordinate_fence(mutation):
+    m=api()
+    with pytest.raises(ValueError): m.geometry(dict(site(), **mutation), [])
+
+
+def test_duplicate_index_and_checksum_rejected(tmp_path):
+    m=api(); p=write(tmp_path/'j3.parquet', [site(),site()])
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        with pytest.raises(ValueError, match='duplicate'): index.ingest('j3',p)
+        p.with_suffix('.done').write_text('{}')
+        with pytest.raises(ValueError, match='commit'): index.ingest('j3',p)
+
+
+def test_forbidden_source_and_outcome_columns(tmp_path):
+    m=api()
+    with pytest.raises(Exception): m.load_loci([tmp_path/'psi25'/'loci.tsv'])
+    p=write(tmp_path/'bad.parquet', [dict(site(), delta_psi=.8)])
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        with pytest.raises(ValueError, match='outcome'): index.ingest('j3',p)
+
+
+def test_index_j2_j4_real_layout_and_join(tmp_path):
+    m=api(); loci=tmp_path/'loci.tsv'; loci.write_text('e\tchr1\t10\t230\t+\n')
+    j6=write(tmp_path/'j6.parquet',[site()])
+    j2=write(tmp_path/'j2.parquet',[dict(locus_id='e',strand='+',pos_end_1b_transcript=113,W=80,L=40,u=4,p_unpaired=.3)], {b'coordinates':b'GRCh38; GENCODE v50'})
+    atlas=tmp_path/'cfg'/'ablation_maps'; atlas.mkdir(parents=True)
+    j4=write(atlas/'shard_0.parquet',[dict(row_id='r',locus='e',chrom='chr1',strand='+',
+        site_kind='donor',site_position=130,tissue=0,footprint_start=119,footprint_end=122,
+        raw_model_delta=-.2,status='ok',model_evidence=True,evidence_class='sequence_ablation_proxy')],
+        {b'coordinates':b'GRCh38; GENCODE v50; 1-based inclusive'})
+    j4.with_suffix('.done').rename(atlas.parent/'shard_0.done')
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        index.ingest('j2',j2); index.ingest('j4',j4,config_id='cfg')
+        index.ingest('j4',j4,config_id='cfg')
+        m.join_shard(j6,tmp_path/'out.parquet',index,[loci])
+    row=pq.read_table(tmp_path/'out.parquet').to_pylist()[0]
+    assert json.loads(row['j2_accessibility'])[0]['value']==.3
+    assert json.loads(row['j4_ablation'])['exact_mean']==-.2
+    assert json.loads(row['j4_ablation'])['cells'][0]['config_id']=='cfg'
+
+
+def test_index_disk_cap_rolls_back_and_bad_schema_fences(tmp_path):
+    m=api(); p=write(tmp_path/'j3.parquet',[site()])
+    with m.FeatureIndex(tmp_path/'i.sqlite',max_bytes=1) as index:
+        with pytest.raises(ValueError,match='budget'): index.ingest('j3',p)
+        assert index.identities()==[]
+        assert index.db.execute('SELECT COUNT(*) FROM j3').fetchone()[0]==0
+
+
+def test_j3_nonfinite_score_becomes_explicit_failure(tmp_path):
+    m=api(); p=write(tmp_path/'j3.parquet',[dict(site(),duplex_status='ok',duplex_energy_kcal_mol=float('nan'))])
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        index.ingest('j3',p)
+        r=json.loads(index.db.execute('SELECT payload FROM j3').fetchone()[0])
+        assert r['duplex_status']=='failed'
+        assert r['duplex_energy_kcal_mol'] is None
+
+
+def test_j3_bulk_sequence_columns_are_projected_away(tmp_path):
+    m=api()
+    assert m.J3_DROP_COLUMNS == {'target_with_flank','flank_left','flank_right','duplex_structure'}
+    p=write(tmp_path/'j3.parquet',[dict(site(),target_with_flank='A'*5000,flank_left='C'*80,
+        flank_right='G'*80,duplex_structure='('*5000,duplex_status='ok',duplex_energy_kcal_mol=-7.5)])
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        index.ingest('j3',p)
+        r=json.loads(index.db.execute('SELECT payload FROM j3').fetchone()[0])
+    assert not m.J3_DROP_COLUMNS & set(r)
+    assert r['duplex_energy_kcal_mol']==-7.5
+
+
+def test_geometry_explicit_canonical_sites_excludes_terminal_boundaries():
+    m=api(); loci=[dict(locus_id='e',chrom='chr1',start1=10,end1=230,strand='+',donor_position=130,acceptor_position=None)]
+    r=m.geometry(site(),loci)
+    assert r['acceptor_distance'] is None
+    assert r['donor_distance']==-9.5
+
+
+def test_j2_chunk_lookup_across_batch_boundary_and_invalid_assembly(tmp_path):
+    m=api()
+    rows=[dict(locus_id='e',strand='+',pos_end_1b_transcript=i,W=80,L=40,u=4,p_unpaired=i/1000) for i in range(1,601)]
+    p=write(tmp_path/'grid.parquet',rows,{b'coordinates':b'GRCh38; GENCODE v50'})
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        index.ingest('j2',p)
+        assert index.db.execute('SELECT COUNT(*) FROM j2').fetchone()[0] < 10
+        loc=dict(locus_id='e',chrom='chr1',start1=10,end1=800,strand='+')
+        row=dict(site(),start1=519,end1=522)
+        result=index.annotate(row,[loc],m.GeometryIndex([loc]))
+        assert json.loads(result['j2_accessibility'])[0]['value']==.513
+    bad=write(tmp_path/'bad.parquet',rows[:1],{b'coordinates':b'GRCh37; GENCODE v19'})
+    with m.FeatureIndex(tmp_path/'i2.sqlite') as index:
+        with pytest.raises(ValueError,match='assembly'): index.ingest('j2',bad)
+
+
+def test_canonical_terminal_exons_and_gap_refusal(tmp_path):
+    m=api(); p=tmp_path/'loci.tsv'
+    p.write_text('tx:ex1\tchr1\t10\t230\t+\ntx:ex2\tchr1\t300\t530\t+\n')
+    loci=m.load_loci([p])
+    assert loci[0]['acceptor_position'] is None
+    assert loci[1]['donor_position'] is None
+    assert loci[1]['acceptor_position']==400
+    p.write_text('tx:ex1\tchr1\t10\t230\t+\ntx:ex3\tchr1\t300\t530\t+\n')
+    with pytest.raises(ValueError,match='incomplete'): m.load_loci([p])
+
+
+def test_shared_catalog_reused_across_output_shards(tmp_path):
+    m=api(); p=write(tmp_path/'j6.parquet',[site()]); loc=tmp_path/'loc.tsv'; loc.write_text('e\tchr1\t10\t230\t+\n')
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        context=m.prepare_join(index,[loc],tmp_path)
+        a=m.join_shard(p,tmp_path/'a.parquet',index,[loc],context=context)
+        b=m.join_shard(p,tmp_path/'b.parquet',index,[loc],context=context)
+    assert a['contract']['catalog_sha256']==b['contract']['catalog_sha256']
+    assert (tmp_path/'feature_inputs.json').is_file()
+
+
+def test_damaged_done_rebuild_and_context_rejects_late_index_mutation(tmp_path):
+    m=api(); p=write(tmp_path/'j6.parquet',[site()]); loc=tmp_path/'loc.tsv'; loc.write_text('e\tchr1\t10\t230\t+\n')
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        out=tmp_path/'a.parquet'; m.join_shard(p,out,index,[loc]); out.with_suffix('.done').write_text('{')
+        assert m.join_shard(p,out,index,[loc])['rows']==1
+        context=m.prepare_join(index,[loc],tmp_path)
+        j3=write(tmp_path/'j3.parquet',[site()]); index.ingest('j3',j3)
+        with pytest.raises(ValueError,match='changed'): m.join_shard(p,tmp_path/'b.parquet',index,[loc],context=context)
+
+
+def test_cli_bounded_inventory_without_directory_scan(tmp_path):
+    m=api(); root=tmp_path/'root'; root.mkdir()
+    for name in ['j6_genome_v1','j3_genome_v1','j2_phase1','j2_phase2','j4_configs']:
+        (root/name).mkdir()
+    (root/'j6_genome_v1/run_manifest.json').write_text(json.dumps({'expected_shards':['one']}))
+    write(root/'j6_genome_v1/one.parquet',[site()])
+    write(root/'j3_genome_v1/j3_shard0000_of0256.parquet',[site()])
+    for phase in (1,2):
+        write(root/f'j2_phase{phase}/j2_shard0000.parquet',[
+            dict(locus_id=f'e{phase}',strand='+',pos_end_1b_transcript=113,W=80,L=40,u=4,p_unpaired=.2)],
+            {b'coordinates':b'GRCh38; GENCODE v50'})
+    (root/'j4_configs/j4_configs_manifest.tsv').write_text('#config_id\tstatus\nnone\tskipped\n')
+    loci=tmp_path/'loci.tsv'; loci.write_text('e1\tchr1\t10\t230\t+\n')
+    out=tmp_path/'out'
+    m.main(['--root',str(root),'--out',str(out),'--bounded','--loci',str(loci)])
+    result=json.loads((out/'manifest.json').read_text())
+    assert result['rows']==1 and result['coverage']=='partial'
+    assert len(result['inputs'])==3
