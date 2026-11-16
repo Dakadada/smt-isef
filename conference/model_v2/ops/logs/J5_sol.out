@@ -9701,3 +9701,1242 @@ index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..f2049a4efe810fc8d0fa6fa5c177f346
 +
  if __name__=='__main__': raise SystemExit(main())
 
+exec
+/usr/bin/bash -lc "/home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+from conference.model_v2 import j5_rbp_context as j5
+files=list(j5.inventory(Path.home()/'orcd/scratch/feng/encode'))
+counts={kind:sum(x[3]==kind for x in files) for kind in ('peaks','kd')}
+lines=['J5: focused tests 31 passed, 0 skipped, 0 failed; real-data evidence DO-NOT-ADVANCE. U=assembly unverified (ingestion refuses); H=HepG2, K=K562, p=peaks, d=KD, -=no local file. Every accession below is U.']
+for rbp in j5.RBPS:
+    parts=[]
+    for cell,short in zip(j5.CELLS,('H','K')):
+        for kind,tag in (('peaks','p'),('kd','d')):
+            names=[p.name.split('.')[0] for p,r,c,k in files if (r,c,k)==(rbp,cell,kind)]
+            parts.append(short+tag+':'+(','.join(names) if names else '-'))
+    lines.append(rbp+' '+ ' '.join(parts))
+lines.append('Checks: all 3 sbatch files pass bash -n; owned-file whitespace clean. Required feng gate: RUNNING (will replace with exact final counts).')
+lines.append('Submit commands (NOT executed): "'`j5id=$(sbatch --parsable conference/model_v2/jobs/j5_index.sbatch); sbatch --dependency=afterok:"$j5id" conference/model_v2/jobs/j5_sentinel.sbatch; J5_QUERY_LIST="$HOME/orcd/scratch/feng/model_v2/j5_j6_queries.txt" sbatch --dependency=afterok:"$j5id" conference/model_v2/jobs/j5_full.sbatch`'"')
+lines.append(f'Limitations: {counts[\"peaks\"]} peak + {counts[\"kd\"]} KD files, 0 verified assemblies; all 114 leading peak headers lack assembly; ENCODE lookup failed (DNS/web unavailable). KD format sampled from FUS/HepG2 ENCFF915LBL (rMATS tar); no KD assembly inferred. File SHA/count manifest awaits unsubmitted index job. Full command requires prepared ordered shard list; supply J5_METADATA for metadata, J5_GENE_BOUNDS/J5_FASTA for GC controls; KD direction requires documented sample order. Production RSS/runtime unmeasured; no J8 edits/integration, no submissions/commits.')
+assert len(lines)==25
+path=Path('conference/model_v2/ops/briefs/J5_RESULT.md')
+assert not path.exists()
+path.write_text('\\n'.join(lines)+'\\n')
+print('report_lines',len(lines),'input_counts',counts,'assay_pairs',len({(r,c) for _,r,c,k in files if k=='peaks'}))
+PY" in /home/dashii/smt-isef
+ succeeded in 1838ms:
+report_lines 25 input_counts {'peaks': 114, 'kd': 38} assay_pairs 38
+
+hook: PostToolUse
+hook: PostToolUse Completed
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..f2049a4efe810fc8d0fa6fa5c177f346ed4958a9
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+                         evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
++        stat = path.stat()
+         sha, md5 = digests(path)
+-        stat = path.stat()
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+ exited 1 in 303490ms:
+........................................................................ [ 12%]
+..............................................................s......... [ 24%]
+........................................................................ [ 36%]
+.......................F................................................ [ 49%]
+........................................................................ [ 61%]
+....sss......................................................s.......... [ 73%]
+........................................................................ [ 85%]
+........................................................................ [ 98%]
+...........                                                              [100%]
+=================================== FAILURES ===================================
+__________ test_implementation_has_no_legacy_reference[source_file42] __________
+
+source_file = PosixPath('/home/dashii/smt-isef/feng/src/feng/source_auth.py')
+
+    @pytest.mark.parametrize("source_file", sorted(SOURCE_ROOT.rglob("*.py")))
+    def test_implementation_has_no_legacy_reference(source_file: Path) -> None:
+        text = source_file.read_text(encoding="utf-8")
+        hits = [token for token in FORBIDDEN_REFERENCES if token in text]
+>       assert not hits, f"{source_file.relative_to(SOURCE_ROOT)} references {hits}"
+E       AssertionError: source_auth.py references ['src/']
+E       assert not ['src/']
+
+feng/tests/test_cleanroom.py:23: AssertionError
+=========================== short test summary info ============================
+FAILED feng/tests/test_cleanroom.py::test_implementation_has_no_legacy_reference[source_file42]
+1 failed, 581 passed, 5 skipped in 293.68s (0:04:53)
+
+exec
+/usr/bin/bash -lc 'ps -u dashii -o pid,etimes,pcpu,args' in /home/dashii/smt-isef
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 1428ms:
+    PID ELAPSED %CPU COMMAND
+      1       1 26.0 codex-linux-sandbox --sandbox-policy-cwd /home/dashii/smt-isef --command-cwd /home/dashii/smt-isef --permission-profile {"type":"managed","file_system":{"type":"restricted","entries":[{"path":{"type":"special","value":{"kind":"root"}},"access":"read"},{"path":{"type":"path","path":"/home/dashii/smt-isef"},"access":"write"},{"path":{"type":"special","value":{"kind":"slash_tmp"}},"access":"write"},{"path":{"type":"special","value":{"kind":"tmpdir"}},"access":"write"},{"path":{"type":"path","path":"/home/dashii/smt-isef/.git"},"access":"read","missing_path_behavior":"skip"},{"path":{"type":"path","path":"/home/dashii/smt-isef/.agents"},"access":"read","missing_path_behavior":"skip"},{"path":{"type":"path","path":"/home/dashii/smt-isef/.codex"},"access":"read","missing_path_behavior":"skip"},{"path":{"type":"path","path":"/home/dashii/smt-isef/.aws"},"access":"read","missing_path_behavior":"skip"}]},"network":"restricted"} --apply-seccomp-then-exec -- /usr/bin/bash -c __CODEX_SNAPSHOT_OVERRIDE_SET_0="${CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS+x}" __CODEX_SNAPSHOT_OVERRIDE_0="${CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS-}" __CODEX_SNAPSHOT_OVERRIDE_SET_1="${CODEX_PERMISSION_PROFILE+x}" __CODEX_SNAPSHOT_OVERRIDE_1="${CODEX_PERMISSION_PROFILE-}" __CODEX_SNAPSHOT_OVERRIDE_SET_2="${CODEX_PLUGIN_METRICS_OUTPUT+x}" __CODEX_SNAPSHOT_OVERRIDE_2="${CODEX_PLUGIN_METRICS_OUTPUT-}" __CODEX_SNAPSHOT_OVERRIDE_SET_3="${CODEX_SESSION_ID+x}" __CODEX_SNAPSHOT_OVERRIDE_3="${CODEX_SESSION_ID-}" __CODEX_SNAPSHOT_OVERRIDE_SET_4="${CODEX_THREAD_ID+x}" __CODEX_SNAPSHOT_OVERRIDE_4="${CODEX_THREAD_ID-}" __CODEX_SNAPSHOT_OVERRIDE_SET_5="${CODEX_VERSION+x}" __CODEX_SNAPSHOT_OVERRIDE_5="${CODEX_VERSION-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_0="${ALL_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_0="${ALL_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_1="${BUNDLE_HTTPS_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_1="${BUNDLE_HTTPS_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_2="${BUNDLE_HTTP_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_2="${BUNDLE_HTTP_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_3="${BUNDLE_NO_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_3="${BUNDLE_NO_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_4="${BUNDLE_SSL_CA_CERT+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_4="${BUNDLE_SSL_CA_CERT-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_5="${CARGO_HTTP_CAINFO+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_5="${CARGO_HTTP_CAINFO-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_6="${CODEX_CA_CERTIFICATE+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_6="${CODEX_CA_CERTIFICATE-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_7="${CODEX_NETWORK_ALLOW_LOCAL_BINDING+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_7="${CODEX_NETWORK_ALLOW_LOCAL_BINDING-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_8="${CODEX_NETWORK_PROXY_ACTIVE+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_8="${CODEX_NETWORK_PROXY_ACTIVE-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_9="${CODEX_NETWORK_PROXY_ATTRIBUTION+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_9="${CODEX_NETWORK_PROXY_ATTRIBUTION-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_10="${CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_10="${CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_11="${CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_11="${CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_12="${CURL_CA_BUNDLE+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_12="${CURL_CA_BUNDLE-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_13="${DOCKER_HTTPS_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_13="${DOCKER_HTTPS_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_14="${DOCKER_HTTP_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_14="${DOCKER_HTTP_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_15="${ELECTRON_GET_USE_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_15="${ELECTRON_GET_USE_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_16="${FTP_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_16="${FTP_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_17="${GIT_SSL_CAINFO+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_17="${GIT_SSL_CAINFO-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_18="${HTTPS_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_18="${HTTPS_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_19="${HTTP_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_19="${HTTP_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_20="${NODE_EXTRA_CA_CERTS+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_20="${NODE_EXTRA_CA_CERTS-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_21="${NODE_USE_ENV_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_21="${NODE_USE_ENV_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_22="${NO_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_22="${NO_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_23="${NPM_CONFIG_CAFILE+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_23="${NPM_CONFIG_CAFILE-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_24="${NPM_CONFIG_HTTPS_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_24="${NPM_CONFIG_HTTPS_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_25="${NPM_CONFIG_HTTP_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_25="${NPM_CONFIG_HTTP_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_26="${NPM_CONFIG_NOPROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_26="${NPM_CONFIG_NOPROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_27="${NPM_CONFIG_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_27="${NPM_CONFIG_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_28="${PIP_CERT+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_28="${PIP_CERT-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_29="${PIP_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_29="${PIP_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_30="${REQUESTS_CA_BUNDLE+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_30="${REQUESTS_CA_BUNDLE-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_31="${SSL_CERT_FILE+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_31="${SSL_CERT_FILE-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_32="${WSS_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_32="${WSS_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_33="${WS_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_33="${WS_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_34="${YARN_HTTPS_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_34="${YARN_HTTPS_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_35="${YARN_HTTP_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_35="${YARN_HTTP_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_36="${YARN_NO_PROXY+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_36="${YARN_NO_PROXY-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_37="${all_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_37="${all_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_38="${ftp_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_38="${ftp_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_39="${http_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_39="${http_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_40="${https_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_40="${https_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_41="${no_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_41="${no_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_42="${npm_config_cafile+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_42="${npm_config_cafile-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_43="${npm_config_http_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_43="${npm_config_http_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_44="${npm_config_https_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_44="${npm_config_https_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_45="${npm_config_noproxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_45="${npm_config_noproxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_46="${npm_config_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_46="${npm_config_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_47="${ws_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_47="${ws_proxy-}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_48="${wss_proxy+x}" __CODEX_SNAPSHOT_PROXY_OVERRIDE_48="${wss_proxy-}" __CODEX_SNAPSHOT_PROXY_ENV_SET="${CODEX_NETWORK_PROXY_ACTIVE+x}"  if . '/home/dashii/.codex/shell_snapshots/01a1e23a-81ee-73d3-bacb-4f647084a779.1794796855494202545.sh' >/dev/null 2>&1; then :; fi  if [ -n "${__CODEX_SNAPSHOT_OVERRIDE_SET_0}" ]; then   if [ -z "${CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS+x}" ] || [ "${CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS-}" != "${__CODEX_SNAPSHOT_OVERRIDE_0}" ]; then export CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS="${__CODEX_SNAPSHOT_OVERRIDE_0}"; else export CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS; fi else builtin unset CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS 2>/dev/null || command unset CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS; fi builtin unset __CODEX_SNAPSHOT_OVERRIDE_SET_0 __CODEX_SNAPSHOT_OVERRIDE_0 2>/dev/null || command unset __CODEX_SNAPSHOT_OVERRIDE_SET_0 __CODEX_SNAPSHOT_OVERRIDE_0 if [ -n "${__CODEX_SNAPSHOT_OVERRIDE_SET_1}" ]; then   if [ -z "${CODEX_PERMISSION_PROFILE+x}" ] || [ "${CODEX_PERMISSION_PROFILE-}" != "${__CODEX_SNAPSHOT_OVERRIDE_1}" ]; then export CODEX_PERMISSION_PROFILE="${__CODEX_SNAPSHOT_OVERRIDE_1}"; else export CODEX_PERMISSION_PROFILE; fi else builtin unset CODEX_PERMISSION_PROFILE 2>/dev/null || command unset CODEX_PERMISSION_PROFILE; fi builtin unset __CODEX_SNAPSHOT_OVERRIDE_SET_1 __CODEX_SNAPSHOT_OVERRIDE_1 2>/dev/null || command unset __CODEX_SNAPSHOT_OVERRIDE_SET_1 __CODEX_SNAPSHOT_OVERRIDE_1 if [ -n "${__CODEX_SNAPSHOT_OVERRIDE_SET_2}" ]; then   if [ -z "${CODEX_PLUGIN_METRICS_OUTPUT+x}" ] || [ "${CODEX_PLUGIN_METRICS_OUTPUT-}" != "${__CODEX_SNAPSHOT_OVERRIDE_2}" ]; then export CODEX_PLUGIN_METRICS_OUTPUT="${__CODEX_SNAPSHOT_OVERRIDE_2}"; else export CODEX_PLUGIN_METRICS_OUTPUT; fi else builtin unset CODEX_PLUGIN_METRICS_OUTPUT 2>/dev/null || command unset CODEX_PLUGIN_METRICS_OUTPUT; fi builtin unset __CODEX_SNAPSHOT_OVERRIDE_SET_2 __CODEX_SNAPSHOT_OVERRIDE_2 2>/dev/null || command unset __CODEX_SNAPSHOT_OVERRIDE_SET_2 __CODEX_SNAPSHOT_OVERRIDE_2 if [ -n "${__CODEX_SNAPSHOT_OVERRIDE_SET_3}" ]; then   if [ -z "${CODEX_SESSION_ID+x}" ] || [ "${CODEX_SESSION_ID-}" != "${__CODEX_SNAPSHOT_OVERRIDE_3}" ]; then export CODEX_SESSION_ID="${__CODEX_SNAPSHOT_OVERRIDE_3}"; else export CODEX_SESSION_ID; fi else builtin unset CODEX_SESSION_ID 2>/dev/null || command unset CODEX_SESSION_ID; fi builtin unset __CODEX_SNAPSHOT_OVERRIDE_SET_3 __CODEX_SNAPSHOT_OVERRIDE_3 2>/dev/null || command unset __CODEX_SNAPSHOT_OVERRIDE_SET_3 __CODEX_SNAPSHOT_OVERRIDE_3 if [ -n "${__CODEX_SNAPSHOT_OVERRIDE_SET_4}" ]; then   if [ -z "${CODEX_THREAD_ID+x}" ] || [ "${CODEX_THREAD_ID-}" != "${__CODEX_SNAPSHOT_OVERRIDE_4}" ]; then export CODEX_THREAD_ID="${__CODEX_SNAPSHOT_OVERRIDE_4}"; else export CODEX_THREAD_ID; fi else builtin unset CODEX_THREAD_ID 2>/dev/null || command unset CODEX_THREAD_ID; fi builtin unset __CODEX_SNAPSHOT_OVERRIDE_SET_4 __CODEX_SNAPSHOT_OVERRIDE_4 2>/dev/null || command unset __CODEX_SNAPSHOT_OVERRIDE_SET_4 __CODEX_SNAPSHOT_OVERRIDE_4 if [ -n "${__CODEX_SNAPSHOT_OVERRIDE_SET_5}" ]; then   if [ -z "${CODEX_VERSION+x}" ] || [ "${CODEX_VERSION-}" != "${__CODEX_SNAPSHOT_OVERRIDE_5}" ]; then export CODEX_VERSION="${__CODEX_SNAPSHOT_OVERRIDE_5}"; else export CODEX_VERSION; fi else builtin unset CODEX_VERSION 2>/dev/null || command unset CODEX_VERSION; fi builtin unset __CODEX_SNAPSHOT_OVERRIDE_SET_5 __CODEX_SNAPSHOT_OVERRIDE_5 2>/dev/null || command unset __CODEX_SNAPSHOT_OVERRIDE_SET_5 __CODEX_SNAPSHOT_OVERRIDE_5 if [ -n "$__CODEX_SNAPSHOT_PROXY_ENV_SET" ] || [ -n "${CODEX_NETWORK_PROXY_ACTIVE+x}" ]; then if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_0}" ]; then   if [ -z "${ALL_PROXY+x}" ] || [ "${ALL_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_0}" ]; then export ALL_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_0}"; else export ALL_PROXY; fi else builtin unset ALL_PROXY 2>/dev/null || command unset ALL_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_0 __CODEX_SNAPSHOT_PROXY_OVERRIDE_0 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_0 __CODEX_SNAPSHOT_PROXY_OVERRIDE_0 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_1}" ]; then   if [ -z "${BUNDLE_HTTPS_PROXY+x}" ] || [ "${BUNDLE_HTTPS_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_1}" ]; then export BUNDLE_HTTPS_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_1}"; else export BUNDLE_HTTPS_PROXY; fi else builtin unset BUNDLE_HTTPS_PROXY 2>/dev/null || command unset BUNDLE_HTTPS_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_1 __CODEX_SNAPSHOT_PROXY_OVERRIDE_1 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_1 __CODEX_SNAPSHOT_PROXY_OVERRIDE_1 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_2}" ]; then   if [ -z "${BUNDLE_HTTP_PROXY+x}" ] || [ "${BUNDLE_HTTP_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_2}" ]; then export BUNDLE_HTTP_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_2}"; else export BUNDLE_HTTP_PROXY; fi else builtin unset BUNDLE_HTTP_PROXY 2>/dev/null || command unset BUNDLE_HTTP_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_2 __CODEX_SNAPSHOT_PROXY_OVERRIDE_2 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_2 __CODEX_SNAPSHOT_PROXY_OVERRIDE_2 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_3}" ]; then   if [ -z "${BUNDLE_NO_PROXY+x}" ] || [ "${BUNDLE_NO_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_3}" ]; then export BUNDLE_NO_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_3}"; else export BUNDLE_NO_PROXY; fi else builtin unset BUNDLE_NO_PROXY 2>/dev/null || command unset BUNDLE_NO_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_3 __CODEX_SNAPSHOT_PROXY_OVERRIDE_3 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_3 __CODEX_SNAPSHOT_PROXY_OVERRIDE_3 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_4}" ]; then   if [ -z "${BUNDLE_SSL_CA_CERT+x}" ] || [ "${BUNDLE_SSL_CA_CERT-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_4}" ]; then export BUNDLE_SSL_CA_CERT="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_4}"; else export BUNDLE_SSL_CA_CERT; fi else builtin unset BUNDLE_SSL_CA_CERT 2>/dev/null || command unset BUNDLE_SSL_CA_CERT; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_4 __CODEX_SNAPSHOT_PROXY_OVERRIDE_4 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_4 __CODEX_SNAPSHOT_PROXY_OVERRIDE_4 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_5}" ]; then   if [ -z "${CARGO_HTTP_CAINFO+x}" ] || [ "${CARGO_HTTP_CAINFO-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_5}" ]; then export CARGO_HTTP_CAINFO="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_5}"; else export CARGO_HTTP_CAINFO; fi else builtin unset CARGO_HTTP_CAINFO 2>/dev/null || command unset CARGO_HTTP_CAINFO; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_5 __CODEX_SNAPSHOT_PROXY_OVERRIDE_5 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_5 __CODEX_SNAPSHOT_PROXY_OVERRIDE_5 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_6}" ]; then   if [ -z "${CODEX_CA_CERTIFICATE+x}" ] || [ "${CODEX_CA_CERTIFICATE-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_6}" ]; then export CODEX_CA_CERTIFICATE="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_6}"; else export CODEX_CA_CERTIFICATE; fi else builtin unset CODEX_CA_CERTIFICATE 2>/dev/null || command unset CODEX_CA_CERTIFICATE; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_6 __CODEX_SNAPSHOT_PROXY_OVERRIDE_6 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_6 __CODEX_SNAPSHOT_PROXY_OVERRIDE_6 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_7}" ]; then   if [ -z "${CODEX_NETWORK_ALLOW_LOCAL_BINDING+x}" ] || [ "${CODEX_NETWORK_ALLOW_LOCAL_BINDING-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_7}" ]; then export CODEX_NETWORK_ALLOW_LOCAL_BINDING="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_7}"; else export CODEX_NETWORK_ALLOW_LOCAL_BINDING; fi else builtin unset CODEX_NETWORK_ALLOW_LOCAL_BINDING 2>/dev/null || command unset CODEX_NETWORK_ALLOW_LOCAL_BINDING; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_7 __CODEX_SNAPSHOT_PROXY_OVERRIDE_7 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_7 __CODEX_SNAPSHOT_PROXY_OVERRIDE_7 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_8}" ]; then   if [ -z "${CODEX_NETWORK_PROXY_ACTIVE+x}" ] || [ "${CODEX_NETWORK_PROXY_ACTIVE-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_8}" ]; then export CODEX_NETWORK_PROXY_ACTIVE="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_8}"; else export CODEX_NETWORK_PROXY_ACTIVE; fi else builtin unset CODEX_NETWORK_PROXY_ACTIVE 2>/dev/null || command unset CODEX_NETWORK_PROXY_ACTIVE; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_8 __CODEX_SNAPSHOT_PROXY_OVERRIDE_8 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_8 __CODEX_SNAPSHOT_PROXY_OVERRIDE_8 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_9}" ]; then   if [ -z "${CODEX_NETWORK_PROXY_ATTRIBUTION+x}" ] || [ "${CODEX_NETWORK_PROXY_ATTRIBUTION-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_9}" ]; then export CODEX_NETWORK_PROXY_ATTRIBUTION="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_9}"; else export CODEX_NETWORK_PROXY_ATTRIBUTION; fi else builtin unset CODEX_NETWORK_PROXY_ATTRIBUTION 2>/dev/null || command unset CODEX_NETWORK_PROXY_ATTRIBUTION; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_9 __CODEX_SNAPSHOT_PROXY_OVERRIDE_9 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_9 __CODEX_SNAPSHOT_PROXY_OVERRIDE_9 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_10}" ]; then   if [ -z "${CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS+x}" ] || [ "${CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_10}" ]; then export CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_10}"; else export CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS; fi else builtin unset CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS 2>/dev/null || command unset CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_10 __CODEX_SNAPSHOT_PROXY_OVERRIDE_10 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_10 __CODEX_SNAPSHOT_PROXY_OVERRIDE_10 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_11}" ]; then   if [ -z "${CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE+x}" ] || [ "${CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_11}" ]; then export CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_11}"; else export CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE; fi else builtin unset CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE 2>/dev/null || command unset CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_11 __CODEX_SNAPSHOT_PROXY_OVERRIDE_11 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_11 __CODEX_SNAPSHOT_PROXY_OVERRIDE_11 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_12}" ]; then   if [ -z "${CURL_CA_BUNDLE+x}" ] || [ "${CURL_CA_BUNDLE-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_12}" ]; then export CURL_CA_BUNDLE="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_12}"; else export CURL_CA_BUNDLE; fi else builtin unset CURL_CA_BUNDLE 2>/dev/null || command unset CURL_CA_BUNDLE; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_12 __CODEX_SNAPSHOT_PROXY_OVERRIDE_12 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_12 __CODEX_SNAPSHOT_PROXY_OVERRIDE_12 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_13}" ]; then   if [ -z "${DOCKER_HTTPS_PROXY+x}" ] || [ "${DOCKER_HTTPS_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_13}" ]; then export DOCKER_HTTPS_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_13}"; else export DOCKER_HTTPS_PROXY; fi else builtin unset DOCKER_HTTPS_PROXY 2>/dev/null || command unset DOCKER_HTTPS_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_13 __CODEX_SNAPSHOT_PROXY_OVERRIDE_13 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_13 __CODEX_SNAPSHOT_PROXY_OVERRIDE_13 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_14}" ]; then   if [ -z "${DOCKER_HTTP_PROXY+x}" ] || [ "${DOCKER_HTTP_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_14}" ]; then export DOCKER_HTTP_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_14}"; else export DOCKER_HTTP_PROXY; fi else builtin unset DOCKER_HTTP_PROXY 2>/dev/null || command unset DOCKER_HTTP_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_14 __CODEX_SNAPSHOT_PROXY_OVERRIDE_14 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_14 __CODEX_SNAPSHOT_PROXY_OVERRIDE_14 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_15}" ]; then   if [ -z "${ELECTRON_GET_USE_PROXY+x}" ] || [ "${ELECTRON_GET_USE_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_15}" ]; then export ELECTRON_GET_USE_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_15}"; else export ELECTRON_GET_USE_PROXY; fi else builtin unset ELECTRON_GET_USE_PROXY 2>/dev/null || command unset ELECTRON_GET_USE_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_15 __CODEX_SNAPSHOT_PROXY_OVERRIDE_15 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_15 __CODEX_SNAPSHOT_PROXY_OVERRIDE_15 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_16}" ]; then   if [ -z "${FTP_PROXY+x}" ] || [ "${FTP_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_16}" ]; then export FTP_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_16}"; else export FTP_PROXY; fi else builtin unset FTP_PROXY 2>/dev/null || command unset FTP_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_16 __CODEX_SNAPSHOT_PROXY_OVERRIDE_16 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_16 __CODEX_SNAPSHOT_PROXY_OVERRIDE_16 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_17}" ]; then   if [ -z "${GIT_SSL_CAINFO+x}" ] || [ "${GIT_SSL_CAINFO-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_17}" ]; then export GIT_SSL_CAINFO="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_17}"; else export GIT_SSL_CAINFO; fi else builtin unset GIT_SSL_CAINFO 2>/dev/null || command unset GIT_SSL_CAINFO; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_17 __CODEX_SNAPSHOT_PROXY_OVERRIDE_17 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_17 __CODEX_SNAPSHOT_PROXY_OVERRIDE_17 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_18}" ]; then   if [ -z "${HTTPS_PROXY+x}" ] || [ "${HTTPS_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_18}" ]; then export HTTPS_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_18}"; else export HTTPS_PROXY; fi else builtin unset HTTPS_PROXY 2>/dev/null || command unset HTTPS_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_18 __CODEX_SNAPSHOT_PROXY_OVERRIDE_18 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_18 __CODEX_SNAPSHOT_PROXY_OVERRIDE_18 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_19}" ]; then   if [ -z "${HTTP_PROXY+x}" ] || [ "${HTTP_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_19}" ]; then export HTTP_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_19}"; else export HTTP_PROXY; fi else builtin unset HTTP_PROXY 2>/dev/null || command unset HTTP_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_19 __CODEX_SNAPSHOT_PROXY_OVERRIDE_19 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_19 __CODEX_SNAPSHOT_PROXY_OVERRIDE_19 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_20}" ]; then   if [ -z "${NODE_EXTRA_CA_CERTS+x}" ] || [ "${NODE_EXTRA_CA_CERTS-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_20}" ]; then export NODE_EXTRA_CA_CERTS="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_20}"; else export NODE_EXTRA_CA_CERTS; fi else builtin unset NODE_EXTRA_CA_CERTS 2>/dev/null || command unset NODE_EXTRA_CA_CERTS; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_20 __CODEX_SNAPSHOT_PROXY_OVERRIDE_20 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_20 __CODEX_SNAPSHOT_PROXY_OVERRIDE_20 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_21}" ]; then   if [ -z "${NODE_USE_ENV_PROXY+x}" ] || [ "${NODE_USE_ENV_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_21}" ]; then export NODE_USE_ENV_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_21}"; else export NODE_USE_ENV_PROXY; fi else builtin unset NODE_USE_ENV_PROXY 2>/dev/null || command unset NODE_USE_ENV_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_21 __CODEX_SNAPSHOT_PROXY_OVERRIDE_21 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_21 __CODEX_SNAPSHOT_PROXY_OVERRIDE_21 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_22}" ]; then   if [ -z "${NO_PROXY+x}" ] || [ "${NO_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_22}" ]; then export NO_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_22}"; else export NO_PROXY; fi else builtin unset NO_PROXY 2>/dev/null || command unset NO_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_22 __CODEX_SNAPSHOT_PROXY_OVERRIDE_22 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_22 __CODEX_SNAPSHOT_PROXY_OVERRIDE_22 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_23}" ]; then   if [ -z "${NPM_CONFIG_CAFILE+x}" ] || [ "${NPM_CONFIG_CAFILE-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_23}" ]; then export NPM_CONFIG_CAFILE="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_23}"; else export NPM_CONFIG_CAFILE; fi else builtin unset NPM_CONFIG_CAFILE 2>/dev/null || command unset NPM_CONFIG_CAFILE; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_23 __CODEX_SNAPSHOT_PROXY_OVERRIDE_23 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_23 __CODEX_SNAPSHOT_PROXY_OVERRIDE_23 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_24}" ]; then   if [ -z "${NPM_CONFIG_HTTPS_PROXY+x}" ] || [ "${NPM_CONFIG_HTTPS_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_24}" ]; then export NPM_CONFIG_HTTPS_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_24}"; else export NPM_CONFIG_HTTPS_PROXY; fi else builtin unset NPM_CONFIG_HTTPS_PROXY 2>/dev/null || command unset NPM_CONFIG_HTTPS_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_24 __CODEX_SNAPSHOT_PROXY_OVERRIDE_24 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_24 __CODEX_SNAPSHOT_PROXY_OVERRIDE_24 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_25}" ]; then   if [ -z "${NPM_CONFIG_HTTP_PROXY+x}" ] || [ "${NPM_CONFIG_HTTP_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_25}" ]; then export NPM_CONFIG_HTTP_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_25}"; else export NPM_CONFIG_HTTP_PROXY; fi else builtin unset NPM_CONFIG_HTTP_PROXY 2>/dev/null || command unset NPM_CONFIG_HTTP_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_25 __CODEX_SNAPSHOT_PROXY_OVERRIDE_25 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_25 __CODEX_SNAPSHOT_PROXY_OVERRIDE_25 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_26}" ]; then   if [ -z "${NPM_CONFIG_NOPROXY+x}" ] || [ "${NPM_CONFIG_NOPROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_26}" ]; then export NPM_CONFIG_NOPROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_26}"; else export NPM_CONFIG_NOPROXY; fi else builtin unset NPM_CONFIG_NOPROXY 2>/dev/null || command unset NPM_CONFIG_NOPROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_26 __CODEX_SNAPSHOT_PROXY_OVERRIDE_26 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_26 __CODEX_SNAPSHOT_PROXY_OVERRIDE_26 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_27}" ]; then   if [ -z "${NPM_CONFIG_PROXY+x}" ] || [ "${NPM_CONFIG_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_27}" ]; then export NPM_CONFIG_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_27}"; else export NPM_CONFIG_PROXY; fi else builtin unset NPM_CONFIG_PROXY 2>/dev/null || command unset NPM_CONFIG_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_27 __CODEX_SNAPSHOT_PROXY_OVERRIDE_27 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_27 __CODEX_SNAPSHOT_PROXY_OVERRIDE_27 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_28}" ]; then   if [ -z "${PIP_CERT+x}" ] || [ "${PIP_CERT-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_28}" ]; then export PIP_CERT="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_28}"; else export PIP_CERT; fi else builtin unset PIP_CERT 2>/dev/null || command unset PIP_CERT; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_28 __CODEX_SNAPSHOT_PROXY_OVERRIDE_28 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_28 __CODEX_SNAPSHOT_PROXY_OVERRIDE_28 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_29}" ]; then   if [ -z "${PIP_PROXY+x}" ] || [ "${PIP_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_29}" ]; then export PIP_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_29}"; else export PIP_PROXY; fi else builtin unset PIP_PROXY 2>/dev/null || command unset PIP_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_29 __CODEX_SNAPSHOT_PROXY_OVERRIDE_29 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_29 __CODEX_SNAPSHOT_PROXY_OVERRIDE_29 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_30}" ]; then   if [ -z "${REQUESTS_CA_BUNDLE+x}" ] || [ "${REQUESTS_CA_BUNDLE-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_30}" ]; then export REQUESTS_CA_BUNDLE="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_30}"; else export REQUESTS_CA_BUNDLE; fi else builtin unset REQUESTS_CA_BUNDLE 2>/dev/null || command unset REQUESTS_CA_BUNDLE; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_30 __CODEX_SNAPSHOT_PROXY_OVERRIDE_30 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_30 __CODEX_SNAPSHOT_PROXY_OVERRIDE_30 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_31}" ]; then   if [ -z "${SSL_CERT_FILE+x}" ] || [ "${SSL_CERT_FILE-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_31}" ]; then export SSL_CERT_FILE="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_31}"; else export SSL_CERT_FILE; fi else builtin unset SSL_CERT_FILE 2>/dev/null || command unset SSL_CERT_FILE; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_31 __CODEX_SNAPSHOT_PROXY_OVERRIDE_31 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_31 __CODEX_SNAPSHOT_PROXY_OVERRIDE_31 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_32}" ]; then   if [ -z "${WSS_PROXY+x}" ] || [ "${WSS_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_32}" ]; then export WSS_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_32}"; else export WSS_PROXY; fi else builtin unset WSS_PROXY 2>/dev/null || command unset WSS_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_32 __CODEX_SNAPSHOT_PROXY_OVERRIDE_32 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_32 __CODEX_SNAPSHOT_PROXY_OVERRIDE_32 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_33}" ]; then   if [ -z "${WS_PROXY+x}" ] || [ "${WS_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_33}" ]; then export WS_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_33}"; else export WS_PROXY; fi else builtin unset WS_PROXY 2>/dev/null || command unset WS_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_33 __CODEX_SNAPSHOT_PROXY_OVERRIDE_33 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_33 __CODEX_SNAPSHOT_PROXY_OVERRIDE_33 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_34}" ]; then   if [ -z "${YARN_HTTPS_PROXY+x}" ] || [ "${YARN_HTTPS_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_34}" ]; then export YARN_HTTPS_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_34}"; else export YARN_HTTPS_PROXY; fi else builtin unset YARN_HTTPS_PROXY 2>/dev/null || command unset YARN_HTTPS_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_34 __CODEX_SNAPSHOT_PROXY_OVERRIDE_34 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_34 __CODEX_SNAPSHOT_PROXY_OVERRIDE_34 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_35}" ]; then   if [ -z "${YARN_HTTP_PROXY+x}" ] || [ "${YARN_HTTP_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_35}" ]; then export YARN_HTTP_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_35}"; else export YARN_HTTP_PROXY; fi else builtin unset YARN_HTTP_PROXY 2>/dev/null || command unset YARN_HTTP_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_35 __CODEX_SNAPSHOT_PROXY_OVERRIDE_35 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_35 __CODEX_SNAPSHOT_PROXY_OVERRIDE_35 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_36}" ]; then   if [ -z "${YARN_NO_PROXY+x}" ] || [ "${YARN_NO_PROXY-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_36}" ]; then export YARN_NO_PROXY="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_36}"; else export YARN_NO_PROXY; fi else builtin unset YARN_NO_PROXY 2>/dev/null || command unset YARN_NO_PROXY; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_36 __CODEX_SNAPSHOT_PROXY_OVERRIDE_36 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_36 __CODEX_SNAPSHOT_PROXY_OVERRIDE_36 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_37}" ]; then   if [ -z "${all_proxy+x}" ] || [ "${all_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_37}" ]; then export all_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_37}"; else export all_proxy; fi else builtin unset all_proxy 2>/dev/null || command unset all_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_37 __CODEX_SNAPSHOT_PROXY_OVERRIDE_37 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_37 __CODEX_SNAPSHOT_PROXY_OVERRIDE_37 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_38}" ]; then   if [ -z "${ftp_proxy+x}" ] || [ "${ftp_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_38}" ]; then export ftp_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_38}"; else export ftp_proxy; fi else builtin unset ftp_proxy 2>/dev/null || command unset ftp_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_38 __CODEX_SNAPSHOT_PROXY_OVERRIDE_38 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_38 __CODEX_SNAPSHOT_PROXY_OVERRIDE_38 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_39}" ]; then   if [ -z "${http_proxy+x}" ] || [ "${http_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_39}" ]; then export http_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_39}"; else export http_proxy; fi else builtin unset http_proxy 2>/dev/null || command unset http_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_39 __CODEX_SNAPSHOT_PROXY_OVERRIDE_39 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_39 __CODEX_SNAPSHOT_PROXY_OVERRIDE_39 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_40}" ]; then   if [ -z "${https_proxy+x}" ] || [ "${https_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_40}" ]; then export https_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_40}"; else export https_proxy; fi else builtin unset https_proxy 2>/dev/null || command unset https_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_40 __CODEX_SNAPSHOT_PROXY_OVERRIDE_40 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_40 __CODEX_SNAPSHOT_PROXY_OVERRIDE_40 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_41}" ]; then   if [ -z "${no_proxy+x}" ] || [ "${no_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_41}" ]; then export no_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_41}"; else export no_proxy; fi else builtin unset no_proxy 2>/dev/null || command unset no_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_41 __CODEX_SNAPSHOT_PROXY_OVERRIDE_41 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_41 __CODEX_SNAPSHOT_PROXY_OVERRIDE_41 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_42}" ]; then   if [ -z "${npm_config_cafile+x}" ] || [ "${npm_config_cafile-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_42}" ]; then export npm_config_cafile="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_42}"; else export npm_config_cafile; fi else builtin unset npm_config_cafile 2>/dev/null || command unset npm_config_cafile; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_42 __CODEX_SNAPSHOT_PROXY_OVERRIDE_42 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_42 __CODEX_SNAPSHOT_PROXY_OVERRIDE_42 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_43}" ]; then   if [ -z "${npm_config_http_proxy+x}" ] || [ "${npm_config_http_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_43}" ]; then export npm_config_http_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_43}"; else export npm_config_http_proxy; fi else builtin unset npm_config_http_proxy 2>/dev/null || command unset npm_config_http_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_43 __CODEX_SNAPSHOT_PROXY_OVERRIDE_43 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_43 __CODEX_SNAPSHOT_PROXY_OVERRIDE_43 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_44}" ]; then   if [ -z "${npm_config_https_proxy+x}" ] || [ "${npm_config_https_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_44}" ]; then export npm_config_https_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_44}"; else export npm_config_https_proxy; fi else builtin unset npm_config_https_proxy 2>/dev/null || command unset npm_config_https_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_44 __CODEX_SNAPSHOT_PROXY_OVERRIDE_44 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_44 __CODEX_SNAPSHOT_PROXY_OVERRIDE_44 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_45}" ]; then   if [ -z "${npm_config_noproxy+x}" ] || [ "${npm_config_noproxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_45}" ]; then export npm_config_noproxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_45}"; else export npm_config_noproxy; fi else builtin unset npm_config_noproxy 2>/dev/null || command unset npm_config_noproxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_45 __CODEX_SNAPSHOT_PROXY_OVERRIDE_45 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_45 __CODEX_SNAPSHOT_PROXY_OVERRIDE_45 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_46}" ]; then   if [ -z "${npm_config_proxy+x}" ] || [ "${npm_config_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_46}" ]; then export npm_config_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_46}"; else export npm_config_proxy; fi else builtin unset npm_config_proxy 2>/dev/null || command unset npm_config_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_46 __CODEX_SNAPSHOT_PROXY_OVERRIDE_46 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_46 __CODEX_SNAPSHOT_PROXY_OVERRIDE_46 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_47}" ]; then   if [ -z "${ws_proxy+x}" ] || [ "${ws_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_47}" ]; then export ws_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_47}"; else export ws_proxy; fi else builtin unset ws_proxy 2>/dev/null || command unset ws_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_47 __CODEX_SNAPSHOT_PROXY_OVERRIDE_47 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_47 __CODEX_SNAPSHOT_PROXY_OVERRIDE_47 if [ -n "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_48}" ]; then   if [ -z "${wss_proxy+x}" ] || [ "${wss_proxy-}" != "${__CODEX_SNAPSHOT_PROXY_OVERRIDE_48}" ]; then export wss_proxy="${__CODEX_SNAPSHOT_PROXY_OVERRIDE_48}"; else export wss_proxy; fi else builtin unset wss_proxy 2>/dev/null || command unset wss_proxy; fi builtin unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_48 __CODEX_SNAPSHOT_PROXY_OVERRIDE_48 2>/dev/null || command unset __CODEX_SNAPSHOT_PROXY_OVERRIDE_SET_48 __CODEX_SNAPSHOT_PROXY_OVERRIDE_48 fi if [ -n "${PATH:-}" ]; then export PATH='/home/dashii/.codex/packages/standalone/releases/0.159.2-x86_64-unknown-linux-musl/codex-path':"$PATH"; else export PATH='/home/dashii/.codex/packages/standalone/releases/0.159.2-x86_64-unknown-linux-musl/codex-path'; fi  exec '/usr/bin/bash' -c 'ps -u dashii -o pid,etimes,pcpu,args'
+      2       0  0.0 ps -u dashii -o pid,etimes,pcpu,args
+
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..f2049a4efe810fc8d0fa6fa5c177f346ed4958a9
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+                         evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
++        stat = path.stat()
+         sha, md5 = digests(path)
+-        stat = path.stat()
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+codex
+J5’s focused gate passes: 31 passed, 0 skipped, 0 failed. The repository gate finished with 581 passed, 5 skipped, 1 failed: `feng/tests/test_cleanroom.py:23` flags a forbidden `src/` reference in `feng/src/feng/source_auth.py`. Those files are outside J5’s edit scope, so I’m leaving the failure unfixed and recording it in the result brief.
+exec
+/usr/bin/bash -lc "cat >> conference/model_v2/tests/test_j5_rbp_context.py <<'PY'
+
+
+def test_missing_kd_measurement_is_explicitly_unavailable(index,tmp_path):
+    p,md=kd_tar(tmp_path,'ID\\tchr\\tstrand\\texonStart_0base\\texonEnd\\tIncLevelDifference',
+                'e1\\tchr5\\t+\\t100\\t110\\tNA')
+    index.add_file(p,'FUS','HepG2',kind='kd',metadata=md)
+    event=get(index)['knockdown']['events'][0]
+    assert event['raw_sample1_minus_sample2'] is None
+    assert event['measurement_evidence_class']=='not_available'
+PY
+PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j5_rbp_context.py -q" in /home/dashii/smt-isef
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..f2049a4efe810fc8d0fa6fa5c177f346ed4958a9
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+                         evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
++        stat = path.stat()
+         sha, md5 = digests(path)
+-        stat = path.stat()
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+ exited 1 in 4427ms:
+...............................F                                         [100%]
+=================================== FAILURES ===================================
+____________ test_missing_kd_measurement_is_explicitly_unavailable _____________
+
+index = <conference.model_v2.j5_rbp_context.ContextIndex object at 0x7f8084ab8450>
+tmp_path = PosixPath('/tmp/pytest-of-dashii/pytest-29/test_missing_kd_measurement_is0')
+
+    def test_missing_kd_measurement_is_explicitly_unavailable(index,tmp_path):
+        p,md=kd_tar(tmp_path,'ID\tchr\tstrand\texonStart_0base\texonEnd\tIncLevelDifference',
+                    'e1\tchr5\t+\t100\t110\tNA')
+        index.add_file(p,'FUS','HepG2',kind='kd',metadata=md)
+        event=get(index)['knockdown']['events'][0]
+        assert event['raw_sample1_minus_sample2'] is None
+>       assert event['measurement_evidence_class']=='not_available'
+E       AssertionError: assert 'observed' == 'not_available'
+E         
+E         - not_available
+E         + observed
+
+conference/model_v2/tests/test_j5_rbp_context.py:337: AssertionError
+=========================== short test summary info ============================
+FAILED conference/model_v2/tests/test_j5_rbp_context.py::test_missing_kd_measurement_is_explicitly_unavailable
+1 failed, 31 passed in 2.38s
+

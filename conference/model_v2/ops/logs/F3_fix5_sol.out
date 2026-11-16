@@ -1,2 +1,2159 @@
 WARNING: failed to clean up stale arg0 temp dirs: Directory not empty (os error 39)
 Reading additional input from stdin...
+OpenAI Codex v0.159.2
+--------
+workdir: /home/dashii/smt-isef
+model: gpt-6.1-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1e24f-3435-7c12-9e00-64fdec3386d1
+--------
+user
+# TASK F3-FIX5 (Codex gpt-6.1-sol, medium). Owner ONLY conference/model_v2/evaluation_core.py + tests/test_evaluation_core.py. Read conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md (2 MED: invisible U+200B/Cyrillic confusables in assay/study ids evade the duplicate guard; casefold wrongly merges genuine case-distinct replicate ids). Close this class of bug STRUCTURALLY, not by more normalization: identifiers (assay_id, study_id, independent_unit_id, observation_id) become an opaque, CASE-SENSITIVE, ASCII-only vocabulary [A-Za-z0-9._:+-] (max 128 chars, no whitespace, no control/format/non-ASCII); anything else raises SchemaError at validation (public entry points + read_table); remove casefold/NFKC/strip from ids (keep canonicalization for sequence/chrom/chemistry only). Document the contract in the module docstring. Regression tests from all repros in F3_REREVIEW4_RESULT.md and earlier REREVIEW files (trailing-space, zero-width, Cyrillic lookalike -> now rejected; AssayA vs assaya -> distinct genuine replicates). Keep all existing tests passing except ones that encode the old id-normalization (update and say which). Run from repo root: PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_evaluation_core.py -q. Report <=10 lines conference/model_v2/ops/briefs/F3_FIX5_RESULT.md. No commits/submissions/sealed data.
+warning: clamping SessionEnd hook timeout to 3s in /home/dashii/.codex/plugins/cache/openai-codex/codex/1.0.6/hooks/hooks.json
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+hook: UserPromptSubmit Completed
+codex
+I’ll check the rereview repros, add strict case-sensitive ID validation and regression tests, then run the requested test command. I’ll limit edits to the two owned files and required result report.
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/using-superpowers/SKILL.md' in /home/dashii/smt-isef
+ succeeded in 1305ms:
+---
+name: using-superpowers
+description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+---
+
+<SUBAGENT-STOP>
+If you were dispatched as a subagent to execute a specific task, ignore this skill.
+</SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. You cannot rationalize your way out of this.
+</EXTREMELY-IMPORTANT>
+
+## The Rule
+
+**Invoke relevant or requested skills BEFORE any response or action** — including clarifying questions, exploring the codebase, or checking files. If it turns out wrong for the situation, you don't have to use it.
+
+**Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
+
+Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
+
+## Skill Priority
+
+When multiple skills apply, process skills come first — they set the approach, then implementation skills (frontend-design, etc.) carry it out. Brainstorming and systematic-debugging are Superpowers' most common process skills, but the rule holds for any of them.
+
+- "Let's build X" → superpowers:brainstorming first, then implementation skills.
+- "Fix this bug" → superpowers:systematic-debugging first, then domain skills.
+
+## Red Flags
+
+These thoughts mean STOP—you're rationalizing:
+
+| Thought | Reality |
+|---------|---------|
+| "This is just a simple question" | Questions are tasks. Check for skills. |
+| "I need more context first" | Skill check comes BEFORE clarifying questions. |
+| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
+| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
+| "Let me gather information first" | Skills tell you HOW to gather information. |
+| "This doesn't need a formal skill" | If a skill exists, use it. |
+| "I remember this skill" | Skills evolve. Read current version. |
+| "This doesn't count as a task" | Action = task. Check for skills. |
+| "The skill is overkill" | Simple things become complex. Use it. |
+| "I'll just do this one thing first" | Check BEFORE doing anything. |
+| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
+| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+
+## Platform Adaptation
+
+If your harness appears here, read its reference file for special instructions:
+
+- Claude Code: `references/claude-code-tools.md`
+- Codex: `references/codex-tools.md`
+- Pi: `references/pi-tools.md`
+- Antigravity: `references/antigravity-tools.md`
+- Hermes Agent: `references/hermes-tools.md`
+- Muse: `references/muse-tools.md`
+
+## User Instructions
+
+User instructions (CLAUDE.md, AGENTS.md, GEMINI.md, etc, direct requests) take precedence over skills, which in turn override default behavior. Only skip skill workflows or instructions when your human partner has explicitly told you to.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "sed -n '1,65p' feng/HANDOFF.md; cat conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md; cat /etc/motd.d/*; cat /home/dashii/orcd/.quota" in /home/dashii/smt-isef
+ succeeded in 1223ms:
+# HANDOFF — feng/ (the new prospective arm)
+
+Entry point for anyone (Claude or Codex) picking up the `feng/` arm. The old
+`src/`/`pre/` program is a separate, committed effort — see `docs/HANDOFF.md`.
+`feng/` does not touch that code.
+
+> **History trimmed 2026-09-09.** The blow-by-blow Arm D publish-atomicity review
+> saga (R1–R4, H1–H5) and the Arm E hoff bug#1–#4 / site-15 saga are SUPERSEDED
+> (both arms' compute is out) and live in git history of this file (working tree at
+> `f0b0d48` + uncommitted). Earlier dated checkpoints (09-01…09-04) are in
+> `feng/HANDOFF_ARCHIVE.md`. This file = LIVE state + evergreen orientation only.
+
+---
+## ⏩ CONFERENCE POSTER — LIVE (2026-09-30)
+GOAL (user): get compute out. Keep HANDOFF current so /clear is always safe. Codex MCP still DOWN
+(CONNECTION_CLOSED) but the **CLI route WORKS** — see Codex route note below. sol-low rule stands.
+All prior monitors/heartbeat STOPPED (user paused, then resumed).
+- **★★★ 2026-10-28 — ITEM 2 (PSI efficacy) REANALYSIS: endogenous size series band identity SOLVED by
+  blind replicate validation. NOT yet adversarially reviewed (standing gate OPEN).**
+  Source data = the two endogenous size-series gels in repo root (untracked): `Singh Lab Quantified
+  Data - 7-27 truncated ASOs endogenous (including RT PCR) samples 1-9.csv` (audit "Gel 8") +
+  `...7-28 ASO size comparison w samples 1-9 on endogenous gene (+RT PCR).csv` ("Gel 9"). They are a
+  REPLICATE PAIR of the same size series → used as the independent (non-circular) scorer.
+  METHOD: blind brute force over all 6 band-pair hypotheses (product bands at Rf clusters ~0.40 /
+  ~0.48 / ~0.56 / ~0.58; inclusion = lower-Rf = larger amplicon), scored ONLY on cross-gel replicate
+  agreement — biology NEVER fed into selection, applied only as an after-the-fact check.
+  WINNER: **+E7 (inclusion) = ~0.56 band, ΔE7 (skipping) = ~0.58 band; the big ~0.40 band is a
+  non-product (gDNA/heteroduplex), excluded.** Pearson r=0.991 / Spearman ρ=0.967 (NOT ceiling-driven:
+  only lanes F18 & 3UP8 peg at 100%, dropping them r=0.995; max lane-to-lane |Δ|=4.0 pp). The lab
+  audit's PHOTO band call (+E7=upper0.40 / ΔE7=0.56) ranks DEAD LAST (r=0.030) → this reanalysis
+  OVERTURNS the workbook photo assignment in `psi25/SMN2_all_sources_PSI_band_assignment_audit.xlsx`.
+  RESULT under the FINAL-PSI loading order (lane2=WT,3=Scr18,4=F18,5=Scr14,6=F14,7=Scr10,8=F10,
+  9=Scr8,10=3UP8) — mean inclusion PSI% (G8/G9): F18 100(100/100), 3UP8 98(100/96), F14 95(94/96),
+  F10 91(90/93) | Scr18 74, Scr10 71, Scr8 67, WT 59, Scr14 57. All 4 actives (91-100) ≫ all 5
+  controls (57-74), clean bimodal gap; **F18>F14>F10 potency order correct** → CORROBORATES item 1 ΔG
+  rank (F18 -24.7 > F14 -17.0 > F10 -11.1): binding energy predicts inclusion.
+  CAVEATS (do NOT publish as measured): (1) RANK-only, not quantitative — F18/3UP8 peg at 100% ceiling
+  (skip band ~absent) + WT=59% baseline is biologically high (untreated SMN2 usually ~10-20%) ⇒
+  absolute PSI miscalibrated; safe claim = ORDERING only. (2) Band rule is replicate-VALIDATED but the
+  lane→ASO LABELS still assume the FINAL-PSI loading order (the 4-active/5-control split is forced by
+  the PSI gap, but which active=F18 vs F14 is not). (3) CONTRADICTS the gel photo → needs ONE
+  amplicon-size anchor (ladder MW or junction/seq call) to confirm 0.56=+E7 before publication.
+  7-17 POSITIONAL (E3 walk A-F) endogenous pair ATTEMPTED, FAILED validation: trial-1 lanes 5-8 are
+  single-band → PSI undefined → replicate anchor collapses (best r=-0.31). Too degenerate to blind-
+  validate from this export; NOT presenting a number. Only the size series survives.
+  Scripts (session scratchpad, SESSION-SCOPED — rebuildable from this entry if gone):
+  `/tmp/claude-264670/-home-dashii-smt-isef/1f0a4778-fd3f-44fb-94ee-1a8a1119f4cd/scratchpad/`
+  {brute.py (6-hypothesis blind search), psi_perm2.py (coherence), xlsxdump.py (audit reader)}.
+  NEXT: STANDING-GATE Codex sol adversarial review of this reanalysis BEFORE it feeds any artifact;
+  lab ask = (a) lane→ASO map + (b) one amplicon-size anchor. No artifact written yet.
+- **★★★ 2026-10-05/06 — ITEM 3 JOB 24817368 COMPLETED, B DEFECT CONFIRMED FIXED. REVIEW IN FLIGHT.**
+  `sacct`: **COMPLETED exit 0:0**, elapsed **1-11:57:02** (~36h, vs the 4.5h ETA — shards slowed from
+  ~1min to ~40min each late in the run), End 2026-10-05T22:07:21, MaxRSS 7.67G of 120G. **241/241**
+  accessibility shards `.done`. Tables rewritten 22:07 in `conference/artifacts/item3_spec_{occupancy,
+  gated,absolute}.tsv` + `item3_spec_provenance.txt`. NOTE job stdout/stderr logs are **0 bytes** (shard
+  loop prints nothing) — shard `.done` mtimes in
+  `/orcd/scratch/orcd/011/dashii/conference_smn2_aso/results/item3_spec_v1/accessibility_shards/` are
+  the real progress signal, NOT the logs.
+  **B IS REAL NOW:** applicable/evaluated/**failed** → F18 10/10/**0**, F14 1751/1751/**0**,
+  F10 320202/320202/**0** (was 100% failed). Accessible loci (genes): F18 3 (3), F14 1133 (1114),
+  F10 204838 (35268). Gate cuts everyone ~3-4× but **ordering unchanged** — @100nM `sum_theta_off`
+  ungated→gated: F18 16→3, F14 4144→1133, F10 577057→148952; burden F10/F18=**49,650.7×**,
+  F14/F18=377.7×; specificity ratio F10/F18=**1.995e-5**, F14/F18=2.648e-3; `theta_on_over_sum_theta_off`
+  F18 0.3333 / F14 8.826e-4 / F10 6.650e-6. Expression still `unavailable` (expected).
+  ⇒ **A, B, C now all agree: length DEGRADES specificity. No regime shows honest parity.** Headline
+# F3-REREVIEW4 — DO-NOT-ADVANCE
+- MED `conference/model_v2/evaluation_core.py:260`: invisible U+200B in assay IDs survives NFKC; append 20 renamed negative copies with increasing U+200B suffixes: duplicate groups=0, AUROC 0.9→0.3. Reject invisible/control and confusable identifiers or define an enforced identifier vocabulary.
+- MED `conference/model_v2/evaluation_core.py:260`: casefold silently merges distinct case-sensitive assay IDs: otherwise identical genuine replicates `AssayA` and `assaya` become duplicate contributors and metrics block. Preserve opaque IDs or require and validate a documented case-insensitive identifier contract upstream.
+- Prior repros: 20 trailing-space assay aliases, 20 sequence-case aliases, chromosome `5`, uppercase chemistry, and changed annotations now block; baseline AUROC 0.9. NaN/-inf/bool/string thresholds and NaN/+inf/-1/bool limits reject; zero limit accepts.
+- U/T and chromosome aliases merge; opposite strands remain distinct; float coordinates reject. Canonical study group IDs agree; a clearly distinct replicate ID remains distinct. Unicode Cyrillic lookalikes also evade duplicate detection.
+- Targeted pytest: 430 passed, 0 failed, 0 skipped (5.59 s); cache/bytecode disabled to honor read-only scope. No source edits, submissions, or sealed data; full feng suite not run (task-specific gate).
+ ==========================================================================
+|        MIT Office of Research Computing and Data Engaging System         |
+|                                                                          |
+|  Website:            https://orcd.mit.edu                                |
+|  Documentation:      https://orcd-docs.mit.edu                           |
+|  Web Portal:         https://orcd-ood.mit.edu                            |
+|  Consulting:         orcd-help-engaging@mit.edu                          |
+|  Office Hours:       https://orcd.mit.edu/news-and-events/office-hours   |
+|  ORCD Updates Slack: https://mit-orcd-updates.slack.com                  |
+ ==========================================================================
+ *************************************************************************
+*                 === IMPORTANT POLICY INFORMATION ===                     *
+*                                                                          *
+* - Account and password sharing is prohibited.                            *
+* - ORCD systems are suitable for storing low-level security requirements. *
+*   See https://orcd-docs.mit.edu/data-security/ for more information.     *
+* - See https://orcd-docs.mit.edu/code-of-conduct/ for Acceptable Use and  *
+*   Code of Conduct.                                                       *
+* - Authorized users must adhere to ALL MIT Acceptable Use Policies:       *
+*               https://ist.mit.edu/about/it-policies                      *
+*                                                                          *
+ *************************************************************************
+ *************************************************************************
+
+                               QUOTA REPORT
+ Space   | Usage (GB) | Limit (GB) | % Used |  Files | Limit | % Used
+---------+------------+------------+--------+--------+-------+--------
+ HOME    |      133.5 |      200.0 |  66.73 | 719.8K |  1.0M |  71.98
+ SCRATCH |      699.5 |     1024.0 |  68.31 | 610.9K |  1.0M |  61.09
+ POOL    |      231.8 |     1024.0 |  22.64 | 506.4K |  1.1M |  46.04
+Last updated: Sun Nov 15 21:47:57 EST 2026
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/systematic-debugging/SKILL.md /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/test-driven-development/SKILL.md; git status --short; rg --files -g AGENTS.md -g '*REREVIEW*' conference; sed -n '1,340p' conference/model_v2/evaluation_core.py" in /home/dashii/smt-isef
+ succeeded in 2358ms:
+---
+name: systematic-debugging
+description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
+---
+
+# Systematic Debugging
+
+## Overview
+
+**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
+
+**Violating the letter of this process is violating the spirit of debugging.**
+
+## The Iron Law
+
+```
+NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
+```
+
+If you haven't completed Phase 1, you cannot propose fixes.
+
+## When to Use
+
+Use for ANY technical issue:
+- Test failures
+- Bugs in production
+- Unexpected behavior
+- Performance problems
+- Build failures
+- Integration issues
+
+**Use this ESPECIALLY when:**
+- Under time pressure (emergencies make guessing tempting)
+- "Just one quick fix" seems obvious
+- You've already tried multiple fixes
+- Previous fix didn't work
+- You don't fully understand the issue
+
+**Don't skip when:**
+- Issue seems simple (simple bugs have root causes too)
+- You're in a hurry (rushing guarantees rework)
+- Manager wants it fixed NOW (systematic is faster than thrashing)
+
+## The Four Phases
+
+You MUST complete each phase before proceeding to the next.
+
+### Phase 1: Root Cause Investigation
+
+**BEFORE attempting ANY fix:**
+
+1. **Read Error Messages Carefully**
+   - Don't skip past errors or warnings
+   - They often contain the exact solution
+   - Read stack traces completely
+   - Note line numbers, file paths, error codes
+
+2. **Reproduce Consistently**
+   - Can you trigger it reliably?
+   - What are the exact steps?
+   - Does it happen every time?
+   - If not reproducible → gather more data, don't guess
+
+3. **Check Recent Changes**
+   - What changed that could cause this?
+   - Git diff, recent commits
+   - New dependencies, config changes
+   - Environmental differences
+
+4. **Gather Evidence in Multi-Component Systems**
+
+   **WHEN system has multiple components (CI → build → signing, API → service → database):**
+
+   **BEFORE proposing fixes, add diagnostic instrumentation:**
+   ```
+   For EACH component boundary:
+     - Log what data enters component
+     - Log what data exits component
+     - Verify environment/config propagation
+     - Check state at each layer
+
+   Run once to gather evidence showing WHERE it breaks
+   THEN analyze evidence to identify failing component
+   THEN investigate that specific component
+   ```
+
+   **Example (multi-layer system):**
+   ```bash
+   # Layer 1: Workflow
+   echo "=== Secrets available in workflow: ==="
+   echo "IDENTITY: $([ -n "${IDENTITY:-}" ] && echo SET || echo UNSET)"
+
+   # Layer 2: Build script
+   echo "=== Env vars in build script: ==="
+   printenv IDENTITY >/dev/null 2>&1 && echo "IDENTITY in environment" || echo "IDENTITY not in environment"
+
+   # Layer 3: Signing script
+   echo "=== Keychain state: ==="
+   security list-keychains
+   security find-identity -v
+
+   # Layer 4: Actual signing
+   codesign --sign "$IDENTITY" --verbose=4 "$APP"
+   ```
+
+   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)
+
+5. **Trace Data Flow**
+
+   **WHEN error is deep in call stack:**
+
+   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.
+
+   **Quick version:**
+   - Where does bad value originate?
+   - What called this with bad value?
+   - Keep tracing up until you find the source
+   - Fix at source, not at symptom
+
+### Phase 2: Pattern Analysis
+
+**Find the pattern before fixing:**
+
+1. **Find Working Examples**
+   - Locate similar working code in same codebase
+   - What works that's similar to what's broken?
+
+2. **Compare Against References**
+   - If implementing pattern, read reference implementation COMPLETELY
+   - Don't skim - read every line
+   - Understand the pattern fully before applying
+
+3. **Identify Differences**
+   - What's different between working and broken?
+   - List every difference, however small
+   - Don't assume "that can't matter"
+
+4. **Understand Dependencies**
+   - What other components does this need?
+   - What settings, config, environment?
+   - What assumptions does it make?
+
+### Phase 3: Hypothesis and Testing
+
+**Scientific method:**
+
+1. **Form Single Hypothesis**
+   - State clearly: "I think X is the root cause because Y"
+   - Write it down
+   - Be specific, not vague
+
+2. **Test Minimally**
+   - Make the SMALLEST possible change to test hypothesis
+   - One variable at a time
+   - Don't fix multiple things at once
+
+3. **Verify Before Continuing**
+   - Did it work? Yes → Phase 4
+   - Didn't work? Form NEW hypothesis
+   - DON'T add more fixes on top
+
+4. **When You Don't Know**
+   - Say "I don't understand X"
+   - Don't pretend to know
+   - Ask for help
+   - Research more
+
+### Phase 4: Implementation
+
+**Fix the root cause, not the symptom:**
+
+1. **Create Failing Test Case**
+   - Simplest possible reproduction
+   - Automated test if possible
+   - One-off test script if no framework
+   - MUST have before fixing
+   - Use the `superpowers:test-driven-development` skill for writing proper failing tests
+
+2. **Implement Single Fix**
+   - Address the root cause identified
+   - ONE change at a time
+   - No "while I'm here" improvements
+   - No bundled refactoring
+
+3. **Verify Fix**
+   - Test passes now?
+   - No other tests broken?
+   - Issue actually resolved?
+   - Use the `superpowers:verification-before-completion` skill before claiming success
+
+4. **If Fix Doesn't Work**
+   - STOP
+   - Count: How many fixes have you tried?
+   - If < 3: Return to Phase 1, re-analyze with new information
+   - **If ≥ 3: STOP and question the architecture (step 5 below)**
+   - DON'T attempt Fix #4 without architectural discussion
+
+5. **If 3+ Fixes Failed: Question Architecture**
+
+   **Pattern indicating architectural problem:**
+   - Each fix reveals new shared state/coupling/problem in different place
+   - Fixes require "massive refactoring" to implement
+   - Each fix creates new symptoms elsewhere
+
+   **STOP and question fundamentals:**
+   - Is this pattern fundamentally sound?
+   - Are we "sticking with it through sheer inertia"?
+   - Should we refactor architecture vs. continue fixing symptoms?
+
+   **Discuss with your human partner before attempting more fixes**
+
+   This is NOT a failed hypothesis - this is a wrong architecture.
+
+## Red Flags - STOP and Follow Process
+
+If you catch yourself thinking:
+- "Quick fix for now, investigate later"
+- "Just try changing X and see if it works"
+- "Add multiple changes, run tests"
+- "Skip the test, I'll manually verify"
+- "It's probably X, let me fix that"
+- "I don't fully understand but this might work"
+- "Pattern says X but I'll adapt it differently"
+- "Here are the main problems: [lists fixes without investigation]"
+- Proposing solutions before tracing data flow
+- **"One more fix attempt" (when already tried 2+)**
+- **Each fix reveals new problem in different place**
+
+**ALL of these mean: STOP. Return to Phase 1.**
+
+**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+
+## your human partner's Signals You're Doing It Wrong
+
+**Watch for these redirections:**
+- "Is that not happening?" - You assumed without verifying
+- "Will it show us...?" - You should have added evidence gathering
+- "Stop guessing" - You're proposing fixes without understanding
+- "Ultra-think this" - Question fundamentals, not just symptoms
+- "We're stuck?" (frustrated) - Your approach isn't working
+
+**When you see these:** STOP. Return to Phase 1.
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple bugs. |
+| "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check thrashing. |
+| "Just try this first, then investigate" | First fix sets the pattern. Do it right from the start. |
+| "I'll write test after confirming fix works" | Untested fixes don't stick. Test first proves it. |
+| "Multiple fixes at once saves time" | Can't isolate what worked. Causes new bugs. |
+| "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Read it completely. |
+| "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
+| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+
+## Quick Reference
+
+| Phase | Key Activities | Success Criteria |
+|-------|---------------|------------------|
+| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
+| **2. Pattern** | Find working examples, compare | Identify differences |
+| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
+| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
+
+## When Process Reveals "No Root Cause"
+
+If systematic investigation reveals issue is truly environmental, timing-dependent, or external:
+
+1. You've completed the process
+2. Document what you investigated
+3. Implement appropriate handling (retry, timeout, error message)
+4. Add monitoring/logging for future investigation
+
+**But:** 95% of "no root cause" cases are incomplete investigation.
+
+## Supporting Techniques
+
+These techniques are part of systematic debugging and available in this directory:
+
+- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger
+- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
+- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
+---
+name: test-driven-development
+description: Use when implementing any feature or bugfix, before writing implementation code
+---
+
+# Test-Driven Development (TDD)
+
+## Overview
+
+Write the test first. Watch it fail. Write minimal code to pass.
+
+**Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
+
+**Violating the letter of the rules is violating the spirit of the rules.**
+
+## When to Use
+
+**Always:**
+- New features
+- Bug fixes
+- Refactoring
+- Behavior changes
+
+**Exceptions (ask your human partner):**
+- Throwaway prototypes
+- Generated code
+- Configuration files
+
+Thinking "skip TDD just this once"? Stop. That's rationalization.
+
+## The Iron Law
+
+```
+NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+```
+
+Write code before the test? Delete it. Start over.
+
+**No exceptions:**
+- Don't keep it as "reference"
+- Don't "adapt" it while writing tests
+- Don't look at it
+- Delete means delete
+
+Implement fresh from tests. Period.
+
+## Red-Green-Refactor
+
+```dot
+digraph tdd_cycle {
+    rankdir=LR;
+    red [label="RED\nWrite failing test", shape=box, style=filled, fillcolor="#ffcccc"];
+    verify_red [label="Verify fails\ncorrectly", shape=diamond];
+    green [label="GREEN\nMinimal code", shape=box, style=filled, fillcolor="#ccffcc"];
+    verify_green [label="Verify passes\nAll green", shape=diamond];
+    refactor [label="REFACTOR\nClean up", shape=box, style=filled, fillcolor="#ccccff"];
+    next [label="Next", shape=ellipse];
+
+    red -> verify_red;
+    verify_red -> green [label="yes"];
+    verify_red -> red [label="wrong\nfailure"];
+    green -> verify_green;
+    verify_green -> refactor [label="yes"];
+    verify_green -> green [label="no"];
+    refactor -> verify_green [label="stay\ngreen"];
+    verify_green -> next;
+    next -> red;
+}
+```
+
+### RED - Write Failing Test
+
+Write one minimal test showing what should happen.
+
+<Good>
+```typescript
+test('retries failed operations 3 times', async () => {
+  let attempts = 0;
+  const operation = () => {
+    attempts++;
+    if (attempts < 3) throw new Error('fail');
+    return 'success';
+  };
+
+  const result = await retryOperation(operation);
+
+  expect(result).toBe('success');
+  expect(attempts).toBe(3);
+});
+```
+Clear name, tests real behavior, one thing
+</Good>
+
+<Bad>
+```typescript
+test('retry works', async () => {
+  const mock = jest.fn()
+    .mockRejectedValueOnce(new Error())
+    .mockRejectedValueOnce(new Error())
+    .mockResolvedValueOnce('success');
+  await retryOperation(mock);
+  expect(mock).toHaveBeenCalledTimes(3);
+});
+```
+Vague name, tests mock not code
+</Bad>
+
+**Requirements:**
+- One behavior
+- Clear name
+- Real code (no mocks unless unavoidable)
+
+### Verify RED - Watch It Fail
+
+**MANDATORY. Never skip.**
+
+```bash
+npm test path/to/test.test.ts
+```
+
+Confirm:
+- Test fails (not errors)
+- Failure message is expected
+- Fails because feature missing (not typos)
+
+**Test passes?** You're testing existing behavior. Fix test.
+
+**Test errors?** Fix error, re-run until it fails correctly.
+
+### GREEN - Minimal Code
+
+Write simplest code to pass the test.
+
+<Good>
+```typescript
+async function retryOperation<T>(fn: () => Promise<T>): Promise<T> {
+  for (let i = 0; i < 3; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i === 2) throw e;
+    }
+  }
+  throw new Error('unreachable');
+}
+```
+Just enough to pass
+</Good>
+
+<Bad>
+```typescript
+async function retryOperation<T>(
+  fn: () => Promise<T>,
+  options?: {
+    maxRetries?: number;
+    backoff?: 'linear' | 'exponential';
+    onRetry?: (attempt: number) => void;
+  }
+): Promise<T> {
+  // YAGNI
+}
+```
+Over-engineered
+</Bad>
+
+Don't add features, refactor other code, or "improve" beyond the test.
+
+### Verify GREEN - Watch It Pass
+
+**MANDATORY.**
+
+```bash
+npm test path/to/test.test.ts
+```
+
+Confirm:
+- Test passes
+- Other tests still pass
+- Output pristine (no errors, warnings)
+
+**Test fails?** Fix code, not test.
+
+**Other tests fail?** Fix now.
+
+**"Other tests" means the project's suite, not just your file.** A
+green run of the test you wrote is not a green suite. Before you call
+the change done, run the project's test command (bare `pytest`,
+`npm test`, `cargo test` — whatever the repo uses) even when your task
+named only one test file. A scope statement in your task bounds the
+deliverable, not your verification. Any failure that run shows —
+including one you didn't cause — goes in your report by name; a red
+test you watched scroll past and didn't mention is a report falsified
+by omission.
+
+### REFACTOR - Clean Up
+
+After green only:
+- Remove duplication
+- Improve names
+- Extract helpers
+
+Keep tests green. Don't add behavior.
+
+### Repeat
+
+Next failing test for next feature.
+
+## Good Tests
+
+| Quality | Good | Bad |
+|---------|------|-----|
+| **Minimal** | One thing. "and" in name? Split it. | `test('validates email and domain and whitespace')` |
+| **Clear** | Name describes behavior | `test('test1')` |
+| **Shows intent** | Demonstrates desired API | Obscures what code should do |
+
+When writing or changing any test, read [writing-good-tests.md](writing-good-tests.md) for the rules that keep tests honest:
+- Name the production change that would make the test fail — before writing it
+- Assert on real behavior, never on mock behavior
+- Keep test-only code in test utilities, out of production classes
+- Understand a dependency's side effects before mocking it
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
+| "I'll test after" | Tests written after pass immediately — which proves nothing. They may test the wrong thing, test the implementation instead of the behavior, or miss the edge case you forgot. You never watched it fail, so you never proved it can catch the bug. Test-first forces that failure. |
+| "Tests after achieve same goals (spirit not ritual)" | Tests-after answer "what does this do?"; tests-first answer "what should this do?" Tests written after are biased by the code you already wrote — you verify the cases you remembered, not the ones you'd have discovered. Coverage without proof the tests work. |
+| "Already manually tested" | Manual testing is ad-hoc: no record of what you covered, no way to re-run it when the code changes, easy to forget cases under pressure. "Worked when I tried it" ≠ comprehensive. Automated tests run the same way every time. |
+| "Deleting X hours is wasteful" | Sunk cost fallacy — that time is already spent either way. The real choice: rewrite with TDD (high confidence) vs. keep it and bolt tests on after (low confidence, likely bugs). Keeping code you can't trust is the waste. |
+| "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
+| "Need to explore first" | Fine. Throw away exploration, start with TDD. |
+| "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
+| "TDD will slow me down" | TDD IS the pragmatic path: catches bugs before commit, prevents regressions, lets you refactor without fear. "Pragmatic" shortcuts mean debugging in production — slower, not faster. |
+| "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
+| "Existing code has no tests" | You're improving it. Add tests for existing code. |
+
+## Red Flags - STOP and Start Over
+
+- Code before test
+- Test after implementation
+- Test passes immediately
+- Can't explain why test failed
+- Tests added "later"
+- Rationalizing "just this once"
+- "I already manually tested it"
+- "Tests after achieve the same purpose"
+- "It's about spirit not ritual"
+- "Keep as reference" or "adapt existing code"
+- "Already spent X hours, deleting is wasteful"
+- "TDD is dogmatic, I'm being pragmatic"
+- "This is different because..."
+
+**All of these mean: Delete code. Start over with TDD.**
+
+## Example: Bug Fix
+
+**Bug:** Empty email accepted
+
+**RED**
+```typescript
+test('rejects empty email', async () => {
+  const result = await submitForm({ email: '' });
+  expect(result.error).toBe('Email required');
+});
+```
+
+**Verify RED**
+```bash
+$ npm test
+FAIL: expected 'Email required', got undefined
+```
+
+**GREEN**
+```typescript
+function submitForm(data: FormData) {
+  if (!data.email?.trim()) {
+    return { error: 'Email required' };
+  }
+  // ...
+}
+```
+
+**Verify GREEN**
+```bash
+$ npm test
+PASS
+```
+
+**REFACTOR**
+Extract validation for multiple fields if needed.
+
+## Verification Checklist
+
+Before marking work complete:
+
+- [ ] Every new function/method has a test
+- [ ] Watched each test fail before implementing
+- [ ] Each test failed for expected reason (feature missing, not typo)
+- [ ] Wrote minimal code to pass each test
+- [ ] All tests pass
+- [ ] Output pristine (no errors, warnings)
+- [ ] Tests use real code (mocks only if unavoidable)
+- [ ] Edge cases and errors covered
+
+Can't check all boxes? You skipped TDD. Start over.
+
+## When Stuck
+
+| Problem | Solution |
+|---------|----------|
+| Don't know how to test | Write wished-for API. Write assertion first. Ask your human partner. |
+| Test too complicated | Design too complicated. Simplify interface. |
+| Must mock everything | Code too coupled. Use dependency injection. |
+| Test setup huge | Extract helpers. Still complex? Simplify design. |
+
+## Debugging Integration
+
+Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
+
+Never fix bugs without a test.
+
+## Final Rule
+
+```
+Production code → test exists and failed first
+Otherwise → not TDD
+```
+
+No exceptions without your human partner's permission.
+ M conference/model_v2/ops/logs/F3_fix5_sol.out
+ M conference/model_v2/ops/logs/J5_sol.out
+?? conference/model_v2/ops/briefs/J5_RESULT.md
+conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md
+conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md
+conference/model_v2/ops/briefs/F3_REREVIEW3_RESULT.md
+conference/model_v2/ops/briefs/F3_REREVIEW2_RESULT.md
+conference/model_v2/ops/briefs/F3_REREVIEW_RESULT.md
+conference/model_v2/ops/briefs/J6_REREVIEW_RESULT.md
+"""F3 - evaluation core: label states, leakage-free splits, guarded metrics, clustered uncertainty.
+
+Statistics / software-engineering module only. It fits nothing and reads no outcome
+data. Five pieces, each refusing loudly instead of degrading silently:
+
+1. ``validate_table``  - exhaustive label states; a ``verified_negative`` needs explicit
+   ``negative_evidence`` (assayed_and_powered is True + finite nonnegative detection limit) and can
+   never come from a responder-only table (absence is not a negative).
+2. ``make_splits`` / ``make_nested_splits`` - purged group splits. Five leakage axes:
+   near-identical ASO sequence, chemistry family, study, window, independent unit.
+   The test set is one unit of the mode's primary axis; every other row sharing ANY
+   active axis group with a test row is purged (in neither train nor test).
+3. ``compute_metric`` - AUROC/AUPRC/FDR/accuracy/precision/recall/calibration only with
+   enough verified negatives and positives (counted as independent units), otherwise
+   ``MetricBlocked``. ``pu_report`` is the positive-unlabeled alternative and never
+   emits a supervised metric. Unlabeled / unassayed / censored are never negatives.
+4. ``cluster_bootstrap_ci`` - resamples effective independent clusters
+   (``independent_unit_id`` merged with sequence / window overlap); refuses below
+   ``min_clusters``.
+5. ``BASELINES`` (M0..M6) and ``run_ablation`` (leave-feature-family-out interface).
+
+``check_source_not_forbidden`` refuses the July exon-7 outcome workbook, any ``psi25``
+directory and anything under ``feng/terminal`` (SCIENTIFIC_LOCK).
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+import os
+import random
+import re
+import unicodedata
+from dataclasses import asdict, dataclass
+from enum import Enum
+from types import MappingProxyType
+from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
+from urllib.parse import unquote
+
+from conference.model_v2.trans_intervention import EVIDENCE_CLASSES
+
+__all__ = [
+    "LabelState", "ObservationTable", "validate_table", "read_table",
+    "GroupingConfig", "Fold", "SplitPlan", "NestedSplitPlan", "axis_groups",
+    "make_splits", "make_nested_splits", "verify_no_leakage",
+    "MetricPolicy", "MetricResult", "compute_metric", "precision_recall_curve",
+    "PUQuantity", "PUReport", "pu_report",
+    "CIResult", "effective_clusters", "cluster_bootstrap_ci", "bootstrap_metric_ci",
+    "FeatureFamily", "BaselineSpec", "BASELINES", "baseline_feature_columns",
+    "permuted_reference_scores", "AblationCell", "AblationResult", "run_ablation",
+    "check_source_not_forbidden",
+]
+
+
+# ------------------------------------------------------------------ errors
+class SchemaError(ValueError):
+    """A row or argument violates the observation-table contract."""
+
+
+class NegativeEvidenceError(SchemaError):
+    """A verified_negative lacks explicit, powered negative evidence."""
+
+
+class LabelStateError(SchemaError):
+    """A non-negative label state was used (or encoded) as a negative."""
+
+
+class ForbiddenSourceError(RuntimeError):
+    """An input path matches a forbidden outcome source."""
+
+
+class SplitRefused(RuntimeError):
+    """A split was refused (independent N too small, or nothing left to train on)."""
+
+
+class LeakageError(RuntimeError):
+    """A group straddles train and test. Indicates a bug; never expected."""
+
+
+class MetricBlocked(RuntimeError):
+    """A metric was refused; ``reason`` says why."""
+
+    def __init__(self, metric: str, reason: str):
+        super().__init__(f"{metric}: BLOCKED - {reason}")
+        self.metric = metric
+        self.reason = reason
+
+
+class UncertaintyRefused(RuntimeError):
+    """A confidence interval was refused (too few independent clusters)."""
+
+
+class BaselineUndefined(ValueError):
+    """The baseline has no agreed feature set yet."""
+
+
+# ------------------------------------------------------------------ forbidden sources
+_FORBIDDEN_PATTERNS: Tuple[Tuple[str, "re.Pattern[str]"], ...] = (
+    ("july_exon7_outcome_workbook", re.compile(
+        r"smn2[\W_]*exon[\W_]*7[\W_]*7[\W_]*27[\W_]*28[\W_]*complete[\W_]*data", re.I)),
+    ("psi25", re.compile(r"(^|/)psi25(?![A-Za-z0-9])", re.I)),
+    ("feng_terminal", re.compile(r"(^|/)feng/+terminal(?![A-Za-z0-9])", re.I)),
+)
+
+
+def _normalized_source_forms(raw: str) -> set[str]:
+    forms = {raw}
+    current = raw
+    for _ in range(16):
+        normalized = unicodedata.normalize("NFKC", unquote(current)).replace("\\", "/")
+        forms.add(normalized)
+        if normalized == current:
+            break
+        current = normalized
+    else:
+        raise ForbiddenSourceError("source normalization did not converge within 16 steps")
+    for item in tuple(forms):
+        expanded = os.path.expanduser(item.replace("\\", "/"))
+        forms.update((os.path.normpath(expanded), os.path.abspath(expanded)))
+        try:
+            resolved = os.path.realpath(expanded)
+            # Symlink targets may themselves use encoded or Unicode names.
+            for _ in range(16):
+                normalized = unicodedata.normalize("NFKC", unquote(resolved)).replace("\\", "/")
+                forms.update((normalized, os.path.normpath(normalized)))
+                if normalized == resolved:
+                    break
+                resolved = normalized
+            else:
+                raise ForbiddenSourceError("resolved source normalization did not converge")
+        except (OSError, ValueError):
+            pass
+    return forms
+
+
+def check_source_not_forbidden(path: Any) -> str:
+    """Return ``str(path)`` or raise ``ForbiddenSourceError``.
+
+    Checks the literal string, its URL-decoded form, the normalised absolute path
+    and the symlink-resolved path. Only path names are inspected; nothing is opened.
+    """
+    raw = os.fspath(path) if isinstance(path, os.PathLike) else str(path)
+    for form in _normalized_source_forms(raw):
+        text = form.replace("\\", "/")
+        for label, pattern in _FORBIDDEN_PATTERNS:
+            if pattern.search(text):
+                raise ForbiddenSourceError(
+                    f"refused forbidden outcome source ({label}): {raw!r}")
+    return raw
+
+
+def _strings(value: Any) -> List[str]:
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, os.PathLike):
+        return [os.fspath(value)]
+    if isinstance(value, Mapping):
+        return [s for v in value.values() for s in _strings(v)]
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return [s for v in value for s in _strings(v)]
+    return []
+
+
+# ------------------------------------------------------------------ label states / table
+class LabelState(str, Enum):
+    MEASURED_POSITIVE = "measured_positive"
+    VERIFIED_NEGATIVE = "verified_negative"
+    UNLABELED = "unlabeled"
+    UNASSAYED = "unassayed"
+    CENSORED = "censored"
+
+    @classmethod
+    def parse(cls, value: Any) -> "LabelState":
+        if isinstance(value, cls):
+            return value
+        try:
+            return cls(value)
+        except ValueError:
+            raise SchemaError(
+                f"label_state {value!r} not in {[s.value for s in cls]}") from None
+
+
+LABEL_STATES = tuple(s.value for s in LabelState)
+POSITIVE = LabelState.MEASURED_POSITIVE.value
+NEGATIVE = LabelState.VERIFIED_NEGATIVE.value
+REQUIRED_FIELDS = ("observation_id", "label_state", "assay_id", "study_id",
+                   "independent_unit_id", "provenance")
+RESPONDER_ONLY_KINDS = frozenset({"responder_only", "responders_only", "hits_only",
+                                  "positives_only"})
+ABSENCE_BASES = frozenset({"absence", "absent", "absent_from_table", "not_listed",
+                           "not_reported", "inferred", "assumed", "absence_from_responder_list"})
+NEGATIVE_BASES = frozenset({"dose_response", "powered_assay", "direct_measurement",
+                            "assayed_nonresponder", "measured_negative"})
+SOURCE_TABLE_KINDS = RESPONDER_ONLY_KINDS | {"full_screen", "all_assayed", "complete",
+                                           "dose_response", "assay_results"}
+RESPONDER_ONLY_SOURCES = frozenset({"holgersen_s4", "holgersen_table_s4",
+                                   "holgersen_supplementary_table_s4"})
+BINARY_LABEL_FIELDS = ("binary_label", "label", "y")
+# Closed identity contract: assay_id within a study must distinguish experimental
+# conditions and genuine replicate assays. Row/unit names, labels, evidence and
+# arbitrary annotations cannot turn one assay into multiple observations.
+ASSAY_IDENTITY_FIELDS = ("study_id", "assay_id", "aso_sequence", "chemistry_family",
+                         "chrom", "start", "end", "strand")
+
+
+def _category(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", unicodedata.normalize("NFKC", value).casefold()).strip("_")
+
+
+def _freeze(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return MappingProxyType({k: _freeze(v) for k, v in value.items()})
+    if isinstance(value, (tuple, list)):
+        return tuple(_freeze(v) for v in value)
+    if isinstance(value, (set, frozenset)):
+        return frozenset(_freeze(v) for v in value)
+    if isinstance(value, os.PathLike):
+        return os.fspath(value)
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    raise SchemaError(f"unsupported mutable metadata value: {type(value).__name__}")
+
+
+@dataclass(frozen=True)
+class ObservationTable:
+    """Deeply immutable validated rows; public consumers revalidate even this wrapper.
+
+    ``duplicate_assay_records`` lists rows sharing the canonical assay-defining
+    fields, regardless of metadata. They count as one independent unit for grouping;
+    statistics refuse duplicate contributors rather than giving copies extra weight.
+    """
+    rows: Tuple[Mapping[str, Any], ...]
+    duplicate_assay_records: Tuple[Tuple[str, ...], ...] = ()
+
+    def __len__(self) -> int:
+        return len(self.rows)
+
+    @property
+    def ids(self) -> Tuple[str, ...]:
+        return tuple(r["observation_id"] for r in self.rows)
+
+    def subset(self, indices: Sequence[int]) -> "ObservationTable":
+        return ObservationTable(tuple(self.rows[i] for i in indices))
+
+
+def _nonempty(row: Mapping[str, Any], name: str, where: str) -> str:
+    value = row.get(name)
+    if not isinstance(value, str) or not value.strip():
+        raise SchemaError(f"{where}: field {name!r} must be a non-empty string")
+    return value
+
+
+def _canonicalize_assay_identity(row: Dict[str, Any], where: str) -> None:
+    """Canonicalize supplied identity fields once, before hashing or consumption.
+
+    Optional fields may be absent, but supplied values must be valid. Coordinates
+    are already canonical integers; alternate scalar types fail closed.
+    """
+    for name in ("assay_id", "study_id"):
+        row[name] = unicodedata.normalize("NFKC", _nonempty(row, name, where)).strip().casefold()
+        _nonempty(row, name, where)
+    if "aso_sequence" in row:
+        row["aso_sequence"] = normalize_sequence(row["aso_sequence"])
+    if "chemistry_family" in row:
+        row["chemistry_family"] = normalize_chemistry(_nonempty(row, "chemistry_family", where))
+    if "chrom" in row:
+        row["chrom"] = _canonical_chromosome(_nonempty(row, "chrom", f"{where}: window axis"))
+    for name in ("start", "end"):
+        if name in row:
+            _positive_int(row[name], f"{where}: window axis {name}")
+    if "start" in row and "end" in row and row["end"] < row["start"]:
+        raise SchemaError(f"{where}: window axis needs start<=end")
+    if "strand" in row:
+        strand = unicodedata.normalize("NFKC", _nonempty(row, "strand", f"{where}: window axis")).strip()
+        if strand not in ("+", "-"):
+            raise SchemaError(f"{where}: window axis strand must be +/-")
+        row["strand"] = strand
+
+
+def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> ObservationTable:
+    """Validate observation rows (mappings) and return an ``ObservationTable``.
+
+    ``responder_only_studies``: study ids whose tables list responders only (e.g. a
+    hits-only supplement). No ``verified_negative`` may originate from them, and none
+    from a row declaring ``source_table_kind`` in ``RESPONDER_ONLY_KINDS``.
+    """
+    if isinstance(rows, ObservationTable):
+        rows = rows.rows
+    responder_only = RESPONDER_ONLY_SOURCES | frozenset(_category(s) for s in responder_only_studies)
+    out: List[Dict[str, Any]] = []
+    seen = set()
+    for index, row in enumerate(rows):
+        where = f"row {index}"
+        if not isinstance(row, Mapping):
+            raise SchemaError(f"{where}: not a mapping")
+        r = dict(row)
+        oid = _nonempty(r, "observation_id", where)
+        where = f"row {index} ({oid})"
+        if oid in seen:
+            raise SchemaError(f"{where}: duplicate observation_id")
+        seen.add(oid)
+        if "label_state" not in r:
+            raise SchemaError(f"{where}: missing label_state")
+        state = LabelState.parse(r["label_state"])
+        r["label_state"] = state.value
+        for name in ("assay_id", "study_id", "independent_unit_id"):
+            _nonempty(r, name, where)
+        _canonicalize_assay_identity(r, where)
+        prov = r.get("provenance")
+        if isinstance(prov, Mapping):
+            if not isinstance(prov.get("source"), str) or not prov["source"].strip():
+                raise SchemaError(f"{where}: provenance mapping needs a non-empty 'source'")
+        elif not isinstance(prov, str) or not prov.strip():
+            raise SchemaError(f"{where}: provenance must be a non-empty string or mapping")
+        for text in _strings(prov) + _strings(r.get("source_path")):
+            check_source_not_forbidden(text)
+        if r.get("evidence_class") is not None:
+            r["evidence_class"] = _category(str(r["evidence_class"]))
+            if r["evidence_class"] not in EVIDENCE_CLASSES:
+                raise SchemaError(f"{where}: bad evidence_class {r['evidence_class']!r}")
+        kind = _category(str(r.get("source_table_kind", "")))
+        if kind and kind not in SOURCE_TABLE_KINDS:
+            raise NegativeEvidenceError(f"{where}: unknown source_table_kind {kind!r}")
+        if "source_table_kind" in r:
+            r["source_table_kind"] = kind
+
+        if state is LabelState.VERIFIED_NEGATIVE:
+            sources = [r["study_id"]] + _strings(prov) + _strings(r.get("source_path"))
+            source_tokens = [_category(form) for s in sources for form in _normalized_source_forms(s)]
+            known_responder = any(
+                f"_{known}_" in f"_{token}_" for known in responder_only for token in source_tokens)
+            if kind in RESPONDER_ONLY_KINDS or known_responder:
+                raise NegativeEvidenceError(
+                    f"{where}: verified_negative from a responder-only table; absence "
+                    "from a responder list is not a measured negative")
+            ne = r.get("negative_evidence")
+            if not isinstance(ne, Mapping):
+                raise NegativeEvidenceError(
+                    f"{where}: verified_negative requires an explicit negative_evidence mapping")
+            if ne.get("assayed_and_powered") is not True:
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+I’m using the debugging and TDD skills. The duplicate guard currently rewrites assay/study IDs with NFKC, stripping and casefolding; observation/unit IDs only receive nonempty checks. I’ll validate all four with one strict rule before grouping or metrics. The task-specific scope and test command take precedence over the standing `feng/` defaults.
+exec
+/usr/bin/bash -lc "cat conference/model_v2/ops/briefs/F3_REREVIEW_RESULT.md conference/model_v2/ops/briefs/F3_REREVIEW2_RESULT.md conference/model_v2/ops/briefs/F3_REREVIEW3_RESULT.md; rg -n '"'^def |casefold|NFKC|strip'"\\(|study_id|canonical' conference/model_v2/evaluation_core.py; rg -n '"'^def test|canonical|alias|replicate|read_table|entry|study'"' conference/model_v2/tests/test_evaluation_core.py" in /home/dashii/smt-isef
+ succeeded in 1110ms:
+# F3 re-review — DO-NOT-ADVANCE
+Targeted gate: 209 passed, 0 failed, 0 skipped (2.50 s); no jobs or sealed data accessed.
+Original R1–R13 repros rerun; synthetic chemistry aliases registered as in test fixture where needed.
+R1–R3: invalid evidence/policy and responder-only source refused; R3 absence-basis variant refused.
+R4: duplicate independent-unit inflation blocked, but duplicate score weighting remains (finding 4).
+R5–R7: no unit/nested bridge straddle; MOE aliases group and purge correctly.
+R8–R10: changed plan and missing feature manifests refused; all three encoded/Unicode/separator paths refused.
+R11–R12: excluded rows do not inflate CI N; nonfinite point and NaN min_clusters refused.
+R13: k=15 against PU universe 10 is recorded blocked (original pytest.raises now fails as expected).
+
+- HIGH `conference/model_v2/evaluation_core.py:1128`: `merge_axes=()` gives a 12-cluster CI for 12 identical-sequence, overlapping-window rows; default correctly refuses N=1. Make sequence/window merging mandatory for uncertainty, or refuse weakened axes.
+- HIGH `conference/model_v2/evaluation_core.py:406`: `GroupingConfig(sequence_threshold=float('nan'))` accepts NaN; two one-mismatch sequences split across train/test. Require finite nonnegative integer threshold/padding and validate all grouping controls.
+- HIGH `conference/model_v2/evaluation_core.py:497`: overlapping `chr5` and `5` windows form separate groups and enter opposite train/test folds. Canonicalize GRCh38 chromosome names or reject noncanonical names before clustering.
+- MED `conference/model_v2/evaluation_core.py:915`: duplicating one misranked verified negative 20 times changes AUROC 0.9 to 0.3 while independent-negative N remains 10. Reject/deduplicate exact assay copies or use explicit independent-unit weights for metrics and PU statistics.
+- MED `conference/model_v2/evaluation_core.py:665`: `min_independent_groups=float('nan')` permits a two-group split despite the minimum-N guard. Require a positive integer at outer and inner split entry points.
+
+All findings reproduced with synthetic in-memory rows; none fixed in this read-only review. Feature manifests still depend on truthful caller declarations, as noted in F3_FIX_RESULT. Task-specific pytest gate overrides the unrelated feng full-suite instruction.
+# F3-REREVIEW2 — DO-NOT-ADVANCE
+
+- MED `conference/model_v2/evaluation_core.py:336`: duplicate identity hashes every metadata field; adding a different irrelevant `note` to each of 20 renamed copies of one verified negative bypasses the guard and changes AUROC from 0.9 to 0.3 while independent negative N stays 10. Define assay identity from canonical assay-defining fields, or require explicit deduplication/independent-unit weighting before all statistics, including PU and CIs.
+- MED `conference/model_v2/evaluation_core.py:899`: `accuracy` with `threshold=float('nan')` returns 0.5 on 10 positive and 10 verified-negative rows because every comparison is false; `-inf` likewise yields FDR 0.5. Require an explicit finite, non-boolean numeric threshold before classification metrics.
+
+Prior five repros rerun with synthetic rows: weakened CI axes refused; NaN sequence threshold refused; chr5/5 grouped; exact renamed copies refused (baseline AUROC 0.9); NaN split minimum refused. The first finding above extends the fourth fix.
+NaN/inf detection limits refused; negative detection limit -1 is accepted (its physical validity depends on assay units and was not specified). Case, dot-segment, repeatedly encoded and Unicode forbidden paths refused in probes. Manifests still depend on truthful caller declarations; arbitrary in-memory source provenance cannot be authenticated.
+Targeted gate: 304 passed, 0 failed, 0 skipped (4.02 s). No source edits, jobs, sealed data, or full feng suite; task-specific gate used. Findings remain unfixed in this read-only review.
+# F3-REREVIEW3 — DO-NOT-ADVANCE
+
+- MED `conference/model_v2/evaluation_core.py:342`: identity hashes raw values, so aliases evade duplicate detection and reweight metrics. Synthetic 10 positives/10 negatives: AUROC 0.9; append 20 renamed copies of one negative with distinct trailing spaces in `assay_id`, or distinct sequence letter casing, and AUROC becomes 0.3 with zero duplicate groups. Canonicalize/validate identity fields consistently before hashing; include chromosome and chemistry aliases.
+- Repro: a single copy with `chrom='5'` instead of `chr5`, or uppercase chemistry instead of its accepted lowercase spelling, also evades detection (AUROC 0.9 → 0.81818). Field-order reversal is correctly detected as duplicate.
+- Prior MED annotation repro: 20 renamed copies with differing notes/provenance/evidence annotations now raise `MetricBlocked`. Prior MED threshold repro: NaN and -inf, plus boolean and string thresholds, raise `SchemaError`.
+- Detection limits NaN, +inf, -1 and True raise `NegativeEvidenceError`; 0 accepted. Signed/log-scale limits are explicitly unsupported.
+- Replicates with distinct assay IDs remain distinct; same study/assay ID and identical remaining identity fields are flagged even with distinct independent-unit IDs. This follows the documented contract but requires callers to assign unique assay IDs to genuine replicates; reused IDs can falsely block them.
+- Targeted pytest: 373 passed, 0 failed, 0 skipped (4.30 s). No source edits, submissions, sealed data, or full feng suite; task-specific gate used.
+106:def _normalized_source_forms(raw: str) -> set[str]:
+110:        normalized = unicodedata.normalize("NFKC", unquote(current)).replace("\\", "/")
+124:                normalized = unicodedata.normalize("NFKC", unquote(resolved)).replace("\\", "/")
+136:def check_source_not_forbidden(path: Any) -> str:
+152:def _strings(value: Any) -> List[str]:
+186:REQUIRED_FIELDS = ("observation_id", "label_state", "assay_id", "study_id",
+202:ASSAY_IDENTITY_FIELDS = ("study_id", "assay_id", "aso_sequence", "chemistry_family",
+206:def _category(value: str) -> str:
+207:    return re.sub(r"[^a-z0-9]+", "_", unicodedata.normalize("NFKC", value).casefold()).strip("_")
+210:def _freeze(value: Any) -> Any:
+228:    ``duplicate_assay_records`` lists rows sharing the canonical assay-defining
+246:def _nonempty(row: Mapping[str, Any], name: str, where: str) -> str:
+248:    if not isinstance(value, str) or not value.strip():
+253:def _canonicalize_assay_identity(row: Dict[str, Any], where: str) -> None:
+257:    are already canonical integers; alternate scalar types fail closed.
+259:    for name in ("assay_id", "study_id"):
+260:        row[name] = unicodedata.normalize("NFKC", _nonempty(row, name, where)).strip().casefold()
+267:        row["chrom"] = _canonical_chromosome(_nonempty(row, "chrom", f"{where}: window axis"))
+274:        strand = unicodedata.normalize("NFKC", _nonempty(row, "strand", f"{where}: window axis")).strip()
+280:def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> ObservationTable:
+306:        for name in ("assay_id", "study_id", "independent_unit_id"):
+308:        _canonicalize_assay_identity(r, where)
+311:            if not isinstance(prov.get("source"), str) or not prov["source"].strip():
+313:        elif not isinstance(prov, str) or not prov.strip():
+328:            sources = [r["study_id"]] + _strings(prov) + _strings(r.get("source_path"))
+376:def _as_table(rows: Any) -> ObservationTable:
+380:def read_table(path: Any, **kwargs: Any) -> ObservationTable:
+385:            rows = [json.loads(line) for line in handle if line.strip()]
+411:def normalize_chemistry(value: str) -> str:
+412:    text = unicodedata.normalize("NFKC", value).casefold().strip()
+420:def _positive_int(value: Any, name: str) -> None:
+488:def normalize_sequence(seq: Any) -> str:
+497:def _edit_within(a: str, b: str, limit: int) -> bool:
+511:def _near_identical(a: str, b: str, cfg: GroupingConfig) -> bool:
+523:def _sequence_groups(table: ObservationTable, cfg: GroupingConfig) -> List[str]:
+539:def _canonical_chromosome(chrom: str) -> str:
+541:    name = chrom.strip().upper()
+551:def _window_groups(table: ObservationTable, cfg: GroupingConfig) -> List[str]:
+562:        chrom = _canonical_chromosome(chrom)
+583:def axis_groups(rows: Any, config: GroupingConfig = GroupingConfig(),
+597:            out[axis] = tuple(f"study:{r['study_id']}" for r in table.rows)
+607:def _components(table: ObservationTable, group_lists: Sequence[Sequence[str]]) -> List[str]:
+622:def _stable_seed(*parts: Any) -> int:
+627:def _plain(value: Any) -> Any:
+639:def _fingerprint(value: Any) -> str:
+680:def verify_no_leakage(plan: SplitPlan, rows: Any = None) -> None:
+701:def make_splits(rows: Any, mode: str, *, config: GroupingConfig = GroupingConfig(),
+725:def _splits_from_groups(table: ObservationTable, mode: str, config: GroupingConfig,
+777:def make_nested_splits(rows: Any, *, outer_mode: str, inner_mode: Optional[str] = None,
+859:def metric_key(name: str) -> str:
+860:    key = str(name).strip().lower().replace("-", "_").replace(" ", "_")
+864:    key = key.replace("_score", "").strip("_")
+868:def _resolve_scores(table: ObservationTable, scores: Any) -> List[float]:
+884:def _midranks(values: Sequence[float]) -> List[float]:
+898:def _rank_probability(pos: Sequence[float], other: Sequence[float]) -> float:
+905:def _pr_points(y: Sequence[int], s: Sequence[float]) -> List[Tuple[float, float, float]]:
+921:def _metric_value(key: str, y: Sequence[int], s: Sequence[float],
+959:def _supervised(key: str, display: str, states: Sequence[str], units: Sequence[str],
+989:def _check_supervised_request(name: str, mode: str, negative_states: Sequence[str]) -> str:
+1006:def _has_duplicate_contributors(table: ObservationTable, indices: Sequence[int]) -> bool:
+1015:def compute_metric(name: str, rows: Any, scores: Any, *, policy: MetricPolicy = MetricPolicy(),
+1035:def precision_recall_curve(rows: Any, scores: Any, *, policy: MetricPolicy = MetricPolicy()
+1083:def pu_report(rows: Any, scores: Any, *, top_k: Sequence[int] = (), class_prior: Optional[float] = None,
+1187:def effective_clusters(rows: Any, *, merge_axes: Sequence[str] = ("sequence", "window"),
+1201:def _quantile(sorted_values: Sequence[float], q: float) -> float:
+1208:def cluster_bootstrap_ci(rows: Any, statistic: Callable[[Sequence[int]], float], *,
+1278:def bootstrap_metric_ci(name: str, rows: Any, scores: Any, *,
+1335:def _build_registry() -> Dict[str, BaselineSpec]:
+1351:def register_baseline(spec: BaselineSpec) -> None:
+1361:def baseline_feature_columns(name: str) -> Tuple[str, ...]:
+1370:def permuted_reference_scores(observation_ids: Sequence[str], seed: int = 0) -> Dict[str, float]:
+1413:def _evaluate(table: ObservationTable, scores: Mapping[str, float], pu: bool,
+1441:def _validate_feature_sources(features: Mapping[str, Mapping[str, Any]],
+1454:        if not isinstance(path, (str, os.PathLike)) or not os.fspath(path).strip():
+1465:                if not isinstance(path, (str, os.PathLike)) or not os.fspath(path).strip():
+1478:def run_ablation(rows: Any, features: Mapping[str, Mapping[str, Any]], baseline: str,
+38:def row(oid, state="measured_positive", *, seq="ACGTACGTACGTACGTAC", chem="chemA", study="S1",
+40:    r = {"observation_id": oid, "label_state": state, "assay_id": "assay1", "study_id": study,
+57:            chem=f"chem{i % n_chem if n_chem else i}", study=f"S{i % n_studies if n_studies else i}",
+79:def test_label_states_are_exhaustive_and_closed():
+88:@pytest.mark.parametrize("field", ["observation_id", "label_state", "assay_id", "study_id",
+90:def test_every_required_field_is_enforced(field):
+101:def test_duplicate_observation_ids_and_bad_provenance_rejected():
+110:def test_valid_table_passes_and_all_states_accepted():
+126:def test_verified_negative_needs_explicit_powered_evidence(evidence):
+133:def test_negative_from_responder_only_table_is_rejected_even_with_claimed_evidence():
+137:    r = row("n2", "verified_negative", study="holgersen_s4")
+140:    # positives and unlabeled rows from the same responder-only study are fine
+141:    ec.validate_table([row("p", study="holgersen_s4"), row("u", "unlabeled", study="holgersen_s4")],
+147:def test_non_negative_state_encoded_as_zero_raises(state, field):
+152:def test_binary_label_must_agree_with_state():
+163:def test_duplicate_aso_under_different_ids_shares_a_sequence_group():
+170:def test_near_identical_and_truncated_sequences_cluster():
+187:def test_sequence_clusters_are_single_linkage_transitive():
+195:def test_window_clustering_overlap_padding_strand_and_chrom():
+208:def test_window_chain_merges_transitively_and_contained_windows_do_not_reset_span():
+216:def test_window_axis_rejects_missing_or_malformed_coordinates(bad):
+221:def test_missing_chemistry_or_bad_sequence_is_not_silently_grouped():
+229:def test_trap_duplicate_aso_under_different_ids_never_straddles():
+231:    rows.append(row("dup", seq=rows[0]["aso_sequence"], chem="chemZ", study="SZ",
+233:    plan = ec.make_splits(rows, "leave_study_out")
+240:    # the duplicate is purged (not trained on) when its twin's study is held out
+241:    fold = next(f for f in plan.folds if f.test_group_ids == ("study:s0",))
+245:def test_trap_overlapping_windows_across_studies_never_split():
+247:    rows.append(row("ovl", seq="GGGGGGGGGGCCCCCCCC", chem="chemY", study="SY",
+249:    for mode in ("leave_one_aso_out", "leave_study_out", "region_blocked"):
+260:def test_trap_chemistry_family_straddle():
+271:def test_relaxing_an_axis_is_explicit_and_recorded():
+283:def test_randomised_leakage_fuzz_all_modes():
+290:                            study=f"s{rng.randrange(12)}", start=start, end=start + rng.randrange(10, 40),
+305:def test_verify_no_leakage_detects_a_tampered_plan():
+317:def test_leave_study_out_holds_out_whole_studies():
+319:    plan = ec.make_splits(rows, "leave_study_out")
+320:    assert [f.test_group_ids for f in plan.folds] == [(f"study:s{k}",) for k in range(4)]
+325:def test_tiny_n_is_refused_with_a_stated_reason(mode):
+336:def test_kfold_refuses_more_folds_than_independent_groups():
+345:def test_nested_inner_folds_never_see_outer_test_groups():
+347:    rows.append(row("dup", seq=rows[0]["aso_sequence"], chem="chemZ", study="S3",
+348:                    start=700000, end=700017))     # links study S0 and S3 through a duplicate
+349:    nested = ec.make_nested_splits(rows, outer_mode="leave_study_out",
+368:def test_nested_refuses_when_independent_n_is_too_small_and_says_which_level():
+378:def test_splits_are_deterministic_and_order_independent_in_group_ids():
+380:    a = ec.make_splits(rows, "leave_study_out", seed=11, n_folds=4)
+381:    b = ec.make_splits(rows, "leave_study_out", seed=11, n_folds=4)
+382:    c = ec.make_splits(rows, "leave_study_out", seed=12, n_folds=4)
+386:    d = ec.make_splits(shuffled, "leave_study_out", seed=11, n_folds=4)
+389:    n1 = ec.make_nested_splits(rows, outer_mode="leave_study_out", seed=3, outer_n_folds=5, inner_n_folds=2)
+390:    n2 = ec.make_nested_splits(rows, outer_mode="leave_study_out", seed=3, outer_n_folds=5, inner_n_folds=2)
+404:def test_metrics_blocked_without_verified_negatives(name):
+412:def test_metric_blocked_when_either_class_is_below_minimum():
+421:def test_minimum_counts_independent_units_not_rows():
+431:def test_unassayed_or_unlabeled_can_never_be_declared_negative(states):
+437:def test_non_negative_states_are_excluded_not_counted_as_negatives():
+448:def test_metric_values_and_tie_handling():
+472:def test_calibration_and_brier():
+486:def test_scores_must_be_finite_complete_and_aligned():
+496:def test_precision_recall_curve_is_guarded_too():
+502:def test_pu_mode_never_emits_supervised_metrics():
+519:def test_pu_quantities_values():
+531:def test_pu_ties_get_expected_credit_not_optimistic_credit():
+539:def test_pu_prior_adjustment_is_tagged_model_assumption_and_states_the_prior():
+551:def test_pu_universe_excludes_verified_negatives_censored_and_by_default_unassayed():
+561:def test_pu_blocked_with_too_few_independent_positives_and_bad_k():
+578:def test_ci_refused_below_minimum_clusters():
+586:def test_correlated_windows_are_one_cluster_even_with_distinct_unit_ids():
+589:        rows.append(row(f"w{i}", seq=rand_seq(random.Random(900 + i)), chem=f"cw{i}", study=f"sw{i}",
+600:def test_shared_unit_ids_and_duplicate_sequences_collapse_clusters():
+607:def test_cluster_bootstrap_is_wider_than_row_bootstrap_for_clustered_data():
+613:            rows.append(row(f"c{c}_{j}", seq=rand_seq(rng), chem=f"k{c}_{j}", study=f"s{c}_{j}",
+624:def test_bootstrap_is_deterministic_per_seed():
+633:def test_metric_ci_respects_guard_and_degenerate_replicates():
+660:def test_forbidden_sources_are_refused(path):
+664:        ec.read_table(path)
+674:def test_unrelated_paths_are_allowed(path):
+679:def test_symlink_to_forbidden_directory_is_refused(tmp_path):
+686:        ec.read_table(link / "t.jsonl")
+689:def test_read_table_round_trip_and_format_guard(tmp_path):
+692:    assert len(ec.read_table(path)) == 3
+695:        ec.read_table(tmp_path / "obs.csv")
+698:def test_ablation_refuses_forbidden_source_paths_before_running_anything():
+709:def test_baseline_registry_is_cumulative_and_evidence_tagged():
+728:def test_registry_columns_exist_in_the_j9_feature_vocabulary():
+745:def test_ablation_returns_typed_per_fold_groups_and_blocked_reasons():
+780:def test_ablation_m0_is_a_seeded_permuted_reference_needing_no_model():
+792:def test_ablation_pu_mode_never_emits_supervised_metrics_and_records_blocks():
+814:def test_ablation_input_contract_errors():
+832:def test_register_baseline_defines_m6_explicitly(monkeypatch):
+844:def test_r1_public_table_cannot_bypass_negative_evidence(metric):
+853:def test_r1_validated_rows_are_deeply_immutable_and_detached():
+866:def test_r2_policy_requires_positive_integer_counts(bad, field):
+873:    {"study_id": "holgersen_s4"},
+881:def test_r3_responder_sources_and_absence_evidence_cannot_supply_negatives(metadata):
+890:def test_r4_renamed_assay_copies_do_not_inflate_independent_n(pu):
+902:def test_r5_independent_unit_is_an_axis_in_every_split(mode, n_folds):
+916:def test_r6_inner_splits_preserve_transitive_outer_groups_after_bridge_purge():
+921:    nested = ec.make_nested_splits(rows, outer_mode="leave_study_out")
+928:@pytest.mark.parametrize("alias", ["2'-MOE", "2-MOE", "2′ MOE", "2′-O-methoxyethyl"])
+929:def test_r7_moe_aliases_cannot_straddle(alias):
+932:    rows[1]["chemistry_family"] = alias
+933:    plan = ec.make_splits(rows, "leave_study_out")
+939:def test_r7_ambiguous_or_unknown_chemistry_is_rejected(chem):
+946:def test_r8_plan_is_bound_to_metadata_not_only_ids(field, value):
+948:    plan = ec.make_splits(rows, "leave_study_out", n_folds=3)
+954:def test_r9_feature_sources_required_before_fit():
+956:    plan = ec.make_splits(rows, "leave_study_out", n_folds=3)
+969:def test_r10_encoded_unicode_and_separator_aliases_are_forbidden(path):
+974:def test_r11_excluded_rows_do_not_clear_ci_cluster_minimum():
+981:def test_r12_nonfinite_point_cannot_have_finite_ci():
+993:def test_r12_invalid_ci_controls_are_rejected(kwargs):
+998:def test_r13_pu_ablation_records_k_outside_eligible_universe():
+1000:    plan = ec.make_splits(rows, "leave_study_out")
+1007:def test_r4_duplicate_assay_records_are_reported_and_never_independent():
+1014:def test_r4_sequence_bridge_connects_unit_counts_transitively():
+1023:def test_r8_recomputes_plan_before_fit_even_when_ids_and_hash_are_unchanged(kind):
+1025:    plan = ec.make_splits(rows, "leave_study_out", n_folds=3)
+1041:def test_r9_manifest_covers_every_feature_cell_and_checks_sources_before_fit(bad):
+1043:    plan = ec.make_splits(rows, "leave_study_out", n_folds=3)
+1064:def test_r11_excluded_rows_do_not_change_resampling_or_cluster_counts():
+1073:def test_r12_ci_result_itself_rejects_nonfinite_point():
+1078:def test_r12_all_failed_replicates_refused_even_if_tolerance_is_one():
+1086:def test_r2_both_classes_required_at_lowest_valid_policy(n_pos, n_neg):
+1094:def test_r2_pu_minimum_requires_a_positive_integer(bad):
+1100:def test_r8_fingerprint_binds_split_controls_even_when_folds_would_be_identical(change):
+1102:    plan = ec.make_splits(rows, "leave_study_out")
+1107:def test_r11_excluded_bridge_cannot_split_preexisting_clusters():
+1116:@pytest.mark.parametrize("axes", [(), ("sequence",), ("window",), ("study",)])
+1117:def test_fix2_ci_cannot_disable_correlation_axes(axes):
+1128:def test_fix2_grouping_integer_controls(field, bad):
+1134:def test_fix2_grouping_positive_controls(field):
+1141:def test_fix2_grouping_boolean_controls(field, bad):
+1146:@pytest.mark.parametrize("bad", [None, "study", ([],), ("study", "study")])
+1147:def test_fix2_grouping_relax_is_validated(bad):
+1152:def test_fix2_grouping_relax_is_detached():
+1161:def test_fix2_chromosome_aliases_never_straddle(left, right):
+1174:def test_fix2_unrecognized_chromosomes_refused(chrom):
+1179:@pytest.mark.parametrize("entry", ["outer", "nested_outer", "nested_inner"])
+1181:def test_fix2_split_minima_are_positive_integers(entry, bad):
+1184:        if entry == "outer":
+1185:            ec.make_splits(rows, "leave_study_out", min_independent_groups=bad)
+1187:            kw = {"min_outer_groups" if entry == "nested_outer" else "min_inner_groups": bad}
+1188:            ec.make_nested_splits(rows, outer_mode="leave_study_out", **kw)
+1193:def test_fix2_exact_assay_copies_cannot_reweight_metrics(metric):
+1210:def test_fix2_pu_refuses_duplicate_candidates(state):
+1218:def test_fix2_generic_ci_refuses_duplicate_contributors():
+1227:def test_fix3_annotations_cannot_disguise_duplicate_assays(metric):
+1247:def test_fix3_pu_refuses_annotated_copies(state):
+1256:def test_fix3_generic_ci_refuses_annotated_copies_before_statistic():
+1268:@pytest.mark.parametrize("field,value", [("assay_id", "assay2"), ("study_id", "S2"),
+1272:def test_fix3_distinct_assay_defining_fields_preserved(field, value):
+1280:def test_fix3_classification_requires_explicit_finite_numeric_threshold(metric, threshold):
+1287:def test_fix3_finite_numeric_thresholds_are_valid(threshold):
+1294:def test_fix3_invalid_detection_limits_refused(limit):
+1300:def test_fix3_units_do_not_authorize_unsupported_signed_detection_limits():
+1308:def test_fix3_nonnegative_detection_limits_accepted(limit):
+1316:    ("study_id", lambda s, i: " Ｓ１０ ", 1),
+1326:@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+1328:def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_copies, consumer):
+1335:    rows += [{**rows[10], field: alias(rows[10][field], i),
+1341:            pytest.fail("aliased copies must be refused before resampling")
+1356:@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+1357:def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field, alias, n_copies):
+1358:    source = row("original", chem="moe", study="S10")
+1359:    copy = {**source, field: alias(source[field], 0),
+1365:        groups = ec.axis_groups(rows, axes=("sequence", "chemistry", "study", "window"))
+1371:def test_fix4_genuine_distinct_assay_replicates_still_contribute():
+1373:    rows.append({**rows[10], "assay_id": "replicate2", "observation_id": "replicate",
+1374:                 "independent_unit_id": "replicate_unit"})
+1385:def test_fix4_invalid_identity_rejected_before_hashing(field, value):
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "sed -n '1,78p' conference/model_v2/tests/test_evaluation_core.py; sed -n '1308,1410p' conference/model_v2/tests/test_evaluation_core.py; sed -n '350,400p' conference/model_v2/evaluation_core.py; sed -n '1365,1384p' conference/model_v2/evaluation_core.py; sed -n '680,700p' conference/model_v2/evaluation_core.py; cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/test-driven-development/writing-good-tests.md" in /home/dashii/smt-isef
+ succeeded in 1527ms:
+"""Adversarial tests for F3 evaluation_core: leakage, missingness, tiny-N, determinism,
+forbidden sources, PU mode. Synthetic rows only - no lab data, no files outside tmp_path."""
+from __future__ import annotations
+
+import json
+import os
+import random
+import sys
+from dataclasses import replace
+from pathlib import Path
+
+import pytest
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from conference.model_v2 import evaluation_core as ec  # noqa: E402
+
+BASES = "ACGT"
+NEG_EVIDENCE = {"assayed_and_powered": True, "detection_limit": 0.05, "basis": "dose_response"}
+
+
+@pytest.fixture(autouse=True)
+def synthetic_chemistry_vocabulary(monkeypatch):
+    # Synthetic independent families are explicitly registered by the test caller.
+    names = ["chema", "chemy", "chemz"] + [f"chem{i}" for i in range(200)]
+    names += [f"c{i}" for i in range(40)] + [f"cw{i}" for i in range(20)]
+    names += [f"k{i}_{j}" for i in range(12) for j in range(6)]
+    monkeypatch.setattr(ec, "CHEMISTRY_ALIASES", {**ec.CHEMISTRY_ALIASES,
+                                               **{name: name for name in names}})
+
+
+def rand_seq(rng, n=18):
+    return "".join(rng.choice(BASES) for _ in range(n))
+
+
+def row(oid, state="measured_positive", *, seq="ACGTACGTACGTACGTAC", chem="chemA", study="S1",
+        unit=None, chrom="chr5", start=1000, end=1017, strand="+", **extra):
+    r = {"observation_id": oid, "label_state": state, "assay_id": "assay1", "study_id": study,
+         "independent_unit_id": unit or oid, "provenance": {"source": "synthetic:test"},
+         "aso_sequence": seq, "chemistry_family": chem, "chrom": chrom, "start": start,
+         "end": end, "strand": strand}
+    if state == "verified_negative":
+        r["negative_evidence"] = dict(NEG_EVIDENCE)
+    r.update(extra)
+    return r
+
+
+def independent_rows(n, *, seed=7, states=None, n_studies=None, n_chem=None):
+    """n rows that share NO group on any axis unless n_studies / n_chem fold them."""
+    rng = random.Random(seed)
+    out = []
+    for i in range(n):
+        out.append(row(
+            f"o{i:03d}", (states[i] if states else "measured_positive"), seq=rand_seq(rng),
+            chem=f"chem{i % n_chem if n_chem else i}", study=f"S{i % n_studies if n_studies else i}",
+            start=1000 + 500 * i, end=1017 + 500 * i))
+    return out
+
+
+def labelled(n_pos, n_neg, n_unl=0, n_unassayed=0, n_censored=0, **kw):
+    states = (["measured_positive"] * n_pos + ["verified_negative"] * n_neg
+              + ["unlabeled"] * n_unl + ["unassayed"] * n_unassayed + ["censored"] * n_censored)
+    return independent_rows(len(states), states=states, **kw)
+
+
+def assert_no_straddle(plan):
+    for fold in plan.folds:
+        assert not set(fold.test_idx) & set(fold.train_idx)
+        assert not set(fold.purged_idx) & (set(fold.test_idx) | set(fold.train_idx))
+        assert len(fold.test_idx) + len(fold.train_idx) + len(fold.purged_idx) == len(plan.observation_ids)
+        for axis in plan.axes:
+            g = plan.group_ids[axis]
+            assert not {g[i] for i in fold.test_idx} & {g[i] for i in fold.train_idx}, (fold.fold_id, axis)
+
+
+# ------------------------------------------------------------------ label states / validator
+def test_fix3_nonnegative_detection_limits_accepted(limit):
+    evidence = {**NEG_EVIDENCE, "detection_limit": limit}
+    assert len(ec.validate_table([row("n", "verified_negative", negative_evidence=evidence)])) == 1
+
+
+_FIX4_ALIASES = [
+    ("assay_id", lambda s, i: s + " " * (i + 1), 20),
+    ("assay_id", lambda s, i: " ＡＳＳＡＹ１ ", 1),
+    ("study_id", lambda s, i: " Ｓ１０ ", 1),
+    ("aso_sequence", lambda s, i: "".join(
+        c.lower() if (i + 1) & (1 << j) else c for j, c in enumerate(s)), 20),
+    ("aso_sequence", lambda s, i: s.lower().replace("t", "u"), 1),
+    ("chrom", lambda s, i: "5", 1),
+    ("chemistry_family", lambda s, i: s.upper(), 1),
+    ("chemistry_family", lambda s, i: "2'-O-methoxyethyl", 1),
+]
+
+
+@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+@pytest.mark.parametrize("consumer", ["auroc", "pr_curve", "metric_ci", "generic_ci", "pu"])
+def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_copies, consumer):
+    rows = labelled(10, 10)
+    rows[10]["chemistry_family"] = "moe"
+    scores = [.5] * 10 + [1.] + [0.] * 9
+    assert ec.compute_metric("auroc", rows, scores).value == pytest.approx(.9)
+    if consumer == "pu":
+        rows[10]["label_state"] = "unlabeled"
+    rows += [{**rows[10], field: alias(rows[10][field], i),
+              "observation_id": f"copy{i}", "independent_unit_id": f"copy_unit{i}"}
+             for i in range(n_copies)]
+    scores += [1.] * n_copies
+    if consumer == "generic_ci":
+        def statistic(indices):
+            pytest.fail("aliased copies must be refused before resampling")
+        with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+            ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)
+    else:
+        with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+            if consumer == "auroc":
+                ec.compute_metric("auroc", rows, scores)
+            elif consumer == "pr_curve":
+                ec.precision_recall_curve(rows, scores)
+            elif consumer == "metric_ci":
+                ec.bootstrap_metric_ci("auroc", rows, scores, n_boot=20)
+            else:
+                ec.pu_report(rows, scores, top_k=(5,))
+
+
+@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field, alias, n_copies):
+    source = row("original", chem="moe", study="S10")
+    copy = {**source, field: alias(source[field], 0),
+            "observation_id": "copy", "independent_unit_id": "copy_unit"}
+    for rows in ([source, copy], ec.validate_table([source, copy])):
+        table = ec.validate_table(rows)
+        assert table.duplicate_assay_records == (("original", "copy"),)
+        assert table.rows[0][field] == table.rows[1][field]
+        groups = ec.axis_groups(rows, axes=("sequence", "chemistry", "study", "window"))
+        assert all(g[0] == g[1] for g in groups.values())
+        clusters = ec.effective_clusters(rows, merge_axes=())
+        assert clusters[0] == clusters[1]
+
+
+def test_fix4_genuine_distinct_assay_replicates_still_contribute():
+    rows = labelled(10, 10)
+    rows.append({**rows[10], "assay_id": "replicate2", "observation_id": "replicate",
+                 "independent_unit_id": "replicate_unit"})
+    assert ec.validate_table(rows).duplicate_assay_records == ()
+    clusters = ec.effective_clusters(rows, merge_axes=())
+    assert len(set(clusters)) == 21
+    assert ec.compute_metric("auroc", rows, [.5] * 10 + [1.] + [0.] * 9 + [1.]).value \
+        == pytest.approx(9 / 11)
+
+
+@pytest.mark.parametrize("field,value", [("aso_sequence", "ACGX"), ("aso_sequence", ""),
+    ("chemistry_family", "MOE/LNA"), ("chrom", "chr23"), ("start", "1000"),
+    ("start", True), ("end", 999), ("strand", "unknown")])
+def test_fix4_invalid_identity_rejected_before_hashing(field, value):
+    with pytest.raises(ec.SchemaError):
+        ec.validate_table([row("a", **{field: value})])
+            if basis not in NEGATIVE_BASES:
+                raise NegativeEvidenceError(
+                    f"{where}: negative_evidence.basis={ne.get('basis')!r} is absence-inferred "
+                    "or not a recognized measured-evidence category")
+            r["negative_evidence"] = {**ne, "basis": basis}
+        for name in BINARY_LABEL_FIELDS:
+            value = r.get(name)
+            if value is None:
+                continue
+            if value not in (0, 1):
+                raise SchemaError(f"{where}: {name}={value!r} is not binary")
+            needed = LabelState.MEASURED_POSITIVE if value == 1 else LabelState.VERIFIED_NEGATIVE
+            if state is not needed:
+                raise LabelStateError(
+                    f"{where}: {name}={int(value)} encodes {needed.value} but label_state is "
+                    f"{state.value}; {state.value} is never a "
+                    f"{'negative' if value == 0 else 'positive'}")
+        out.append(_freeze(r))
+    records: Dict[str, List[str]] = {}
+    for r in out:
+        identity = {k: r.get(k) for k in ASSAY_IDENTITY_FIELDS}
+        records.setdefault(_fingerprint(identity), []).append(r["observation_id"])
+    duplicates = tuple(tuple(ids) for ids in records.values() if len(ids) > 1)
+    return ObservationTable(tuple(out), duplicates)
+
+
+def _as_table(rows: Any) -> ObservationTable:
+    return validate_table(rows)
+
+
+def read_table(path: Any, **kwargs: Any) -> ObservationTable:
+    """Read a ``.jsonl`` / ``.json`` observation table, after the forbidden-source guard."""
+    name = check_source_not_forbidden(path)
+    with open(os.path.expanduser(name), "r", encoding="utf-8") as handle:
+        if name.endswith(".jsonl"):
+            rows = [json.loads(line) for line in handle if line.strip()]
+        elif name.endswith(".json"):
+            rows = json.load(handle)
+        else:
+            raise SchemaError(f"unsupported table format: {name!r} (use .jsonl or .json)")
+    return validate_table(rows, **kwargs)
+
+
+# ------------------------------------------------------------------ grouping
+AXES = ("sequence", "chemistry", "study", "window", "independent_unit")
+MODES = {"leave_one_aso_out": "sequence", "leave_study_out": "study",
+         "region_blocked": "window"}
+_SEQ_RE = re.compile(r"^[ACGTN]+$")
+
+# Closed vocabulary. PS alone is a backbone, not an unambiguous chemistry family.
+CHEMISTRY_ALIASES = {
+    if spec.kind == "undefined":
+        raise BaselineUndefined(f"{name}: {spec.description}")
+    return spec.feature_columns
+
+
+def permuted_reference_scores(observation_ids: Sequence[str], seed: int = 0) -> Dict[str, float]:
+    """M0: seeded random scores, independent of input order."""
+    rng = random.Random(_stable_seed("m0_permuted_reference", seed))
+    return {oid: rng.random() for oid in sorted(observation_ids)}
+
+
+@dataclass(frozen=True)
+class AblationCell:
+    variant: str                              # "full", "drop:<family>", "permuted_reference"
+    dropped_family: Optional[str]
+    feature_columns: Tuple[str, ...]
+    fold_id: Optional[int]                    # None = pooled out-of-fold scores
+    test_group_ids: Tuple[str, ...]
+    held_out_groups: Mapping[str, Tuple[str, ...]]
+    n_train: int
+def verify_no_leakage(plan: SplitPlan, rows: Any = None) -> None:
+    """Raise ``LeakageError`` if any active-axis group appears in both train and test."""
+    if rows is not None:
+        table = _as_table(rows)
+        if plan.observation_ids != table.ids or plan.data_fingerprint != _fingerprint(table.rows):
+            raise SchemaError("split plan was built for a different table (data fingerprint differs)")
+        expected = make_splits(table, plan.mode, config=plan.config, seed=plan.seed,
+                               n_folds=plan.n_folds,
+                               min_independent_groups=plan.min_independent_groups)
+        if plan != expected:
+            raise LeakageError("split plan differs from recomputed groups/config/folds")
+    for fold in plan.folds:
+        if set(fold.test_idx) & set(fold.train_idx):
+            raise LeakageError(f"fold {fold.fold_id}: a row is in both train and test")
+        for axis in plan.axes:
+            groups = plan.group_ids[axis]
+            both = {groups[i] for i in fold.train_idx} & {groups[i] for i in fold.test_idx}
+            if both:
+                raise LeakageError(f"fold {fold.fold_id}: {axis} groups straddle: {sorted(both)}")
+
+
+# Writing Good Tests
+
+**Load this reference when:** writing or changing tests, adding mocks, or
+adding cleanup/helper methods for tests.
+
+## Overview
+
+A test exists to catch a specific break. Two principles govern everything
+here:
+
+```
+1. Every test names the break it catches
+2. Every test exercises the real thing
+```
+
+Strict TDD produces both naturally: a test written first and watched
+failing against real code has already proven it can fail, and only earns
+a mock when the real dependency proves slow or external.
+
+## Principle 1: Name the Break
+
+Before writing the test body, answer: **what production change should
+make this test fail — and is that change a bug or a decision?** A test
+earns its place by catching a wrong branch, missing side effect, wrong
+argument, boundary case, or broken contract.
+
+**Derive expectations independently.** Use literals and hand-checked
+fixtures; table-driven tests with literal `want` values are the preferred
+shape. An expectation computed by the code under test — or its helpers —
+passes no matter what that code does:
+
+```typescript
+// ❌ Mirror assertion: the same builder computes both sides — always true
+const expected = buildSearchQuery({ tag: 'urgent' });
+expect(buildSearchQuery({ tag: 'urgent' })).toBe(expected);
+
+// ✅ Hand-derived literal
+expect(buildSearchQuery({ tag: 'urgent' })).toBe('tag:"urgent"');
+```
+
+**No change detectors.** If only intentional decisions can fail a test —
+a constant's value, exact message wording, private structure — it fires
+on redesign and sleeps through bugs. Test the behavior that depends on
+the decision: not `expect(MAX_RETRIES).toBe(5)` but "a failing call is
+retried 5 times and the 6th attempt never happens."
+
+**Behavior, not text.** Asserting that a script, skill, or config
+contains an exact line proves only that the source is the source. Run
+scripts against controlled inputs and assert outputs, side effects, or
+exit codes. Documents that instruct agents are tested by the consuming
+agent's behavior (superpowers:writing-skills); prose for humans earns no
+test at all.
+
+**Your code, not the framework.** Test the contract your code makes at
+its boundaries — the route you register, the query you emit, the payload
+you produce. Upstream mechanics are their maintainers' tests to write
+(the classic: asserting your router invokes a registered handler — that
+is the framework's test, not yours). When upstream behavior genuinely
+surprised you, write one narrow characterization test naming the
+assumption. The same boundary applies inside your code: constructors,
+getters, constants, and trivial forwarding earn tests only when they
+validate, normalize, default, derive, enforce, or cause side effects —
+otherwise assert the first consumer-visible result that depends on them.
+
+### Gate Function
+
+```
+BEFORE writing the test body:
+  Name the production change that would make this test fail.
+
+  Cannot name one            → redesign around an observable behavior
+  "The source text changed"  → run the artifact and assert its effects
+  Only intentional decisions → change detector; test the behavior
+                               that depends on the decision
+
+  Confirm the expected value is derived without the code under test.
+  IF it reuses the code's logic or helpers:
+    Replace it with a literal or hand-checked fixture
+```
+
+## Principle 2: Exercise the Real Thing
+
+**The mock earns no assertions.** A mock assertion passes when the mock
+is present and fails when it is absent — it says nothing about the
+component. Assert the real component's behavior; if the mock is what you
+are checking, unmock it or delete the assertion.
+
+```typescript
+// ✅ Real behavior
+expect(screen.getByRole('navigation')).toBeInTheDocument();
+
+// ❌ Mock existence
+expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument();
+```
+
+**your human partner's correction:** "Are we testing the behavior of a
+mock?"
+
+**Mock at the right level.** Learn every side effect of the real method
+before replacing it; mock the slow or external operation and keep what
+the test depends on real. When unsure, run the test against the real
+implementation first and observe what actually needs to happen.
+
+```typescript
+// ❌ The mock swallows the config write that duplicate detection reads
+vi.mock('ToolCatalog', () => ({
+  discoverAndCacheTools: vi.fn().mockResolvedValue(undefined)
+}));
+
+// ✅ Mock only the slow server startup; the config write stays real
+vi.mock('MCPServerManager');
+```
+
+**Make doubles specific.** When arguments, call counts, or ordering are
+part of the contract, assert them — a fake that accepts anything verifies
+nothing. Give each branch (success, error, malformed) its own fixture or
+spy, so the wrong branch cannot satisfy the expectation.
+
+**Mirror real data completely.** Mock the complete structure as it exists
+in reality — all documented fields — not just the ones your test reads.
+Partial mocks fail silently when downstream code reads an omitted field:
+the test passes while integration breaks.
+
+**Production classes carry production methods only.** Cleanup that only
+tests need lives in test utilities, never as a `destroy()` on the
+production class. Ask: is this method called only from tests? Does this
+class own this resource's lifecycle? Wrong answers → test utility.
+
+**Prefer real components over complex mocks.** When mock setup outgrows
+the test logic, mocks miss methods the real components have, or tests
+break when the mock changes, switch to an integration test with real
+components. **your human partner's question:** "Do we need to be using a
+mock here?"
+
+### Gate Function
+
+```
+BEFORE adding a mock or test helper:
+  List the real method's side effects; keep the ones the test
+  depends on real — mock the slow/external level below them.
+
+  Mock responses mirror the complete real structure.
+
+  A method only tests call lives in test utilities, not production.
+
+  About to assert on the mock itself?
+    Unmock it or delete the assertion.
+```
+
+## Tests Ship With the Implementation
+
+The TDD cycle — failing test, minimal implementation, refactor — is what
+"complete" means. Ship the tests the behavior needs and only those:
+trivial code and human prose earn none, and a test written to satisfy
+process costs maintenance forever.
+
+## The Mutation Check
+
+Before finishing, mentally mutate the production code; at least one test
+should fail for each realistic mutation:
+
+- Wrong constant or argument
+- Wrong branch handler
+- Missing state change or side effect
+- Empty or default return
+- Missing validation for zero, empty, nil, unauthorized, or malformed input
+
+A mutation nothing catches marks the behavior as unprotected — or the
+test as tautological.
+
+## Quick Reference
+
+| When you... | Do |
+|-------------|-----|
+| Write any test | Name the break it catches — a bug, not a decision |
+| Build an expected value | Derive it by hand; never with the code under test |
+| Test a script or document | Run it / pressure-test its consumer; never grep its text |
+| Reach for a dependency test | Test your boundary contract, not their documented mechanics |
+| Want to assert on a mocked element | Test the real component, or unmock it |
+| Are about to mock a method | Learn its side effects; mock the slow/external level |
+| Build a mock response | Mirror the real structure completely |
+| Need cleanup only tests use | Put it in test utilities |
+| Watch mock setup balloon | Switch to an integration test with real components |
+| Finish a test file | Run the mutation check |
+
+## Warning Signs
+
+- Setup and assertion share the same object, guaranteeing equality
+- The test can fail only through a panic, crash, or missing selector
+- The test fails on every intentional change, never on accidental breakage
+- Expected values are hidden behind loops, builders, or helpers
+- The test greps source text, or asserts a removed symbol stays removed
+- The test would still matter if only the framework remained
+- The test exists for coverage, checking no side effect or outcome
+- An assertion checks a `*-mock` test ID, or fails if you remove the mock
+- A method is called only from test files
+- Mock setup is more than half the test, or you can't explain why the mock is needed
+- Mocking "just to be safe"
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "sed -n '132,146p' conference/model_v2/tests/test_evaluation_core.py; sed -n '1468,1518p' conference/model_v2/evaluation_core.py; sed -n '1184,1228p' conference/model_v2/evaluation_core.py; rg -n 'study:s|study:S' conference/model_v2/tests/test_evaluation_core.py" in /home/dashii/smt-isef
+ succeeded in 1629ms:
+
+def test_negative_from_responder_only_table_is_rejected_even_with_claimed_evidence():
+    r = row("n1", "verified_negative", source_table_kind="responder_only")
+    with pytest.raises(ec.NegativeEvidenceError, match="responder-only"):
+        ec.validate_table([r])
+    r = row("n2", "verified_negative", study="holgersen_s4")
+    with pytest.raises(ec.NegativeEvidenceError, match="responder-only"):
+        ec.validate_table([r], responder_only_studies=["holgersen_s4"])
+    # positives and unlabeled rows from the same responder-only study are fine
+    ec.validate_table([row("p", study="holgersen_s4"), row("u", "unlabeled", study="holgersen_s4")],
+                      responder_only_studies=["holgersen_s4"])
+
+
+@pytest.mark.parametrize("state", ["unassayed", "unlabeled", "censored"])
+@pytest.mark.parametrize("field", ["binary_label", "label", "y"])
+                    raise SchemaError(f"feature source {path!r} absent from source_paths")
+    for oid, values in features.items():
+        if not isinstance(values, Mapping):
+            raise SchemaError(f"features[{oid!r}] must be a mapping")
+        required = set(values) | (set(columns) if oid in ids else set())
+        if required - set(feature_sources.get(oid, {})):
+            raise SchemaError(f"feature source manifest missing coverage for {oid}")
+    return _freeze(features)
+
+
+def run_ablation(rows: Any, features: Mapping[str, Mapping[str, Any]], baseline: str,
+                 plan: SplitPlan, fit_predict: Optional[FitPredict] = None, *,
+                 metrics: Sequence[str] = ("auroc", "auprc"), pu: bool = False,
+                 policy: MetricPolicy = MetricPolicy(), threshold: Optional[float] = None,
+                 top_k: Sequence[int] = (), class_prior: Optional[float] = None,
+                 seed: int = 0, source_paths: Sequence[Any] = (),
+                 feature_sources: Optional[Mapping[str, Mapping[str, Sequence[Any]]]] = None
+                 ) -> AblationResult:
+    """Leave-feature-family-out runner (interface only: the caller supplies the model).
+
+    ``fit_predict(train, test, columns) -> {observation_id: score}``. Train records
+    carry ``label_state``; test records do NOT (labels cannot leak into prediction).
+    M0 ignores ``fit_predict`` and scores with a seeded permutation. Every blocked
+    metric is recorded with its reason instead of being dropped.
+    ``source_paths``: every input file behind ``rows`` / ``features``; each is checked
+    against the forbidden outcome sources before anything runs.
+    Feature baselines also require ``feature_sources[observation_id][column]`` to
+    list nonempty source paths from that inventory for every feature input.
+    """
+    for path in source_paths:
+        check_source_not_forbidden(path)
+    table = _as_table(rows)
+    if plan.observation_ids != table.ids:
+        raise SchemaError("split plan was built for a different table (observation ids differ)")
+    verify_no_leakage(plan, table)
+    policy.__post_init__()
+    for name in metrics:
+        _check_supervised_request(name, "supervised", (NEGATIVE,))
+    spec = BASELINES.get(baseline)
+    columns = baseline_feature_columns(baseline)  # raises for unknown / undefined
+    if spec.kind == "permuted_reference":
+        variants: List[Tuple[str, Optional[str], Tuple[str, ...]]] = [("permuted_reference", None, ())]
+    else:
+        if fit_predict is None:
+            raise SchemaError(f"{baseline} needs a fit_predict callable")
+        missing = [oid for oid in table.ids if oid not in features]
+        if missing:
+            raise SchemaError(f"features missing for {len(missing)} rows, e.g. {missing[:3]}")
+        features = _validate_feature_sources(features, table.ids, columns,
+                                              source_paths, feature_sources)
+        variants = [("full", None, columns)] + [
+            raise UncertaintyRefused("CI point and bounds must be finite")
+
+
+def effective_clusters(rows: Any, *, merge_axes: Sequence[str] = ("sequence", "window"),
+                       config: GroupingConfig = GroupingConfig()) -> Tuple[str, ...]:
+    """Independent cluster per row: ``independent_unit_id`` merged with every listed
+    leakage axis, so overlapping windows / near-identical ASOs filed under different
+    unit ids still count as ONE cluster. Exact renamed assay copies always collapse,
+    including when optional merge_axes are disabled."""
+    table = _as_table(rows)
+    lists: List[Sequence[str]] = [[f"unit:{r['independent_unit_id']}" for r in table.rows]]
+    duplicate_id = {oid: ids[0] for ids in table.duplicate_assay_records for oid in ids}
+    lists.append([duplicate_id.get(oid, oid) for oid in table.ids])
+    lists += list(axis_groups(table, config, tuple(merge_axes)).values())
+    return tuple(_components(table, lists))
+
+
+def _quantile(sorted_values: Sequence[float], q: float) -> float:
+    pos = q * (len(sorted_values) - 1)
+    lo = int(math.floor(pos))
+    hi = min(lo + 1, len(sorted_values) - 1)
+    return sorted_values[lo] + (sorted_values[hi] - sorted_values[lo]) * (pos - lo)
+
+
+def cluster_bootstrap_ci(rows: Any, statistic: Callable[[Sequence[int]], float], *,
+                         n_boot: int = 1000, seed: int = 0, min_clusters: int = 10,
+                         alpha: float = 0.05, merge_axes: Sequence[str] = ("sequence", "window"),
+                         config: GroupingConfig = GroupingConfig(),
+                         max_failed_fraction: float = 0.1,
+                         eligible_indices: Optional[Sequence[int]] = None) -> CIResult:
+    """Percentile cluster bootstrap. ``statistic(indices)`` receives row indices (with
+    repeats) of whole resampled clusters. Refuses with ``UncertaintyRefused`` when
+    fewer than ``min_clusters`` effective clusters exist, or when too many replicates
+    are degenerate (``MetricBlocked`` / non-finite). ``eligible_indices`` restricts
+    the point/resamples and cluster count to contributing observations, while keeping
+    the original clustering (excluded bridge rows cannot split an established unit).
+    Statistic indices always refer to the original input rows.
+    Sequence and window merging are mandatory; extra merge axes may be requested.
+    Exact assay copies among contributing rows are refused before calling statistic.
+    """
+    merge_axes = tuple(merge_axes)
+    if not {"sequence", "window"}.issubset(merge_axes):
+        raise UncertaintyRefused("CI requires sequence and window merging; axes cannot be weakened")
+    table = _as_table(rows)
+    _positive_int(n_boot, "n_boot")
+241:    fold = next(f for f in plan.folds if f.test_group_ids == ("study:s0",))
+320:    assert [f.test_group_ids for f in plan.folds] == [(f"study:s{k}",) for k in range(4)]
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/verification-before-completion/SKILL.md' in /home/dashii/smt-isef
+ succeeded in 1593ms:
+---
+name: verification-before-completion
+description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+---
+
+# Verification Before Completion
+
+## Overview
+
+**Core principle:** Evidence before claims, always.
+
+**Violating the letter of this rule is violating the spirit of this rule.**
+
+## The Iron Law
+
+```
+NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+```
+
+If you haven't run the verification command in this message, you cannot claim it passes.
+
+## The Gate Function
+
+```
+BEFORE claiming any status or expressing satisfaction:
+
+1. IDENTIFY: What command proves this claim?
+2. RUN: Execute the FULL command (fresh, complete)
+3. READ: Full output, check exit code, count failures
+4. VERIFY: Does output confirm the claim?
+   - If NO: State actual status with evidence
+   - If YES: State claim WITH evidence
+5. ONLY THEN: Make the claim
+
+Skip any step = lying, not verifying
+```
+
+## Common Failures
+
+| Claim | Requires | Not Sufficient |
+|-------|----------|----------------|
+| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
+| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
+| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
+| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
+| Regression test works | Red-green cycle verified | Test passes once |
+| Agent completed | VCS diff shows changes | Agent reports "success" |
+| Requirements met | Line-by-line checklist | Tests passing |
+
+## Red Flags - STOP
+
+- Using "should", "probably", "seems to"
+- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
+- About to commit/push/PR without verification
+- Trusting agent success reports
+- Relying on partial verification
+- Thinking "just this once"
+- Tired and wanting work over
+- **ANY wording implying success without having run verification**
+
+## Rationalization Prevention
+
+| Excuse | Reality |
+|--------|---------|
+| "Should work now" | RUN the verification |
+| "I'm confident" | Confidence ≠ evidence |
+| "Just this once" | No exceptions |
+| "Linter passed" | Linter ≠ compiler |
+| "Agent said success" | Verify independently |
+| "I'm tired" | Exhaustion ≠ excuse |
+| "Partial check is enough" | Partial proves nothing |
+| "Different words so rule doesn't apply" | Spirit over letter |
+
+## Key Patterns
+
+**Tests:**
+```
+✅ [Run test command] [See: 34/34 pass] "All tests pass"
+❌ "Should pass now" / "Looks correct"
+```
+
+**Regression tests (TDD Red-Green):**
+```
+✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
+❌ "I've written a regression test" (without red-green verification)
+```
+
+**Build:**
+```
+✅ [Run build] [See: exit 0] "Build passes"
+❌ "Linter passed" (linter doesn't check compilation)
+```
+
+**Requirements:**
+```
+✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
+❌ "Tests pass, phase complete"
+```
+
+**Agent delegation:**
+```
+✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
+❌ Trust agent report
+```
+
+## When To Apply
+
+**ALWAYS before:**
+- ANY variation of success/completion claims
+- ANY expression of satisfaction
+- ANY positive statement about work state
+- Committing, PR creation, task completion
+- Moving to next task
+- Delegating to agents
+
+**Rule applies to:**
+- Exact phrases
+- Paraphrases and synonyms
+- Implications of success
+- ANY communication suggesting completion/correctness
+
+hook: PostToolUse
+hook: PostToolUse Completed

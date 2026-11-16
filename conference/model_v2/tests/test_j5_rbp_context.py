@@ -326,3 +326,12 @@ def test_reference_mutation_prevents_commit(index,tmp_path):
     with pytest.raises(ValueError,match='reference changed'):
         j5.write_features(source,out,index,fetch=fetch,reference_contract={'fasta':identity})
     assert not out.with_suffix('.done').exists()
+
+
+def test_missing_kd_measurement_is_explicitly_unavailable(index,tmp_path):
+    p,md=kd_tar(tmp_path,'ID\tchr\tstrand\texonStart_0base\texonEnd\tIncLevelDifference',
+                'e1\tchr5\t+\t100\t110\tNA')
+    index.add_file(p,'FUS','HepG2',kind='kd',metadata=md)
+    event=get(index)['knockdown']['events'][0]
+    assert event['raw_sample1_minus_sample2'] is None
+    assert event['measurement_evidence_class']=='not_available'
