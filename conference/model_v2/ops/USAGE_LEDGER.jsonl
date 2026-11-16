@@ -50,3 +50,5 @@
 {"ts":"2026-11-16T01:20:17Z","event":"dispatch","task":"J8J10_rereview+F3_rereview3","worker":"codex gpt-6.1-terra medium x2"}
 {"ts":"2026-11-16T02:19:04Z","event":"dispatch","task":"F3_fix4","worker":"codex gpt-6.1-sol medium","note":"J8J10 rereview ADVANCE; F3 rereview3 DO-NOT-ADVANCE 1 MED"}
 {"ts":"2026-11-16T02:37:22Z","event":"dispatch","task":"F3_rereview4","worker":"codex gpt-6.1-terra medium"}
+{"ts":"2026-11-16T02:40:39Z","event":"dispatch","task":"J5","worker":"codex gpt-6.1-sol high","note":"user: finish everything up to J7 before /clear"}
+{"ts":"2026-11-16T03:03:15Z","event":"dispatch","task":"F3_fix5","worker":"codex gpt-6.1-sol medium","note":"rereview4 DO-NOT-ADVANCE 2 MED; structural fix: ASCII opaque case-sensitive ids"}

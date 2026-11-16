@@ -22,3 +22,1397 @@ hook: UserPromptSubmit Completed
 hook: UserPromptSubmit Completed
 codex
 I’ll independently rerun the prior reproductions and the requested test, then probe the identity canonicalization for bypasses and false merges. I’ll keep the review read-only apart from the requested report.
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/using-superpowers/SKILL.md' in /home/dashii/smt-isef
+ succeeded in 1424ms:
+---
+name: using-superpowers
+description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+---
+
+<SUBAGENT-STOP>
+If you were dispatched as a subagent to execute a specific task, ignore this skill.
+</SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. You cannot rationalize your way out of this.
+</EXTREMELY-IMPORTANT>
+
+## The Rule
+
+**Invoke relevant or requested skills BEFORE any response or action** — including clarifying questions, exploring the codebase, or checking files. If it turns out wrong for the situation, you don't have to use it.
+
+**Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
+
+Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
+
+## Skill Priority
+
+When multiple skills apply, process skills come first — they set the approach, then implementation skills (frontend-design, etc.) carry it out. Brainstorming and systematic-debugging are Superpowers' most common process skills, but the rule holds for any of them.
+
+- "Let's build X" → superpowers:brainstorming first, then implementation skills.
+- "Fix this bug" → superpowers:systematic-debugging first, then domain skills.
+
+## Red Flags
+
+These thoughts mean STOP—you're rationalizing:
+
+| Thought | Reality |
+|---------|---------|
+| "This is just a simple question" | Questions are tasks. Check for skills. |
+| "I need more context first" | Skill check comes BEFORE clarifying questions. |
+| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
+| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
+| "Let me gather information first" | Skills tell you HOW to gather information. |
+| "This doesn't need a formal skill" | If a skill exists, use it. |
+| "I remember this skill" | Skills evolve. Read current version. |
+| "This doesn't count as a task" | Action = task. Check for skills. |
+| "The skill is overkill" | Simple things become complex. Use it. |
+| "I'll just do this one thing first" | Check BEFORE doing anything. |
+| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
+| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+
+## Platform Adaptation
+
+If your harness appears here, read its reference file for special instructions:
+
+- Claude Code: `references/claude-code-tools.md`
+- Codex: `references/codex-tools.md`
+- Pi: `references/pi-tools.md`
+- Antigravity: `references/antigravity-tools.md`
+- Hermes Agent: `references/hermes-tools.md`
+- Muse: `references/muse-tools.md`
+
+## User Instructions
+
+User instructions (CLAUDE.md, AGENTS.md, GEMINI.md, etc, direct requests) take precedence over skills, which in turn override default behavior. Only skip skill workflows or instructions when your human partner has explicitly told you to.
+
+exec
+/usr/bin/bash -lc "sed -n '1,100p' feng/HANDOFF.md" in /home/dashii/smt-isef
+ succeeded in 1536ms:
+# HANDOFF — feng/ (the new prospective arm)
+
+Entry point for anyone (Claude or Codex) picking up the `feng/` arm. The old
+`src/`/`pre/` program is a separate, committed effort — see `docs/HANDOFF.md`.
+`feng/` does not touch that code.
+
+> **History trimmed 2026-09-09.** The blow-by-blow Arm D publish-atomicity review
+> saga (R1–R4, H1–H5) and the Arm E hoff bug#1–#4 / site-15 saga are SUPERSEDED
+> (both arms' compute is out) and live in git history of this file (working tree at
+> `f0b0d48` + uncommitted). Earlier dated checkpoints (09-01…09-04) are in
+> `feng/HANDOFF_ARCHIVE.md`. This file = LIVE state + evergreen orientation only.
+
+---
+## ⏩ CONFERENCE POSTER — LIVE (2026-09-30)
+GOAL (user): get compute out. Keep HANDOFF current so /clear is always safe. Codex MCP still DOWN
+(CONNECTION_CLOSED) but the **CLI route WORKS** — see Codex route note below. sol-low rule stands.
+All prior monitors/heartbeat STOPPED (user paused, then resumed).
+- **★★★ 2026-10-28 — ITEM 2 (PSI efficacy) REANALYSIS: endogenous size series band identity SOLVED by
+  blind replicate validation. NOT yet adversarially reviewed (standing gate OPEN).**
+  Source data = the two endogenous size-series gels in repo root (untracked): `Singh Lab Quantified
+  Data - 7-27 truncated ASOs endogenous (including RT PCR) samples 1-9.csv` (audit "Gel 8") +
+  `...7-28 ASO size comparison w samples 1-9 on endogenous gene (+RT PCR).csv` ("Gel 9"). They are a
+  REPLICATE PAIR of the same size series → used as the independent (non-circular) scorer.
+  METHOD: blind brute force over all 6 band-pair hypotheses (product bands at Rf clusters ~0.40 /
+  ~0.48 / ~0.56 / ~0.58; inclusion = lower-Rf = larger amplicon), scored ONLY on cross-gel replicate
+  agreement — biology NEVER fed into selection, applied only as an after-the-fact check.
+  WINNER: **+E7 (inclusion) = ~0.56 band, ΔE7 (skipping) = ~0.58 band; the big ~0.40 band is a
+  non-product (gDNA/heteroduplex), excluded.** Pearson r=0.991 / Spearman ρ=0.967 (NOT ceiling-driven:
+  only lanes F18 & 3UP8 peg at 100%, dropping them r=0.995; max lane-to-lane |Δ|=4.0 pp). The lab
+  audit's PHOTO band call (+E7=upper0.40 / ΔE7=0.56) ranks DEAD LAST (r=0.030) → this reanalysis
+  OVERTURNS the workbook photo assignment in `psi25/SMN2_all_sources_PSI_band_assignment_audit.xlsx`.
+  RESULT under the FINAL-PSI loading order (lane2=WT,3=Scr18,4=F18,5=Scr14,6=F14,7=Scr10,8=F10,
+  9=Scr8,10=3UP8) — mean inclusion PSI% (G8/G9): F18 100(100/100), 3UP8 98(100/96), F14 95(94/96),
+  F10 91(90/93) | Scr18 74, Scr10 71, Scr8 67, WT 59, Scr14 57. All 4 actives (91-100) ≫ all 5
+  controls (57-74), clean bimodal gap; **F18>F14>F10 potency order correct** → CORROBORATES item 1 ΔG
+  rank (F18 -24.7 > F14 -17.0 > F10 -11.1): binding energy predicts inclusion.
+  CAVEATS (do NOT publish as measured): (1) RANK-only, not quantitative — F18/3UP8 peg at 100% ceiling
+  (skip band ~absent) + WT=59% baseline is biologically high (untreated SMN2 usually ~10-20%) ⇒
+  absolute PSI miscalibrated; safe claim = ORDERING only. (2) Band rule is replicate-VALIDATED but the
+  lane→ASO LABELS still assume the FINAL-PSI loading order (the 4-active/5-control split is forced by
+  the PSI gap, but which active=F18 vs F14 is not). (3) CONTRADICTS the gel photo → needs ONE
+  amplicon-size anchor (ladder MW or junction/seq call) to confirm 0.56=+E7 before publication.
+  7-17 POSITIONAL (E3 walk A-F) endogenous pair ATTEMPTED, FAILED validation: trial-1 lanes 5-8 are
+  single-band → PSI undefined → replicate anchor collapses (best r=-0.31). Too degenerate to blind-
+  validate from this export; NOT presenting a number. Only the size series survives.
+  Scripts (session scratchpad, SESSION-SCOPED — rebuildable from this entry if gone):
+  `/tmp/claude-264670/-home-dashii-smt-isef/1f0a4778-fd3f-44fb-94ee-1a8a1119f4cd/scratchpad/`
+  {brute.py (6-hypothesis blind search), psi_perm2.py (coherence), xlsxdump.py (audit reader)}.
+  NEXT: STANDING-GATE Codex sol adversarial review of this reanalysis BEFORE it feeds any artifact;
+  lab ask = (a) lane→ASO map + (b) one amplicon-size anchor. No artifact written yet.
+- **★★★ 2026-10-05/06 — ITEM 3 JOB 24817368 COMPLETED, B DEFECT CONFIRMED FIXED. REVIEW IN FLIGHT.**
+  `sacct`: **COMPLETED exit 0:0**, elapsed **1-11:57:02** (~36h, vs the 4.5h ETA — shards slowed from
+  ~1min to ~40min each late in the run), End 2026-10-05T22:07:21, MaxRSS 7.67G of 120G. **241/241**
+  accessibility shards `.done`. Tables rewritten 22:07 in `conference/artifacts/item3_spec_{occupancy,
+  gated,absolute}.tsv` + `item3_spec_provenance.txt`. NOTE job stdout/stderr logs are **0 bytes** (shard
+  loop prints nothing) — shard `.done` mtimes in
+  `/orcd/scratch/orcd/011/dashii/conference_smn2_aso/results/item3_spec_v1/accessibility_shards/` are
+  the real progress signal, NOT the logs.
+  **B IS REAL NOW:** applicable/evaluated/**failed** → F18 10/10/**0**, F14 1751/1751/**0**,
+  F10 320202/320202/**0** (was 100% failed). Accessible loci (genes): F18 3 (3), F14 1133 (1114),
+  F10 204838 (35268). Gate cuts everyone ~3-4× but **ordering unchanged** — @100nM `sum_theta_off`
+  ungated→gated: F18 16→3, F14 4144→1133, F10 577057→148952; burden F10/F18=**49,650.7×**,
+  F14/F18=377.7×; specificity ratio F10/F18=**1.995e-5**, F14/F18=2.648e-3; `theta_on_over_sum_theta_off`
+  F18 0.3333 / F14 8.826e-4 / F10 6.650e-6. Expression still `unavailable` (expected).
+  ⇒ **A, B, C now all agree: length DEGRADES specificity. No regime shows honest parity.** Headline
+  stands as "length degrades specificity; occupancy- AND accessibility-weighting confirm it".
+  **⚠ STANDING-GATE REVIEW NOT YET RUN — dispatched then CANCELLED by user 2026-10-06 within ~1 min.**
+  Task b7gcw4xm1 killed (`TaskStop` confirmed, no codex process left); `item3_review.out` 0 bytes, NO
+  verdict produced, sandbox was read-only so repo/artifacts untouched. **The gate is still OPEN — item 3
+  must NOT advance to README reframe until it runs.**
+  RE-FIRE verbatim (prompt file survives, no rebuild needed):
+  `cd /home/dashii/smt-isef && codex exec -m gpt-5.6-sol -c model_reasoning_effort="low" --sandbox
+  read-only --skip-git-repo-check "$(cat <scratchpad>/item3_review_prompt.txt)"`
+  where `<scratchpad>` = `/tmp/claude-264670/-home-dashii-smt-isef/6ccb40ba-d2c7-4718-8218-723d9b48c985/
+  scratchpad` (SESSION-SCOPED — if that dir is gone, the prompt must be rebuilt; its 9 attack points are
+  summarized next so it can be).
+  Scope was item3_spec.py + test_item3_spec.py + the 3 tables + provenance + sbatch. 9 attack points:
+  (1) does the U→T fix merely SILENCE the fail-closed check — could a WRONG locus now pass? (2) F10
+  theta_on=0.511@1nM vs ~1.0 for F18/F14 — bug, and is theta_on/sum_theta_off well-posed across ASOs
+  with differing theta_on? (3) mass-balance violation — ~149k simultaneously occupied sites from a
+  finite pool; does it inflate or deflate the F10-vs-F18 contrast? (4) F18's denominator-of-3
+  fragility; (5) is the accessibility gate applied SYMMETRICALLY to on- vs off-target? (6) 3UP8
+  saturated-empties not coerced to 0/NaN; (7) shard-merge integrity — header leakage, dupes, does
+  anything assert 241? (8) `query_id " [candidate]"` suffix severity + is query_id ever a join key?
+  (9) any other "confident number on absent evidence" (the B-was-all-failed class) recurrence.
+  **NEXT after review:** fix/log findings → item3 README reframe → then the `query_id " [candidate]"`
+  suffix cleanup (cosmetic, severity being re-confirmed by the review).
+- **CODEX ROUTE (2026-10-06):** MCP `codex mcp-server` still CONNECTION_CLOSED, but **CLI works** —
+  `codex-cli 0.159.2` at `~/.local/bin/codex`, auth OK, smoke-tested `ROUTE_OK`. Dispatch via
+  `codex exec -m gpt-5.6-sol -c model_reasoning_effort="low|medium" --sandbox read-only|workspace-write
+  --skip-git-repo-check`. ⚠ **`~/.codex/config.toml` default is now `gpt-6.1-sol` effort `low`** — newer
+  than the 5.6 named in CLAUDE.md's tiering table, so ALWAYS pass `-m` explicitly or you silently get
+  6.1. User DEFERRED deciding whether to move the tiering table to 6.1. Codex sandbox still CANNOT
+  reach the Slurm controller → Claude submits all jobs from the main shell.
+- **★★ 2026-10-04 — ITEM 3 "B" DEFECT ROOT-CAUSED + FIXED + RERUN LAUNCHED (job 24817368)** (SUPERSEDED
+  by the completion entry above; cause/fix detail retained).
+  Cause was NOT data: pure ALPHABET mismatch. `feng/src/feng/titration/evaluate.py:313` fail-closed
+  compares the rung target against a GENOMIC (DNA) fetch verbatim; conference targets are stored RNA (U).
+  genomic `CCAGCATTATGAAAGTGA` vs target `CCAGCAUUAUGAAAGUGA` — identical but for T/U → ViennaError
+  "padded window does not contain the rung target" for EVERY U-containing locus. Arm E passes
+
+exec
+/usr/bin/bash -lc 'cat /etc/motd.d/*' in /home/dashii/smt-isef
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse
+exec
+/usr/bin/bash -lc 'cat conference/model_v2/ops/briefs/F3_REREVIEW3_RESULT.md' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc 'git status --short' in /home/dashii/smt-isef
+hook: PostToolUse Completed
+ succeeded in 1689ms:
+ ==========================================================================
+|        MIT Office of Research Computing and Data Engaging System         |
+|                                                                          |
+|  Website:            https://orcd.mit.edu                                |
+|  Documentation:      https://orcd-docs.mit.edu                           |
+|  Web Portal:         https://orcd-ood.mit.edu                            |
+|  Consulting:         orcd-help-engaging@mit.edu                          |
+|  Office Hours:       https://orcd.mit.edu/news-and-events/office-hours   |
+|  ORCD Updates Slack: https://mit-orcd-updates.slack.com                  |
+ ==========================================================================
+ *************************************************************************
+*                 === IMPORTANT POLICY INFORMATION ===                     *
+*                                                                          *
+* - Account and password sharing is prohibited.                            *
+* - ORCD systems are suitable for storing low-level security requirements. *
+*   See https://orcd-docs.mit.edu/data-security/ for more information.     *
+* - See https://orcd-docs.mit.edu/code-of-conduct/ for Acceptable Use and  *
+*   Code of Conduct.                                                       *
+* - Authorized users must adhere to ALL MIT Acceptable Use Policies:       *
+*               https://ist.mit.edu/about/it-policies                      *
+*                                                                          *
+ *************************************************************************
+ *************************************************************************
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 1394ms:
+# F3-REREVIEW3 — DO-NOT-ADVANCE
+
+- MED `conference/model_v2/evaluation_core.py:342`: identity hashes raw values, so aliases evade duplicate detection and reweight metrics. Synthetic 10 positives/10 negatives: AUROC 0.9; append 20 renamed copies of one negative with distinct trailing spaces in `assay_id`, or distinct sequence letter casing, and AUROC becomes 0.3 with zero duplicate groups. Canonicalize/validate identity fields consistently before hashing; include chromosome and chemistry aliases.
+- Repro: a single copy with `chrom='5'` instead of `chr5`, or uppercase chemistry instead of its accepted lowercase spelling, also evades detection (AUROC 0.9 → 0.81818). Field-order reversal is correctly detected as duplicate.
+- Prior MED annotation repro: 20 renamed copies with differing notes/provenance/evidence annotations now raise `MetricBlocked`. Prior MED threshold repro: NaN and -inf, plus boolean and string thresholds, raise `SchemaError`.
+- Detection limits NaN, +inf, -1 and True raise `NegativeEvidenceError`; 0 accepted. Signed/log-scale limits are explicitly unsupported.
+- Replicates with distinct assay IDs remain distinct; same study/assay ID and identical remaining identity fields are flagged even with distinct independent-unit IDs. This follows the documented contract but requires callers to assign unique assay IDs to genuine replicates; reused IDs can falsely block them.
+- Targeted pytest: 373 passed, 0 failed, 0 skipped (4.30 s). No source edits, submissions, sealed data, or full feng suite; task-specific gate used.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 5200ms:
+M  conference/model_v2/evaluation_core.py
+A  conference/model_v2/j10_offtarget_profile.py
+M  conference/model_v2/j10_robustness.py
+M  conference/model_v2/j8_feature_join.py
+A  conference/model_v2/jobs/j10_RESULT.md
+A  conference/model_v2/jobs/j10_array.sbatch
+D  conference/model_v2/jobs/j10_bounded.sbatch
+A  conference/model_v2/jobs/j10_merge.sbatch
+M  conference/model_v2/jobs/j8_bounded.sbatch
+M  conference/model_v2/jobs/j8_full.sbatch
+M  conference/model_v2/ops/JOBS.jsonl
+M  conference/model_v2/ops/LAST_HEARTBEAT.json
+M  conference/model_v2/ops/NEXT_ACTION.json
+M  conference/model_v2/ops/USAGE_LEDGER.jsonl
+A  conference/model_v2/ops/briefs/F3_FIX3_RESULT.md
+A  conference/model_v2/ops/briefs/F3_FIX4_RESULT.md
+A  conference/model_v2/ops/briefs/F3_REREVIEW2_RESULT.md
+A  conference/model_v2/ops/briefs/F3_REREVIEW3_RESULT.md
+A  conference/model_v2/ops/briefs/F3_fix3.md
+A  conference/model_v2/ops/briefs/F3_fix4.md
+A  conference/model_v2/ops/briefs/F3_rereview2.md
+A  conference/model_v2/ops/briefs/F3_rereview3.md
+A  conference/model_v2/ops/briefs/F3_rereview4.md
+A  conference/model_v2/ops/briefs/J8J10_FIX_RESULT.md
+A  conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md
+A  conference/model_v2/ops/briefs/J8J10_REVIEW_RESULT.md
+A  conference/model_v2/ops/briefs/J8J10_fix.md
+A  conference/model_v2/ops/briefs/J8J10_rereview.md
+A  conference/model_v2/ops/briefs/J8J10_review.md
+A  conference/model_v2/ops/logs/F3_fix3_sol.out
+A  conference/model_v2/ops/logs/F3_fix4_sol.out
+A  conference/model_v2/ops/logs/F3_rereview2_codex.out
+A  conference/model_v2/ops/logs/F3_rereview3_codex.out
+AM conference/model_v2/ops/logs/F3_rereview4_codex.out
+A  conference/model_v2/ops/logs/J10_codex2.out
+A  conference/model_v2/ops/logs/J8J10_fix_astra.out
+A  conference/model_v2/ops/logs/J8J10_rereview_codex.out
+A  conference/model_v2/ops/logs/J8J10_review_codex.out
+A  conference/model_v2/ops/logs/mv2-j10-bounded-29242486.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_0.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_1.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_10.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_100.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_101.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_102.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_103.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_104.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_105.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_106.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_107.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_108.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_109.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_11.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_110.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_111.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_112.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_113.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_114.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_115.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_116.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_117.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_118.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_119.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_12.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_120.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_121.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_122.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_123.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_124.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_125.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_126.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_127.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_128.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_129.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_13.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_130.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_131.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_132.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_133.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_134.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_135.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_136.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_137.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_138.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_139.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_14.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_140.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_141.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_142.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_143.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_144.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_145.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_146.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_147.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_148.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_149.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_15.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_150.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_151.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_152.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_153.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_154.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_155.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_156.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_157.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_158.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_159.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_16.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_160.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_161.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_162.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_163.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_164.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_165.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_166.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_167.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_168.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_169.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_17.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_170.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_171.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_172.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_173.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_174.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_175.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_176.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_177.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_178.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_179.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_18.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_180.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_181.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_182.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_183.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_184.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_185.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_186.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_187.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_188.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_189.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_19.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_190.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_191.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_192.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_193.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_194.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_195.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_196.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_197.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_198.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_199.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_2.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_20.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_200.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_201.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_202.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_203.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_204.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_205.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_206.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_207.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_208.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_209.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_21.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_210.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_211.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_212.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_213.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_214.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_215.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_216.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_217.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_218.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_219.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_22.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_220.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_221.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_222.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_223.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_224.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_225.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_226.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_227.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_228.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_229.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_23.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_230.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_231.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_232.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_233.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_234.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_235.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_236.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_237.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_238.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_239.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_24.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_240.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_241.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_242.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_243.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_244.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_245.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_246.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_247.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_248.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_249.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_25.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_250.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_251.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_252.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_253.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_254.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_255.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_26.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_27.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_28.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_29.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_3.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_30.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_31.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_32.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_33.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_34.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_35.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_36.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_37.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_38.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_39.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_4.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_40.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_41.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_42.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_43.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_44.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_45.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_46.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_47.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_48.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_49.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_5.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_50.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_51.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_52.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_53.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_54.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_55.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_56.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_57.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_58.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_59.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_6.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_60.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_61.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_62.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_63.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_64.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_65.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_66.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_67.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_68.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_69.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_7.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_70.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_71.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_72.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_73.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_74.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_75.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_76.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_77.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_78.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_79.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_8.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_80.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_81.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_82.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_83.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_84.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_85.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_86.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_87.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_88.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_89.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_9.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_90.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_91.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_92.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_93.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_94.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_95.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_96.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_97.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_98.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-29254990_99.out
+A  conference/model_v2/ops/logs/mv2-j10-offtarget-merge-29254991.out
+A  conference/model_v2/ops/logs/mv2-j8-bounded-29242485.out
+A  conference/model_v2/ops/logs/mv2-j8-bounded-29253489.out
+M  conference/model_v2/tests/test_evaluation_core.py
+A  conference/model_v2/tests/test_j10_offtarget_profile.py
+M  conference/model_v2/tests/test_j10_robustness.py
+M  conference/model_v2/tests/test_j8_feature_join.py
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+I’m using the code-review skill for the adversarial checks. The prior report identifies identity aliasing as the main gate; I’m checking both duplicate detection and the downstream grouping behavior.
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/caveman/caveman/4.1.0/skills/caveman-review/SKILL.md' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest -p no:cacheprovider conference/model_v2/tests/test_evaluation_core.py -q' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "rg -n 'duplicate|canonical|identity|assay_id|threshold|detection_limit' conference/model_v2/tests/test_evaluation_core.py" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "nl -ba conference/model_v2/evaluation_core.py | sed -n '180,410p'" in /home/dashii/smt-isef
+ succeeded in 1578ms:
+---
+name: caveman-review
+description: >
+  Compressed code review - one line per finding with location, problem and fix.
+  Use for /caveman-review, "review this PR", or "review the diff".
+---
+
+Write code review comments terse and actionable. One line per finding. Location, problem, fix. No throat-clearing.
+
+## Rules
+
+**Format:** `L<line>: <problem>. <fix>.` — or `<file>:L<line>: ...` when reviewing multi-file diffs.
+
+**Severity prefix (optional, when mixed):**
+- `🔴 bug:` — broken behavior, will cause incident
+- `🟡 risk:` — works but fragile (race, missing null check, swallowed error)
+- `🔵 nit:` — style, naming, micro-optim. Author can ignore
+- `❓ q:` — genuine question, not a suggestion
+
+**Drop:**
+- "I noticed that...", "It seems like...", "You might want to consider..."
+- "This is just a suggestion but..." — use `nit:` instead
+- "Great work!", "Looks good overall but..." — say it once at the top, not per comment
+- Restating what the line does — the reviewer can read the diff
+- Hedging ("perhaps", "maybe", "I think") — if unsure use `q:`
+
+**Keep:**
+- Exact line numbers
+- Exact symbol/function/variable names in backticks
+- Concrete fix, not "consider refactoring this"
+- The *why* if the fix isn't obvious from the problem statement
+
+## Examples
+
+❌ "I noticed that on line 42 you're not checking if the user object is null before accessing the email property. This could potentially cause a crash if the user is not found in the database. You might want to add a null check here."
+
+✅ `L42: 🔴 bug: user can be null after .find(). Add guard before .email.`
+
+❌ "It looks like this function is doing a lot of things and might benefit from being broken up into smaller functions for readability."
+
+✅ `L88-140: 🔵 nit: 50-line fn does 4 things. Extract validate/normalize/persist.`
+
+❌ "Have you considered what happens if the API returns a 429? I think we should probably handle that case."
+
+✅ `L23: 🟡 risk: no retry on 429. Wrap in withBackoff(3).`
+
+## Auto-Clarity
+
+Drop terse mode for: security findings (CVE-class bugs need full explanation + reference), architectural disagreements (need rationale, not just a one-liner), and onboarding contexts where the author is new and needs the "why". In those cases write a normal paragraph, then resume terse for the rest.
+
+## Boundaries
+
+Reviews only — does not write the code fix, does not approve/request-changes, does not run linters. Output the comment(s) ready to paste into the PR. "stop caveman-review" or "normal mode": revert to verbose review style.
+ succeeded in 1430ms:
+21:NEG_EVIDENCE = {"assayed_and_powered": True, "detection_limit": 0.05, "basis": "dose_response"}
+40:    r = {"observation_id": oid, "label_state": state, "assay_id": "assay1", "study_id": study,
+88:@pytest.mark.parametrize("field", ["observation_id", "label_state", "assay_id", "study_id",
+101:def test_duplicate_observation_ids_and_bad_provenance_rejected():
+102:    with pytest.raises(ec.SchemaError, match="duplicate"):
+116:    None, {}, {"assayed_and_powered": True}, {"detection_limit": 0.1},
+117:    {"assayed_and_powered": False, "detection_limit": 0.1},
+118:    {"assayed_and_powered": "yes", "detection_limit": 0.1},
+119:    {"assayed_and_powered": 1, "detection_limit": 0.1},
+120:    {"assayed_and_powered": True, "detection_limit": None},
+121:    {"assayed_and_powered": True, "detection_limit": float("nan")},
+122:    {"assayed_and_powered": True, "detection_limit": True},
+123:    {"assayed_and_powered": True, "detection_limit": 0.1, "basis": "absent_from_table"},
+124:    {"assayed_and_powered": True, "detection_limit": 0.1, "basis": "Not_Listed"},
+163:def test_duplicate_aso_under_different_ids_shares_a_sequence_group():
+178:    strict = ec.GroupingConfig(sequence_threshold=0, containment_is_identical=False)
+181:    hamming = ec.GroupingConfig(sequence_metric="hamming", sequence_threshold=1,
+229:def test_trap_duplicate_aso_under_different_ids_never_straddles():
+240:    # the duplicate is purged (not trained on) when its twin's study is held out
+348:                    start=700000, end=700017))     # links study S0 and S3 through a duplicate
+407:        ec.compute_metric(name, rows, [0.5] * len(rows), policy=POLICY, threshold=0.5)
+454:    # AP: thresholds 3 (P=1, R=1/3), 2 (tp=3, fp=1 -> P=.75, R=1): 1/3*1 + 2/3*.75
+458:    assert ec.compute_metric("accuracy", rows, values, policy=POLICY, threshold=2).value == pytest.approx(5 / 6)
+459:    assert ec.compute_metric("precision", rows, values, policy=POLICY, threshold=2).value == 0.75
+460:    assert ec.compute_metric("fdr", rows, values, policy=POLICY, threshold=2).value == 0.25
+461:    assert ec.compute_metric("recall", rows, values, policy=POLICY, threshold=3).value == pytest.approx(1 / 3)
+464:    with pytest.raises(ec.SchemaError, match="threshold"):
+467:        ec.compute_metric("fdr", rows, values, policy=POLICY, threshold=99)
+600:def test_shared_unit_ids_and_duplicate_sequences_collapse_clusters():
+850:                          threshold=.5)
+861:        table.rows[1]["negative_evidence"]["detection_limit"] = None
+1007:def test_r4_duplicate_assay_records_are_reported_and_never_independent():
+1010:    assert table.duplicate_assay_records == (("copy1", "copy2"),)
+1090:                              policy=ec.MetricPolicy(1, 1), threshold=.5)
+1125:@pytest.mark.parametrize("field", ["sequence_threshold", "window_padding",
+1200:    with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+1206:            ec.compute_metric(metric, rows, scores, threshold=.5)
+1210:def test_fix2_pu_refuses_duplicate_candidates(state):
+1214:    with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+1218:def test_fix2_generic_ci_refuses_duplicate_contributors():
+1221:    with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+1227:def test_fix3_annotations_cannot_disguise_duplicate_assays(metric):
+1237:    with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+1243:            ec.compute_metric(metric, rows, scores, threshold=.5)
+1252:    with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+1262:        pytest.fail("duplicate contributors must be refused before resampling")
+1264:    with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+1268:@pytest.mark.parametrize("field,value", [("assay_id", "assay2"), ("study_id", "S2"),
+1274:    assert table.duplicate_assay_records == ()
+1278:@pytest.mark.parametrize("threshold", [None, float("nan"), float("inf"), -float("inf"),
+1280:def test_fix3_classification_requires_explicit_finite_numeric_threshold(metric, threshold):
+1282:    with pytest.raises(ec.SchemaError, match="threshold"):
+1283:        ec.compute_metric(metric, rows, [.9] * 10 + [.1] * 10, threshold=threshold)
+1286:@pytest.mark.parametrize("threshold", [0, 1, .5, -1.])
+1287:def test_fix3_finite_numeric_thresholds_are_valid(threshold):
+1289:    result = ec.compute_metric("accuracy", rows, [.9] * 10 + [.1] * 10, threshold=threshold)
+1290:    assert result.value == (1. if threshold == .5 else .5)
+1294:def test_fix3_invalid_detection_limits_refused(limit):
+1295:    evidence = {**NEG_EVIDENCE, "detection_limit": limit}
+1296:    with pytest.raises(ec.NegativeEvidenceError, match="detection_limit"):
+1300:def test_fix3_units_do_not_authorize_unsupported_signed_detection_limits():
+1301:    evidence = {**NEG_EVIDENCE, "detection_limit": -1, "unit": "log10",
+1303:    with pytest.raises(ec.NegativeEvidenceError, match="detection_limit"):
+1308:def test_fix3_nonnegative_detection_limits_accepted(limit):
+1309:    evidence = {**NEG_EVIDENCE, "detection_limit": limit}
+1314:    ("assay_id", lambda s, i: s + " " * (i + 1), 20),
+1315:    ("assay_id", lambda s, i: " ＡＳＳＡＹ１ ", 1),
+1328:def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_copies, consumer):
+1342:        with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+1345:        with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+1357:def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field, alias, n_copies):
+1363:        assert table.duplicate_assay_records == (("original", "copy"),)
+1373:    rows.append({**rows[10], "assay_id": "replicate2", "observation_id": "replicate",
+1375:    assert ec.validate_table(rows).duplicate_assay_records == ()
+1385:def test_fix4_invalid_identity_rejected_before_hashing(field, value):
+
+hook: PostToolUse
+ succeeded in 1616ms:
+   180	                f"label_state {value!r} not in {[s.value for s in cls]}") from None
+   181	
+   182	
+   183	LABEL_STATES = tuple(s.value for s in LabelState)
+   184	POSITIVE = LabelState.MEASURED_POSITIVE.value
+   185	NEGATIVE = LabelState.VERIFIED_NEGATIVE.value
+   186	REQUIRED_FIELDS = ("observation_id", "label_state", "assay_id", "study_id",
+   187	                   "independent_unit_id", "provenance")
+   188	RESPONDER_ONLY_KINDS = frozenset({"responder_only", "responders_only", "hits_only",
+   189	                                  "positives_only"})
+   190	ABSENCE_BASES = frozenset({"absence", "absent", "absent_from_table", "not_listed",
+   191	                           "not_reported", "inferred", "assumed", "absence_from_responder_list"})
+   192	NEGATIVE_BASES = frozenset({"dose_response", "powered_assay", "direct_measurement",
+   193	                            "assayed_nonresponder", "measured_negative"})
+   194	SOURCE_TABLE_KINDS = RESPONDER_ONLY_KINDS | {"full_screen", "all_assayed", "complete",
+   195	                                           "dose_response", "assay_results"}
+   196	RESPONDER_ONLY_SOURCES = frozenset({"holgersen_s4", "holgersen_table_s4",
+   197	                                   "holgersen_supplementary_table_s4"})
+   198	BINARY_LABEL_FIELDS = ("binary_label", "label", "y")
+   199	# Closed identity contract: assay_id within a study must distinguish experimental
+   200	# conditions and genuine replicate assays. Row/unit names, labels, evidence and
+   201	# arbitrary annotations cannot turn one assay into multiple observations.
+   202	ASSAY_IDENTITY_FIELDS = ("study_id", "assay_id", "aso_sequence", "chemistry_family",
+   203	                         "chrom", "start", "end", "strand")
+   204	
+   205	
+   206	def _category(value: str) -> str:
+   207	    return re.sub(r"[^a-z0-9]+", "_", unicodedata.normalize("NFKC", value).casefold()).strip("_")
+   208	
+   209	
+   210	def _freeze(value: Any) -> Any:
+   211	    if isinstance(value, Mapping):
+   212	        return MappingProxyType({k: _freeze(v) for k, v in value.items()})
+   213	    if isinstance(value, (tuple, list)):
+   214	        return tuple(_freeze(v) for v in value)
+   215	    if isinstance(value, (set, frozenset)):
+   216	        return frozenset(_freeze(v) for v in value)
+   217	    if isinstance(value, os.PathLike):
+   218	        return os.fspath(value)
+   219	    if value is None or isinstance(value, (str, int, float, bool)):
+   220	        return value
+   221	    raise SchemaError(f"unsupported mutable metadata value: {type(value).__name__}")
+   222	
+   223	
+   224	@dataclass(frozen=True)
+   225	class ObservationTable:
+   226	    """Deeply immutable validated rows; public consumers revalidate even this wrapper.
+   227	
+   228	    ``duplicate_assay_records`` lists rows sharing the canonical assay-defining
+   229	    fields, regardless of metadata. They count as one independent unit for grouping;
+   230	    statistics refuse duplicate contributors rather than giving copies extra weight.
+   231	    """
+   232	    rows: Tuple[Mapping[str, Any], ...]
+   233	    duplicate_assay_records: Tuple[Tuple[str, ...], ...] = ()
+   234	
+   235	    def __len__(self) -> int:
+   236	        return len(self.rows)
+   237	
+   238	    @property
+   239	    def ids(self) -> Tuple[str, ...]:
+   240	        return tuple(r["observation_id"] for r in self.rows)
+   241	
+   242	    def subset(self, indices: Sequence[int]) -> "ObservationTable":
+   243	        return ObservationTable(tuple(self.rows[i] for i in indices))
+   244	
+   245	
+   246	def _nonempty(row: Mapping[str, Any], name: str, where: str) -> str:
+   247	    value = row.get(name)
+   248	    if not isinstance(value, str) or not value.strip():
+   249	        raise SchemaError(f"{where}: field {name!r} must be a non-empty string")
+   250	    return value
+   251	
+   252	
+   253	def _canonicalize_assay_identity(row: Dict[str, Any], where: str) -> None:
+   254	    """Canonicalize supplied identity fields once, before hashing or consumption.
+   255	
+   256	    Optional fields may be absent, but supplied values must be valid. Coordinates
+   257	    are already canonical integers; alternate scalar types fail closed.
+   258	    """
+   259	    for name in ("assay_id", "study_id"):
+   260	        row[name] = unicodedata.normalize("NFKC", _nonempty(row, name, where)).strip().casefold()
+   261	        _nonempty(row, name, where)
+   262	    if "aso_sequence" in row:
+   263	        row["aso_sequence"] = normalize_sequence(row["aso_sequence"])
+   264	    if "chemistry_family" in row:
+   265	        row["chemistry_family"] = normalize_chemistry(_nonempty(row, "chemistry_family", where))
+   266	    if "chrom" in row:
+   267	        row["chrom"] = _canonical_chromosome(_nonempty(row, "chrom", f"{where}: window axis"))
+   268	    for name in ("start", "end"):
+   269	        if name in row:
+   270	            _positive_int(row[name], f"{where}: window axis {name}")
+   271	    if "start" in row and "end" in row and row["end"] < row["start"]:
+   272	        raise SchemaError(f"{where}: window axis needs start<=end")
+   273	    if "strand" in row:
+   274	        strand = unicodedata.normalize("NFKC", _nonempty(row, "strand", f"{where}: window axis")).strip()
+   275	        if strand not in ("+", "-"):
+   276	            raise SchemaError(f"{where}: window axis strand must be +/-")
+   277	        row["strand"] = strand
+   278	
+   279	
+   280	def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> ObservationTable:
+   281	    """Validate observation rows (mappings) and return an ``ObservationTable``.
+   282	
+   283	    ``responder_only_studies``: study ids whose tables list responders only (e.g. a
+   284	    hits-only supplement). No ``verified_negative`` may originate from them, and none
+   285	    from a row declaring ``source_table_kind`` in ``RESPONDER_ONLY_KINDS``.
+   286	    """
+   287	    if isinstance(rows, ObservationTable):
+   288	        rows = rows.rows
+   289	    responder_only = RESPONDER_ONLY_SOURCES | frozenset(_category(s) for s in responder_only_studies)
+   290	    out: List[Dict[str, Any]] = []
+   291	    seen = set()
+   292	    for index, row in enumerate(rows):
+   293	        where = f"row {index}"
+   294	        if not isinstance(row, Mapping):
+   295	            raise SchemaError(f"{where}: not a mapping")
+   296	        r = dict(row)
+   297	        oid = _nonempty(r, "observation_id", where)
+   298	        where = f"row {index} ({oid})"
+   299	        if oid in seen:
+   300	            raise SchemaError(f"{where}: duplicate observation_id")
+   301	        seen.add(oid)
+   302	        if "label_state" not in r:
+   303	            raise SchemaError(f"{where}: missing label_state")
+   304	        state = LabelState.parse(r["label_state"])
+   305	        r["label_state"] = state.value
+   306	        for name in ("assay_id", "study_id", "independent_unit_id"):
+   307	            _nonempty(r, name, where)
+   308	        _canonicalize_assay_identity(r, where)
+   309	        prov = r.get("provenance")
+   310	        if isinstance(prov, Mapping):
+   311	            if not isinstance(prov.get("source"), str) or not prov["source"].strip():
+   312	                raise SchemaError(f"{where}: provenance mapping needs a non-empty 'source'")
+   313	        elif not isinstance(prov, str) or not prov.strip():
+   314	            raise SchemaError(f"{where}: provenance must be a non-empty string or mapping")
+   315	        for text in _strings(prov) + _strings(r.get("source_path")):
+   316	            check_source_not_forbidden(text)
+   317	        if r.get("evidence_class") is not None:
+   318	            r["evidence_class"] = _category(str(r["evidence_class"]))
+   319	            if r["evidence_class"] not in EVIDENCE_CLASSES:
+   320	                raise SchemaError(f"{where}: bad evidence_class {r['evidence_class']!r}")
+   321	        kind = _category(str(r.get("source_table_kind", "")))
+   322	        if kind and kind not in SOURCE_TABLE_KINDS:
+   323	            raise NegativeEvidenceError(f"{where}: unknown source_table_kind {kind!r}")
+   324	        if "source_table_kind" in r:
+   325	            r["source_table_kind"] = kind
+   326	
+   327	        if state is LabelState.VERIFIED_NEGATIVE:
+   328	            sources = [r["study_id"]] + _strings(prov) + _strings(r.get("source_path"))
+   329	            source_tokens = [_category(form) for s in sources for form in _normalized_source_forms(s)]
+   330	            known_responder = any(
+   331	                f"_{known}_" in f"_{token}_" for known in responder_only for token in source_tokens)
+   332	            if kind in RESPONDER_ONLY_KINDS or known_responder:
+   333	                raise NegativeEvidenceError(
+   334	                    f"{where}: verified_negative from a responder-only table; absence "
+   335	                    "from a responder list is not a measured negative")
+   336	            ne = r.get("negative_evidence")
+   337	            if not isinstance(ne, Mapping):
+   338	                raise NegativeEvidenceError(
+   339	                    f"{where}: verified_negative requires an explicit negative_evidence mapping")
+   340	            if ne.get("assayed_and_powered") is not True:
+   341	                raise NegativeEvidenceError(
+   342	                    f"{where}: negative_evidence.assayed_and_powered must be exactly True")
+   343	            limit = ne.get("detection_limit")
+   344	            if isinstance(limit, bool) or not isinstance(limit, (int, float)) \
+   345	                    or not math.isfinite(limit) or limit < 0:
+   346	                raise NegativeEvidenceError(
+   347	                    f"{where}: negative_evidence.detection_limit must be a finite nonnegative "
+   348	                    "number; signed/log-scale conventions are not supported")
+   349	            basis = _category(str(ne.get("basis", "")))
+   350	            if basis not in NEGATIVE_BASES:
+   351	                raise NegativeEvidenceError(
+   352	                    f"{where}: negative_evidence.basis={ne.get('basis')!r} is absence-inferred "
+   353	                    "or not a recognized measured-evidence category")
+   354	            r["negative_evidence"] = {**ne, "basis": basis}
+   355	        for name in BINARY_LABEL_FIELDS:
+   356	            value = r.get(name)
+   357	            if value is None:
+   358	                continue
+   359	            if value not in (0, 1):
+   360	                raise SchemaError(f"{where}: {name}={value!r} is not binary")
+   361	            needed = LabelState.MEASURED_POSITIVE if value == 1 else LabelState.VERIFIED_NEGATIVE
+   362	            if state is not needed:
+   363	                raise LabelStateError(
+   364	                    f"{where}: {name}={int(value)} encodes {needed.value} but label_state is "
+   365	                    f"{state.value}; {state.value} is never a "
+   366	                    f"{'negative' if value == 0 else 'positive'}")
+   367	        out.append(_freeze(r))
+   368	    records: Dict[str, List[str]] = {}
+   369	    for r in out:
+   370	        identity = {k: r.get(k) for k in ASSAY_IDENTITY_FIELDS}
+   371	        records.setdefault(_fingerprint(identity), []).append(r["observation_id"])
+   372	    duplicates = tuple(tuple(ids) for ids in records.values() if len(ids) > 1)
+   373	    return ObservationTable(tuple(out), duplicates)
+   374	
+   375	
+   376	def _as_table(rows: Any) -> ObservationTable:
+   377	    return validate_table(rows)
+   378	
+   379	
+   380	def read_table(path: Any, **kwargs: Any) -> ObservationTable:
+   381	    """Read a ``.jsonl`` / ``.json`` observation table, after the forbidden-source guard."""
+   382	    name = check_source_not_forbidden(path)
+   383	    with open(os.path.expanduser(name), "r", encoding="utf-8") as handle:
+   384	        if name.endswith(".jsonl"):
+   385	            rows = [json.loads(line) for line in handle if line.strip()]
+   386	        elif name.endswith(".json"):
+   387	            rows = json.load(handle)
+   388	        else:
+   389	            raise SchemaError(f"unsupported table format: {name!r} (use .jsonl or .json)")
+   390	    return validate_table(rows, **kwargs)
+   391	
+   392	
+   393	# ------------------------------------------------------------------ grouping
+   394	AXES = ("sequence", "chemistry", "study", "window", "independent_unit")
+   395	MODES = {"leave_one_aso_out": "sequence", "leave_study_out": "study",
+   396	         "region_blocked": "window"}
+   397	_SEQ_RE = re.compile(r"^[ACGTN]+$")
+   398	
+   399	# Closed vocabulary. PS alone is a backbone, not an unambiguous chemistry family.
+   400	CHEMISTRY_ALIASES = {
+   401	    "moe": "moe", "2moe": "moe", "2omoe": "moe", "2omethoxyethyl": "moe",
+   402	    "methoxyethyl": "moe",
+   403	    "ome": "ome", "2ome": "ome", "2omethyl": "ome",
+   404	    "lna": "lna", "lockednucleicacid": "lna",
+   405	    "pmo": "pmo", "morpholino": "pmo", "phosphorodiamidatemorpholino": "pmo",
+   406	    "pna": "pna", "peptidenucleicacid": "pna", "dna": "dna", "rna": "rna",
+   407	    "cet": "cet", "constrainedethyl": "cet",
+   408	}
+   409	
+   410	
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "sed -n '1,65p;1305,1395p' conference/model_v2/tests/test_evaluation_core.py; sed -n '410,570p' conference/model_v2/evaluation_core.py" in /home/dashii/smt-isef
+ succeeded in 7802ms:
+........................................................................ [ 16%]
+........................................................................ [ 33%]
+........................................................................ [ 50%]
+........................................................................ [ 66%]
+........................................................................ [ 83%]
+......................................................................   [100%]
+430 passed in 5.59s
+
+hook: PostToolUse
+exec
+/usr/bin/bash -lc "rg -n 'study_id|assay_id|independent_unit_id|_canonical_chromosome|def normalize_sequence|def compute_metric|def make_groups' conference/model_v2/evaluation_core.py" in /home/dashii/smt-isef
+hook: PostToolUse Completed
+ succeeded in 1667ms:
+"""Adversarial tests for F3 evaluation_core: leakage, missingness, tiny-N, determinism,
+forbidden sources, PU mode. Synthetic rows only - no lab data, no files outside tmp_path."""
+from __future__ import annotations
+
+import json
+import os
+import random
+import sys
+from dataclasses import replace
+from pathlib import Path
+
+import pytest
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from conference.model_v2 import evaluation_core as ec  # noqa: E402
+
+BASES = "ACGT"
+NEG_EVIDENCE = {"assayed_and_powered": True, "detection_limit": 0.05, "basis": "dose_response"}
+
+
+@pytest.fixture(autouse=True)
+def synthetic_chemistry_vocabulary(monkeypatch):
+    # Synthetic independent families are explicitly registered by the test caller.
+    names = ["chema", "chemy", "chemz"] + [f"chem{i}" for i in range(200)]
+    names += [f"c{i}" for i in range(40)] + [f"cw{i}" for i in range(20)]
+    names += [f"k{i}_{j}" for i in range(12) for j in range(6)]
+    monkeypatch.setattr(ec, "CHEMISTRY_ALIASES", {**ec.CHEMISTRY_ALIASES,
+                                               **{name: name for name in names}})
+
+
+def rand_seq(rng, n=18):
+    return "".join(rng.choice(BASES) for _ in range(n))
+
+
+def row(oid, state="measured_positive", *, seq="ACGTACGTACGTACGTAC", chem="chemA", study="S1",
+        unit=None, chrom="chr5", start=1000, end=1017, strand="+", **extra):
+    r = {"observation_id": oid, "label_state": state, "assay_id": "assay1", "study_id": study,
+         "independent_unit_id": unit or oid, "provenance": {"source": "synthetic:test"},
+         "aso_sequence": seq, "chemistry_family": chem, "chrom": chrom, "start": start,
+         "end": end, "strand": strand}
+    if state == "verified_negative":
+        r["negative_evidence"] = dict(NEG_EVIDENCE)
+    r.update(extra)
+    return r
+
+
+def independent_rows(n, *, seed=7, states=None, n_studies=None, n_chem=None):
+    """n rows that share NO group on any axis unless n_studies / n_chem fold them."""
+    rng = random.Random(seed)
+    out = []
+    for i in range(n):
+        out.append(row(
+            f"o{i:03d}", (states[i] if states else "measured_positive"), seq=rand_seq(rng),
+            chem=f"chem{i % n_chem if n_chem else i}", study=f"S{i % n_studies if n_studies else i}",
+            start=1000 + 500 * i, end=1017 + 500 * i))
+    return out
+
+
+def labelled(n_pos, n_neg, n_unl=0, n_unassayed=0, n_censored=0, **kw):
+    states = (["measured_positive"] * n_pos + ["verified_negative"] * n_neg
+              + ["unlabeled"] * n_unl + ["unassayed"] * n_unassayed + ["censored"] * n_censored)
+    return independent_rows(len(states), states=states, **kw)
+
+
+@pytest.mark.parametrize("limit", [0, .05])
+def test_fix3_nonnegative_detection_limits_accepted(limit):
+    evidence = {**NEG_EVIDENCE, "detection_limit": limit}
+    assert len(ec.validate_table([row("n", "verified_negative", negative_evidence=evidence)])) == 1
+
+
+_FIX4_ALIASES = [
+    ("assay_id", lambda s, i: s + " " * (i + 1), 20),
+    ("assay_id", lambda s, i: " ＡＳＳＡＹ１ ", 1),
+    ("study_id", lambda s, i: " Ｓ１０ ", 1),
+    ("aso_sequence", lambda s, i: "".join(
+        c.lower() if (i + 1) & (1 << j) else c for j, c in enumerate(s)), 20),
+    ("aso_sequence", lambda s, i: s.lower().replace("t", "u"), 1),
+    ("chrom", lambda s, i: "5", 1),
+    ("chemistry_family", lambda s, i: s.upper(), 1),
+    ("chemistry_family", lambda s, i: "2'-O-methoxyethyl", 1),
+]
+
+
+@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+@pytest.mark.parametrize("consumer", ["auroc", "pr_curve", "metric_ci", "generic_ci", "pu"])
+def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_copies, consumer):
+    rows = labelled(10, 10)
+    rows[10]["chemistry_family"] = "moe"
+    scores = [.5] * 10 + [1.] + [0.] * 9
+    assert ec.compute_metric("auroc", rows, scores).value == pytest.approx(.9)
+    if consumer == "pu":
+        rows[10]["label_state"] = "unlabeled"
+    rows += [{**rows[10], field: alias(rows[10][field], i),
+              "observation_id": f"copy{i}", "independent_unit_id": f"copy_unit{i}"}
+             for i in range(n_copies)]
+    scores += [1.] * n_copies
+    if consumer == "generic_ci":
+        def statistic(indices):
+            pytest.fail("aliased copies must be refused before resampling")
+        with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+            ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)
+    else:
+        with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+            if consumer == "auroc":
+                ec.compute_metric("auroc", rows, scores)
+            elif consumer == "pr_curve":
+                ec.precision_recall_curve(rows, scores)
+            elif consumer == "metric_ci":
+                ec.bootstrap_metric_ci("auroc", rows, scores, n_boot=20)
+            else:
+                ec.pu_report(rows, scores, top_k=(5,))
+
+
+@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field, alias, n_copies):
+    source = row("original", chem="moe", study="S10")
+    copy = {**source, field: alias(source[field], 0),
+            "observation_id": "copy", "independent_unit_id": "copy_unit"}
+    for rows in ([source, copy], ec.validate_table([source, copy])):
+        table = ec.validate_table(rows)
+        assert table.duplicate_assay_records == (("original", "copy"),)
+        assert table.rows[0][field] == table.rows[1][field]
+        groups = ec.axis_groups(rows, axes=("sequence", "chemistry", "study", "window"))
+        assert all(g[0] == g[1] for g in groups.values())
+        clusters = ec.effective_clusters(rows, merge_axes=())
+        assert clusters[0] == clusters[1]
+
+
+def test_fix4_genuine_distinct_assay_replicates_still_contribute():
+    rows = labelled(10, 10)
+    rows.append({**rows[10], "assay_id": "replicate2", "observation_id": "replicate",
+                 "independent_unit_id": "replicate_unit"})
+    assert ec.validate_table(rows).duplicate_assay_records == ()
+    clusters = ec.effective_clusters(rows, merge_axes=())
+    assert len(set(clusters)) == 21
+    assert ec.compute_metric("auroc", rows, [.5] * 10 + [1.] + [0.] * 9 + [1.]).value \
+        == pytest.approx(9 / 11)
+
+
+@pytest.mark.parametrize("field,value", [("aso_sequence", "ACGX"), ("aso_sequence", ""),
+    ("chemistry_family", "MOE/LNA"), ("chrom", "chr23"), ("start", "1000"),
+    ("start", True), ("end", 999), ("strand", "unknown")])
+def test_fix4_invalid_identity_rejected_before_hashing(field, value):
+    with pytest.raises(ec.SchemaError):
+        ec.validate_table([row("a", **{field: value})])
+
+def normalize_chemistry(value: str) -> str:
+    text = unicodedata.normalize("NFKC", value).casefold().strip()
+    # Remove only known orthographic separators; do not turn MOE/LNA or MOE? into aliases.
+    key = re.sub(r"[\s\-'′’]", "", text)
+    if key not in CHEMISTRY_ALIASES:
+        raise SchemaError(f"unknown or ambiguous chemistry_family {value!r}")
+    return CHEMISTRY_ALIASES[key]
+
+
+def _positive_int(value: Any, name: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise SchemaError(f"{name} must be a finite positive integer")
+
+
+@dataclass(frozen=True)
+class GroupingConfig:
+    """Leakage axes and their thresholds.
+
+    ``relax`` removes axes from the keep-together set; it is recorded on every plan
+    as ``relaxed_axes`` (a declared leakage risk), never applied silently.
+    ``window_padding`` pads each window on both sides before clustering (1-based
+    closed coordinates, as in J6 ``start1``/``end1``).
+    """
+    sequence_metric: str = "edit"            # "edit" (Levenshtein) or "hamming"
+    sequence_threshold: int = 2
+    containment_is_identical: bool = True    # truncations (e.g. 14-mer inside 18-mer)
+    min_containment_length: int = 8
+    window_padding: int = 0
+    strand_aware: bool = True
+    relax: Tuple[str, ...] = ()
+    max_unique_sequences: int = 4000         # O(n^2) pairwise guard (login-node safe)
+
+    def __post_init__(self) -> None:
+        if self.sequence_metric not in ("edit", "hamming"):
+            raise SchemaError(f"bad sequence_metric {self.sequence_metric!r}")
+        for name in ("sequence_threshold", "window_padding"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise SchemaError(f"{name} must be a finite nonnegative integer")
+        for name in ("min_containment_length", "max_unique_sequences"):
+            _positive_int(getattr(self, name), name)
+        for name in ("containment_is_identical", "strand_aware"):
+            if not isinstance(getattr(self, name), bool):
+                raise SchemaError(f"{name} must be a boolean")
+        if not isinstance(self.relax, (tuple, list)) or any(
+                not isinstance(axis, str) for axis in self.relax):
+            raise SchemaError("relax must be a sequence of axis names")
+        if len(set(self.relax)) != len(self.relax):
+            raise SchemaError("relax must not repeat axes")
+        bad = set(self.relax) - set(AXES)
+        if bad:
+            raise SchemaError(f"unknown axes in relax: {sorted(bad)}")
+        if "independent_unit" in self.relax:
+            raise SchemaError("independent_unit cannot be relaxed")
+        object.__setattr__(self, "relax", tuple(self.relax))
+
+    @property
+    def axes(self) -> Tuple[str, ...]:
+        return tuple(a for a in AXES if a not in self.relax)
+
+
+class _UnionFind:
+    def __init__(self, n: int):
+        self.parent = list(range(n))
+
+    def find(self, x: int) -> int:
+        while self.parent[x] != x:
+            self.parent[x] = self.parent[self.parent[x]]
+            x = self.parent[x]
+        return x
+
+    def union(self, a: int, b: int) -> None:
+        ra, rb = self.find(a), self.find(b)
+        if ra != rb:
+            self.parent[max(ra, rb)] = min(ra, rb)
+
+
+def normalize_sequence(seq: Any) -> str:
+    if not isinstance(seq, str):
+        raise SchemaError(f"aso_sequence must be a string, got {seq!r}")
+    out = "".join(seq.split()).upper().replace("U", "T")
+    if not _SEQ_RE.match(out):
+        raise SchemaError(f"aso_sequence {seq!r} is not ACGTUN")
+    return out
+
+
+def _edit_within(a: str, b: str, limit: int) -> bool:
+    if abs(len(a) - len(b)) > limit:
+        return False
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        if min(cur) > limit:
+            return False
+        prev = cur
+    return prev[-1] <= limit
+
+
+def _near_identical(a: str, b: str, cfg: GroupingConfig) -> bool:
+    if a == b:
+        return True
+    short, long_ = (a, b) if len(a) <= len(b) else (b, a)
+    if cfg.containment_is_identical and len(short) >= cfg.min_containment_length \
+            and short in long_:
+        return True
+    if cfg.sequence_metric == "hamming":
+        return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) <= cfg.sequence_threshold
+    return _edit_within(a, b, cfg.sequence_threshold)
+
+
+def _sequence_groups(table: ObservationTable, cfg: GroupingConfig) -> List[str]:
+    seqs = [normalize_sequence(r.get("aso_sequence")) for r in table.rows]
+    uniq = sorted(set(seqs))
+    if len(uniq) > cfg.max_unique_sequences:
+        raise SplitRefused(
+            f"{len(uniq)} unique sequences exceeds max_unique_sequences="
+            f"{cfg.max_unique_sequences}; pairwise clustering refused on this node")
+    uf = _UnionFind(len(uniq))
+    for i in range(len(uniq)):
+        for j in range(i + 1, len(uniq)):
+            if _near_identical(uniq[i], uniq[j], cfg):
+                uf.union(i, j)
+    label = {s: f"seq:{uniq[uf.find(i)]}" for i, s in enumerate(uniq)}  # root = smallest
+    return [label[s] for s in seqs]
+
+
+def _canonical_chromosome(chrom: str) -> str:
+    """GRCh38 primary chromosomes only; unknown contig aliases fail closed."""
+    name = chrom.strip().upper()
+    if name.startswith("CHR"):
+        name = name[3:]
+    if name in ("M", "MT"):
+        return "chrM"
+    if name in {str(i) for i in range(1, 23)} | {"X", "Y"}:
+        return "chr" + name
+    raise SchemaError(f"unrecognized GRCh38 primary chromosome {chrom!r}")
+
+
+def _window_groups(table: ObservationTable, cfg: GroupingConfig) -> List[str]:
+    keyed: Dict[Tuple[str, str], List[Tuple[int, int, int]]] = {}
+    for i, r in enumerate(table.rows):
+        chrom, start, end, strand = r.get("chrom"), r.get("start"), r.get("end"), r.get("strand")
+        ok = (isinstance(chrom, str) and chrom and strand in ("+", "-")
+              and all(isinstance(v, int) and not isinstance(v, bool) for v in (start, end))
+              and 1 <= start <= end)
+        if not ok:
+            raise SchemaError(
+                f"row {i} ({r['observation_id']}): window axis needs chrom, 1-based closed "
+                "int start<=end, strand in +/-")
+        chrom = _canonical_chromosome(chrom)
+        keyed.setdefault((chrom, strand if cfg.strand_aware else "*"), []).append((start, end, i))
+    out = [""] * len(table)
+    for (chrom, strand), items in sorted(keyed.items()):
+        items.sort()
+        cluster: List[int] = []
+        lo = hi = 0
+        for start, end, i in items + [(None, None, -1)]:  # sentinel flushes the last cluster
+            if cluster and (start is None or start > hi + 2 * cfg.window_padding):
+
+ succeeded in 1947ms:
+18:   (``independent_unit_id`` merged with sequence / window overlap); refuses below
+186:REQUIRED_FIELDS = ("observation_id", "label_state", "assay_id", "study_id",
+187:                   "independent_unit_id", "provenance")
+199:# Closed identity contract: assay_id within a study must distinguish experimental
+202:ASSAY_IDENTITY_FIELDS = ("study_id", "assay_id", "aso_sequence", "chemistry_family",
+253:def _canonicalize_assay_identity(row: Dict[str, Any], where: str) -> None:
+259:    for name in ("assay_id", "study_id"):
+267:        row["chrom"] = _canonical_chromosome(_nonempty(row, "chrom", f"{where}: window axis"))
+306:        for name in ("assay_id", "study_id", "independent_unit_id"):
+308:        _canonicalize_assay_identity(r, where)
+328:            sources = [r["study_id"]] + _strings(prov) + _strings(r.get("source_path"))
+488:def normalize_sequence(seq: Any) -> str:
+539:def _canonical_chromosome(chrom: str) -> str:
+562:        chrom = _canonical_chromosome(chrom)
+597:            out[axis] = tuple(f"study:{r['study_id']}" for r in table.rows)
+601:            out[axis] = tuple(f"unit:{r['independent_unit_id']}" for r in table.rows)
+1015:def compute_metric(name: str, rows: Any, scores: Any, *, policy: MetricPolicy = MetricPolicy(),
+1189:    """Independent cluster per row: ``independent_unit_id`` merged with every listed
+1194:    lists: List[Sequence[str]] = [[f"unit:{r['independent_unit_id']}" for r in table.rows]]
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+The requested test module passes: 430 tests. The original aliases are covered, but the new normalization also changes assay identifiers themselves; I’m testing whether that collapses distinct IDs and whether unnormalized invisible characters can still evade detection.
+exec
+/usr/bin/bash -lc "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from conference.model_v2 import evaluation_core as e
+base={'observation_id':'a','label_state':'measured_positive','assay_id':'AssayA','study_id':'Study','independent_unit_id':'u1','provenance':'synthetic','aso_sequence':'AUT','chemistry_family':'rna','chrom':'chr5','start':1,'end':3,'strand':'+'}
+for desc,changes in [('case distinct',{'assay_id':'assaya'}),('unicode confusable',{'assay_id':'Assay\\u200bA'}),('cyrillic confusable',{'assay_id':'AssayА'}),('missing optional',{'chrom':None}),('U/T',{'aso_sequence':'ATT'}),('strand',{'strand':'－'}),('chrom',{'chrom':'5'}),('coords',{'start':1.0})]:
+ b={**base,**changes,'observation_id':'b','independent_unit_id':'u2'}
+ if desc=='missing optional': del b['chrom']
+ try:
+  t=e.validate_table([base,b]); print(desc, 'dups=',t.duplicate_assay_records,'ids=',[r['assay_id'] for r in t.rows], 'study_groups=',e.axis_groups(t,axes=('study',))['study'])
+ except Exception as x: print(desc,type(x).__name__,str(x))
+rows=[]
+for i in range(20):
+ r={**base,'observation_id':str(i),'independent_unit_id':str(i),'assay_id':f'a{i}','study_id':f's{i}'}
+ if i>=10:r.update(label_state='verified_negative',negative_evidence={'assayed_and_powered':True,'detection_limit':0.05,'basis':'dose_response'})
+ rows.append(r)
+scores=[.5]*10+[1.]+[0.]*9
+print('baseline',e.compute_metric('auroc',rows,scores).value)
+for name,fn,n in [('space',lambda s,i:s+' '*(i+1),20),('case',lambda s,i:''.join(c.lower() if (i+1)&(1<<j) else c for j,c in enumerate(s)),20),('invisible',lambda s,i:s+'\\u200b'*(i+1),20)]:
+ key='aso_sequence' if name=='case' else 'assay_id'
+ source=rows[10]
+ copies=[{**source,key:fn(source[key],i),'observation_id':f'c{i}','independent_unit_id':f'c{i}'} for i in range(n)]
+ try: print(name,e.compute_metric('auroc',rows+copies,scores+[1.]*n).value,'duplicates',e.validate_table(rows+copies).duplicate_assay_records)
+ except Exception as x:print(name,type(x).__name__,str(x))
+PY" in /home/dashii/smt-isef
+ exited 1 in 1699ms:
+case distinct dups= (('a', 'b'),) ids= ['assaya', 'assaya'] study_groups= ('study:study', 'study:study')
+unicode confusable dups= () ids= ['assaya', 'assay\u200ba'] study_groups= ('study:study', 'study:study')
+cyrillic confusable dups= () ids= ['assaya', 'assayа'] study_groups= ('study:study', 'study:study')
+missing optional dups= () ids= ['assaya', 'assaya'] study_groups= ('study:study', 'study:study')
+U/T dups= (('a', 'b'),) ids= ['assaya', 'assaya'] study_groups= ('study:study', 'study:study')
+strand dups= () ids= ['assaya', 'assaya'] study_groups= ('study:study', 'study:study')
+chrom dups= (('a', 'b'),) ids= ['assaya', 'assaya'] study_groups= ('study:study', 'study:study')
+coords SchemaError row 1 (b): window axis start must be a finite positive integer
+Traceback (most recent call last):
+  File "<stdin>", line 15, in <module>
+  File "/home/dashii/smt-isef/conference/model_v2/evaluation_core.py", line 1030, in compute_metric
+    return _supervised(key, name, [r["label_state"] for r in table.rows],
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dashii/smt-isef/conference/model_v2/evaluation_core.py", line 980, in _supervised
+    raise MetricBlocked(display, "; ".join(problems) + (
+conference.model_v2.evaluation_core.MetricBlocked: auroc: BLOCKED - 1 independent verified_negative unit(s) (10 rows) < minimum 10; 1 independent measured_positive unit(s) (10 rows) < minimum 10. Use pu_report() for positive-unlabeled quantities.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from conference.model_v2 import evaluation_core as e
+import random
+rng=random.Random(7); rows=[]
+for i in range(20):
+ r=dict(observation_id=str(i),label_state='measured_positive' if i<10 else 'verified_negative',assay_id='assay1',study_id=f's{i}',independent_unit_id=str(i),provenance='synthetic',aso_sequence=''.join(rng.choices('ACGT',k=18)),chemistry_family='moe',chrom='chr5',start=1000+i*500,end=1017+i*500,strand='+')
+ if i>=10:r['negative_evidence']={'assayed_and_powered':True,'detection_limit':.05,'basis':'dose_response'}
+ rows.append(r)
+scores=[.5]*10+[1.]+[0.]*9
+print('baseline',e.compute_metric('auroc',rows,scores).value)
+for name,key,fn,n in [('space','assay_id',lambda s,i:s+' '*(i+1),20),('case','aso_sequence',lambda s,i:''.join(c.lower() if (i+1)&(1<<j) else c for j,c in enumerate(s)),20),('chrom','chrom',lambda s,i:'5',1),('chem','chemistry_family',lambda s,i:'MOE',1),('invisible','assay_id',lambda s,i:s+'\\u200b'*(i+1),20),('missing chrom','chrom',lambda s,i:None,1),('annotation','notes',lambda s,i:str(i),20)]:
+ copies=[]
+ for i in range(n):
+  c={**rows[10],key:fn(rows[10].get(key),i),'observation_id':f'c{i}','independent_unit_id':f'c{i}'}
+  if name=='missing chrom':del c['chrom']
+  copies.append(c)
+ try:print(name,'auroc',e.compute_metric('auroc',rows+copies,scores+[1.]*n).value,'duplicates',e.validate_table(rows+copies).duplicate_assay_records)
+ except Exception as x:print(name,type(x).__name__,str(x))
+for v in [float('nan'),float('-inf'),True,'0.5']:
+ try:e.compute_metric('accuracy',rows,scores,threshold=v);print('threshold',repr(v),'ACCEPTED')
+ except Exception as x:print('threshold',repr(v),type(x).__name__)
+for v in [float('nan'),float('inf'),-1,True,0]:
+ r={**rows[10],'negative_evidence':{**rows[10]['negative_evidence'],'detection_limit':v}}
+ try:e.validate_table([r]);print('limit',repr(v),'ACCEPTED')
+ except Exception as x:print('limit',repr(v),type(x).__name__)
+PY" in /home/dashii/smt-isef
+ succeeded in 1832ms:
+baseline 0.9
+space MetricBlocked auroc: BLOCKED - duplicate assay records: renamed copies provide only 1 independent assay per group; resolve copies before computing statistics
+case MetricBlocked auroc: BLOCKED - duplicate assay records: renamed copies provide only 1 independent assay per group; resolve copies before computing statistics
+chrom MetricBlocked auroc: BLOCKED - duplicate assay records: renamed copies provide only 1 independent assay per group; resolve copies before computing statistics
+chem MetricBlocked auroc: BLOCKED - duplicate assay records: renamed copies provide only 1 independent assay per group; resolve copies before computing statistics
+invisible auroc 0.3 duplicates ()
+missing chrom SchemaError row 20 (c0): window axis needs chrom, 1-based closed int start<=end, strand in +/-
+annotation MetricBlocked auroc: BLOCKED - duplicate assay records: renamed copies provide only 1 independent assay per group; resolve copies before computing statistics
+threshold nan SchemaError
+threshold -inf SchemaError
+threshold True SchemaError
+threshold '0.5' SchemaError
+limit nan NegativeEvidenceError
+limit inf NegativeEvidenceError
+limit -1 NegativeEvidenceError
+limit True NegativeEvidenceError
+limit 0 ACCEPTED
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "cat > conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md <<'EOF'
+# F3-REREVIEW4 — DO-NOT-ADVANCE
+- MED "'`conference/model_v2/evaluation_core.py:260`: invisible U+200B in assay IDs survives NFKC; append 20 renamed negative copies with increasing U+200B suffixes: duplicate groups=0, AUROC 0.9→0.3. Reject invisible/control and confusable identifiers or define an enforced identifier vocabulary.
+- MED `conference/model_v2/evaluation_core.py:260`: casefold silently merges distinct case-sensitive assay IDs: otherwise identical genuine replicates `AssayA` and `assaya` become duplicate contributors and metrics block. Preserve opaque IDs or require and validate a documented case-insensitive identifier contract upstream.
+- Prior repros: 20 trailing-space assay aliases, 20 sequence-case aliases, chromosome `5`, uppercase chemistry, and changed annotations now block; baseline AUROC 0.9. NaN/-inf/bool/string thresholds and NaN/+inf/-1/bool limits reject; zero limit accepts.
+- U/T and chromosome aliases merge; opposite strands remain distinct; float coordinates reject. Canonical study group IDs agree; a clearly distinct replicate ID remains distinct. Unicode Cyrillic lookalikes also evade duplicate detection.
+- Targeted pytest: 430 passed, 0 failed, 0 skipped (5.59 s); cache/bytecode disabled to honor read-only scope. No source edits, submissions, or sealed data; full feng suite not run (task-specific gate).
+EOF
+wc -l conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md' in /home/dashii/smt-isef
+ succeeded in 1804ms:
+6 conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+**DO-NOT-ADVANCE.** The prior alias reproductions now block, but two identity issues remain:
+
+- [evaluation_core.py:260](/home/dashii/smt-isef/conference/model_v2/evaluation_core.py:260): Invisible characters evade duplicate detection; 20 renamed copies changed synthetic AUROC from 0.9 to 0.3.
+- [evaluation_core.py:260](/home/dashii/smt-isef/conference/model_v2/evaluation_core.py:260): Case folding merges otherwise distinct case-sensitive assay IDs, potentially blocking genuine replicates.
+
+The findings remain unfixed because this was a read-only review. The requested report is at [F3_REREVIEW4_RESULT.md](/home/dashii/smt-isef/conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md).
+
+Targeted pytest: **430 passed, 0 failed, 0 skipped**. The full feng suite was not run; the task specified the targeted gate. No source edits, submissions, or sealed-data access.
+hook: Stop
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+34,203
+**DO-NOT-ADVANCE.** The prior alias reproductions now block, but two identity issues remain:
+
+- [evaluation_core.py:260](/home/dashii/smt-isef/conference/model_v2/evaluation_core.py:260): Invisible characters evade duplicate detection; 20 renamed copies changed synthetic AUROC from 0.9 to 0.3.
+- [evaluation_core.py:260](/home/dashii/smt-isef/conference/model_v2/evaluation_core.py:260): Case folding merges otherwise distinct case-sensitive assay IDs, potentially blocking genuine replicates.
+
+The findings remain unfixed because this was a read-only review. The requested report is at [F3_REREVIEW4_RESULT.md](/home/dashii/smt-isef/conference/model_v2/ops/briefs/F3_REREVIEW4_RESULT.md).
+
+Targeted pytest: **430 passed, 0 failed, 0 skipped**. The full feng suite was not run; the task specified the targeted gate. No source edits, submissions, or sealed-data access.

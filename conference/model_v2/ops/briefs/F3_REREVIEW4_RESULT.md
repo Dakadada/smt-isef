@@ -1,0 +1,6 @@
+# F3-REREVIEW4 — DO-NOT-ADVANCE
+- MED `conference/model_v2/evaluation_core.py:260`: invisible U+200B in assay IDs survives NFKC; append 20 renamed negative copies with increasing U+200B suffixes: duplicate groups=0, AUROC 0.9→0.3. Reject invisible/control and confusable identifiers or define an enforced identifier vocabulary.
+- MED `conference/model_v2/evaluation_core.py:260`: casefold silently merges distinct case-sensitive assay IDs: otherwise identical genuine replicates `AssayA` and `assaya` become duplicate contributors and metrics block. Preserve opaque IDs or require and validate a documented case-insensitive identifier contract upstream.
+- Prior repros: 20 trailing-space assay aliases, 20 sequence-case aliases, chromosome `5`, uppercase chemistry, and changed annotations now block; baseline AUROC 0.9. NaN/-inf/bool/string thresholds and NaN/+inf/-1/bool limits reject; zero limit accepts.
+- U/T and chromosome aliases merge; opposite strands remain distinct; float coordinates reject. Canonical study group IDs agree; a clearly distinct replicate ID remains distinct. Unicode Cyrillic lookalikes also evade duplicate detection.
+- Targeted pytest: 430 passed, 0 failed, 0 skipped (5.59 s); cache/bytecode disabled to honor read-only scope. No source edits, submissions, or sealed data; full feng suite not run (task-specific gate).
