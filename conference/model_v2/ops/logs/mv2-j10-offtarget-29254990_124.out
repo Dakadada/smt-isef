@@ -1,0 +1,24 @@
+{"duplicate_rows":0,"input_rows":43135,"profiled_rows":43135,"unique_rows":43135}
+	Command being timed: "/home/dashii/orcd/pool/smt-isef-env/bin/python -m conference.model_v2.j10_offtarget_profile partial --shard-index 124 --shard-count 256"
+	User time (seconds): 12.22
+	System time (seconds): 3.13
+	Percent of CPU this job got: 96%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:15.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1627728
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1
+	Minor (reclaiming a frame) page faults: 1199248
+	Voluntary context switches: 5912
+	Involuntary context switches: 47
+	Swaps: 0
+	File system inputs: 719224
+	File system outputs: 896
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

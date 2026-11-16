@@ -1,0 +1,1384 @@
+Reading additional input from stdin...
+OpenAI Codex v0.159.2
+--------
+workdir: /home/dashii/smt-isef
+model: gpt-6.1-terra
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1e1f0-e878-77d3-a0c8-8de08791a1db
+--------
+user
+# TASK J8J10-REREVIEW (Codex gpt-6.1-terra, medium, targeted, READ-ONLY except one report). Re-verify each of the 6 findings F1-F6 in conference/model_v2/ops/briefs/J8J10_REVIEW_RESULT.md is truly fixed (rerun their repro scripts against current j8_feature_join.py/j10_robustness.py; do not trust conference/model_v2/ops/briefs/J8J10_FIX_RESULT.md) and probe the fixes for new defects (index/bound correctness incl. inclusive overlap at footprint ends, sidecar path guard incl. symlink/.done/-wal, checkpoint-reuse integrity, marker verification). Run: PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j8_feature_join.py conference/model_v2/tests/test_j10_robustness.py -q from repo root. No source edits/submissions/wet-lab/outcome files/ /orcd traversal. Write <=25 lines to conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md (verdict ADVANCE/DO-NOT-ADVANCE, per-finding fixed/not, new findings w/ file:line + repro).
+warning: clamping SessionEnd hook timeout to 3s in /home/dashii/.codex/plugins/cache/openai-codex/codex/1.0.6/hooks/hooks.json
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+hook: UserPromptSubmit Completed
+codex
+I’ll inspect the checkpoint and original findings, rerun the reproductions and targeted tests, then write the requested review report. I’ll keep the source and outcome files untouched.
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/claude-plugins-official/superpowers/7.0.2/skills/using-superpowers/SKILL.md' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc 'cat /etc/motd.d/*' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "sed -n '1,100p' feng/HANDOFF.md" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc 'cat conference/model_v2/ops/briefs/J8J10_REVIEW_RESULT.md' in /home/dashii/smt-isef
+ succeeded in 1625ms:
+# HANDOFF — feng/ (the new prospective arm)
+
+Entry point for anyone (Claude or Codex) picking up the `feng/` arm. The old
+`src/`/`pre/` program is a separate, committed effort — see `docs/HANDOFF.md`.
+`feng/` does not touch that code.
+
+> **History trimmed 2026-09-09.** The blow-by-blow Arm D publish-atomicity review
+> saga (R1–R4, H1–H5) and the Arm E hoff bug#1–#4 / site-15 saga are SUPERSEDED
+> (both arms' compute is out) and live in git history of this file (working tree at
+> `f0b0d48` + uncommitted). Earlier dated checkpoints (09-01…09-04) are in
+> `feng/HANDOFF_ARCHIVE.md`. This file = LIVE state + evergreen orientation only.
+
+---
+## ⏩ CONFERENCE POSTER — LIVE (2026-09-30)
+GOAL (user): get compute out. Keep HANDOFF current so /clear is always safe. Codex MCP still DOWN
+(CONNECTION_CLOSED) but the **CLI route WORKS** — see Codex route note below. sol-low rule stands.
+All prior monitors/heartbeat STOPPED (user paused, then resumed).
+- **★★★ 2026-10-28 — ITEM 2 (PSI efficacy) REANALYSIS: endogenous size series band identity SOLVED by
+  blind replicate validation. NOT yet adversarially reviewed (standing gate OPEN).**
+  Source data = the two endogenous size-series gels in repo root (untracked): `Singh Lab Quantified
+  Data - 7-27 truncated ASOs endogenous (including RT PCR) samples 1-9.csv` (audit "Gel 8") +
+  `...7-28 ASO size comparison w samples 1-9 on endogenous gene (+RT PCR).csv` ("Gel 9"). They are a
+  REPLICATE PAIR of the same size series → used as the independent (non-circular) scorer.
+  METHOD: blind brute force over all 6 band-pair hypotheses (product bands at Rf clusters ~0.40 /
+  ~0.48 / ~0.56 / ~0.58; inclusion = lower-Rf = larger amplicon), scored ONLY on cross-gel replicate
+  agreement — biology NEVER fed into selection, applied only as an after-the-fact check.
+  WINNER: **+E7 (inclusion) = ~0.56 band, ΔE7 (skipping) = ~0.58 band; the big ~0.40 band is a
+  non-product (gDNA/heteroduplex), excluded.** Pearson r=0.991 / Spearman ρ=0.967 (NOT ceiling-driven:
+  only lanes F18 & 3UP8 peg at 100%, dropping them r=0.995; max lane-to-lane |Δ|=4.0 pp). The lab
+  audit's PHOTO band call (+E7=upper0.40 / ΔE7=0.56) ranks DEAD LAST (r=0.030) → this reanalysis
+  OVERTURNS the workbook photo assignment in `psi25/SMN2_all_sources_PSI_band_assignment_audit.xlsx`.
+  RESULT under the FINAL-PSI loading order (lane2=WT,3=Scr18,4=F18,5=Scr14,6=F14,7=Scr10,8=F10,
+  9=Scr8,10=3UP8) — mean inclusion PSI% (G8/G9): F18 100(100/100), 3UP8 98(100/96), F14 95(94/96),
+  F10 91(90/93) | Scr18 74, Scr10 71, Scr8 67, WT 59, Scr14 57. All 4 actives (91-100) ≫ all 5
+  controls (57-74), clean bimodal gap; **F18>F14>F10 potency order correct** → CORROBORATES item 1 ΔG
+  rank (F18 -24.7 > F14 -17.0 > F10 -11.1): binding energy predicts inclusion.
+  CAVEATS (do NOT publish as measured): (1) RANK-only, not quantitative — F18/3UP8 peg at 100% ceiling
+  (skip band ~absent) + WT=59% baseline is biologically high (untreated SMN2 usually ~10-20%) ⇒
+  absolute PSI miscalibrated; safe claim = ORDERING only. (2) Band rule is replicate-VALIDATED but the
+  lane→ASO LABELS still assume the FINAL-PSI loading order (the 4-active/5-control split is forced by
+  the PSI gap, but which active=F18 vs F14 is not). (3) CONTRADICTS the gel photo → needs ONE
+  amplicon-size anchor (ladder MW or junction/seq call) to confirm 0.56=+E7 before publication.
+  7-17 POSITIONAL (E3 walk A-F) endogenous pair ATTEMPTED, FAILED validation: trial-1 lanes 5-8 are
+  single-band → PSI undefined → replicate anchor collapses (best r=-0.31). Too degenerate to blind-
+  validate from this export; NOT presenting a number. Only the size series survives.
+  Scripts (session scratchpad, SESSION-SCOPED — rebuildable from this entry if gone):
+  `/tmp/claude-264670/-home-dashii-smt-isef/1f0a4778-fd3f-44fb-94ee-1a8a1119f4cd/scratchpad/`
+  {brute.py (6-hypothesis blind search), psi_perm2.py (coherence), xlsxdump.py (audit reader)}.
+  NEXT: STANDING-GATE Codex sol adversarial review of this reanalysis BEFORE it feeds any artifact;
+  lab ask = (a) lane→ASO map + (b) one amplicon-size anchor. No artifact written yet.
+- **★★★ 2026-10-05/06 — ITEM 3 JOB 24817368 COMPLETED, B DEFECT CONFIRMED FIXED. REVIEW IN FLIGHT.**
+  `sacct`: **COMPLETED exit 0:0**, elapsed **1-11:57:02** (~36h, vs the 4.5h ETA — shards slowed from
+  ~1min to ~40min each late in the run), End 2026-10-05T22:07:21, MaxRSS 7.67G of 120G. **241/241**
+  accessibility shards `.done`. Tables rewritten 22:07 in `conference/artifacts/item3_spec_{occupancy,
+  gated,absolute}.tsv` + `item3_spec_provenance.txt`. NOTE job stdout/stderr logs are **0 bytes** (shard
+  loop prints nothing) — shard `.done` mtimes in
+  `/orcd/scratch/orcd/011/dashii/conference_smn2_aso/results/item3_spec_v1/accessibility_shards/` are
+  the real progress signal, NOT the logs.
+  **B IS REAL NOW:** applicable/evaluated/**failed** → F18 10/10/**0**, F14 1751/1751/**0**,
+  F10 320202/320202/**0** (was 100% failed). Accessible loci (genes): F18 3 (3), F14 1133 (1114),
+  F10 204838 (35268). Gate cuts everyone ~3-4× but **ordering unchanged** — @100nM `sum_theta_off`
+  ungated→gated: F18 16→3, F14 4144→1133, F10 577057→148952; burden F10/F18=**49,650.7×**,
+  F14/F18=377.7×; specificity ratio F10/F18=**1.995e-5**, F14/F18=2.648e-3; `theta_on_over_sum_theta_off`
+  F18 0.3333 / F14 8.826e-4 / F10 6.650e-6. Expression still `unavailable` (expected).
+  ⇒ **A, B, C now all agree: length DEGRADES specificity. No regime shows honest parity.** Headline
+  stands as "length degrades specificity; occupancy- AND accessibility-weighting confirm it".
+  **⚠ STANDING-GATE REVIEW NOT YET RUN — dispatched then CANCELLED by user 2026-10-06 within ~1 min.**
+  Task b7gcw4xm1 killed (`TaskStop` confirmed, no codex process left); `item3_review.out` 0 bytes, NO
+  verdict produced, sandbox was read-only so repo/artifacts untouched. **The gate is still OPEN — item 3
+  must NOT advance to README reframe until it runs.**
+  RE-FIRE verbatim (prompt file survives, no rebuild needed):
+  `cd /home/dashii/smt-isef && codex exec -m gpt-5.6-sol -c model_reasoning_effort="low" --sandbox
+  read-only --skip-git-repo-check "$(cat <scratchpad>/item3_review_prompt.txt)"`
+  where `<scratchpad>` = `/tmp/claude-264670/-home-dashii-smt-isef/6ccb40ba-d2c7-4718-8218-723d9b48c985/
+  scratchpad` (SESSION-SCOPED — if that dir is gone, the prompt must be rebuilt; its 9 attack points are
+  summarized next so it can be).
+  Scope was item3_spec.py + test_item3_spec.py + the 3 tables + provenance + sbatch. 9 attack points:
+  (1) does the U→T fix merely SILENCE the fail-closed check — could a WRONG locus now pass? (2) F10
+  theta_on=0.511@1nM vs ~1.0 for F18/F14 — bug, and is theta_on/sum_theta_off well-posed across ASOs
+  with differing theta_on? (3) mass-balance violation — ~149k simultaneously occupied sites from a
+  finite pool; does it inflate or deflate the F10-vs-F18 contrast? (4) F18's denominator-of-3
+  fragility; (5) is the accessibility gate applied SYMMETRICALLY to on- vs off-target? (6) 3UP8
+  saturated-empties not coerced to 0/NaN; (7) shard-merge integrity — header leakage, dupes, does
+  anything assert 241? (8) `query_id " [candidate]"` suffix severity + is query_id ever a join key?
+  (9) any other "confident number on absent evidence" (the B-was-all-failed class) recurrence.
+  **NEXT after review:** fix/log findings → item3 README reframe → then the `query_id " [candidate]"`
+  suffix cleanup (cosmetic, severity being re-confirmed by the review).
+- **CODEX ROUTE (2026-10-06):** MCP `codex mcp-server` still CONNECTION_CLOSED, but **CLI works** —
+  `codex-cli 0.159.2` at `~/.local/bin/codex`, auth OK, smoke-tested `ROUTE_OK`. Dispatch via
+  `codex exec -m gpt-5.6-sol -c model_reasoning_effort="low|medium" --sandbox read-only|workspace-write
+  --skip-git-repo-check`. ⚠ **`~/.codex/config.toml` default is now `gpt-6.1-sol` effort `low`** — newer
+  than the 5.6 named in CLAUDE.md's tiering table, so ALWAYS pass `-m` explicitly or you silently get
+  6.1. User DEFERRED deciding whether to move the tiering table to 6.1. Codex sandbox still CANNOT
+  reach the Slurm controller → Claude submits all jobs from the main shell.
+- **★★ 2026-10-04 — ITEM 3 "B" DEFECT ROOT-CAUSED + FIXED + RERUN LAUNCHED (job 24817368)** (SUPERSEDED
+  by the completion entry above; cause/fix detail retained).
+  Cause was NOT data: pure ALPHABET mismatch. `feng/src/feng/titration/evaluate.py:313` fail-closed
+  compares the rung target against a GENOMIC (DNA) fetch verbatim; conference targets are stored RNA (U).
+  genomic `CCAGCATTATGAAAGTGA` vs target `CCAGCAUUAUGAAAGUGA` — identical but for T/U → ViennaError
+  "padded window does not contain the rung target" for EVERY U-containing locus. Arm E passes
+
+ succeeded in 2115ms:
+---
+name: using-superpowers
+description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+---
+
+<SUBAGENT-STOP>
+If you were dispatched as a subagent to execute a specific task, ignore this skill.
+</SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. You cannot rationalize your way out of this.
+</EXTREMELY-IMPORTANT>
+
+## The Rule
+
+**Invoke relevant or requested skills BEFORE any response or action** — including clarifying questions, exploring the codebase, or checking files. If it turns out wrong for the situation, you don't have to use it.
+
+**Before entering plan mode:** if you haven't already brainstormed, invoke the brainstorming skill first.
+
+Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
+
+## Skill Priority
+
+When multiple skills apply, process skills come first — they set the approach, then implementation skills (frontend-design, etc.) carry it out. Brainstorming and systematic-debugging are Superpowers' most common process skills, but the rule holds for any of them.
+
+- "Let's build X" → superpowers:brainstorming first, then implementation skills.
+- "Fix this bug" → superpowers:systematic-debugging first, then domain skills.
+
+## Red Flags
+
+These thoughts mean STOP—you're rationalizing:
+
+| Thought | Reality |
+|---------|---------|
+| "This is just a simple question" | Questions are tasks. Check for skills. |
+| "I need more context first" | Skill check comes BEFORE clarifying questions. |
+| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
+| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
+| "Let me gather information first" | Skills tell you HOW to gather information. |
+| "This doesn't need a formal skill" | If a skill exists, use it. |
+| "I remember this skill" | Skills evolve. Read current version. |
+| "This doesn't count as a task" | Action = task. Check for skills. |
+| "The skill is overkill" | Simple things become complex. Use it. |
+| "I'll just do this one thing first" | Check BEFORE doing anything. |
+| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
+| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+
+## Platform Adaptation
+
+If your harness appears here, read its reference file for special instructions:
+
+- Claude Code: `references/claude-code-tools.md`
+- Codex: `references/codex-tools.md`
+- Pi: `references/pi-tools.md`
+- Antigravity: `references/antigravity-tools.md`
+- Hermes Agent: `references/hermes-tools.md`
+- Muse: `references/muse-tools.md`
+
+## User Instructions
+
+User instructions (CLAUDE.md, AGENTS.md, GEMINI.md, etc, direct requests) take precedence over skills, which in turn override default behavior. Only skip skill workflows or instructions when your human partner has explicitly told you to.
+
+ succeeded in 2078ms:
+ ==========================================================================
+|        MIT Office of Research Computing and Data Engaging System         |
+|                                                                          |
+|  Website:            https://orcd.mit.edu                                |
+|  Documentation:      https://orcd-docs.mit.edu                           |
+|  Web Portal:         https://orcd-ood.mit.edu                            |
+|  Consulting:         orcd-help-engaging@mit.edu                          |
+|  Office Hours:       https://orcd.mit.edu/news-and-events/office-hours   |
+|  ORCD Updates Slack: https://mit-orcd-updates.slack.com                  |
+ ==========================================================================
+ *************************************************************************
+*                 === IMPORTANT POLICY INFORMATION ===                     *
+*                                                                          *
+* - Account and password sharing is prohibited.                            *
+* - ORCD systems are suitable for storing low-level security requirements. *
+*   See https://orcd-docs.mit.edu/data-security/ for more information.     *
+* - See https://orcd-docs.mit.edu/code-of-conduct/ for Acceptable Use and  *
+*   Code of Conduct.                                                       *
+* - Authorized users must adhere to ALL MIT Acceptable Use Policies:       *
+*               https://ist.mit.edu/about/it-policies                      *
+*                                                                          *
+ *************************************************************************
+ *************************************************************************
+
+
+ succeeded in 1937ms:
+# J8J10 adversarial review
+Verdict: DO-NOT-ADVANCE — 1 HIGH, 5 MED findings; all reproduced with tiny synthetic Python scripts.
+Requested pytest: 40 passed, 0 skipped, 0 failed (2.02 s); full feng suite not run for this review.
+Scope: source/tests/jobs read-only; only this report added; no submissions or real wet-lab/outcome reads.
+
+HIGH F1 — j8_feature_join.py:324; jobs/j8_full.sbatch:18 — J4 overlap lookup scans the entire earlier chromosome/strand prefix for every J6 row; bounded throughput cannot support the claimed full-genome runtime.
+Repro: insert 100/1,000/5,000 disjoint J4 intervals, query beyond their ends: zero hits but 527/5,017/25,017 SQLite VM instructions; EXPLAIN uses only chrom,strand,start<?.
+Fix: use an interval/RTree index or a validated maximum-footprint-length lower bound on start; benchmark representative full-density lookups before sizing the full job.
+
+MED F2 — j10_robustness.py:154,175,349 — discovery-selected J6 near-matches receive random-position tails labelled p_value without an observed-position exchangeability/ascertainment model; a stated decoy universe alone does not supply that model.
+Repro: flank A*40+T*18+A*40, ASO A*18, start=40,length=18,n=50,seed=1729: p=0.019608; conditioning on J6's <=3 mismatches leaves only six decoys (plus-one tail 1/7, below minimum 20).
+Fix: retain descriptive distributions with p_value=None until a prespecified, selection-aware null is justified; overlapping decoys alone are not proof of invalidity.
+
+MED F3 — j10_robustness.py:351 — an upstream failed context fetch aborts the entire report instead of preserving an explicit unavailable null.
+Repro: two otherwise valid J3 rows with complementarity_status=ok but target_with_flank=None, footprint_start1_in_context=None: main raises TypeError at None-1; no report exists.
+Fix: validate context/offset/channel status per site and emit blocked nulls with the upstream failure reason, retaining the candidate in rank coverage.
+
+MED F4 — j8_feature_join.py:216; j10_robustness.py:33 — derived .done paths are opened before applying safe_path, bypassing the wetlab/terminal boundary through a sidecar symlink.
+Repro: allowed.parquet.done -> temporary wetlab/marker.json containing valid window/span: j3_fold_variant returns w120s60; J8 also reads the marker before eventually refusing its hash path.
+Fix: resolve and guard every sidecar/catalog/manifest path before opening it; add synthetic forbidden-target symlink tests.
+
+MED F5 — j10_robustness.py:322 — J3 marker parameters are trusted without validating committed rows/hash; hashing the current parquet only records an unverified replacement.
+Repro: two-row parquet plus .done {rows:999999,sha256:"wrong",params:{window:120,span:60}} still produces a two-row robustness report.
+Fix: verify source commit markers against parquet hashes/counts before reading features; include marker identities in the report contract (and authenticate J9's upstream commit).
+
+MED F6 — j8_feature_join.py:361; j10_robustness.py:329 — incomplete checkpoints can be accepted as completed results.
+Repro: remove J8 marker.contract and change context.code_sha256: old parquet is reused; replace a completed J10 JSON with {contract:old_contract}: rerun returns with all result sections absent.
+Fix: require an exact, present J8 contract and validate J10 result schema/payload integrity before reuse; rebuild damaged checkpoints.
+
+Coverage gaps: test_j8_feature_join.py:218 checks malformed JSON only; test_j10_robustness.py:137 actually omits the input SHA. Add the above cases and a full-density lookup check.
+No additional defect established in strand/midpoint arithmetic, J2 transcript-end indexing, J4 inclusive overlap, Kendall tau-b/sign flips, missing-grid handling, or evaluation_core's supervised refusal.
+Unfixed: all findings, by read-only instruction. Limits: synthetic repros only; production-wide cardinality/RSS/runtime not measured; ~37 GB denotes a disk index estimate, not a demonstrated RAM requirement.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+I’m using the verification and code-review skills to check the six fixes against executable evidence and look for regressions at their boundaries.
+exec
+/usr/bin/bash -lc 'cat /home/dashii/.codex/plugins/cache/caveman/caveman/4.1.0/skills/caveman-review/SKILL.md /home/dashii/.codex/plugins/cache/caveman/caveman/4.1.0/skills/verify-and-stop/SKILL.md' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "rg -n 'def |CREATE |INDEX|contract|safe_path|marker|overlap|checkpoint|sha256|p_value|footprint' conference/model_v2/j8_feature_join.py conference/model_v2/j10_robustness.py" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc 'PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j8_feature_join.py conference/model_v2/tests/test_j10_robustness.py -q' in /home/dashii/smt-isef
+ succeeded in 1604ms:
+---
+name: caveman-review
+description: >
+  Compressed code review - one line per finding with location, problem and fix.
+  Use for /caveman-review, "review this PR", or "review the diff".
+---
+
+Write code review comments terse and actionable. One line per finding. Location, problem, fix. No throat-clearing.
+
+## Rules
+
+**Format:** `L<line>: <problem>. <fix>.` — or `<file>:L<line>: ...` when reviewing multi-file diffs.
+
+**Severity prefix (optional, when mixed):**
+- `🔴 bug:` — broken behavior, will cause incident
+- `🟡 risk:` — works but fragile (race, missing null check, swallowed error)
+- `🔵 nit:` — style, naming, micro-optim. Author can ignore
+- `❓ q:` — genuine question, not a suggestion
+
+**Drop:**
+- "I noticed that...", "It seems like...", "You might want to consider..."
+- "This is just a suggestion but..." — use `nit:` instead
+- "Great work!", "Looks good overall but..." — say it once at the top, not per comment
+- Restating what the line does — the reviewer can read the diff
+- Hedging ("perhaps", "maybe", "I think") — if unsure use `q:`
+
+**Keep:**
+- Exact line numbers
+- Exact symbol/function/variable names in backticks
+- Concrete fix, not "consider refactoring this"
+- The *why* if the fix isn't obvious from the problem statement
+
+## Examples
+
+❌ "I noticed that on line 42 you're not checking if the user object is null before accessing the email property. This could potentially cause a crash if the user is not found in the database. You might want to add a null check here."
+
+✅ `L42: 🔴 bug: user can be null after .find(). Add guard before .email.`
+
+❌ "It looks like this function is doing a lot of things and might benefit from being broken up into smaller functions for readability."
+
+✅ `L88-140: 🔵 nit: 50-line fn does 4 things. Extract validate/normalize/persist.`
+
+❌ "Have you considered what happens if the API returns a 429? I think we should probably handle that case."
+
+✅ `L23: 🟡 risk: no retry on 429. Wrap in withBackoff(3).`
+
+## Auto-Clarity
+
+Drop terse mode for: security findings (CVE-class bugs need full explanation + reference), architectural disagreements (need rationale, not just a one-liner), and onboarding contexts where the author is new and needs the "why". In those cases write a normal paragraph, then resume terse for the rest.
+
+## Boundaries
+
+Reviews only — does not write the code fix, does not approve/request-changes, does not run linters. Output the comment(s) ready to paste into the PR. "stop caveman-review" or "normal mode": revert to verbose review style.---
+name: verify-and-stop
+description: Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion checks, focused gate runs, and last-mile proof.
+---
+
+# Verify and stop
+
+Translate acceptance conditions into smallest sufficient proof set.
+
+- Reuse still-current results with matching repository state.
+- Run focused checks before wider gates.
+- Distinguish pass, fail, unavailable, and blocked exactly.
+- Do not edit product code unless verification request includes fixes.
+- Do not add polish, cleanup, or unrelated tests after criteria pass.
+
+Stop immediately when acceptance proof is complete. Report commands, results, and unresolved risk only.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 2012ms:
+conference/model_v2/j8_feature_join.py:5:Distances use the footprint midpoint and transcript orientation. J4 overlap
+conference/model_v2/j8_feature_join.py:6:summaries are explicitly distinct from exact-footprint predictions. JSON feature
+conference/model_v2/j8_feature_join.py:9:The SQLite index checkpoints each verified input atomically. Its cache is 32 MiB;
+conference/model_v2/j8_feature_join.py:16:ASO footprints are 10/14/18 nt, so only F18 sites (~0.01% of J6) can ever match a
+conference/model_v2/j8_feature_join.py:18:not_available; no length substitution is ever performed. J3's own per-footprint
+conference/model_v2/j8_feature_join.py:47:def safe_path(path):
+conference/model_v2/j8_feature_join.py:54:def sha256(path):
+conference/model_v2/j8_feature_join.py:55:    h = hashlib.sha256()
+conference/model_v2/j8_feature_join.py:56:    with safe_path(path).open('rb') as stream:
+conference/model_v2/j8_feature_join.py:62:def dumps(value):
+conference/model_v2/j8_feature_join.py:66:def atomic_json(path, value):
+conference/model_v2/j8_feature_join.py:67:    path = safe_path(path)
+conference/model_v2/j8_feature_join.py:77:def fence(row):
+conference/model_v2/j8_feature_join.py:84:def load_loci(paths):
+conference/model_v2/j8_feature_join.py:87:        with safe_path(path).open() as stream:
+conference/model_v2/j8_feature_join.py:117:    """Small curated exon index; nearest boundaries via bisect, overlaps by chromosome."""
+conference/model_v2/j8_feature_join.py:118:    def __init__(self, loci):
+conference/model_v2/j8_feature_join.py:137:    def overlapping(self,row):
+conference/model_v2/j8_feature_join.py:144:    def annotate(self, row):
+conference/model_v2/j8_feature_join.py:148:                      anchor='footprint_midpoint', donor_distance=None, acceptor_distance=None,
+conference/model_v2/j8_feature_join.py:159:        local=self.overlapping(row)
+conference/model_v2/j8_feature_join.py:160:        overlaps = [l for l in local if l['start1']+100 <= row['end1'] and l['end1']-100 >= row['start1']]
+conference/model_v2/j8_feature_join.py:161:        if overlaps:
+conference/model_v2/j8_feature_join.py:162:            result['region_class'] = ('exonic' if any(l['start1']+100 <= row['start1'] and row['end1'] <= l['end1']-100 for l in overlaps)
+conference/model_v2/j8_feature_join.py:170:def geometry(row, loci):
+conference/model_v2/j8_feature_join.py:174:def accessibility(row, loci, grids):
+conference/model_v2/j8_feature_join.py:191:def atlas_summary(row, atlas):
+conference/model_v2/j8_feature_join.py:195:        if a['footprint_start'] > row['end1'] or a['footprint_end'] < row['start1']: continue
+conference/model_v2/j8_feature_join.py:196:        exact=(a['footprint_start'],a['footprint_end'])==(row['start1'],row['end1'])
+conference/model_v2/j8_feature_join.py:199:        hits.append({k:a.get(k) for k in ('locus','config_id','site_kind','site_position','tissue','footprint_start','footprint_end')} |
+conference/model_v2/j8_feature_join.py:209:                overlap_mean=sum(valid)/len(valid) if valid else None,
+conference/model_v2/j8_feature_join.py:210:                n_failed=sum(a['status']!='ok' for a in hits), n_overlap=len(hits), cells=hits,
+conference/model_v2/j8_feature_join.py:211:                interpretation='raw N-ablation deltas; overlap is descriptive, not a site-specific prediction')
+conference/model_v2/j8_feature_join.py:214:def input_identity(path, kind):
+conference/model_v2/j8_feature_join.py:215:    path=safe_path(path); marker=(path.parent.parent/(path.stem+'.done')) if kind=='j4' else path.with_suffix('.done')
+conference/model_v2/j8_feature_join.py:216:    marker=safe_path(marker)
+conference/model_v2/j8_feature_join.py:217:    m=json.loads(marker.read_text())
+conference/model_v2/j8_feature_join.py:219:    digest=sha256(path); rows=pq.read_metadata(path).num_rows
+conference/model_v2/j8_feature_join.py:220:    if entry.get('sha256')!=digest or entry.get('rows')!=rows:
+conference/model_v2/j8_feature_join.py:221:        raise ValueError('invalid input commit marker')
+conference/model_v2/j8_feature_join.py:231:    return dict(path=str(path),sha256=digest,rows=rows,kind=kind,
+conference/model_v2/j8_feature_join.py:232:                marker_path=str(marker),marker_sha256=sha256(marker))
+conference/model_v2/j8_feature_join.py:237:    def __init__(self,path,max_bytes=20*1024**3):
+conference/model_v2/j8_feature_join.py:238:        self.path=safe_path(path); self.path.parent.mkdir(parents=True,exist_ok=True)
+conference/model_v2/j8_feature_join.py:240:        for suffix in ('-journal','-wal','-shm'): safe_path(str(self.path)+suffix)
+conference/model_v2/j8_feature_join.py:243:          CREATE TABLE IF NOT EXISTS inputs(path TEXT PRIMARY KEY, identity TEXT);
+conference/model_v2/j8_feature_join.py:244:          CREATE TABLE IF NOT EXISTS j3(id TEXT PRIMARY KEY,payload TEXT);
+conference/model_v2/j8_feature_join.py:245:          CREATE TABLE IF NOT EXISTS j2(locus TEXT,strand TEXT,u INTEGER,w INTEGER,l INTEGER,first INTEGER,last INTEGER,values_blob BLOB,
+conference/model_v2/j8_feature_join.py:247:          CREATE TABLE IF NOT EXISTS j4(id TEXT PRIMARY KEY,chrom TEXT,strand TEXT,start INTEGER,end INTEGER,payload TEXT);
+conference/model_v2/j8_feature_join.py:248:          CREATE INDEX IF NOT EXISTS j4_overlap ON j4(chrom,strand,start,end);
+conference/model_v2/j8_feature_join.py:249:          CREATE INDEX IF NOT EXISTS j4_width ON j4((end-start));''')
+conference/model_v2/j8_feature_join.py:250:    def __enter__(self): return self
+conference/model_v2/j8_feature_join.py:251:    def __exit__(self,*args): self.db.close()
+conference/model_v2/j8_feature_join.py:252:    def identities(self):
+conference/model_v2/j8_feature_join.py:254:    def ingest(self,kind,path,*,config_id=None):
+conference/model_v2/j8_feature_join.py:261:        pf=pq.ParquetFile(safe_path(path))
+conference/model_v2/j8_feature_join.py:307:                            start,end=row['footprint_start'],row['footprint_end']
+conference/model_v2/j8_feature_join.py:309:                                raise ValueError('invalid J4 footprint coordinates')
+conference/model_v2/j8_feature_join.py:311:                            self.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',(str(config_id)+':'+row['row_id'],row['chrom'],row['strand'],row['footprint_start'],row['footprint_end'],dumps(row)))
+conference/model_v2/j8_feature_join.py:317:    def annotate(self,row,loci,geo):
+conference/model_v2/j8_feature_join.py:324:        local=[l for l in geo.overlapping(row) if l['start1']<=row['start1'] and row['end1']<=l['end1']]
+conference/model_v2/j8_feature_join.py:333:        # resume or new ingestion. Every overlapping interval must start at least
+conference/model_v2/j8_feature_join.py:335:        # never the entire earlier chromosome prefix; no assumed footprint size.
+conference/model_v2/j8_feature_join.py:344:def prepare_join(index,locus_paths,output_dir):
+conference/model_v2/j8_feature_join.py:346:    output_dir=safe_path(output_dir); output_dir.mkdir(parents=True,exist_ok=True)
+conference/model_v2/j8_feature_join.py:348:    locus_inputs=[dict(path=str(safe_path(p)),sha256=sha256(p),kind='loci') for p in locus_paths]
+conference/model_v2/j8_feature_join.py:352:    path=safe_path(output_dir/'feature_inputs.json')
+conference/model_v2/j8_feature_join.py:356:    return dict(loci=loci,geo=GeometryIndex(loci),catalog_sha256=sha256(path),
+conference/model_v2/j8_feature_join.py:357:                catalog_path=str(path),locus_inputs=locus_inputs,code_sha256=sha256(__file__),
+conference/model_v2/j8_feature_join.py:361:def join_shard(j6_path,output,index,locus_paths,*,batch_size=512,context=None):
+conference/model_v2/j8_feature_join.py:363:    source=input_identity(j6_path,'j6'); output=safe_path(output); output.parent.mkdir(parents=True,exist_ok=True)
+conference/model_v2/j8_feature_join.py:367:    inputs=[source,dict(path=context['catalog_path'],sha256=context['catalog_sha256'],kind='feature_catalog')]+context['locus_inputs']
+conference/model_v2/j8_feature_join.py:368:    contract=dict(version=VERSION,code_sha256=context['code_sha256'],inputs=inputs,
+conference/model_v2/j8_feature_join.py:369:                  catalog_sha256=context['catalog_sha256'],assembly=ASSEMBLY,annotation=ANNOTATION,exon_padding=100)
+conference/model_v2/j8_feature_join.py:370:    marker=safe_path(output.with_suffix('.done'))
+conference/model_v2/j8_feature_join.py:371:    if marker.exists():
+conference/model_v2/j8_feature_join.py:372:        try: old=json.loads(marker.read_text())
+conference/model_v2/j8_feature_join.py:375:        if old.get('contract') is not None and old['contract']!=contract: raise ValueError('join inputs or implementation changed; use a fresh output')
+conference/model_v2/j8_feature_join.py:376:        if (old.get('contract')==contract and old.get('rows')==source['rows'] and
+conference/model_v2/j8_feature_join.py:377:                output.exists() and sha256(output)==old.get('sha256') and pq.read_metadata(output).num_rows==source['rows']):
+conference/model_v2/j8_feature_join.py:379:    marker.unlink(missing_ok=True)
+conference/model_v2/j8_feature_join.py:380:    pf=pq.ParquetFile(safe_path(j6_path))
+conference/model_v2/j8_feature_join.py:396:        result=dict(contract=contract,inputs=inputs,rows=n,sha256=sha256(output))
+conference/model_v2/j8_feature_join.py:397:        atomic_json(marker,result)
+conference/model_v2/j8_feature_join.py:403:def production_inventory(root,*,bounded=False):
+conference/model_v2/j8_feature_join.py:405:    root=safe_path(root)
+conference/model_v2/j8_feature_join.py:406:    manifest=safe_path(root/'j6_genome_v1/run_manifest.json')
+conference/model_v2/j8_feature_join.py:412:    config=safe_path(root/'j4_configs/j4_configs_manifest.tsv')
+conference/model_v2/j8_feature_join.py:422:def main(argv=None):
+conference/model_v2/j8_feature_join.py:427:    args=p.parse_args(argv); out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+conference/model_v2/j8_feature_join.py:436:            gate=safe_path(safe_path(args.root)/'j6_genome_v1/gate_report.json')
+conference/model_v2/j8_feature_join.py:441:          inputs=index.identities(),source_manifests=[dict(path=str(p),sha256=sha256(p)) for p in manifests],
+conference/model_v2/j8_feature_join.py:443:          j2_coverage_warning='J2 folded u in {8,12,18}; ASO footprints are 10/14/18 nt, so only '
+conference/model_v2/j10_robustness.py:24:from conference.model_v2.j8_feature_join import atomic_json, safe_path, sha256, input_identity, dumps
+conference/model_v2/j10_robustness.py:31:def j3_fold_variant(path):
+conference/model_v2/j10_robustness.py:32:    """Read the single J3 fold window from its commit marker; never assume a label."""
+conference/model_v2/j10_robustness.py:33:    marker=safe_path(safe_path(path).with_suffix('.done'))
+conference/model_v2/j10_robustness.py:34:    params=json.loads(marker.read_text()).get('params',{})
+conference/model_v2/j10_robustness.py:37:        raise ValueError('J3 marker lacks explicit fold window/span; cannot label the accessibility variant')
+conference/model_v2/j10_robustness.py:43:def finite(value):
+conference/model_v2/j10_robustness.py:55:    def __post_init__(self):
+conference/model_v2/j10_robustness.py:61:def alternative_scores(rows,settings,candidates):
+conference/model_v2/j10_robustness.py:84:def rank_stability(alternatives,*,candidates=None,min_agreement=.8,max_flip_fraction=0):
+conference/model_v2/j10_robustness.py:125:def dna(sequence):
+conference/model_v2/j10_robustness.py:131:def dinucleotide_shuffle(sequence,*,seed):
+conference/model_v2/j10_robustness.py:143:def shifted_decoys(sequence,*,start,length,n,seed,gc_tolerance=0):
+conference/model_v2/j10_robustness.py:146:    Excludes the true start (overlap with the true footprint is allowed and stated).
+conference/model_v2/j10_robustness.py:151:        raise ValueError('invalid footprint or draw count')
+conference/model_v2/j10_robustness.py:158:                sampling_universe=dict(definition='all same-locus starts except observed start, exact length, GC-matched; overlap allowed',
+conference/model_v2/j10_robustness.py:159:                    method='uniform_without_replacement',locus_sequence_sha256=__import__('hashlib').sha256(sequence.encode()).hexdigest(),
+conference/model_v2/j10_robustness.py:164:def empirical_null(observed,values,*,universe,min_decoys=20,higher_is_extreme=True):
+conference/model_v2/j10_robustness.py:180:                p_value=(1+extreme)/(1+len(values)),tail='upper' if higher_is_extreme else 'lower',
+conference/model_v2/j10_robustness.py:184:def null_channels(sequence,*,start,length,n,seed,scorers,min_decoys=20,gc_tolerance=0,directions=None):
+conference/model_v2/j10_robustness.py:188:    footprint GC are retained; acceptance counts and the nonuniform law are stated.
+conference/model_v2/j10_robustness.py:197:    universe=dict(definition='dinucleotide-preserving permutations of the supplied flank, conditioned on footprint GC/length',
+conference/model_v2/j10_robustness.py:198:                  method='randomized_euler_trail_nonuniform',locus_sequence_sha256=shifted['sampling_universe']['locus_sequence_sha256'],
+conference/model_v2/j10_robustness.py:203:            result[channel]=dict(status='blocked',p_value=None,reason='decoy channel not precomputed; no scoring backend in J10',evidence_class='not_available'); continue
+conference/model_v2/j10_robustness.py:204:        def score(s):
+conference/model_v2/j10_robustness.py:216:                parts[name]=dict(status='blocked',reason=exc.reason,p_value=None,distribution=values,observed=observed,
+conference/model_v2/j10_robustness.py:222:def complementarity_scorer(aso_sequence):
+conference/model_v2/j10_robustness.py:230:    def score(sequence):
+conference/model_v2/j10_robustness.py:235:def _direction(column):
+conference/model_v2/j10_robustness.py:239:def descriptive_scores(features,columns):
+conference/model_v2/j10_robustness.py:252:def baseline_ablation(features,*,source_paths,seed=0):
+conference/model_v2/j10_robustness.py:292:def j9_report(rows,*,source,seed=0,fold_variant='w120s60',mismatch_variant='mm3'):
+conference/model_v2/j10_robustness.py:318:def j9_identity(path):
+conference/model_v2/j10_robustness.py:321:    path=safe_path(path); marker=safe_path(path.parent/'manifest.json')
+conference/model_v2/j10_robustness.py:322:    manifest=json.loads(marker.read_text())
+conference/model_v2/j10_robustness.py:324:    digest=sha256(path); rows=pq.read_metadata(path).num_rows
+conference/model_v2/j10_robustness.py:325:    if len(entries)!=1 or entries[0].get('rows')!=rows or entries[0].get('sha256')!=digest:
+conference/model_v2/j10_robustness.py:327:    return dict(path=str(path),sha256=digest,rows=rows,kind='j9',
+conference/model_v2/j10_robustness.py:328:                marker_path=str(marker),marker_sha256=sha256(marker))
+conference/model_v2/j10_robustness.py:331:def site_null(row,seed):
+conference/model_v2/j10_robustness.py:337:        sequence=row.get('target_with_flank'); offset=row.get('footprint_start1_in_context')
+conference/model_v2/j10_robustness.py:339:            raise ValueError('upstream context/footprint offset unavailable or invalid')
+conference/model_v2/j10_robustness.py:347:                    channels={c:dict(status='blocked',p_value=None,reason=reason,evidence_class='not_available')
+conference/model_v2/j10_robustness.py:356:def payload_sha256(result):
+conference/model_v2/j10_robustness.py:357:    return hashlib.sha256(dumps({k:v for k,v in result.items() if k!='payload_sha256'}).encode()).hexdigest()
+conference/model_v2/j10_robustness.py:360:def valid_checkpoint(result,contract):
+conference/model_v2/j10_robustness.py:362:    def fields(obj,schema):
+conference/model_v2/j10_robustness.py:364:    def stability(obj):
+conference/model_v2/j10_robustness.py:368:        if not fields(result,dict(contract=dict,j9=dict,j3_sample=dict,blocked=list,payload_sha256=str)): return False
+conference/model_v2/j10_robustness.py:369:        if result['contract']!=contract or result['payload_sha256']!=payload_sha256(result): return False
+conference/model_v2/j10_robustness.py:378:        if not 1<=sample['rows']<=contract['limit'] or sample['j3_fold_variant']!=contract['j3_fold_variant']: return False
+conference/model_v2/j10_robustness.py:388:                if not all(fields(p,dict(status=str,reason=str)) and p['status']=='blocked' and 'p_value' in p and p['p_value'] is None for p in parts): return False
+conference/model_v2/j10_robustness.py:398:def main(argv=None):
+conference/model_v2/j10_robustness.py:406:    paths=[safe_path(args.j9),safe_path(args.j3)]
+conference/model_v2/j10_robustness.py:409:    # Bounded output checkpoint; exact source SHA is acquired in Slurm, not login.
+conference/model_v2/j10_robustness.py:410:    contract=dict(inputs=identities,seed=args.seed,limit=args.limit,
+conference/model_v2/j10_robustness.py:411:                  j3_fold_variant=variant,code_sha256=sha256(__file__))
+conference/model_v2/j10_robustness.py:412:    output=safe_path(args.out); output.parent.mkdir(parents=True,exist_ok=True)
+conference/model_v2/j10_robustness.py:416:        if valid_checkpoint(prior,contract): return
+conference/model_v2/j10_robustness.py:417:        if isinstance(prior,dict) and prior.get('contract') is not None and prior['contract']!=contract:
+conference/model_v2/j10_robustness.py:422:             'accessibility_p_unpaired','accessibility_status','target_with_flank','footprint_start1_in_context']
+conference/model_v2/j10_robustness.py:439:    result=dict(contract=contract,j9=j9_report(j9rows,source=str(paths[0]),seed=args.seed,fold_variant=variant),j3_sample=dict(
+conference/model_v2/j10_robustness.py:444:                 'Shift distributions are descriptive: no selection-aware null for J6-discovered near-matches; p_value=None.',
+conference/model_v2/j10_robustness.py:447:    result['payload_sha256']=payload_sha256(result)
+conference/model_v2/j10_robustness.py:448:    if not valid_checkpoint(result,contract): raise ValueError('invalid robustness result schema')
+
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 7790ms:
+.............................J4_BENCH {"build_s":2.1904961690015625,"configs":1000,"dense_hit_vm":1556,"dense_rows_s":331.1626870193037,"full_miss_vm":41,"index_bytes":67117056,"maxrss_kib":168448,"miss_rows_s":9405.277940739408,"rows":216000,"small_miss_vm":58,"width_index_bytes":2449408}
+........................................... [ 98%]
+.                                                                        [100%]
+73 passed in 5.68s
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "sed -n '40,55p;214,315p;317,342p;361,400p' conference/model_v2/j8_feature_join.py" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "sed -n '164,221p;318,450p' conference/model_v2/j10_robustness.py" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "rg -n 'def test_|def .*fixture|def .*marker|def .*write' conference/model_v2/tests/test_j8_feature_join.py conference/model_v2/tests/test_j10_robustness.py" in /home/dashii/smt-isef
+ succeeded in 1579ms:
+
+VERSION = '1.0.0'
+ASSEMBLY, ANNOTATION = 'GRCh38', 'GENCODE v50'
+OUTCOME_COLUMNS = {'label', 'label_state', 'outcome', 'psi', 'delta_psi', 'dpsi', 'efficacy', 'potency'}
+J3_DROP_COLUMNS = {'target_with_flank', 'flank_left', 'flank_right', 'duplex_structure'}
+
+
+def safe_path(path):
+    p = Path(check_source_not_forbidden(path)).expanduser().resolve()
+    if any(x.lower() in {'wetlab', 'terminal', 'psi25'} for x in p.parts):
+        raise ValueError('outcome source forbidden')
+    return p
+
+
+def sha256(path):
+    h = hashlib.sha256()
+def input_identity(path, kind):
+    path=safe_path(path); marker=(path.parent.parent/(path.stem+'.done')) if kind=='j4' else path.with_suffix('.done')
+    marker=safe_path(marker)
+    m=json.loads(marker.read_text())
+    entry=m.get('ablation',m)
+    digest=sha256(path); rows=pq.read_metadata(path).num_rows
+    if entry.get('sha256')!=digest or entry.get('rows')!=rows:
+        raise ValueError('invalid input commit marker')
+    if kind=='j2':
+        coordinates=(pq.read_schema(path).metadata or {}).get(b'coordinates',b'')
+        if coordinates:
+            valid=b'GRCh38; GENCODE v50' in coordinates
+        else:
+            fasta=str(m.get('fasta',''))
+            valid=('/gencode/v50/GRCh38.primary_assembly.genome.fa' in fasta and
+                   Path(str(m.get('loci',''))).name in ('j2_loci_phase1.tsv','j2_loci_phase2.tsv'))
+        if not valid: raise ValueError('J2 assembly fence requires coordinate metadata or pinned upstream FASTA/loci provenance')
+    return dict(path=str(path),sha256=digest,rows=rows,kind=kind,
+                marker_path=str(marker),marker_sha256=sha256(marker))
+
+
+class FeatureIndex:
+    """Single writer; transactional per-shard resume. No directory discovery."""
+    def __init__(self,path,max_bytes=20*1024**3):
+        self.path=safe_path(path); self.path.parent.mkdir(parents=True,exist_ok=True)
+        # SQLite opens these implicitly, including on recovery of an existing DB.
+        for suffix in ('-journal','-wal','-shm'): safe_path(str(self.path)+suffix)
+        self.db=sqlite3.connect(self.path); self.max_bytes=max_bytes
+        self.db.executescript('''PRAGMA cache_size=-32768; PRAGMA temp_store=FILE;
+          CREATE TABLE IF NOT EXISTS inputs(path TEXT PRIMARY KEY, identity TEXT);
+          CREATE TABLE IF NOT EXISTS j3(id TEXT PRIMARY KEY,payload TEXT);
+          CREATE TABLE IF NOT EXISTS j2(locus TEXT,strand TEXT,u INTEGER,w INTEGER,l INTEGER,first INTEGER,last INTEGER,values_blob BLOB,
+            PRIMARY KEY(locus,strand,u,w,l,first));
+          CREATE TABLE IF NOT EXISTS j4(id TEXT PRIMARY KEY,chrom TEXT,strand TEXT,start INTEGER,end INTEGER,payload TEXT);
+          CREATE INDEX IF NOT EXISTS j4_overlap ON j4(chrom,strand,start,end);
+          CREATE INDEX IF NOT EXISTS j4_width ON j4((end-start));''')
+    def __enter__(self): return self
+    def __exit__(self,*args): self.db.close()
+    def identities(self):
+        return [json.loads(x[0]) for x in self.db.execute('SELECT identity FROM inputs ORDER BY path')]
+    def ingest(self,kind,path,*,config_id=None):
+        if kind not in ('j2','j3','j4'): raise ValueError('unknown index kind')
+        identity=input_identity(path,kind); identity['config_id']=config_id
+        prior=self.db.execute('SELECT identity FROM inputs WHERE path=?',(identity['path'],)).fetchone()
+        if prior:
+            if prior[0]!=dumps(identity): raise ValueError('index input changed')
+            return
+        pf=pq.ParquetFile(safe_path(path))
+        if OUTCOME_COLUMNS.intersection(x.lower() for x in pf.schema_arrow.names): raise ValueError('outcome columns forbidden')
+        if kind=='j4':
+            coords=(pf.schema_arrow.metadata or {}).get(b'coordinates',b'')
+            if b'GRCh38; GENCODE v50' not in coords: raise ValueError('atlas assembly fence')
+        # Project away the bulk sequence/structure columns at read time: the J3 shards
+        # are ~357 MB each and ~95% of that is flank/structure text this join discards.
+        columns=[n for n in pf.schema_arrow.names if n not in J3_DROP_COLUMNS] if kind=='j3' else None
+        try:
+            with self.db:
+                for batch in pf.iter_batches(batch_size=512,columns=columns):
+                    rows=batch.to_pylist()
+                    if kind=='j2':
+                        # Bounded compressed contiguous chunks; never one SQLite row per
+                        # base/grid cell (the full grid contains billions of cells).
+                        key=lambda r:(r['locus_id'],r['strand'],r['u'],r['W'],r['L'])
+                        for group,items in groupby(rows,key=key):
+                            chunk=list(items); positions=[r['pos_end_1b_transcript'] for r in chunk]
+                            if positions!=list(range(positions[0],positions[0]+len(positions))):
+                                raise ValueError('J2 positions must be contiguous and ordered within a grid chunk')
+                            previous=self.db.execute('SELECT 1 FROM j2 WHERE locus=? AND strand=? AND u=? AND w=? AND l=? AND first<=? AND last>=?',
+                                                     (*group,positions[-1],positions[0])).fetchone()
+                            if previous: raise ValueError('duplicate J2 grid positions')
+                            values=[r['p_unpaired'] if r['p_unpaired'] is not None else float('nan') for r in chunk]
+                            blob=zlib.compress(struct.pack('!'+str(len(values))+'d',*values))
+                            self.db.execute('INSERT INTO j2 VALUES (?,?,?,?,?,?,?,?)',(*group,positions[0],positions[-1],blob))
+                    for row in rows:
+                        if kind=='j3':
+                            fence(row)
+                            # Retain provenance/status and channel fields, omit large redundant flanks.
+                            keep={k:v for k,v in row.items() if k not in J3_DROP_COLUMNS}
+                            for channel,columns in {'duplex':('duplex_energy_kcal_mol',),
+                                    'accessibility':('accessibility_p_unpaired',),
+                                    'complementarity':('complementarity_wc_pairs','complementarity_gu_pairs','complementarity_mismatch_count')}.items():
+                                if channel+'_status' not in keep: continue
+                                invalid=any(keep.get(c) is None or not math.isfinite(keep[c]) for c in columns)
+                                if keep[channel+'_status']=='ok' and invalid:
+                                    keep[channel+'_status']='failed'
+                                    keep[channel+'_reason']='upstream ok status with missing/nonfinite numeric channel'
+                                if keep[channel+'_status']!='ok':
+                                    for c in columns: keep[c]=None
+                                    keep[channel+'_evidence_class']='not_available'
+                            self.db.execute('INSERT INTO j3 VALUES (?,?)',(row['site_id'],dumps(keep)))
+                        elif kind=='j2':
+                            continue
+                        else:
+                            start,end=row['footprint_start'],row['footprint_end']
+                            if type(start) is not int or type(end) is not int or not 1<=start<=end:
+                                raise ValueError('invalid J4 footprint coordinates')
+                            row=dict(row,config_id=config_id)
+                            self.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',(str(config_id)+':'+row['row_id'],row['chrom'],row['strand'],row['footprint_start'],row['footprint_end'],dumps(row)))
+                    size=self.db.execute('PRAGMA page_count').fetchone()[0]*self.db.execute('PRAGMA page_size').fetchone()[0]
+                    if size>self.max_bytes: raise ValueError('index disk budget exceeded; raise explicitly in Slurm')
+                self.db.execute('INSERT INTO inputs VALUES (?,?)',(identity['path'],dumps(identity)))
+        except sqlite3.IntegrityError as exc:
+    def annotate(self,row,loci,geo):
+        fence(row)
+        hit=self.db.execute('SELECT payload FROM j3 WHERE id=?',(row['site_id'],)).fetchone()
+        channels=json.loads(hit[0]) if hit else dict(status='not_available',evidence_class='not_available',reason='site_id absent from indexed J3 inputs')
+        if hit:
+            for key in ('chrom','strand','start1','end1','assembly','annotation','aso_id'):
+                if channels.get(key)!=row.get(key): raise ValueError('site identity collision: '+key)
+        local=[l for l in geo.overlapping(row) if l['start1']<=row['start1'] and row['end1']<=l['end1']]
+        grids=[]
+        for l in local:
+            pos=row['end1']-l['start1']+1 if row['strand']=='+' else l['end1']-row['start1']+1
+            for w,span,u,first,blob in self.db.execute('SELECT w,l,u,first,values_blob FROM j2 WHERE locus=? AND strand=? AND u=? AND first<=? AND last>=?',
+                      (l['locus_id'],row['strand'],row['end1']-row['start1']+1,pos,pos)):
+                v=struct.unpack_from('!d',zlib.decompress(blob),8*(pos-first))[0]
+                grids.append(dict(locus_id=l['locus_id'],strand=row['strand'],pos_end_1b_transcript=pos,W=w,L=span,u=u,p_unpaired=v))
+        # MAX uses the expression index's last entry (O(log N)), including after
+        # resume or new ingestion. Every overlapping interval must start at least
+        # query.start - max(end-start). This bounds work by local atlas density,
+        # never the entire earlier chromosome prefix; no assumed footprint size.
+        width=self.db.execute('SELECT MAX(end-start) FROM j4').fetchone()[0]
+        atlas=[] if width is None else [json.loads(x[0]) for x in self.db.execute(
+            'SELECT payload FROM j4 WHERE chrom=? AND strand=? AND start>=? AND start<=? AND end>=?',
+            (row['chrom'],row['strand'],row['start1']-width,row['end1'],row['start1']))]
+        return dict(row,j3_channels=dumps(channels),curated_geometry=dumps(geo.annotate(row)),
+                    j2_accessibility=dumps(accessibility(row,local,grids)),j4_ablation=dumps(atlas_summary(row,atlas)))
+
+def join_shard(j6_path,output,index,locus_paths,*,batch_size=512,context=None):
+    if batch_size<1: raise ValueError('positive batch size required')
+    source=input_identity(j6_path,'j6'); output=safe_path(output); output.parent.mkdir(parents=True,exist_ok=True)
+    context=context or prepare_join(index,locus_paths,output.parent)
+    if context['index_version']!=(index.db.total_changes,index.db.execute('PRAGMA data_version').fetchone()[0]):
+        raise ValueError('feature index changed after catalog snapshot')
+    inputs=[source,dict(path=context['catalog_path'],sha256=context['catalog_sha256'],kind='feature_catalog')]+context['locus_inputs']
+    contract=dict(version=VERSION,code_sha256=context['code_sha256'],inputs=inputs,
+                  catalog_sha256=context['catalog_sha256'],assembly=ASSEMBLY,annotation=ANNOTATION,exon_padding=100)
+    marker=safe_path(output.with_suffix('.done'))
+    if marker.exists():
+        try: old=json.loads(marker.read_text())
+        except (ValueError,OSError): old={}
+        if not isinstance(old,dict): old={}
+        if old.get('contract') is not None and old['contract']!=contract: raise ValueError('join inputs or implementation changed; use a fresh output')
+        if (old.get('contract')==contract and old.get('rows')==source['rows'] and
+                output.exists() and sha256(output)==old.get('sha256') and pq.read_metadata(output).num_rows==source['rows']):
+            return old
+    marker.unlink(missing_ok=True)
+    pf=pq.ParquetFile(safe_path(j6_path))
+    if OUTCOME_COLUMNS.intersection(x.lower() for x in pf.schema_arrow.names): raise ValueError('outcome columns forbidden')
+    fields=[f.with_metadata({b'evidence_class':b'derived'}) for f in pf.schema_arrow]
+    for name in ('j3_channels','curated_geometry','j2_accessibility','j4_ablation'):
+        fields.append(pa.field(name,pa.string(),metadata={b'evidence_class':b'derived',b'cell_evidence':b'JSON status/evidence_class; J3 channel-specific companions'}))
+    schema=pa.schema(fields,metadata={b'coordinates':b'GRCh38; GENCODE v50; 1-based inclusive',b'j8_version':VERSION.encode()})
+    loci=context['loci']; geo=context['geo']; n=0
+    fd,temp=tempfile.mkstemp(dir=output.parent,suffix='.parquet.tmp'); os.close(fd)
+    try:
+        with pq.ParquetWriter(temp,schema,compression='zstd') as writer:
+            for batch in pf.iter_batches(batch_size=batch_size):
+                records=[index.annotate(r,loci,geo) for r in batch.to_pylist()]
+                writer.write_table(pa.Table.from_pylist(records,schema=schema)); n+=len(records)
+        if n!=source['rows']: raise ValueError('row-count conservation failed')
+        with open(temp,'rb') as stream: os.fsync(stream.fileno())
+        os.replace(temp,output)
+        result=dict(contract=contract,inputs=inputs,rows=n,sha256=sha256(output))
+        atomic_json(marker,result)
+        return result
+    finally:
+        if os.path.exists(temp): os.unlink(temp)
+
+ succeeded in 1761ms:
+def empirical_null(observed,values,*,universe,min_decoys=20,higher_is_extreme=True):
+    """One-sided plus-one empirical tail; refuses missing scores or undefined universe."""
+    if not isinstance(universe,dict) or not isinstance(universe.get('definition'),str) or not universe['definition'].strip():
+        raise MetricBlocked('empirical_null','sampling universe is not defined')
+    if type(min_decoys) is not int or min_decoys<1: raise ValueError('positive minimum decoy count required')
+    if universe.get('method')=='randomized_euler_trail_nonuniform':
+        raise MetricBlocked('empirical_null','Euler-trail draw probabilities are not uniform; descriptive null only')
+    if universe.get('method')=='uniform_without_replacement':
+        raise MetricBlocked('empirical_null','J6 discovery selection is not modeled: random positions are not '
+                            'exchangeable with discovery-selected near-matches; descriptive distribution only, '
+                            'no prespecified selection-aware null is justified')
+    if not finite(observed) or any(not finite(v) for v in values):
+        raise MetricBlocked('empirical_null','missing/failed observed or decoy scores; no selective deletion')
+    if len(values)<min_decoys: raise MetricBlocked('empirical_null',f'n_decoys={len(values)} below minimum={min_decoys}')
+    extreme=sum(v>=observed if higher_is_extreme else v<=observed for v in values)
+    return dict(distribution=list(values),observed=observed,n_decoys=len(values),minimum_decoys=min_decoys,
+                p_value=(1+extreme)/(1+len(values)),tail='upper' if higher_is_extreme else 'lower',
+                sampling_universe=universe,evidence_class='derived',interpretation='conditional matched-decoy tail; not biological efficacy evidence')
+
+
+def null_channels(sequence,*,start,length,n,seed,scorers,min_decoys=20,gc_tolerance=0,directions=None):
+    """Callbacks are lookups/statistical descriptors only; absent channels are blocked.
+
+    Entire target flank is dinucleotide shuffled. Only draws also matching the
+    footprint GC are retained; acceptance counts and the nonuniform law are stated.
+    """
+    sequence=dna(sequence); target=sequence[start:start+length]
+    shifted=shifted_decoys(sequence,start=start,length=length,n=n,seed=seed,gc_tolerance=gc_tolerance)
+    target_gc=sum(b in 'GC' for b in target)/length
+    shuffled=[]
+    for i in range(n):
+        s=dinucleotide_shuffle(sequence,seed=seed+i)[start:start+length]
+        if abs(sum(b in 'GC' for b in s)/length-target_gc)<=gc_tolerance+1e-12: shuffled.append(s)
+    universe=dict(definition='dinucleotide-preserving permutations of the supplied flank, conditioned on footprint GC/length',
+                  method='randomized_euler_trail_nonuniform',locus_sequence_sha256=shifted['sampling_universe']['locus_sequence_sha256'],
+                  length=length,gc_tolerance=gc_tolerance,n_attempted=n,n_accepted=len(shuffled),n_unique=len(set(shuffled)))
+    result={}
+    for channel,scorer in sorted(scorers.items()):
+        if scorer is None:
+            result[channel]=dict(status='blocked',p_value=None,reason='decoy channel not precomputed; no scoring backend in J10',evidence_class='not_available'); continue
+        def score(s):
+            try:
+                v=scorer(s)
+            except (KeyError,ValueError,RuntimeError): return None
+            return v if finite(v) else None
+        observed=score(target); parts={}
+        for name,sequences,u in [('shift',[d['sequence'] for d in shifted['decoys']],shifted['sampling_universe']),('shuffle',shuffled,universe)]:
+            values=[score(s) for s in sequences]
+            try:
+                parts[name]=dict(status='ok',**empirical_null(observed,values,universe=u,min_decoys=min_decoys,
+                                                   higher_is_extreme=(directions or {}).get(channel,True)))
+            except MetricBlocked as exc:
+                parts[name]=dict(status='blocked',reason=exc.reason,p_value=None,distribution=values,observed=observed,
+                                 n_decoys=len(values),minimum_decoys=min_decoys,sampling_universe=u,evidence_class='derived')
+        result[channel]=parts
+    return result
+
+
+def j9_identity(path):
+    """Authenticate the feature output against J9's published commit manifest."""
+    import pyarrow.parquet as pq
+    path=safe_path(path); marker=safe_path(path.parent/'manifest.json')
+    manifest=json.loads(marker.read_text())
+    entries=[e for e in manifest.get('outputs',[]) if e.get('name')==path.name]
+    digest=sha256(path); rows=pq.read_metadata(path).num_rows
+    if len(entries)!=1 or entries[0].get('rows')!=rows or entries[0].get('sha256')!=digest:
+        raise ValueError('invalid J9 input commit manifest')
+    return dict(path=str(path),sha256=digest,rows=rows,kind='j9',
+                marker_path=str(marker),marker_sha256=sha256(marker))
+
+
+def site_null(row,seed):
+    """Keep unavailable sites in rank coverage while blocking their decoy nulls."""
+    length=row['end1']-row['start1']+1
+    try:
+        if row.get('complementarity_status')!='ok' or not finite(row.get('complementarity_wc_pairs')):
+            raise ValueError('upstream complementarity unavailable')
+        sequence=row.get('target_with_flank'); offset=row.get('footprint_start1_in_context')
+        if not isinstance(sequence,str) or type(offset) is not int or not 1<=offset<=len(sequence)-length+1:
+            raise ValueError('upstream context/footprint offset unavailable or invalid')
+        sequence=dna(sequence); start=offset-1
+        scorer=complementarity_scorer(row.get('aso_sequence'))
+        observed=scorer(sequence[start:start+length])
+    except (ValueError,TypeError) as exc:
+        reasons=[str(row[k]) for k in ('context_reason','complementarity_reason','duplex_reason','accessibility_reason') if row.get(k)]
+        reason='; '.join([str(exc)]+list(dict.fromkeys(reasons)))
+        return dict(site_id=row['site_id'],aso_id=row['aso_id'],observed_wc_pairs=None,
+                    channels={c:dict(status='blocked',p_value=None,reason=reason,evidence_class='not_available')
+                              for c in ('complementarity','duplex','accessibility')})
+    if observed!=float(row['complementarity_wc_pairs']):
+        raise ValueError('decoy scorer disagrees with the committed J3 complementarity cell: '+row['site_id'])
+    return dict(site_id=row['site_id'],aso_id=row['aso_id'],observed_wc_pairs=observed,
+                channels=null_channels(sequence,start=start,length=length,n=50,seed=seed,
+                         scorers={'complementarity':scorer,'duplex':None,'accessibility':None}))
+
+
+def payload_sha256(result):
+    return hashlib.sha256(dumps({k:v for k,v in result.items() if k!='payload_sha256'}).encode()).hexdigest()
+
+
+def valid_checkpoint(result,contract):
+    """Require a current complete result schema and an intact canonical payload."""
+    def fields(obj,schema):
+        return isinstance(obj,dict) and all(k in obj and type(obj[k]) is t for k,t in schema.items())
+    def stability(obj):
+        return fields(obj,dict(stability_flag=str,n_candidates=int,missing=dict,comparisons=list,
+                               n_sign_flips=int,n_strict_comparisons=int,n_tied_comparisons=int,thresholds=dict))
+    try:
+        if not fields(result,dict(contract=dict,j9=dict,j3_sample=dict,blocked=list,payload_sha256=str)): return False
+        if result['contract']!=contract or result['payload_sha256']!=payload_sha256(result): return False
+        j9=result['j9']; sample=result['j3_sample']
+        if not fields(j9,dict(candidates=list,excluded=list,per_feature=dict,channel_agreement=dict,
+                              baseline_variants=list,ablation=dict,evidence_class=str)): return False
+        if j9['candidates']!=['F18','F14','F10'] or j9['excluded']!=['3UP8']: return False
+        if not stability(j9['channel_agreement']) or not all(stability(x) for x in j9['per_feature'].values()): return False
+        if not fields(j9['ablation'],dict(mode=str,supervised=dict,baselines=dict)): return False
+        if set(j9['ablation']['baselines'])!={'M0','M1','M2','M3','M4','M5'}: return False
+        if not fields(sample,dict(rows=int,sampling_universe=str,j3_fold_variant=str,settings=list,stability=dict,nulls=list)): return False
+        if not 1<=sample['rows']<=contract['limit'] or sample['j3_fold_variant']!=contract['j3_fold_variant']: return False
+        if not stability(sample['stability']) or sample['stability']['n_candidates']!=sample['rows']: return False
+        if len(sample['settings'])!=9 or not all(fields(s,dict(name=str,channel=str,variant_id=str,higher_is_better=bool)) for s in sample['settings']): return False
+        if len(sample['nulls'])!=min(3,sample['rows']): return False
+        for null in sample['nulls']:
+            if not fields(null,dict(site_id=str,aso_id=str,channels=dict)) or 'observed_wc_pairs' not in null: return False
+            if set(null['channels'])!={'complementarity','duplex','accessibility'}: return False
+            for channel in null['channels'].values():
+                if not isinstance(channel,dict): return False
+                parts=[channel] if 'status' in channel else [channel.get('shift'),channel.get('shuffle')]
+                if not all(fields(p,dict(status=str,reason=str)) and p['status']=='blocked' and 'p_value' in p and p['p_value'] is None for p in parts): return False
+                if 'status' not in channel:
+                    for part in parts:
+                        if not fields(part,dict(distribution=list,n_decoys=int,minimum_decoys=int,sampling_universe=dict,evidence_class=str)): return False
+                        if 'observed' not in part or len(part['distribution'])!=part['n_decoys']: return False
+        return bool(result['blocked']) and all(isinstance(x,str) for x in result['blocked'])
+    except (ValueError,TypeError,KeyError):
+        return False
+
+
+def main(argv=None):
+    import pyarrow.parquet as pq
+    from itertools import islice
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--j9',required=True); p.add_argument('--j3',required=True); p.add_argument('--out',required=True)
+    p.add_argument('--limit',type=int,default=300); p.add_argument('--seed',type=int,default=1729)
+    args=p.parse_args(argv)
+    if not 2<=args.limit<=1000: p.error('bounded sample limit must be 2..1000')
+    paths=[safe_path(args.j9),safe_path(args.j3)]
+    identities=[j9_identity(paths[0]),input_identity(paths[1],'j3')]
+    variant=j3_fold_variant(paths[1])
+    # Bounded output checkpoint; exact source SHA is acquired in Slurm, not login.
+    contract=dict(inputs=identities,seed=args.seed,limit=args.limit,
+                  j3_fold_variant=variant,code_sha256=sha256(__file__))
+    output=safe_path(args.out); output.parent.mkdir(parents=True,exist_ok=True)
+    if output.exists():
+        try: prior=json.loads(output.read_text())
+        except (ValueError,OSError): prior={}
+        if valid_checkpoint(prior,contract): return
+        if isinstance(prior,dict) and prior.get('contract') is not None and prior['contract']!=contract:
+            raise ValueError('changed robustness inputs; choose fresh output')
+    j9rows=pq.read_table(paths[0]).to_pylist()
+    columns=['site_id','aso_id','aso_sequence','assembly','annotation','chrom','strand','start1','end1','mismatch_count',
+             'complementarity_wc_pairs','complementarity_status','duplex_energy_kcal_mol','duplex_status',
+             'accessibility_p_unpaired','accessibility_status','target_with_flank','footprint_start1_in_context']
+    pf=pq.ParquetFile(paths[1])
+    columns += [k for k in ('context_reason','complementarity_reason','duplex_reason','accessibility_reason') if k in pf.schema_arrow.names]
+    raw=list(islice((r for b in pf.iter_batches(batch_size=64,columns=columns) for r in b.to_pylist() if r['aso_id']!='3UP8'),args.limit))
+    from conference.model_v2.j8_feature_join import fence
+    for r in raw: fence(r)
+    rows=[dict(candidate_id=r['site_id'],variant_id=variant,mismatch_count=r['mismatch_count'],
+               wc=r['complementarity_wc_pairs'],wc_status=r['complementarity_status'],
+               energy=r['duplex_energy_kcal_mol'],energy_status=r['duplex_status'],
+               access=r['accessibility_p_unpaired'],access_status=r['accessibility_status']) for r in raw]
+    settings=[Setting('complementarity','wc',variant),Setting('duplex','energy',variant,False),Setting('accessibility','access',variant)]
+    settings += [Setting(f'max_mismatch_{k}','wc',variant,True,k) for k in (0,1,2,3)]
+    # Explicit missing alternatives, never silently reuse the one computed J3 window.
+    settings += [Setting(v,'access',v) for v in FOLD_VARIANTS if v!=variant]
+    ids=[r['candidate_id'] for r in rows]
+    alternatives=alternative_scores(rows,settings,ids)
+    nulls=[site_null(r,args.seed+i) for i,r in enumerate(raw[:3])]
+    result=dict(contract=contract,j9=j9_report(j9rows,source=str(paths[0]),seed=args.seed,fold_variant=variant),j3_sample=dict(
+        rows=len(raw),sampling_universe='first N non-3UP8 rows in explicitly named J3 shard; convenience sample, not genome representative',
+        j3_fold_variant=variant,settings=[asdict(s) for s in settings],stability=rank_stability(alternatives),nulls=nulls),
+        blocked=['Duplex-energy and accessibility decoy nulls blocked: both need a folding backend, '
+                 'and J10 runs no scoring backend. Only the pure-sequence complementarity channel is rescored.',
+                 'Shift distributions are descriptive: no selection-aware null for J6-discovered near-matches; p_value=None.',
+                 'J3 alternative fold windows are absent; coverage explicitly incomplete.',
+                 'No verified negatives: supervised metrics blocked by evaluation_core.'])
+    result['payload_sha256']=payload_sha256(result)
+    if not valid_checkpoint(result,contract): raise ValueError('invalid robustness result schema')
+    atomic_json(output,result)
+
+
+ succeeded in 1745ms:
+conference/model_v2/tests/test_j10_robustness.py:13:def test_rank_reversal_ties_and_missing_are_explicit():
+conference/model_v2/tests/test_j10_robustness.py:28:def test_alternatives_fixed_candidates_and_direction():
+conference/model_v2/tests/test_j10_robustness.py:40:def test_dinucleotide_shuffle_preserves_edges_length_gc_and_seed(seq):
+conference/model_v2/tests/test_j10_robustness.py:48:def test_decoys_same_locus_exclude_real_match_gc_and_deterministic():
+conference/model_v2/tests/test_j10_robustness.py:56:def test_null_pvalue_blocked_without_universe_or_minimum_or_failed_score():
+conference/model_v2/tests/test_j10_robustness.py:65:def test_nulls_do_not_invent_uncomputed_channel_values():
+conference/model_v2/tests/test_j10_robustness.py:74:def test_ablation_calls_core_guards_and_missing_features_stay_blocked():
+conference/model_v2/tests/test_j10_robustness.py:85:def test_complete_ablation_descriptive_leave_out():
+conference/model_v2/tests/test_j10_robustness.py:95:def test_j9_adapter_preserves_seed_and_uses_mm3_counts():
+conference/model_v2/tests/test_j10_robustness.py:108:def test_rank_stable_and_missing_alternative_and_invalid_inputs():
+conference/model_v2/tests/test_j10_robustness.py:119:def test_null_lower_tail_and_failed_callback():
+conference/model_v2/tests/test_j10_robustness.py:126:def test_cli_is_bounded_excludes_3up8_and_restarts(tmp_path):
+conference/model_v2/tests/test_j10_robustness.py:157:def test_complementarity_scorer_matches_j3_and_feeds_a_real_null():
+conference/model_v2/tests/test_j10_robustness.py:175:def test_fold_variant_refuses_unlabelled_or_undeclared_marker(tmp_path):
+conference/model_v2/tests/test_j10_robustness.py:205:def test_discovery_selected_shift_null_is_descriptive_only():
+conference/model_v2/tests/test_j10_robustness.py:221:def test_unavailable_context_or_channel_keeps_rank_candidate_and_blocks_null(tmp_path,changes):
+conference/model_v2/tests/test_j10_robustness.py:235:def test_j10_forbidden_marker_symlink_never_opened(tmp_path,monkeypatch,which):
+conference/model_v2/tests/test_j10_robustness.py:252:def test_commit_identity_verified_before_feature_read(tmp_path,monkeypatch,which,field):
+conference/model_v2/tests/test_j10_robustness.py:267:def test_damaged_result_checkpoint_rebuilt(tmp_path,damage):
+conference/model_v2/tests/test_j8_feature_join.py:22:def write(path, rows, metadata=None):
+conference/model_v2/tests/test_j8_feature_join.py:31:def test_geometry_signed_midpoint_and_overlap(strand, donor, acceptor):
+conference/model_v2/tests/test_j8_feature_join.py:44:def test_geometry_does_not_join_other_strand_or_chrom():
+conference/model_v2/tests/test_j8_feature_join.py:49:def test_j2_exact_u_and_minus_coordinate():
+conference/model_v2/tests/test_j8_feature_join.py:61:def test_atlas_partial_overlap_not_called_exact_and_failed_not_averaged():
+conference/model_v2/tests/test_j8_feature_join.py:75:def test_stream_join_conservation_missing_failure_evidence_and_idempotence(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:101:def test_assembly_coordinate_fence(mutation):
+conference/model_v2/tests/test_j8_feature_join.py:106:def test_duplicate_index_and_checksum_rejected(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:114:def test_forbidden_source_and_outcome_columns(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:122:def test_index_j2_j4_real_layout_and_join(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:142:def test_index_disk_cap_rolls_back_and_bad_schema_fences(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:150:def test_j3_nonfinite_score_becomes_explicit_failure(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:159:def test_j3_bulk_sequence_columns_are_projected_away(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:171:def test_geometry_explicit_canonical_sites_excludes_terminal_boundaries():
+conference/model_v2/tests/test_j8_feature_join.py:178:def test_j2_chunk_lookup_across_batch_boundary_and_invalid_assembly(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:194:def test_canonical_terminal_exons_and_gap_refusal(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:205:def test_shared_catalog_reused_across_output_shards(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:215:def test_damaged_done_rebuild_and_context_rejects_late_index_mutation(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:225:def test_cli_bounded_inventory_without_directory_scan(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:246:def test_all_sidecars_reject_forbidden_symlink_before_read(tmp_path, monkeypatch, kind):
+conference/model_v2/tests/test_j8_feature_join.py:279:def test_missing_j8_contract_rebuilds_even_with_matching_payload(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:290:def test_j4_full_density_benchmark_and_prefix_scaling(tmp_path, capsys):
+conference/model_v2/tests/test_j8_feature_join.py:342:def test_j4_bound_tracks_wide_new_intervals_and_restart(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:357:def test_sqlite_implicit_sidecars_forbidden(tmp_path,sidecar):
+conference/model_v2/tests/test_j8_feature_join.py:363:def test_atomic_manifest_output_forbidden(tmp_path):
+conference/model_v2/tests/test_j8_feature_join.py:370:def test_full_gate_manifest_forbidden_before_read(tmp_path,monkeypatch):
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "sed -n '205,380p' conference/model_v2/tests/test_j8_feature_join.py" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "sed -n '126,156p;190,310p' conference/model_v2/tests/test_j10_robustness.py" in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "rg --files conference/model_v2/ops/briefs | rg 'J8J10|repro'" in /home/dashii/smt-isef
+ succeeded in 1626ms:
+def test_shared_catalog_reused_across_output_shards(tmp_path):
+    m=api(); p=write(tmp_path/'j6.parquet',[site()]); loc=tmp_path/'loc.tsv'; loc.write_text('e\tchr1\t10\t230\t+\n')
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        context=m.prepare_join(index,[loc],tmp_path)
+        a=m.join_shard(p,tmp_path/'a.parquet',index,[loc],context=context)
+        b=m.join_shard(p,tmp_path/'b.parquet',index,[loc],context=context)
+    assert a['contract']['catalog_sha256']==b['contract']['catalog_sha256']
+    assert (tmp_path/'feature_inputs.json').is_file()
+
+
+def test_damaged_done_rebuild_and_context_rejects_late_index_mutation(tmp_path):
+    m=api(); p=write(tmp_path/'j6.parquet',[site()]); loc=tmp_path/'loc.tsv'; loc.write_text('e\tchr1\t10\t230\t+\n')
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        out=tmp_path/'a.parquet'; m.join_shard(p,out,index,[loc]); out.with_suffix('.done').write_text('{')
+        assert m.join_shard(p,out,index,[loc])['rows']==1
+        context=m.prepare_join(index,[loc],tmp_path)
+        j3=write(tmp_path/'j3.parquet',[site()]); index.ingest('j3',j3)
+        with pytest.raises(ValueError,match='changed'): m.join_shard(p,tmp_path/'b.parquet',index,[loc],context=context)
+
+
+def test_cli_bounded_inventory_without_directory_scan(tmp_path):
+    m=api(); root=tmp_path/'root'; root.mkdir()
+    for name in ['j6_genome_v1','j3_genome_v1','j2_phase1','j2_phase2','j4_configs']:
+        (root/name).mkdir()
+    (root/'j6_genome_v1/run_manifest.json').write_text(json.dumps({'expected_shards':['one']}))
+    write(root/'j6_genome_v1/one.parquet',[site()])
+    write(root/'j3_genome_v1/j3_shard0000_of0256.parquet',[site()])
+    for phase in (1,2):
+        write(root/f'j2_phase{phase}/j2_shard0000.parquet',[
+            dict(locus_id=f'e{phase}',strand='+',pos_end_1b_transcript=113,W=80,L=40,u=4,p_unpaired=.2)],
+            {b'coordinates':b'GRCh38; GENCODE v50'})
+    (root/'j4_configs/j4_configs_manifest.tsv').write_text('#config_id\tstatus\nnone\tskipped\n')
+    loci=tmp_path/'loci.tsv'; loci.write_text('e1\tchr1\t10\t230\t+\n')
+    out=tmp_path/'out'
+    m.main(['--root',str(root),'--out',str(out),'--bounded','--loci',str(loci)])
+    result=json.loads((out/'manifest.json').read_text())
+    assert result['rows']==1 and result['coverage']=='partial'
+    assert len(result['inputs'])==3
+
+
+@pytest.mark.parametrize('kind', ['j3', 'j4', 'catalog', 'j6_manifest', 'j4_manifest', 'output_marker'])
+def test_all_sidecars_reject_forbidden_symlink_before_read(tmp_path, monkeypatch, kind):
+    m=api(); forbidden=tmp_path/'wetlab'; forbidden.mkdir()
+    target=forbidden/'synthetic.json'; target.write_text('{}')
+    original=Path.open
+    def guarded_open(path, *args, **kwargs):
+        assert forbidden not in path.resolve().parents, 'forbidden target was opened'
+        return original(path,*args,**kwargs)
+    monkeypatch.setattr(Path,'open',guarded_open)
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        if kind in ('j3','j4'):
+            p=tmp_path/'cfg'/'ablation_maps'/'s.parquet' if kind=='j4' else tmp_path/'s.parquet'
+            p.parent.mkdir(parents=True,exist_ok=True)
+            marker=p.parent.parent/'s.done' if kind=='j4' else p.with_suffix('.done')
+            marker.symlink_to(target)
+            action=lambda: m.input_identity(p,kind)
+        elif kind=='catalog':
+            (tmp_path/'feature_inputs.json').symlink_to(target)
+            action=lambda: m.prepare_join(index,[],tmp_path)
+        elif kind=='output_marker':
+            p=write(tmp_path/'s.parquet',[site()]); out=tmp_path/'out.parquet'
+            out.with_suffix('.done').symlink_to(target)
+            action=lambda: m.join_shard(p,out,index,[])
+        else:
+            root=tmp_path/'root'; (root/'j6_genome_v1').mkdir(parents=True)
+            (root/'j4_configs').mkdir()
+            manifest=root/'j6_genome_v1/run_manifest.json'
+            manifest.write_text('{"expected_shards":[]}')
+            link=manifest if kind=='j6_manifest' else root/'j4_configs/j4_configs_manifest.tsv'
+            link.unlink(missing_ok=True); link.symlink_to(target)
+            action=lambda: m.production_inventory(root,bounded=True)
+        with pytest.raises(ValueError,match='forbidden'): action()
+
+
+def test_missing_j8_contract_rebuilds_even_with_matching_payload(tmp_path):
+    m=api(); p=write(tmp_path/'in.parquet',[site()]); out=tmp_path/'out.parquet'
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        context=m.prepare_join(index,[],tmp_path)
+        old=m.join_shard(p,out,index,[],context=context)
+        del old['contract']; out.with_suffix('.done').write_text(json.dumps(old))
+        context['code_sha256']='changed-code'
+        result=m.join_shard(p,out,index,[],context=context)
+        assert result['contract']['code_sha256']=='changed-code'
+
+
+def test_j4_full_density_benchmark_and_prefix_scaling(tmp_path, capsys):
+    """Full per-locus density: 216 cells/config, 1,000 configs, 18nt spans.
+
+    A bounded synthetic slice of the 20,395-config atlas; VM work, not flaky
+    wall-clock thresholds, gates scaling. Timings/RSS are sizing evidence only.
+    """
+    import resource
+    import time
+    m=api(); geo=m.GeometryIndex([])
+    common=dict(locus='e',chrom='chr1',strand='+',site_kind='donor',site_position=1,
+                tissue=0,config_id='c',status='ok',model_evidence=True,raw_model_delta=-.2)
+    with m.FeatureIndex(tmp_path/'bench.sqlite') as index:
+        def add(lo,hi):
+            with index.db:
+                index.db.executemany('INSERT INTO j4 VALUES (?,?,?,?,?,?)',
+                    ((f'{i}:{j}','chr1','+',i*1000+j//12+1,i*1000+j//12+18,
+                      m.dumps(dict(common,footprint_start=i*1000+j//12+1,footprint_end=i*1000+j//12+18)))
+                     for i in range(lo,hi) for j in range(216)))
+        def work(row):
+            count=0
+            def tick():
+                nonlocal count
+                count+=1
+                return 0
+            index.db.set_progress_handler(tick,1)
+            try: result=index.annotate(row,[],geo)
+            finally: index.db.set_progress_handler(None,0)
+            return count,json.loads(result['j4_ablation'])
+        started=time.perf_counter(); add(0,10)
+        small,_=work(dict(site(),start1=10001,end1=10018))
+        add(10,1000); build=time.perf_counter()-started
+        miss,summary=work(dict(site(),start1=1000001,end1=1000018))
+        assert summary['n_overlap']==0
+        assert miss < small*2+100, (small,miss)
+        hit,summary=work(dict(site(),start1=999018,end1=999018))
+        assert summary['n_overlap']==216  # both inclusive endpoints retained
+        assert hit < 12000, hit
+        timings={}
+        for name,offset in [('dense',18),('miss',500)]:
+            started=time.perf_counter()
+            for i in range(300):
+                pos=(i*37%1000)*1000+offset
+                index.annotate(dict(site(),start1=pos,end1=pos+17),[],geo)
+            timings[name+'_rows_s']=300/(time.perf_counter()-started)
+        index_bytes=index.path.stat().st_size
+        width_bytes=index.db.execute("SELECT SUM(pgsize) FROM dbstat WHERE name='j4_width'").fetchone()[0]
+        with capsys.disabled():
+            print('J4_BENCH',m.dumps(dict(rows=216000,configs=1000,build_s=build,
+                index_bytes=index_bytes,width_index_bytes=width_bytes,maxrss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+                small_miss_vm=small,full_miss_vm=miss,dense_hit_vm=hit,**timings)))
+
+
+def test_j4_bound_tracks_wide_new_intervals_and_restart(tmp_path):
+    m=api(); path=tmp_path/'i.sqlite'; geo=m.GeometryIndex([])
+    with m.FeatureIndex(path) as index:
+        index.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',('short','chr1','+',1,2,'{}'))
+        index.db.commit()
+        assert json.loads(index.annotate(dict(site(),start1=100,end1=100),[],geo)['j4_ablation'])['n_overlap']==0
+        row=dict(chrom='chr1',strand='+',footprint_start=1,footprint_end=100,status='ok',model_evidence=True,raw_model_delta=.4)
+        index.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',('wide','chr1','+',1,100,m.dumps(row)))
+        index.db.commit()
+        assert json.loads(index.annotate(dict(site(),start1=100,end1=100),[],geo)['j4_ablation'])['overlap_mean']==.4
+    with m.FeatureIndex(path) as index:
+        assert json.loads(index.annotate(dict(site(),start1=100,end1=100),[],geo)['j4_ablation'])['n_overlap']==1
+
+
+@pytest.mark.parametrize('sidecar', ['-journal','-wal','-shm'])
+def test_sqlite_implicit_sidecars_forbidden(tmp_path,sidecar):
+    m=api(); target=tmp_path/'wetlab'/'synthetic'; target.parent.mkdir(); target.write_bytes(b'')
+    (tmp_path/('i.sqlite'+sidecar)).symlink_to(target)
+    with pytest.raises(ValueError,match='forbidden'): m.FeatureIndex(tmp_path/'i.sqlite')
+
+
+def test_atomic_manifest_output_forbidden(tmp_path):
+    m=api(); target=tmp_path/'wetlab'/'synthetic.json'; target.parent.mkdir(); target.write_text('{}')
+    output=tmp_path/'manifest.json'; output.symlink_to(target)
+    with pytest.raises(ValueError,match='forbidden'): m.atomic_json(output,{'rows':1})
+    assert target.read_text()=='{}'
+
+
+def test_full_gate_manifest_forbidden_before_read(tmp_path,monkeypatch):
+    m=api(); root=tmp_path/'root'; (root/'j6_genome_v1').mkdir(parents=True)
+    target=tmp_path/'wetlab'/'synthetic.json'; target.parent.mkdir(); target.write_text('{}')
+    (root/'j6_genome_v1/gate_report.json').symlink_to(target)
+    loci=tmp_path/'empty.tsv'; loci.write_text('')
+    monkeypatch.setattr(m,'production_inventory',lambda *a,**kw:([],[],[]))
+    original=Path.open
+    def guarded_open(path,*a,**kw):
+        assert target.parent not in path.resolve().parents, 'forbidden target was opened'
+        return original(path,*a,**kw)
+    monkeypatch.setattr(Path,'open',guarded_open)
+
+ succeeded in 1866ms:
+conference/model_v2/ops/briefs/J8J10_rereview.md
+conference/model_v2/ops/briefs/J8J10_FIX_RESULT.md
+conference/model_v2/ops/briefs/J8J10_fix.md
+conference/model_v2/ops/briefs/J8J10_REVIEW_RESULT.md
+conference/model_v2/ops/briefs/J8J10_review.md
+conference/model_v2/ops/briefs/J8J10_RESULT.md
+conference/model_v2/ops/briefs/J8J10_opus5.md
+conference/model_v2/ops/briefs/J8J10_astra.md
+conference/model_v2/ops/briefs/J8J10.md
+
+ succeeded in 1891ms:
+def test_cli_is_bounded_excludes_3up8_and_restarts(tmp_path):
+    import json
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    m=api(); j9=tmp_path/'j9.parquet'; j3=tmp_path/'j3.parquet'; out=tmp_path/'result.json'
+    pq.write_table(pa.Table.from_pylist([dict(aso_id=c,feature_name='m1_wc_pairs',variant_id='default',value_int=i,value_double=None,status='ok')
+                        for i,c in enumerate(['F18','F14','F10','3UP8'])]),j9)
+    base=dict(assembly='GRCh38',annotation='GENCODE v50',chrom='chr1',strand='+',start1=10,end1=13,mismatch_count=0,aso_sequence='ACGT',
+              complementarity_wc_pairs=4,complementarity_status='ok',duplex_energy_kcal_mol=-4.,duplex_status='ok',
+              accessibility_p_unpaired=.1,accessibility_status='ok',target_with_flank='ACGTACGTACGT',footprint_start1_in_context=5)
+    pq.write_table(pa.Table.from_pylist([dict(base,site_id=f's{i}',aso_id=c) for i,c in enumerate(['3UP8','F18','F14','F10'])]),j3)
+    j3.with_suffix('.done').write_text(json.dumps(dict(rows=4,sha256=m.sha256(j3),params=dict(window=120,span=60))))
+    (tmp_path/'manifest.json').write_text(json.dumps(dict(outputs=[dict(name=j9.name,rows=4,sha256=m.sha256(j9))])))
+    args=['--j9',str(j9),'--j3',str(j3),'--out',str(out),'--limit','2']
+    m.main(args); stamp=out.stat().st_mtime_ns; m.main(args)
+    r=json.loads(out.read_text())
+    assert r['j3_sample']['rows']==2
+    assert r['j9']['excluded']==['3UP8']
+    assert out.stat().st_mtime_ns==stamp
+    assert all(n['site_id']!='s0' for n in r['j3_sample']['nulls'])
+    assert all(n['observed_wc_pairs']==4 for n in r['j3_sample']['nulls'])
+    assert r['j3_sample']['nulls'][0]['channels']['duplex']['status']=='blocked'
+    # The one computed window is labelled from the marker, never assumed; the other
+    # two declared J2 windows stay present-but-missing rather than silently reused.
+    assert r['contract']['j3_fold_variant']=='w120s60'
+    assert r['j3_sample']['j3_fold_variant']=='w120s60'
+    absent={s['name'] for s in r['j3_sample']['settings']}&{'w80s40','w200s100'}
+    assert absent=={'w80s40','w200s100'}
+    assert all(r['j3_sample']['stability']['missing'][n]==['s1','s2'] for n in absent)
+
+
+    import pyarrow.parquet as pq
+    m=api(); j9=tmp_path/'features.parquet'; j3=tmp_path/'j3.parquet'; out=tmp_path/'report.json'
+    pq.write_table(pa.Table.from_pylist([dict(aso_id=c,feature_name='m1_wc_pairs',variant_id='default',
+        value_int=i,value_double=None,status='ok') for i,c in enumerate(['F18','F14','F10'])]),j9)
+    base=dict(assembly='GRCh38',annotation='GENCODE v50',chrom='chr1',strand='+',start1=10,end1=13,
+        mismatch_count=0,aso_sequence='ACGT',complementarity_wc_pairs=4,complementarity_status='ok',
+        duplex_energy_kcal_mol=-4.,duplex_status='ok',accessibility_p_unpaired=.1,accessibility_status='ok',
+        target_with_flank='ACGTACGTACGT',footprint_start1_in_context=5)
+    base.update(changes)
+    pq.write_table(pa.Table.from_pylist([dict(base,site_id=f's{i}',aso_id=c) for i,c in enumerate(['F18','F14'])]),j3)
+    j3.with_suffix('.done').write_text(json.dumps(dict(rows=2,sha256=m.sha256(j3),params=dict(window=120,span=60))))
+    (tmp_path/'manifest.json').write_text(json.dumps(dict(outputs=[dict(name=j9.name,rows=3,sha256=m.sha256(j9))])))
+    return j9,j3,out,['--j9',str(j9),'--j3',str(j3),'--out',str(out),'--limit','2']
+
+
+def test_discovery_selected_shift_null_is_descriptive_only():
+    m=api()
+    r=m.null_channels('A'*40+'T'*18+'A'*40,start=40,length=18,n=50,seed=1729,
+                     scorers={'complementarity':m.complementarity_scorer('A'*18)})['complementarity']['shift']
+    assert r['p_value'] is None
+    assert r['status']=='blocked' and 'selection' in r['reason']
+    assert r['observed']==18 and len(r['distribution'])==50
+
+
+@pytest.mark.parametrize('changes', [
+    dict(target_with_flank=None,footprint_start1_in_context=None,duplex_status='failed',
+         duplex_reason='reference fetch failed',accessibility_status='failed',accessibility_reason='reference fetch failed'),
+    dict(footprint_start1_in_context=999),
+    dict(complementarity_status='failed',complementarity_wc_pairs=None,complementarity_reason='missing ASO'),
+    dict(target_with_flank='ACGNACGNACGN'),
+])
+def test_unavailable_context_or_channel_keeps_rank_candidate_and_blocks_null(tmp_path,changes):
+    import json
+    m=api(); _,_,out,args=committed_inputs(tmp_path,**changes)
+    m.main(args); result=json.loads(out.read_text())
+    assert result['j3_sample']['rows']==2
+    assert result['j3_sample']['stability']['n_candidates']==2
+    for n in result['j3_sample']['nulls']:
+        assert n['observed_wc_pairs'] is None
+        assert all(c['status']=='blocked' and c['p_value'] is None for c in n['channels'].values())
+        if 'duplex_reason' in changes:
+            assert 'reference fetch failed' in n['channels']['complementarity']['reason']
+
+
+@pytest.mark.parametrize('which', ['j3_marker','j9_manifest'])
+def test_j10_forbidden_marker_symlink_never_opened(tmp_path,monkeypatch,which):
+    from pathlib import Path
+    m=api(); _,j3,_,args=committed_inputs(tmp_path)
+    forbidden=tmp_path/'wetlab'; forbidden.mkdir(); target=forbidden/'synthetic.json'; target.write_text('{}')
+    marker=j3.with_suffix('.done') if which=='j3_marker' else tmp_path/'manifest.json'
+    marker.unlink(); marker.symlink_to(target)
+    original=Path.open
+    def guarded_open(path,*a,**kw):
+        assert forbidden not in path.resolve().parents, 'forbidden target was opened'
+        return original(path,*a,**kw)
+    monkeypatch.setattr(Path,'open',guarded_open)
+    with pytest.raises(ValueError,match='forbidden'): m.main(args)
+    if which=='j3_marker':
+        with pytest.raises(ValueError,match='forbidden'): m.j3_fold_variant(j3)
+
+
+@pytest.mark.parametrize('which,field', [('j3','rows'),('j3','sha256'),('j9','rows'),('j9','sha256')])
+def test_commit_identity_verified_before_feature_read(tmp_path,monkeypatch,which,field):
+    import json
+    import pyarrow.parquet as pq
+    m=api(); _,j3,out,args=committed_inputs(tmp_path)
+    path=j3.with_suffix('.done') if which=='j3' else tmp_path/'manifest.json'
+    marker=json.loads(path.read_text()); entry=marker if which=='j3' else marker['outputs'][0]
+    entry[field]=999999 if field=='rows' else 'wrong'; path.write_text(json.dumps(marker))
+    def forbidden_read(*a,**kw): pytest.fail('read features before authenticating commits')
+    monkeypatch.setattr(pq,'read_table',forbidden_read)
+    monkeypatch.setattr(pq,'ParquetFile',forbidden_read)
+    with pytest.raises(ValueError,match='commit'): m.main(args)
+    assert not out.exists()
+
+
+@pytest.mark.parametrize('damage', ['contract_only','missing_nulls','invalid_rows','malformed','tampered_value','rehash_incomplete','rehash_missing_distribution','rehash_invalid_channel'])
+def test_damaged_result_checkpoint_rebuilt(tmp_path,damage):
+    import hashlib
+    import json
+    m=api(); _,_,out,args=committed_inputs(tmp_path)
+    m.main(args); good=json.loads(out.read_text()); bad=json.loads(out.read_text())
+    if damage=='contract_only': bad={'contract':bad['contract']}
+    elif damage in ('missing_nulls','rehash_incomplete'): del bad['j3_sample']['nulls']
+    elif damage=='invalid_rows': bad['j3_sample']['rows']='two'
+    elif damage=='tampered_value': bad['j3_sample']['nulls'][0]['observed_wc_pairs']=999
+    elif damage=='rehash_missing_distribution': del bad['j3_sample']['nulls'][0]['channels']['complementarity']['shift']['distribution']
+    elif damage=='rehash_invalid_channel': bad['j3_sample']['nulls'][0]['channels']['complementarity']=[]
+    if damage.startswith('rehash_'):
+        bad['payload_sha256']=hashlib.sha256(m.dumps({k:v for k,v in bad.items() if k!='payload_sha256'}).encode()).hexdigest()
+    out.write_text('{' if damage=='malformed' else json.dumps(bad))
+    m.main(args)
+    assert json.loads(out.read_text())==good
+    for identity in good['contract']['inputs']:
+        assert identity['rows']>0 and len(identity['marker_sha256'])==64
+        assert identity['marker_path']
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+The requested test run passed: 73 passed, 0 skipped, 0 failed. The added tests cover the original failure cases; I’m checking the exact interval boundaries and checkpoint behavior independently before recording the verdict.
+exec
+/usr/bin/bash -lc "PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+import tempfile,json
+from pathlib import Path
+from conference.model_v2 import j8_feature_join as a, j10_robustness as b
+from conference.model_v2.tests.test_j8_feature_join import site
+with tempfile.TemporaryDirectory() as d:
+ with a.FeatureIndex(Path(d)/'x.sqlite') as ix:
+  geo=a.GeometryIndex([])
+  for n in (100,1000,5000):
+   ix.db.execute('DELETE FROM j4')
+   ix.db.executemany('INSERT INTO j4 VALUES (?,?,?,?,?,?)',((str(i),'chr1','+',i*30+1,i*30+18,'{}') for i in range(n)))
+   count=[0]
+   def tick(): count[0]+=1; return 0
+   ix.db.set_progress_handler(tick,1)
+   v=ix.annotate(dict(site(),start1=n*30+100,end1=n*30+117),[],geo)
+   ix.db.set_progress_handler(None,0)
+   print('F1',n,count[0],json.loads(v['j4_ablation'])['n_overlap'])
+  ix.db.execute('DELETE FROM j4')
+  p=dict(chrom='chr1',strand='+',footprint_start=100,footprint_end=117,status='ok',model_evidence=True,raw_model_delta=.2)
+  ix.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',('x','chr1','+',100,117,a.dumps(p)))
+  for lo,hi in [(99,99),(99,100),(117,117),(117,118),(118,118)]:
+   v=ix.annotate(dict(site(),start1=lo,end1=hi),[],geo)
+   print('boundary',lo,hi,json.loads(v['j4_ablation'])['n_overlap'])
+ r=b.null_channels('A'*40+'T'*18+'A'*40,start=40,length=18,n=50,seed=1729,scorers={'complementarity':b.complementarity_scorer('A'*18)})['complementarity']['shift']
+ print('F2',r['status'],r['p_value'],len(r['distribution']))
+ row=dict(start1=1,end1=18,site_id='s',aso_id='F18',complementarity_status='ok',complementarity_wc_pairs=18,target_with_flank=None,footprint_start1_in_context=None,duplex_reason='reference fetch failed')
+ r=b.site_null(row,1729); print('F3',r['channels']['complementarity'])
+ target=Path(d)/'wetlab'/'marker.json'; target.parent.mkdir(); target.write_text('{\"params\":{\"window\":120,\"span\":60}}')
+ (Path(d)/'allowed.done').symlink_to(target)
+ try: b.j3_fold_variant(Path(d)/'allowed.parquet')
+ except Exception as e: print('F4',type(e).__name__,str(e))
+ for suffix in ('-wal','-shm','-journal'):
+  (Path(d)/('db'+suffix)).symlink_to(target)
+  try: a.FeatureIndex(Path(d)/'db')
+  except Exception as e: print('sidecar',suffix,type(e).__name__)
+  (Path(d)/('db'+suffix)).unlink()
+PY" in /home/dashii/smt-isef
+ succeeded in 3154ms:
+F1 100 58 0
+F1 1000 41 0
+F1 5000 41 0
+boundary 99 99 0
+boundary 99 100 1
+boundary 117 117 1
+boundary 117 118 1
+boundary 118 118 0
+F2 blocked None 50
+F3 {'status': 'blocked', 'p_value': None, 'reason': 'upstream context/footprint offset unavailable or invalid; reference fetch failed', 'evidence_class': 'not_available'}
+F4 ValueError outcome source forbidden
+sidecar -wal ValueError
+sidecar -shm ValueError
+sidecar -journal ValueError
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "cat > conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md <<'EOF'
+# J8/J10 adversarial rereview
+Verdict: ADVANCE — F1–F6 fixed in the reproduced scenarios; no new defect established.
+F1 FIXED — j8_feature_join.py:337: recreated 100/1,000/5,000 disjoint-interval miss: 58/41/41 SQLite VM instructions, 0 hits; 216,000-row density test passed.
+F2 FIXED — j10_robustness.py:171: original A40/T18/A40 case yields blocked, p_value=None, 50 descriptive decoys.
+F3 FIXED — j10_robustness.py:331: missing context/offset yields blocked nulls with upstream reason; two-row CLI regression retains both candidates.
+F4 FIXED — j8_feature_join.py:216,240; j10_robustness.py:33: forbidden .done symlink and SQLite -wal/-shm/-journal symlinks raise ValueError before opening; manifest/output symlink tests passed.
+F5 FIXED — j10_robustness.py:318,407: incorrect rows or SHA in J3 marker or J9 manifest rejects before feature read; identities include marker hashes.
+F6 FIXED — j8_feature_join.py:375; j10_robustness.py:360: missing J8 contract rebuilds; contract-only and damaged J10 checkpoints rebuild, intact checkpoint reused.
+Boundary probe: atlas [100,117] vs [99,99]/[99,100]/[117,117]/[117,118]/[118,118] produced 0/1/1/1/0 overlaps.
+New findings: none established. Unfixed: none identified.
+Requested pytest: 73 passed, 0 skipped, 0 failed (5.68 s).
+Limitations: original review supplied repro descriptions, not standalone scripts; cases were recreated and checked alongside regression tests. Synthetic density is not production-wide runtime/RSS proof; sidecar checks do not establish resistance to concurrent symlink replacement.
+EOF
+wc -l conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md" in /home/dashii/smt-isef
+ succeeded in 1466ms:
+12 conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+**ADVANCE.** F1–F6 are fixed in the reproduced scenarios; no new defect was established. The inclusive-overlap, sidecar, marker, and checkpoint probes passed.
+
+The requested tests completed with **73 passed, 0 skipped, 0 failed**. No findings remain unfixed. The original review provided reproduction descriptions rather than standalone scripts, so I recreated the cases; production-wide runtime and memory use remain unmeasured.
+
+Report: [J8J10_REREVIEW_RESULT.md](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md)
+hook: Stop
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+38,564
+**ADVANCE.** F1–F6 are fixed in the reproduced scenarios; no new defect was established. The inclusive-overlap, sidecar, marker, and checkpoint probes passed.
+
+The requested tests completed with **73 passed, 0 skipped, 0 failed**. No findings remain unfixed. The original review provided reproduction descriptions rather than standalone scripts, so I recreated the cases; production-wide runtime and memory use remain unmeasured.
+
+Report: [J8J10_REREVIEW_RESULT.md](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J8J10_REREVIEW_RESULT.md)

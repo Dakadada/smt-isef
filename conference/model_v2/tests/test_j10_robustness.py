@@ -134,7 +134,8 @@ def test_cli_is_bounded_excludes_3up8_and_restarts(tmp_path):
               complementarity_wc_pairs=4,complementarity_status='ok',duplex_energy_kcal_mol=-4.,duplex_status='ok',
               accessibility_p_unpaired=.1,accessibility_status='ok',target_with_flank='ACGTACGTACGT',footprint_start1_in_context=5)
     pq.write_table(pa.Table.from_pylist([dict(base,site_id=f's{i}',aso_id=c) for i,c in enumerate(['3UP8','F18','F14','F10'])]),j3)
-    j3.with_suffix('.done').write_text(json.dumps(dict(rows=4,params=dict(window=120,span=60))))
+    j3.with_suffix('.done').write_text(json.dumps(dict(rows=4,sha256=m.sha256(j3),params=dict(window=120,span=60))))
+    (tmp_path/'manifest.json').write_text(json.dumps(dict(outputs=[dict(name=j9.name,rows=4,sha256=m.sha256(j9))])))
     args=['--j9',str(j9),'--j3',str(j3),'--out',str(out),'--limit','2']
     m.main(args); stamp=out.stat().st_mtime_ns; m.main(args)
     r=json.loads(out.read_text())
@@ -162,11 +163,11 @@ def test_complementarity_scorer_matches_j3_and_feeds_a_real_null():
     assert scorer('ACGTACGT')==scorer(target)     # DNA/RNA alphabets agree
     with pytest.raises(ValueError): scorer('AAAA')  # unequal lengths refuse, never pad
     with pytest.raises(ValueError): m.complementarity_scorer('')
-    # A real (not blocked) shift null: uniform-without-replacement universe, p-value emitted.
+    # A sampled shift distribution is descriptive; discovery selection blocks inference.
     r=m.null_channels('ACGTACGTTGCAACGTACGTTGCA',start=0,length=8,n=12,seed=5,
                       scorers={'complementarity':scorer},min_decoys=3,gc_tolerance=1)
-    assert r['complementarity']['shift']['status']=='ok'
-    assert 0 < r['complementarity']['shift']['p_value'] <= 1
+    assert r['complementarity']['shift']['status']=='blocked'
+    assert r['complementarity']['shift']['p_value'] is None
     assert r['complementarity']['shift']['n_decoys']>=3
     assert r['complementarity']['shuffle']['status']=='blocked'
 
@@ -181,3 +182,104 @@ def test_fold_variant_refuses_unlabelled_or_undeclared_marker(tmp_path):
     with pytest.raises(ValueError, match='outside the declared J2 variant set'): m.j3_fold_variant(p)
     done.write_text(json.dumps({'params': {'window': 200, 'span': 100}}))
     assert m.j3_fold_variant(p)=='w200s100'
+
+
+def committed_inputs(tmp_path, **changes):
+    import json
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    m=api(); j9=tmp_path/'features.parquet'; j3=tmp_path/'j3.parquet'; out=tmp_path/'report.json'
+    pq.write_table(pa.Table.from_pylist([dict(aso_id=c,feature_name='m1_wc_pairs',variant_id='default',
+        value_int=i,value_double=None,status='ok') for i,c in enumerate(['F18','F14','F10'])]),j9)
+    base=dict(assembly='GRCh38',annotation='GENCODE v50',chrom='chr1',strand='+',start1=10,end1=13,
+        mismatch_count=0,aso_sequence='ACGT',complementarity_wc_pairs=4,complementarity_status='ok',
+        duplex_energy_kcal_mol=-4.,duplex_status='ok',accessibility_p_unpaired=.1,accessibility_status='ok',
+        target_with_flank='ACGTACGTACGT',footprint_start1_in_context=5)
+    base.update(changes)
+    pq.write_table(pa.Table.from_pylist([dict(base,site_id=f's{i}',aso_id=c) for i,c in enumerate(['F18','F14'])]),j3)
+    j3.with_suffix('.done').write_text(json.dumps(dict(rows=2,sha256=m.sha256(j3),params=dict(window=120,span=60))))
+    (tmp_path/'manifest.json').write_text(json.dumps(dict(outputs=[dict(name=j9.name,rows=3,sha256=m.sha256(j9))])))
+    return j9,j3,out,['--j9',str(j9),'--j3',str(j3),'--out',str(out),'--limit','2']
+
+
+def test_discovery_selected_shift_null_is_descriptive_only():
+    m=api()
+    r=m.null_channels('A'*40+'T'*18+'A'*40,start=40,length=18,n=50,seed=1729,
+                     scorers={'complementarity':m.complementarity_scorer('A'*18)})['complementarity']['shift']
+    assert r['p_value'] is None
+    assert r['status']=='blocked' and 'selection' in r['reason']
+    assert r['observed']==18 and len(r['distribution'])==50
+
+
+@pytest.mark.parametrize('changes', [
+    dict(target_with_flank=None,footprint_start1_in_context=None,duplex_status='failed',
+         duplex_reason='reference fetch failed',accessibility_status='failed',accessibility_reason='reference fetch failed'),
+    dict(footprint_start1_in_context=999),
+    dict(complementarity_status='failed',complementarity_wc_pairs=None,complementarity_reason='missing ASO'),
+    dict(target_with_flank='ACGNACGNACGN'),
+])
+def test_unavailable_context_or_channel_keeps_rank_candidate_and_blocks_null(tmp_path,changes):
+    import json
+    m=api(); _,_,out,args=committed_inputs(tmp_path,**changes)
+    m.main(args); result=json.loads(out.read_text())
+    assert result['j3_sample']['rows']==2
+    assert result['j3_sample']['stability']['n_candidates']==2
+    for n in result['j3_sample']['nulls']:
+        assert n['observed_wc_pairs'] is None
+        assert all(c['status']=='blocked' and c['p_value'] is None for c in n['channels'].values())
+        if 'duplex_reason' in changes:
+            assert 'reference fetch failed' in n['channels']['complementarity']['reason']
+
+
+@pytest.mark.parametrize('which', ['j3_marker','j9_manifest'])
+def test_j10_forbidden_marker_symlink_never_opened(tmp_path,monkeypatch,which):
+    from pathlib import Path
+    m=api(); _,j3,_,args=committed_inputs(tmp_path)
+    forbidden=tmp_path/'wetlab'; forbidden.mkdir(); target=forbidden/'synthetic.json'; target.write_text('{}')
+    marker=j3.with_suffix('.done') if which=='j3_marker' else tmp_path/'manifest.json'
+    marker.unlink(); marker.symlink_to(target)
+    original=Path.open
+    def guarded_open(path,*a,**kw):
+        assert forbidden not in path.resolve().parents, 'forbidden target was opened'
+        return original(path,*a,**kw)
+    monkeypatch.setattr(Path,'open',guarded_open)
+    with pytest.raises(ValueError,match='forbidden'): m.main(args)
+    if which=='j3_marker':
+        with pytest.raises(ValueError,match='forbidden'): m.j3_fold_variant(j3)
+
+
+@pytest.mark.parametrize('which,field', [('j3','rows'),('j3','sha256'),('j9','rows'),('j9','sha256')])
+def test_commit_identity_verified_before_feature_read(tmp_path,monkeypatch,which,field):
+    import json
+    import pyarrow.parquet as pq
+    m=api(); _,j3,out,args=committed_inputs(tmp_path)
+    path=j3.with_suffix('.done') if which=='j3' else tmp_path/'manifest.json'
+    marker=json.loads(path.read_text()); entry=marker if which=='j3' else marker['outputs'][0]
+    entry[field]=999999 if field=='rows' else 'wrong'; path.write_text(json.dumps(marker))
+    def forbidden_read(*a,**kw): pytest.fail('read features before authenticating commits')
+    monkeypatch.setattr(pq,'read_table',forbidden_read)
+    monkeypatch.setattr(pq,'ParquetFile',forbidden_read)
+    with pytest.raises(ValueError,match='commit'): m.main(args)
+    assert not out.exists()
+
+
+@pytest.mark.parametrize('damage', ['contract_only','missing_nulls','invalid_rows','malformed','tampered_value','rehash_incomplete','rehash_missing_distribution','rehash_invalid_channel'])
+def test_damaged_result_checkpoint_rebuilt(tmp_path,damage):
+    import hashlib
+    import json
+    m=api(); _,_,out,args=committed_inputs(tmp_path)
+    m.main(args); good=json.loads(out.read_text()); bad=json.loads(out.read_text())
+    if damage=='contract_only': bad={'contract':bad['contract']}
+    elif damage in ('missing_nulls','rehash_incomplete'): del bad['j3_sample']['nulls']
+    elif damage=='invalid_rows': bad['j3_sample']['rows']='two'
+    elif damage=='tampered_value': bad['j3_sample']['nulls'][0]['observed_wc_pairs']=999
+    elif damage=='rehash_missing_distribution': del bad['j3_sample']['nulls'][0]['channels']['complementarity']['shift']['distribution']
+    elif damage=='rehash_invalid_channel': bad['j3_sample']['nulls'][0]['channels']['complementarity']=[]
+    if damage.startswith('rehash_'):
+        bad['payload_sha256']=hashlib.sha256(m.dumps({k:v for k,v in bad.items() if k!='payload_sha256'}).encode()).hexdigest()
+    out.write_text('{' if damage=='malformed' else json.dumps(bad))
+    m.main(args)
+    assert json.loads(out.read_text())==good
+    for identity in good['contract']['inputs']:
+        assert identity['rows']>0 and len(identity['marker_sha256'])==64
+        assert identity['marker_path']

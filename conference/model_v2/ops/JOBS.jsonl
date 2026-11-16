@@ -45,3 +45,12 @@
 {"ts":"2026-11-15T21:39:34Z","job":"WETLAB","result":"exon3 exploratory audit done (codex sol): 22/22 PSI cells recompute; sequence/strand/band identity/product sizes UNVERIFIED (10 needs_human_confirmation); not comparable to computational features; 20 tests","out":"conference/model_v2/wetlab/"}
 {"ts":"2026-11-15T23:23:00Z","job":"J8","kind":"bounded_sentinel","slurm_id":"29242485","tests":"J8+J10 40 passed (orchestrator re-verified)"}
 {"ts":"2026-11-15T23:23:00Z","job":"J10","kind":"bounded","slurm_id":"29242486","dependency":"afterok:29242485"}
+{"ts":"2026-11-16T00:21:00Z","job":"J8","slurm_id":"29242485","state":"COMPLETED 1m44s"}
+{"ts":"2026-11-16T00:21:00Z","job":"J10","slurm_id":"29242486","state":"COMPLETED 25s"}
+{"ts":"2026-11-16T01:20:17Z","job":"J8","kind":"bounded_v2","slurm_id":"29253489","tests":"J8 36 + J10 37 passed"}
+{"ts":"2026-11-16T01:36:17Z","job":"J10","kind":"offtarget_profile_array","slurm_id":"29254990","array":"0-255%64","tests":"17 passed (verified)","input":"J3 genome gate-passed","note":"no real-data sentinel beforehand; failure blocks merge via afterok"}
+{"ts":"2026-11-16T01:36:17Z","job":"J10","kind":"merge","slurm_id":"29254991","dependency":"afterok:29254990"}
+{"ts":"2026-11-16T02:19:04Z","job":"J8","slurm_id":"29253489","state":"COMPLETED 1m32s (bounded v2)"}
+{"ts":"2026-11-16T02:35:18Z","job":"J10","slurm_id":"29254990/29254991","state":"COMPLETED, merge completeness passed","rows":11002701,"out":"~/orcd/scratch/feng/model_v2/j10_offtarget_v1/j10_profile.{parquet,json}","headline":"sites(k=0..3) F18 [2,3,107,1551] F14 [19,956,23850,285693] F10 [3291,110096,1453070,9124063] (incl SMN1/SMN2 anchors); descriptive, unmodified-RNA assumption"}
+{"ts":"2026-11-16T02:37:14Z","job":"J10","kind":"offtarget_array_UNLOGGED_SUBMIT","slurm_id":"mv2-j10-offtarget 256 tasks + merge 29254991","note":"submitted 2026-11-15T20:36 local by a worker, not by orchestrator; UNREVIEWED, pre-fix code; do not use until reviewed/rerun","out":"~/orcd/scratch/feng/model_v2/j10_offtarget_v1"}
+{"ts":"2026-11-16T02:37:42Z","job":"J8","kind":"full_genome_join","slurm_id":"29261102","est":"4.4-13.4h, ~37GB scratch, 8G RAM","review":"J8J10 rereview ADVANCE; bounded v2 passed","out":"~/orcd/scratch/feng/model_v2/j8_genome_v2"}

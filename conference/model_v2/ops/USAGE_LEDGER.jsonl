@@ -40,3 +40,13 @@
 {"ts":"2026-11-15T22:39:23Z","event":"dispatch","task":"J10_offtarget","worker":"codex gpt-6.1-sol medium"}
 {"ts":"2026-11-15T22:39:23Z","worker":"codex sol","task":"F3_fix2","event":"return","tests":"model_v2 full: 652 passed 1 skipped (verified)"}
 {"ts":"2026-11-15T23:23:00Z","worker":"claude-opus-5","task":"J8J10","event":"return"}
+{"ts":"2026-11-15T23:41:58Z","obs":"user: Claude 5h at 80%, 2h left; shift to GPT; codex probe OK at 23:41Z"}
+{"ts":"2026-11-15T23:41:58Z","event":"dispatch","task":"F3_rereview2","worker":"codex gpt-6.1-terra medium"}
+{"ts":"2026-11-15T23:41:58Z","event":"dispatch","task":"J8J10_review","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-16T00:21:00Z","event":"dispatch","task":"F3_fix3","worker":"codex gpt-6.1-sol medium"}
+{"ts":"2026-11-16T00:21:00Z","event":"dispatch","task":"J8J10_fix","worker":"codex gpt-6-astra high","note":"review sol: 1H 5M"}
+{"ts":"2026-11-16T00:36:50Z","event":"codex usage limit hit during J10_offtarget; message: try again at 6:24 PM (tz unspecified)"}
+{"ts":"2026-11-16T00:37:09Z","event":"redispatch","task":"J10_offtarget","worker":"codex gpt-6.1-sol medium","note":"codex capacity probe OK after limit; first attempt delivered nothing (stray j10_bounded.sbatch removed)"}
+{"ts":"2026-11-16T01:20:17Z","event":"dispatch","task":"J8J10_rereview+F3_rereview3","worker":"codex gpt-6.1-terra medium x2"}
+{"ts":"2026-11-16T02:19:04Z","event":"dispatch","task":"F3_fix4","worker":"codex gpt-6.1-sol medium","note":"J8J10 rereview ADVANCE; F3 rereview3 DO-NOT-ADVANCE 1 MED"}
+{"ts":"2026-11-16T02:37:22Z","event":"dispatch","task":"F3_rereview4","worker":"codex gpt-6.1-terra medium"}

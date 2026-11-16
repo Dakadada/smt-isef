@@ -9,6 +9,7 @@ always pass through evaluation_core and are blocked for these unlabeled tables.
 from __future__ import annotations
 
 import argparse
+import hashlib
 from dataclasses import asdict, dataclass
 from itertools import combinations
 import json
@@ -20,7 +21,7 @@ import warnings
 from scipy.stats import kendalltau, spearmanr, rankdata
 from conference.model_v2 import evaluation_core as ec
 from conference.model_v2.j3_scoring import complementarity as j3_complementarity
-from conference.model_v2.j8_feature_join import atomic_json, safe_path, sha256
+from conference.model_v2.j8_feature_join import atomic_json, safe_path, sha256, input_identity, dumps
 
 MetricBlocked=ec.MetricBlocked
 # The fold windows J2 actually computed (jobs/j2_fold.py windows=((80,40),(120,60),(200,100))).
@@ -29,7 +30,7 @@ FOLD_VARIANTS=('w80s40','w120s60','w200s100')
 
 def j3_fold_variant(path):
     """Read the single J3 fold window from its commit marker; never assume a label."""
-    marker=safe_path(path).with_suffix('.done')
+    marker=safe_path(safe_path(path).with_suffix('.done'))
     params=json.loads(marker.read_text()).get('params',{})
     window,span=params.get('window'),params.get('span')
     if type(window) is not int or type(span) is not int:
@@ -167,6 +168,10 @@ def empirical_null(observed,values,*,universe,min_decoys=20,higher_is_extreme=Tr
     if type(min_decoys) is not int or min_decoys<1: raise ValueError('positive minimum decoy count required')
     if universe.get('method')=='randomized_euler_trail_nonuniform':
         raise MetricBlocked('empirical_null','Euler-trail draw probabilities are not uniform; descriptive null only')
+    if universe.get('method')=='uniform_without_replacement':
+        raise MetricBlocked('empirical_null','J6 discovery selection is not modeled: random positions are not '
+                            'exchangeable with discovery-selected near-matches; descriptive distribution only, '
+                            'no prespecified selection-aware null is justified')
     if not finite(observed) or any(not finite(v) for v in values):
         raise MetricBlocked('empirical_null','missing/failed observed or decoy scores; no selective deletion')
     if len(values)<min_decoys: raise MetricBlocked('empirical_null',f'n_decoys={len(values)} below minimum={min_decoys}')
@@ -195,7 +200,7 @@ def null_channels(sequence,*,start,length,n,seed,scorers,min_decoys=20,gc_tolera
     result={}
     for channel,scorer in sorted(scorers.items()):
         if scorer is None:
-            result[channel]=dict(status='blocked',reason='decoy channel not precomputed; no scoring backend in J10',evidence_class='not_available'); continue
+            result[channel]=dict(status='blocked',p_value=None,reason='decoy channel not precomputed; no scoring backend in J10',evidence_class='not_available'); continue
         def score(s):
             try:
                 v=scorer(s)
@@ -310,6 +315,86 @@ def j9_report(rows,*,source,seed=0,fold_variant='w120s60',mismatch_variant='mm3'
                 ablation=baseline_ablation(features,source_paths=[source],seed=seed),evidence_class='derived')
 
 
+def j9_identity(path):
+    """Authenticate the feature output against J9's published commit manifest."""
+    import pyarrow.parquet as pq
+    path=safe_path(path); marker=safe_path(path.parent/'manifest.json')
+    manifest=json.loads(marker.read_text())
+    entries=[e for e in manifest.get('outputs',[]) if e.get('name')==path.name]
+    digest=sha256(path); rows=pq.read_metadata(path).num_rows
+    if len(entries)!=1 or entries[0].get('rows')!=rows or entries[0].get('sha256')!=digest:
+        raise ValueError('invalid J9 input commit manifest')
+    return dict(path=str(path),sha256=digest,rows=rows,kind='j9',
+                marker_path=str(marker),marker_sha256=sha256(marker))
+
+
+def site_null(row,seed):
+    """Keep unavailable sites in rank coverage while blocking their decoy nulls."""
+    length=row['end1']-row['start1']+1
+    try:
+        if row.get('complementarity_status')!='ok' or not finite(row.get('complementarity_wc_pairs')):
+            raise ValueError('upstream complementarity unavailable')
+        sequence=row.get('target_with_flank'); offset=row.get('footprint_start1_in_context')
+        if not isinstance(sequence,str) or type(offset) is not int or not 1<=offset<=len(sequence)-length+1:
+            raise ValueError('upstream context/footprint offset unavailable or invalid')
+        sequence=dna(sequence); start=offset-1
+        scorer=complementarity_scorer(row.get('aso_sequence'))
+        observed=scorer(sequence[start:start+length])
+    except (ValueError,TypeError) as exc:
+        reasons=[str(row[k]) for k in ('context_reason','complementarity_reason','duplex_reason','accessibility_reason') if row.get(k)]
+        reason='; '.join([str(exc)]+list(dict.fromkeys(reasons)))
+        return dict(site_id=row['site_id'],aso_id=row['aso_id'],observed_wc_pairs=None,
+                    channels={c:dict(status='blocked',p_value=None,reason=reason,evidence_class='not_available')
+                              for c in ('complementarity','duplex','accessibility')})
+    if observed!=float(row['complementarity_wc_pairs']):
+        raise ValueError('decoy scorer disagrees with the committed J3 complementarity cell: '+row['site_id'])
+    return dict(site_id=row['site_id'],aso_id=row['aso_id'],observed_wc_pairs=observed,
+                channels=null_channels(sequence,start=start,length=length,n=50,seed=seed,
+                         scorers={'complementarity':scorer,'duplex':None,'accessibility':None}))
+
+
+def payload_sha256(result):
+    return hashlib.sha256(dumps({k:v for k,v in result.items() if k!='payload_sha256'}).encode()).hexdigest()
+
+
+def valid_checkpoint(result,contract):
+    """Require a current complete result schema and an intact canonical payload."""
+    def fields(obj,schema):
+        return isinstance(obj,dict) and all(k in obj and type(obj[k]) is t for k,t in schema.items())
+    def stability(obj):
+        return fields(obj,dict(stability_flag=str,n_candidates=int,missing=dict,comparisons=list,
+                               n_sign_flips=int,n_strict_comparisons=int,n_tied_comparisons=int,thresholds=dict))
+    try:
+        if not fields(result,dict(contract=dict,j9=dict,j3_sample=dict,blocked=list,payload_sha256=str)): return False
+        if result['contract']!=contract or result['payload_sha256']!=payload_sha256(result): return False
+        j9=result['j9']; sample=result['j3_sample']
+        if not fields(j9,dict(candidates=list,excluded=list,per_feature=dict,channel_agreement=dict,
+                              baseline_variants=list,ablation=dict,evidence_class=str)): return False
+        if j9['candidates']!=['F18','F14','F10'] or j9['excluded']!=['3UP8']: return False
+        if not stability(j9['channel_agreement']) or not all(stability(x) for x in j9['per_feature'].values()): return False
+        if not fields(j9['ablation'],dict(mode=str,supervised=dict,baselines=dict)): return False
+        if set(j9['ablation']['baselines'])!={'M0','M1','M2','M3','M4','M5'}: return False
+        if not fields(sample,dict(rows=int,sampling_universe=str,j3_fold_variant=str,settings=list,stability=dict,nulls=list)): return False
+        if not 1<=sample['rows']<=contract['limit'] or sample['j3_fold_variant']!=contract['j3_fold_variant']: return False
+        if not stability(sample['stability']) or sample['stability']['n_candidates']!=sample['rows']: return False
+        if len(sample['settings'])!=9 or not all(fields(s,dict(name=str,channel=str,variant_id=str,higher_is_better=bool)) for s in sample['settings']): return False
+        if len(sample['nulls'])!=min(3,sample['rows']): return False
+        for null in sample['nulls']:
+            if not fields(null,dict(site_id=str,aso_id=str,channels=dict)) or 'observed_wc_pairs' not in null: return False
+            if set(null['channels'])!={'complementarity','duplex','accessibility'}: return False
+            for channel in null['channels'].values():
+                if not isinstance(channel,dict): return False
+                parts=[channel] if 'status' in channel else [channel.get('shift'),channel.get('shuffle')]
+                if not all(fields(p,dict(status=str,reason=str)) and p['status']=='blocked' and 'p_value' in p and p['p_value'] is None for p in parts): return False
+                if 'status' not in channel:
+                    for part in parts:
+                        if not fields(part,dict(distribution=list,n_decoys=int,minimum_decoys=int,sampling_universe=dict,evidence_class=str)): return False
+                        if 'observed' not in part or len(part['distribution'])!=part['n_decoys']: return False
+        return bool(result['blocked']) and all(isinstance(x,str) for x in result['blocked'])
+    except (ValueError,TypeError,KeyError):
+        return False
+
+
 def main(argv=None):
     import pyarrow.parquet as pq
     from itertools import islice
@@ -319,20 +404,25 @@ def main(argv=None):
     args=p.parse_args(argv)
     if not 2<=args.limit<=1000: p.error('bounded sample limit must be 2..1000')
     paths=[safe_path(args.j9),safe_path(args.j3)]
+    identities=[j9_identity(paths[0]),input_identity(paths[1],'j3')]
     variant=j3_fold_variant(paths[1])
     # Bounded output checkpoint; exact source SHA is acquired in Slurm, not login.
-    contract=dict(inputs=[dict(path=str(x),sha256=sha256(x)) for x in paths],seed=args.seed,limit=args.limit,
+    contract=dict(inputs=identities,seed=args.seed,limit=args.limit,
                   j3_fold_variant=variant,code_sha256=sha256(__file__))
     output=safe_path(args.out); output.parent.mkdir(parents=True,exist_ok=True)
     if output.exists():
-        prior=json.loads(output.read_text())
-        if prior.get('contract')==contract: return
-        raise ValueError('changed robustness inputs; choose fresh output')
+        try: prior=json.loads(output.read_text())
+        except (ValueError,OSError): prior={}
+        if valid_checkpoint(prior,contract): return
+        if isinstance(prior,dict) and prior.get('contract') is not None and prior['contract']!=contract:
+            raise ValueError('changed robustness inputs; choose fresh output')
     j9rows=pq.read_table(paths[0]).to_pylist()
     columns=['site_id','aso_id','aso_sequence','assembly','annotation','chrom','strand','start1','end1','mismatch_count',
              'complementarity_wc_pairs','complementarity_status','duplex_energy_kcal_mol','duplex_status',
              'accessibility_p_unpaired','accessibility_status','target_with_flank','footprint_start1_in_context']
-    raw=list(islice((r for b in pq.ParquetFile(paths[1]).iter_batches(batch_size=64,columns=columns) for r in b.to_pylist() if r['aso_id']!='3UP8'),args.limit))
+    pf=pq.ParquetFile(paths[1])
+    columns += [k for k in ('context_reason','complementarity_reason','duplex_reason','accessibility_reason') if k in pf.schema_arrow.names]
+    raw=list(islice((r for b in pf.iter_batches(batch_size=64,columns=columns) for r in b.to_pylist() if r['aso_id']!='3UP8'),args.limit))
     from conference.model_v2.j8_feature_join import fence
     for r in raw: fence(r)
     rows=[dict(candidate_id=r['site_id'],variant_id=variant,mismatch_count=r['mismatch_count'],
@@ -345,25 +435,17 @@ def main(argv=None):
     settings += [Setting(v,'access',v) for v in FOLD_VARIANTS if v!=variant]
     ids=[r['candidate_id'] for r in rows]
     alternatives=alternative_scores(rows,settings,ids)
-    nulls=[]
-    for i,r in enumerate(raw[:3]):
-        length=r['end1']-r['start1']+1
-        start=r['footprint_start1_in_context']-1
-        scorer=complementarity_scorer(r['aso_sequence'])
-        # Orientation guard: the rescored observed footprint must reproduce the J3 cell.
-        observed=scorer(r['target_with_flank'][start:start+length])
-        if r['complementarity_status']=='ok' and observed!=float(r['complementarity_wc_pairs']):
-            raise ValueError('decoy scorer disagrees with the committed J3 complementarity cell: '+r['site_id'])
-        nulls.append(dict(site_id=r['site_id'],aso_id=r['aso_id'],observed_wc_pairs=observed,
-             channels=null_channels(r['target_with_flank'],start=start,length=length,n=50,seed=args.seed+i,
-             scorers={'complementarity':scorer,'duplex':None,'accessibility':None})))
+    nulls=[site_null(r,args.seed+i) for i,r in enumerate(raw[:3])]
     result=dict(contract=contract,j9=j9_report(j9rows,source=str(paths[0]),seed=args.seed,fold_variant=variant),j3_sample=dict(
         rows=len(raw),sampling_universe='first N non-3UP8 rows in explicitly named J3 shard; convenience sample, not genome representative',
         j3_fold_variant=variant,settings=[asdict(s) for s in settings],stability=rank_stability(alternatives),nulls=nulls),
         blocked=['Duplex-energy and accessibility decoy nulls blocked: both need a folding backend, '
                  'and J10 runs no scoring backend. Only the pure-sequence complementarity channel is rescored.',
+                 'Shift distributions are descriptive: no selection-aware null for J6-discovered near-matches; p_value=None.',
                  'J3 alternative fold windows are absent; coverage explicitly incomplete.',
                  'No verified negatives: supervised metrics blocked by evaluation_core.'])
+    result['payload_sha256']=payload_sha256(result)
+    if not valid_checkpoint(result,contract): raise ValueError('invalid robustness result schema')
     atomic_json(output,result)
 
 

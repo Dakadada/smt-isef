@@ -4,7 +4,7 @@ Statistics / software-engineering module only. It fits nothing and reads no outc
 data. Five pieces, each refusing loudly instead of degrading silently:
 
 1. ``validate_table``  - exhaustive label states; a ``verified_negative`` needs explicit
-   ``negative_evidence`` (assayed_and_powered is True + finite detection limit) and can
+   ``negative_evidence`` (assayed_and_powered is True + finite nonnegative detection limit) and can
    never come from a responder-only table (absence is not a negative).
 2. ``make_splits`` / ``make_nested_splits`` - purged group splits. Five leakage axes:
    near-identical ASO sequence, chemistry family, study, window, independent unit.
@@ -196,6 +196,11 @@ SOURCE_TABLE_KINDS = RESPONDER_ONLY_KINDS | {"full_screen", "all_assayed", "comp
 RESPONDER_ONLY_SOURCES = frozenset({"holgersen_s4", "holgersen_table_s4",
                                    "holgersen_supplementary_table_s4"})
 BINARY_LABEL_FIELDS = ("binary_label", "label", "y")
+# Closed identity contract: assay_id within a study must distinguish experimental
+# conditions and genuine replicate assays. Row/unit names, labels, evidence and
+# arbitrary annotations cannot turn one assay into multiple observations.
+ASSAY_IDENTITY_FIELDS = ("study_id", "assay_id", "aso_sequence", "chemistry_family",
+                         "chrom", "start", "end", "strand")
 
 
 def _category(value: str) -> str:
@@ -220,8 +225,8 @@ def _freeze(value: Any) -> Any:
 class ObservationTable:
     """Deeply immutable validated rows; public consumers revalidate even this wrapper.
 
-    ``duplicate_assay_records`` lists exact record copies differing only in row/unit
-    identifiers. They are retained and counted as one independent unit for grouping;
+    ``duplicate_assay_records`` lists rows sharing the canonical assay-defining
+    fields, regardless of metadata. They count as one independent unit for grouping;
     statistics refuse duplicate contributors rather than giving copies extra weight.
     """
     rows: Tuple[Mapping[str, Any], ...]
@@ -243,6 +248,33 @@ def _nonempty(row: Mapping[str, Any], name: str, where: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise SchemaError(f"{where}: field {name!r} must be a non-empty string")
     return value
+
+
+def _canonicalize_assay_identity(row: Dict[str, Any], where: str) -> None:
+    """Canonicalize supplied identity fields once, before hashing or consumption.
+
+    Optional fields may be absent, but supplied values must be valid. Coordinates
+    are already canonical integers; alternate scalar types fail closed.
+    """
+    for name in ("assay_id", "study_id"):
+        row[name] = unicodedata.normalize("NFKC", _nonempty(row, name, where)).strip().casefold()
+        _nonempty(row, name, where)
+    if "aso_sequence" in row:
+        row["aso_sequence"] = normalize_sequence(row["aso_sequence"])
+    if "chemistry_family" in row:
+        row["chemistry_family"] = normalize_chemistry(_nonempty(row, "chemistry_family", where))
+    if "chrom" in row:
+        row["chrom"] = _canonical_chromosome(_nonempty(row, "chrom", f"{where}: window axis"))
+    for name in ("start", "end"):
+        if name in row:
+            _positive_int(row[name], f"{where}: window axis {name}")
+    if "start" in row and "end" in row and row["end"] < row["start"]:
+        raise SchemaError(f"{where}: window axis needs start<=end")
+    if "strand" in row:
+        strand = unicodedata.normalize("NFKC", _nonempty(row, "strand", f"{where}: window axis")).strip()
+        if strand not in ("+", "-"):
+            raise SchemaError(f"{where}: window axis strand must be +/-")
+        row["strand"] = strand
 
 
 def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> ObservationTable:
@@ -273,6 +305,7 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> 
         r["label_state"] = state.value
         for name in ("assay_id", "study_id", "independent_unit_id"):
             _nonempty(r, name, where)
+        _canonicalize_assay_identity(r, where)
         prov = r.get("provenance")
         if isinstance(prov, Mapping):
             if not isinstance(prov.get("source"), str) or not prov["source"].strip():
@@ -309,9 +342,10 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> 
                     f"{where}: negative_evidence.assayed_and_powered must be exactly True")
             limit = ne.get("detection_limit")
             if isinstance(limit, bool) or not isinstance(limit, (int, float)) \
-                    or not math.isfinite(limit):
+                    or not math.isfinite(limit) or limit < 0:
                 raise NegativeEvidenceError(
-                    f"{where}: negative_evidence.detection_limit must be a finite number")
+                    f"{where}: negative_evidence.detection_limit must be a finite nonnegative "
+                    "number; signed/log-scale conventions are not supported")
             basis = _category(str(ne.get("basis", "")))
             if basis not in NEGATIVE_BASES:
                 raise NegativeEvidenceError(
@@ -333,7 +367,7 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> 
         out.append(_freeze(r))
     records: Dict[str, List[str]] = {}
     for r in out:
-        identity = {k: v for k, v in r.items() if k not in ("observation_id", "independent_unit_id")}
+        identity = {k: r.get(k) for k in ASSAY_IDENTITY_FIELDS}
         records.setdefault(_fingerprint(identity), []).append(r["observation_id"])
     duplicates = tuple(tuple(ids) for ids in records.values() if len(ids) > 1)
     return ObservationTable(tuple(out), duplicates)
@@ -896,8 +930,10 @@ def _metric_value(key: str, y: Sequence[int], s: Sequence[float],
             prev = recall
         return total
     if key in _THRESHOLD_METRICS:
-        if threshold is None:
-            raise SchemaError(f"{key} needs an explicit threshold (score >= threshold is positive)")
+        if isinstance(threshold, bool) or not isinstance(threshold, (int, float)) \
+                or not math.isfinite(threshold):
+            raise SchemaError(f"{key} needs an explicit finite non-boolean numeric threshold "
+                              "(score >= threshold is positive)")
         pred = [v >= threshold for v in s]
         tp = sum(1 for p, t in zip(pred, y) if p and t)
         fp = sum(1 for p, t in zip(pred, y) if p and not t)

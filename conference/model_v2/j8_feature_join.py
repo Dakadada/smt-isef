@@ -9,7 +9,7 @@ cells retain alternative/context identity, status, evidence and missing values.
 The SQLite index checkpoints each verified input atomically. Its cache is 32 MiB;
 Arrow batches are bounded, but upstream Parquet footers also consume memory.
 Full indexing is a Slurm operation; --bounded selects an explicitly partial atlas.
-A measured full-genome index is ~37 GB, so --max-index-gib must be raised past its
+The prior per-source full-genome index projection is ~37 GB, so --max-index-gib must be raised past its
 20 GiB default (see jobs/j8_full.sbatch for the per-source measurements).
 
 Known upstream coverage gap, not a defect here: J2 folded u in {8,12,18} while the
@@ -64,7 +64,7 @@ def dumps(value):
 
 
 def atomic_json(path, value):
-    path = Path(path)
+    path = safe_path(path)
     fd, temp = tempfile.mkstemp(dir=path.parent, suffix='.tmp')
     try:
         with os.fdopen(fd, 'w') as stream:
@@ -213,6 +213,7 @@ def atlas_summary(row, atlas):
 
 def input_identity(path, kind):
     path=safe_path(path); marker=(path.parent.parent/(path.stem+'.done')) if kind=='j4' else path.with_suffix('.done')
+    marker=safe_path(marker)
     m=json.loads(marker.read_text())
     entry=m.get('ablation',m)
     digest=sha256(path); rows=pq.read_metadata(path).num_rows
@@ -227,13 +228,16 @@ def input_identity(path, kind):
             valid=('/gencode/v50/GRCh38.primary_assembly.genome.fa' in fasta and
                    Path(str(m.get('loci',''))).name in ('j2_loci_phase1.tsv','j2_loci_phase2.tsv'))
         if not valid: raise ValueError('J2 assembly fence requires coordinate metadata or pinned upstream FASTA/loci provenance')
-    return dict(path=str(path),sha256=digest,rows=rows,kind=kind,marker_sha256=sha256(marker))
+    return dict(path=str(path),sha256=digest,rows=rows,kind=kind,
+                marker_path=str(marker),marker_sha256=sha256(marker))
 
 
 class FeatureIndex:
     """Single writer; transactional per-shard resume. No directory discovery."""
     def __init__(self,path,max_bytes=20*1024**3):
         self.path=safe_path(path); self.path.parent.mkdir(parents=True,exist_ok=True)
+        # SQLite opens these implicitly, including on recovery of an existing DB.
+        for suffix in ('-journal','-wal','-shm'): safe_path(str(self.path)+suffix)
         self.db=sqlite3.connect(self.path); self.max_bytes=max_bytes
         self.db.executescript('''PRAGMA cache_size=-32768; PRAGMA temp_store=FILE;
           CREATE TABLE IF NOT EXISTS inputs(path TEXT PRIMARY KEY, identity TEXT);
@@ -241,7 +245,8 @@ class FeatureIndex:
           CREATE TABLE IF NOT EXISTS j2(locus TEXT,strand TEXT,u INTEGER,w INTEGER,l INTEGER,first INTEGER,last INTEGER,values_blob BLOB,
             PRIMARY KEY(locus,strand,u,w,l,first));
           CREATE TABLE IF NOT EXISTS j4(id TEXT PRIMARY KEY,chrom TEXT,strand TEXT,start INTEGER,end INTEGER,payload TEXT);
-          CREATE INDEX IF NOT EXISTS j4_overlap ON j4(chrom,strand,start,end);''')
+          CREATE INDEX IF NOT EXISTS j4_overlap ON j4(chrom,strand,start,end);
+          CREATE INDEX IF NOT EXISTS j4_width ON j4((end-start));''')
     def __enter__(self): return self
     def __exit__(self,*args): self.db.close()
     def identities(self):
@@ -253,7 +258,7 @@ class FeatureIndex:
         if prior:
             if prior[0]!=dumps(identity): raise ValueError('index input changed')
             return
-        pf=pq.ParquetFile(path)
+        pf=pq.ParquetFile(safe_path(path))
         if OUTCOME_COLUMNS.intersection(x.lower() for x in pf.schema_arrow.names): raise ValueError('outcome columns forbidden')
         if kind=='j4':
             coords=(pf.schema_arrow.metadata or {}).get(b'coordinates',b'')
@@ -299,6 +304,9 @@ class FeatureIndex:
                         elif kind=='j2':
                             continue
                         else:
+                            start,end=row['footprint_start'],row['footprint_end']
+                            if type(start) is not int or type(end) is not int or not 1<=start<=end:
+                                raise ValueError('invalid J4 footprint coordinates')
                             row=dict(row,config_id=config_id)
                             self.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',(str(config_id)+':'+row['row_id'],row['chrom'],row['strand'],row['footprint_start'],row['footprint_end'],dumps(row)))
                     size=self.db.execute('PRAGMA page_count').fetchone()[0]*self.db.execute('PRAGMA page_size').fetchone()[0]
@@ -321,8 +329,14 @@ class FeatureIndex:
                       (l['locus_id'],row['strand'],row['end1']-row['start1']+1,pos,pos)):
                 v=struct.unpack_from('!d',zlib.decompress(blob),8*(pos-first))[0]
                 grids.append(dict(locus_id=l['locus_id'],strand=row['strand'],pos_end_1b_transcript=pos,W=w,L=span,u=u,p_unpaired=v))
-        atlas=[json.loads(x[0]) for x in self.db.execute('SELECT payload FROM j4 WHERE chrom=? AND strand=? AND start<=? AND end>=?',
-                                                      (row['chrom'],row['strand'],row['end1'],row['start1']))]
+        # MAX uses the expression index's last entry (O(log N)), including after
+        # resume or new ingestion. Every overlapping interval must start at least
+        # query.start - max(end-start). This bounds work by local atlas density,
+        # never the entire earlier chromosome prefix; no assumed footprint size.
+        width=self.db.execute('SELECT MAX(end-start) FROM j4').fetchone()[0]
+        atlas=[] if width is None else [json.loads(x[0]) for x in self.db.execute(
+            'SELECT payload FROM j4 WHERE chrom=? AND strand=? AND start>=? AND start<=? AND end>=?',
+            (row['chrom'],row['strand'],row['start1']-width,row['end1'],row['start1']))]
         return dict(row,j3_channels=dumps(channels),curated_geometry=dumps(geo.annotate(row)),
                     j2_accessibility=dumps(accessibility(row,local,grids)),j4_ablation=dumps(atlas_summary(row,atlas)))
 
@@ -335,7 +349,7 @@ def prepare_join(index,locus_paths,output_dir):
     catalog=dict(version=VERSION,inputs=index.identities(),loci=locus_inputs,
                  assembly=ASSEMBLY,annotation=ANNOTATION,
                  geometry='canonical transcript exons +/-100nt; terminal nonsplice boundaries excluded')
-    path=output_dir/'feature_inputs.json'
+    path=safe_path(output_dir/'feature_inputs.json')
     if path.exists():
         if json.loads(path.read_text())!=catalog: raise ValueError('join catalog inputs changed; use fresh output')
     else: atomic_json(path,catalog)
@@ -353,16 +367,17 @@ def join_shard(j6_path,output,index,locus_paths,*,batch_size=512,context=None):
     inputs=[source,dict(path=context['catalog_path'],sha256=context['catalog_sha256'],kind='feature_catalog')]+context['locus_inputs']
     contract=dict(version=VERSION,code_sha256=context['code_sha256'],inputs=inputs,
                   catalog_sha256=context['catalog_sha256'],assembly=ASSEMBLY,annotation=ANNOTATION,exon_padding=100)
-    marker=output.with_suffix('.done')
+    marker=safe_path(output.with_suffix('.done'))
     if marker.exists():
         try: old=json.loads(marker.read_text())
         except (ValueError,OSError): old={}
         if not isinstance(old,dict): old={}
         if old.get('contract') is not None and old['contract']!=contract: raise ValueError('join inputs or implementation changed; use a fresh output')
-        if output.exists() and sha256(output)==old.get('sha256') and pq.read_metadata(output).num_rows==source['rows']:
+        if (old.get('contract')==contract and old.get('rows')==source['rows'] and
+                output.exists() and sha256(output)==old.get('sha256') and pq.read_metadata(output).num_rows==source['rows']):
             return old
     marker.unlink(missing_ok=True)
-    pf=pq.ParquetFile(j6_path)
+    pf=pq.ParquetFile(safe_path(j6_path))
     if OUTCOME_COLUMNS.intersection(x.lower() for x in pf.schema_arrow.names): raise ValueError('outcome columns forbidden')
     fields=[f.with_metadata({b'evidence_class':b'derived'}) for f in pf.schema_arrow]
     for name in ('j3_channels','curated_geometry','j2_accessibility','j4_ablation'):
@@ -388,13 +403,13 @@ def join_shard(j6_path,output,index,locus_paths,*,batch_size=512,context=None):
 def production_inventory(root,*,bounded=False):
     """Enumerate only names declared by manifests / fixed upstream array sizes."""
     root=safe_path(root)
-    manifest=root/'j6_genome_v1/run_manifest.json'
+    manifest=safe_path(root/'j6_genome_v1/run_manifest.json')
     names=json.loads(manifest.read_text())['expected_shards']
     j6=[root/'j6_genome_v1'/(n+'.parquet') for n in (names[:2] if bounded else names)]
     entries=[('j3',root/'j3_genome_v1'/f'j3_shard{i:04d}_of0256.parquet',None) for i in range(1 if bounded else 256)]
     for phase,count in ((1,32),(2,128)):
         entries += [('j2',root/f'j2_phase{phase}'/f'j2_shard{i:04d}.parquet',None) for i in range(1 if bounded else count)]
-    config=root/'j4_configs/j4_configs_manifest.tsv'
+    config=safe_path(root/'j4_configs/j4_configs_manifest.tsv')
     with config.open() as stream:
         rows=csv.DictReader((l.lstrip('#') for l in stream if l.startswith('#config_id') or not l.startswith('#')),delimiter='\t')
         for r in rows:
@@ -418,7 +433,7 @@ def main(argv=None):
         count=0
         for path in j6: count+=join_shard(path,out/path.name,index,locus_paths,context=context)['rows']
         if not args.bounded:
-            gate=safe_path(args.root)/'j6_genome_v1/gate_report.json'
+            gate=safe_path(safe_path(args.root)/'j6_genome_v1/gate_report.json')
             expected=json.loads(gate.read_text())['rows']
             if count!=expected: raise ValueError('global J6 row-count conservation failed')
             manifests.append(gate)

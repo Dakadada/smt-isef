@@ -238,7 +238,7 @@ def test_trap_duplicate_aso_under_different_ids_never_straddles():
                {plan.observation_ids[i] for i in fold.purged_idx}
         assert not ({"o000", "dup"} & ids and {"o000", "dup"} & held)
     # the duplicate is purged (not trained on) when its twin's study is held out
-    fold = next(f for f in plan.folds if f.test_group_ids == ("study:S0",))
+    fold = next(f for f in plan.folds if f.test_group_ids == ("study:s0",))
     assert [plan.observation_ids[i] for i in fold.purged_idx] == ["dup"]
 
 
@@ -317,7 +317,7 @@ def test_verify_no_leakage_detects_a_tampered_plan():
 def test_leave_study_out_holds_out_whole_studies():
     rows = independent_rows(12, n_studies=4)
     plan = ec.make_splits(rows, "leave_study_out")
-    assert [f.test_group_ids for f in plan.folds] == [(f"study:S{k}",) for k in range(4)]
+    assert [f.test_group_ids for f in plan.folds] == [(f"study:s{k}",) for k in range(4)]
     assert all(len(f.test_idx) == 3 and len(f.train_idx) == 9 for f in plan.folds)
 
 
@@ -1220,3 +1220,168 @@ def test_fix2_generic_ci_refuses_duplicate_contributors():
     rows.append({**rows[0], "observation_id": "copy", "independent_unit_id": "copy_unit"})
     with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
         ec.cluster_bootstrap_ci(rows, mean_score(list(range(13))), n_boot=20)
+
+
+@pytest.mark.parametrize("metric", ["auroc", "auprc", "accuracy", "precision", "recall",
+                                   "fdr", "brier", "calibration_error", "pr_curve", "ci"])
+def test_fix3_annotations_cannot_disguise_duplicate_assays(metric):
+    rows = labelled(10, 10)
+    scores = [.5] * 10 + [1.] + [0.] * 9
+    assert ec.compute_metric("auroc", rows, scores).value == pytest.approx(.9)
+    rows += [{**rows[10], "observation_id": f"copy{i}", "independent_unit_id": f"u{i}",
+              "note": f"irrelevant {i}",
+              "provenance": {"source": "synthetic:test", "note": f"import {i}"},
+              "negative_evidence": {**NEG_EVIDENCE, "note": f"annotation {i}"}}
+             for i in range(20)]
+    scores += [1.] * 20
+    with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+        if metric == "pr_curve":
+            ec.precision_recall_curve(rows, scores)
+        elif metric == "ci":
+            ec.bootstrap_metric_ci("auroc", rows, scores, n_boot=20)
+        else:
+            ec.compute_metric(metric, rows, scores, threshold=.5)
+
+
+@pytest.mark.parametrize("state", ["measured_positive", "unlabeled", "unassayed"])
+def test_fix3_pu_refuses_annotated_copies(state):
+    rows = labelled(10, 0, n_unl=10, n_unassayed=2)
+    source = next(r for r in rows if r["label_state"] == state)
+    rows.append({**source, "observation_id": "copy", "independent_unit_id": "copy_unit",
+                 "note": "different annotation"})
+    with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+        ec.pu_report(rows, list(range(len(rows))), top_k=(5,), include_unassayed=True)
+
+
+def test_fix3_generic_ci_refuses_annotated_copies_before_statistic():
+    rows = independent_rows(12)
+    rows.append({**rows[0], "observation_id": "copy", "independent_unit_id": "copy_unit",
+                 "note": "different annotation"})
+
+    def statistic(indices):
+        pytest.fail("duplicate contributors must be refused before resampling")
+
+    with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+        ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)
+
+
+@pytest.mark.parametrize("field,value", [("assay_id", "assay2"), ("study_id", "S2"),
+                                         ("aso_sequence", "T" * 18),
+                                         ("chemistry_family", "chemZ"), ("chrom", "chr6"),
+                                         ("start", 1001), ("end", 1018), ("strand", "-")])
+def test_fix3_distinct_assay_defining_fields_preserved(field, value):
+    table = ec.validate_table([row("a"), row("b", **{field: value})])
+    assert table.duplicate_assay_records == ()
+
+
+@pytest.mark.parametrize("metric", ["accuracy", "precision", "recall", "fdr"])
+@pytest.mark.parametrize("threshold", [None, float("nan"), float("inf"), -float("inf"),
+                                       True, False, "0.5", [], {}])
+def test_fix3_classification_requires_explicit_finite_numeric_threshold(metric, threshold):
+    rows = labelled(10, 10)
+    with pytest.raises(ec.SchemaError, match="threshold"):
+        ec.compute_metric(metric, rows, [.9] * 10 + [.1] * 10, threshold=threshold)
+
+
+@pytest.mark.parametrize("threshold", [0, 1, .5, -1.])
+def test_fix3_finite_numeric_thresholds_are_valid(threshold):
+    rows = labelled(10, 10)
+    result = ec.compute_metric("accuracy", rows, [.9] * 10 + [.1] * 10, threshold=threshold)
+    assert result.value == (1. if threshold == .5 else .5)
+
+
+@pytest.mark.parametrize("limit", [-1, -.001, float("inf"), -float("inf")])
+def test_fix3_invalid_detection_limits_refused(limit):
+    evidence = {**NEG_EVIDENCE, "detection_limit": limit}
+    with pytest.raises(ec.NegativeEvidenceError, match="detection_limit"):
+        ec.validate_table([row("n", "verified_negative", negative_evidence=evidence)])
+
+
+def test_fix3_units_do_not_authorize_unsupported_signed_detection_limits():
+    evidence = {**NEG_EVIDENCE, "detection_limit": -1, "unit": "log10",
+                "convention": "signed"}
+    with pytest.raises(ec.NegativeEvidenceError, match="detection_limit"):
+        ec.validate_table([row("n", "verified_negative", negative_evidence=evidence)])
+
+
+@pytest.mark.parametrize("limit", [0, .05])
+def test_fix3_nonnegative_detection_limits_accepted(limit):
+    evidence = {**NEG_EVIDENCE, "detection_limit": limit}
+    assert len(ec.validate_table([row("n", "verified_negative", negative_evidence=evidence)])) == 1
+
+
+_FIX4_ALIASES = [
+    ("assay_id", lambda s, i: s + " " * (i + 1), 20),
+    ("assay_id", lambda s, i: " ＡＳＳＡＹ１ ", 1),
+    ("study_id", lambda s, i: " Ｓ１０ ", 1),
+    ("aso_sequence", lambda s, i: "".join(
+        c.lower() if (i + 1) & (1 << j) else c for j, c in enumerate(s)), 20),
+    ("aso_sequence", lambda s, i: s.lower().replace("t", "u"), 1),
+    ("chrom", lambda s, i: "5", 1),
+    ("chemistry_family", lambda s, i: s.upper(), 1),
+    ("chemistry_family", lambda s, i: "2'-O-methoxyethyl", 1),
+]
+
+
+@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+@pytest.mark.parametrize("consumer", ["auroc", "pr_curve", "metric_ci", "generic_ci", "pu"])
+def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_copies, consumer):
+    rows = labelled(10, 10)
+    rows[10]["chemistry_family"] = "moe"
+    scores = [.5] * 10 + [1.] + [0.] * 9
+    assert ec.compute_metric("auroc", rows, scores).value == pytest.approx(.9)
+    if consumer == "pu":
+        rows[10]["label_state"] = "unlabeled"
+    rows += [{**rows[10], field: alias(rows[10][field], i),
+              "observation_id": f"copy{i}", "independent_unit_id": f"copy_unit{i}"}
+             for i in range(n_copies)]
+    scores += [1.] * n_copies
+    if consumer == "generic_ci":
+        def statistic(indices):
+            pytest.fail("aliased copies must be refused before resampling")
+        with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+            ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)
+    else:
+        with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+            if consumer == "auroc":
+                ec.compute_metric("auroc", rows, scores)
+            elif consumer == "pr_curve":
+                ec.precision_recall_curve(rows, scores)
+            elif consumer == "metric_ci":
+                ec.bootstrap_metric_ci("auroc", rows, scores, n_boot=20)
+            else:
+                ec.pu_report(rows, scores, top_k=(5,))
+
+
+@pytest.mark.parametrize("field,alias,n_copies", _FIX4_ALIASES)
+def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field, alias, n_copies):
+    source = row("original", chem="moe", study="S10")
+    copy = {**source, field: alias(source[field], 0),
+            "observation_id": "copy", "independent_unit_id": "copy_unit"}
+    for rows in ([source, copy], ec.validate_table([source, copy])):
+        table = ec.validate_table(rows)
+        assert table.duplicate_assay_records == (("original", "copy"),)
+        assert table.rows[0][field] == table.rows[1][field]
+        groups = ec.axis_groups(rows, axes=("sequence", "chemistry", "study", "window"))
+        assert all(g[0] == g[1] for g in groups.values())
+        clusters = ec.effective_clusters(rows, merge_axes=())
+        assert clusters[0] == clusters[1]
+
+
+def test_fix4_genuine_distinct_assay_replicates_still_contribute():
+    rows = labelled(10, 10)
+    rows.append({**rows[10], "assay_id": "replicate2", "observation_id": "replicate",
+                 "independent_unit_id": "replicate_unit"})
+    assert ec.validate_table(rows).duplicate_assay_records == ()
+    clusters = ec.effective_clusters(rows, merge_axes=())
+    assert len(set(clusters)) == 21
+    assert ec.compute_metric("auroc", rows, [.5] * 10 + [1.] + [0.] * 9 + [1.]).value \
+        == pytest.approx(9 / 11)
+
+
+@pytest.mark.parametrize("field,value", [("aso_sequence", "ACGX"), ("aso_sequence", ""),
+    ("chemistry_family", "MOE/LNA"), ("chrom", "chr23"), ("start", "1000"),
+    ("start", True), ("end", 999), ("strand", "unknown")])
+def test_fix4_invalid_identity_rejected_before_hashing(field, value):
+    with pytest.raises(ec.SchemaError):
+        ec.validate_table([row("a", **{field: value})])

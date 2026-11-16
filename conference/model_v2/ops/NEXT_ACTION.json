@@ -1,15 +1,31 @@
 {
- "ts": "2026-11-15T15:50Z",
- "state": "ACTIVE; alarm bgmki9z09 armed (~16:44Z)",
- "running_slurm": "J4 atlas wave1 29186278 (181/200 done) -> wave2 submitter 29186279 -> tasks 200-318",
- "limits": "QOS submit caps: mit_preemptable 256, mit_normal 448, assoc 500 jobs/user",
- "next": [
-  "after J4 wave2 submits: find its array id, run j4_scale_gate.py --deep (or submit dependent gate), then rebuild J9 (M5 for F14/F10) ",
-  "investigate the 92 J3 failures (likely N-containing targets) - document",
-  "J7 splice geometry/RBP joins; J10 robustness (alt fold windows already in J9); J11 report + FINAL_LAUNCH_AUDIT.md",
-  "independent re-review of J4 fixes + J9; 3UP8 human confirm; GTF-confirm coords"
+ "ts": "2026-11-16T02:40Z",
+ "T0": "2026-11-15T06:52:49Z",
+ "T_plus": "~19.8h of 48h; campaign window ends 2026-11-17T06:52:49Z",
+ "state": "PRE-/CLEAR CHECKPOINT. Session alarms/monitors die on /clear -> re-arm 59-min alarm (Bash run_in_background: sleep 3540; printf ...) first thing.",
+ "running_slurm": "J8 full genome join 29261102 (preemptable, pending; est 4-13h, ~37GB scratch, out j8_genome_v2, requeue-safe)",
+ "running_workers": "Codex terra F3_rereview4 (-> briefs/F3_REREVIEW4_RESULT.md)",
+ "completed_gate_passed": [
+  "F1 (38 tests)",
+  "J2 p1+p2",
+  "J6 genome (11,002,701 sites)",
+  "J3 genome (92 explicit failures)",
+  "J4 atlas 20,395/20,395 + equiv probe",
+  "J9 SMN2 descriptive v2 (M0-M5, N=3, no sig claims)",
+  "J8/J10 code (73 tests, ADVANCE)",
+  "F3 evaluation_core (430 tests; re-review4 pending)",
+  "wetlab exon3 audit (descriptive, 20 tests)"
  ],
- "done": "J2 p1+p2, J6 genome+gate, J3 genome+gate (11.0M, 92 failed explicit), J4 sentinel+equiv, J9 SMN2 descriptive v1",
- "claude_gpt_only_until": "2026-11-15T20:39:56Z",
- "wetlab": "exon3 workbook NOT yet present at conference/model_v2/data/wetlab/ (checked 2026-11-15); when present run briefs/WETLAB_exon3.md via codex sol (low priority; do not use Fable)"
+ "next": [
+  "read briefs/F3_REREVIEW4_RESULT.md; if DO-NOT-ADVANCE dispatch F3_fix5 (codex sol medium), else mark F3 ADVANCE",
+  "check J8 full 29261102 started w/o disk errors (logs/mv2-j8-full-*.out); gate it (J8 manifest) when done",
+  "review unreviewed J10 off-target module (j10_offtarget_profile.py + outputs j10_offtarget_v1 from worker-submitted array 29254991) - rerun with reviewed code before use",
+  "J2 rerun ulens 10/14/18 only if user wants (accessibility join near-empty); J7 RBP/eCLIP joins need data-source decision; M6 undefined",
+  "J11: figures/model cards/evidence boundary/prediction manifest; FINAL_LAUNCH_AUDIT.md due by T+48h (UTC+CST both); disable at-heartbeat at expiry (atrm)",
+  "commit local snapshot; NO push",
+  "3UP8 human confirmation; GTF-confirm SMN coords; feng cleanroom test failure (source_auth.py 'src/') pre-existing, not touched"
+ ],
+ "model_routing": "Fable & Opus5.5 refuse [bio] on J4/J6/J8J10 (not retried; user-directed reroutes to astra/opus-5 done). claude -p --model claude-opus-5 works (prompt via stdin). codex: gpt-6-astra, gpt-6.1-sol, gpt-6.1-terra via CLI (MCP down). Claude 5h window ~80% at 23:40Z (reset ~01:40Z); GPT limit hit once, reset 23:24Z.",
+ "heartbeat": "at-chain on login009 every 55 min via ops/heartbeat.sh (restart: ./ops/heartbeat.sh); dies if at queue empties",
+ "scratch": "quota cache stale (905.7/1024GB at 21:17 EST); user says space exists; old dirs ~/orcd/scratch/{smt-rna,hf_cache,...} NOT mine, undeleted"
 }

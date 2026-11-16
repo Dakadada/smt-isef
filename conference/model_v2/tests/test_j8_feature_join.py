@@ -240,3 +240,143 @@ def test_cli_bounded_inventory_without_directory_scan(tmp_path):
     result=json.loads((out/'manifest.json').read_text())
     assert result['rows']==1 and result['coverage']=='partial'
     assert len(result['inputs'])==3
+
+
+@pytest.mark.parametrize('kind', ['j3', 'j4', 'catalog', 'j6_manifest', 'j4_manifest', 'output_marker'])
+def test_all_sidecars_reject_forbidden_symlink_before_read(tmp_path, monkeypatch, kind):
+    m=api(); forbidden=tmp_path/'wetlab'; forbidden.mkdir()
+    target=forbidden/'synthetic.json'; target.write_text('{}')
+    original=Path.open
+    def guarded_open(path, *args, **kwargs):
+        assert forbidden not in path.resolve().parents, 'forbidden target was opened'
+        return original(path,*args,**kwargs)
+    monkeypatch.setattr(Path,'open',guarded_open)
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        if kind in ('j3','j4'):
+            p=tmp_path/'cfg'/'ablation_maps'/'s.parquet' if kind=='j4' else tmp_path/'s.parquet'
+            p.parent.mkdir(parents=True,exist_ok=True)
+            marker=p.parent.parent/'s.done' if kind=='j4' else p.with_suffix('.done')
+            marker.symlink_to(target)
+            action=lambda: m.input_identity(p,kind)
+        elif kind=='catalog':
+            (tmp_path/'feature_inputs.json').symlink_to(target)
+            action=lambda: m.prepare_join(index,[],tmp_path)
+        elif kind=='output_marker':
+            p=write(tmp_path/'s.parquet',[site()]); out=tmp_path/'out.parquet'
+            out.with_suffix('.done').symlink_to(target)
+            action=lambda: m.join_shard(p,out,index,[])
+        else:
+            root=tmp_path/'root'; (root/'j6_genome_v1').mkdir(parents=True)
+            (root/'j4_configs').mkdir()
+            manifest=root/'j6_genome_v1/run_manifest.json'
+            manifest.write_text('{"expected_shards":[]}')
+            link=manifest if kind=='j6_manifest' else root/'j4_configs/j4_configs_manifest.tsv'
+            link.unlink(missing_ok=True); link.symlink_to(target)
+            action=lambda: m.production_inventory(root,bounded=True)
+        with pytest.raises(ValueError,match='forbidden'): action()
+
+
+def test_missing_j8_contract_rebuilds_even_with_matching_payload(tmp_path):
+    m=api(); p=write(tmp_path/'in.parquet',[site()]); out=tmp_path/'out.parquet'
+    with m.FeatureIndex(tmp_path/'i.sqlite') as index:
+        context=m.prepare_join(index,[],tmp_path)
+        old=m.join_shard(p,out,index,[],context=context)
+        del old['contract']; out.with_suffix('.done').write_text(json.dumps(old))
+        context['code_sha256']='changed-code'
+        result=m.join_shard(p,out,index,[],context=context)
+        assert result['contract']['code_sha256']=='changed-code'
+
+
+def test_j4_full_density_benchmark_and_prefix_scaling(tmp_path, capsys):
+    """Full per-locus density: 216 cells/config, 1,000 configs, 18nt spans.
+
+    A bounded synthetic slice of the 20,395-config atlas; VM work, not flaky
+    wall-clock thresholds, gates scaling. Timings/RSS are sizing evidence only.
+    """
+    import resource
+    import time
+    m=api(); geo=m.GeometryIndex([])
+    common=dict(locus='e',chrom='chr1',strand='+',site_kind='donor',site_position=1,
+                tissue=0,config_id='c',status='ok',model_evidence=True,raw_model_delta=-.2)
+    with m.FeatureIndex(tmp_path/'bench.sqlite') as index:
+        def add(lo,hi):
+            with index.db:
+                index.db.executemany('INSERT INTO j4 VALUES (?,?,?,?,?,?)',
+                    ((f'{i}:{j}','chr1','+',i*1000+j//12+1,i*1000+j//12+18,
+                      m.dumps(dict(common,footprint_start=i*1000+j//12+1,footprint_end=i*1000+j//12+18)))
+                     for i in range(lo,hi) for j in range(216)))
+        def work(row):
+            count=0
+            def tick():
+                nonlocal count
+                count+=1
+                return 0
+            index.db.set_progress_handler(tick,1)
+            try: result=index.annotate(row,[],geo)
+            finally: index.db.set_progress_handler(None,0)
+            return count,json.loads(result['j4_ablation'])
+        started=time.perf_counter(); add(0,10)
+        small,_=work(dict(site(),start1=10001,end1=10018))
+        add(10,1000); build=time.perf_counter()-started
+        miss,summary=work(dict(site(),start1=1000001,end1=1000018))
+        assert summary['n_overlap']==0
+        assert miss < small*2+100, (small,miss)
+        hit,summary=work(dict(site(),start1=999018,end1=999018))
+        assert summary['n_overlap']==216  # both inclusive endpoints retained
+        assert hit < 12000, hit
+        timings={}
+        for name,offset in [('dense',18),('miss',500)]:
+            started=time.perf_counter()
+            for i in range(300):
+                pos=(i*37%1000)*1000+offset
+                index.annotate(dict(site(),start1=pos,end1=pos+17),[],geo)
+            timings[name+'_rows_s']=300/(time.perf_counter()-started)
+        index_bytes=index.path.stat().st_size
+        width_bytes=index.db.execute("SELECT SUM(pgsize) FROM dbstat WHERE name='j4_width'").fetchone()[0]
+        with capsys.disabled():
+            print('J4_BENCH',m.dumps(dict(rows=216000,configs=1000,build_s=build,
+                index_bytes=index_bytes,width_index_bytes=width_bytes,maxrss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+                small_miss_vm=small,full_miss_vm=miss,dense_hit_vm=hit,**timings)))
+
+
+def test_j4_bound_tracks_wide_new_intervals_and_restart(tmp_path):
+    m=api(); path=tmp_path/'i.sqlite'; geo=m.GeometryIndex([])
+    with m.FeatureIndex(path) as index:
+        index.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',('short','chr1','+',1,2,'{}'))
+        index.db.commit()
+        assert json.loads(index.annotate(dict(site(),start1=100,end1=100),[],geo)['j4_ablation'])['n_overlap']==0
+        row=dict(chrom='chr1',strand='+',footprint_start=1,footprint_end=100,status='ok',model_evidence=True,raw_model_delta=.4)
+        index.db.execute('INSERT INTO j4 VALUES (?,?,?,?,?,?)',('wide','chr1','+',1,100,m.dumps(row)))
+        index.db.commit()
+        assert json.loads(index.annotate(dict(site(),start1=100,end1=100),[],geo)['j4_ablation'])['overlap_mean']==.4
+    with m.FeatureIndex(path) as index:
+        assert json.loads(index.annotate(dict(site(),start1=100,end1=100),[],geo)['j4_ablation'])['n_overlap']==1
+
+
+@pytest.mark.parametrize('sidecar', ['-journal','-wal','-shm'])
+def test_sqlite_implicit_sidecars_forbidden(tmp_path,sidecar):
+    m=api(); target=tmp_path/'wetlab'/'synthetic'; target.parent.mkdir(); target.write_bytes(b'')
+    (tmp_path/('i.sqlite'+sidecar)).symlink_to(target)
+    with pytest.raises(ValueError,match='forbidden'): m.FeatureIndex(tmp_path/'i.sqlite')
+
+
+def test_atomic_manifest_output_forbidden(tmp_path):
+    m=api(); target=tmp_path/'wetlab'/'synthetic.json'; target.parent.mkdir(); target.write_text('{}')
+    output=tmp_path/'manifest.json'; output.symlink_to(target)
+    with pytest.raises(ValueError,match='forbidden'): m.atomic_json(output,{'rows':1})
+    assert target.read_text()=='{}'
+
+
+def test_full_gate_manifest_forbidden_before_read(tmp_path,monkeypatch):
+    m=api(); root=tmp_path/'root'; (root/'j6_genome_v1').mkdir(parents=True)
+    target=tmp_path/'wetlab'/'synthetic.json'; target.parent.mkdir(); target.write_text('{}')
+    (root/'j6_genome_v1/gate_report.json').symlink_to(target)
+    loci=tmp_path/'empty.tsv'; loci.write_text('')
+    monkeypatch.setattr(m,'production_inventory',lambda *a,**kw:([],[],[]))
+    original=Path.open
+    def guarded_open(path,*a,**kw):
+        assert target.parent not in path.resolve().parents, 'forbidden target was opened'
+        return original(path,*a,**kw)
+    monkeypatch.setattr(Path,'open',guarded_open)
+    with pytest.raises(ValueError,match='forbidden'):
+        m.main(['--root',str(root),'--out',str(tmp_path/'out'),'--loci',str(loci)])
