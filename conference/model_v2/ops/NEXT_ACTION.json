@@ -1,5 +1,5 @@
 {
- "ts": "2026-11-16T03:20Z",
+ "ts": "2026-11-16T03:30Z",
  "T0": "2026-11-15T06:52:49Z",
  "T_plus": "~19.8h of 48h; campaign window ends 2026-11-17T06:52:49Z",
  "state": "USER-APPROVED STOP/CLEAR. User will say 'hi' after /clear -> resume from 'resume_steps'. Re-arm 59-min alarm first; restart heartbeat (./ops/heartbeat.sh) if atq empty.",
@@ -28,11 +28,11 @@
  "model_routing": "Fable & Opus5.5 refuse [bio] on J4/J6/J8J10 (not retried; user-directed reroutes to astra/opus-5 done). claude -p --model claude-opus-5 works (prompt via stdin). codex: gpt-6-astra, gpt-6.1-sol, gpt-6.1-terra via CLI (MCP down). Claude 5h window ~80% at 23:40Z (reset ~01:40Z); GPT limit hit once, reset 23:24Z.",
  "heartbeat": "at-chain on login009 every 55 min via ops/heartbeat.sh (restart: ./ops/heartbeat.sh); dies if at queue empties",
  "scratch": "quota cache stale (905.7/1024GB at 21:17 EST); user says space exists; old dirs ~/orcd/scratch/{smt-rna,hf_cache,...} NOT mine, undeleted",
- "running_workers_at_clear": "Codex J5 (sol high) -> briefs/J5_RESULT.md ; Codex F3_fix5 (sol medium) -> briefs/F3_FIX5_RESULT.md. These keep running outside the session; results land as files.",
+ "running_workers_at_clear": "none (all Codex workers finished)",
  "resume_steps": [
   "1 re-arm alarm; check ls briefs for J5_RESULT.md and F3_FIX5_RESULT.md; ps for codex",
-  "2 F3: F3_REREVIEW4 = DO-NOT-ADVANCE (2 MED id aliasing). fix5 (structural: ASCII opaque case-sensitive ids) dispatched; verify tests (pytest test_evaluation_core.py from repo root w/ PYTHONPATH=feng/src), then ONE light terra re-review (briefs/F3_rereview4.md pattern); F3 is not used for any supervised result anyway (no verified negatives)",
-  "3 J5: worker reports 31 tests passed but my rerun showed 1 failed/31 passed (worker may still have been editing; rerun). REAL DATA BLOCKED: all ENCODE peak/KD files (21 RBPs, HepG2+K562; PCBP2 has no K562) have UNVERIFIED assembly (bare ENCFF*.bed.gz, no header) so ingestion correctly refuses. Unblock needs authoritative metadata (ENCODE accession->assembly; network lookup or user-provided table) or a tested liftOver; do NOT guess. Until then J5 = NOT_SUBMITTED/BLOCKED (honest). Read briefs/J5_RESULT.md",
+  "2 F3: fix5 DONE+verified 639 tests pass (ids opaque ASCII case-sensitive). Needs ONE final light terra re-review (briefs/F3_rereview4.md pattern -> F3_REREVIEW5_RESULT.md); F3 not used for supervised results (no verified negatives)",
+  "3 J5: J5 tests now 32 passed (verified 03:30Z). REAL DATA BLOCKED: all ENCODE peak/KD files (21 RBPs, HepG2+K562; PCBP2 has no K562) have UNVERIFIED assembly (bare ENCFF*.bed.gz, no header) so ingestion correctly refuses. Unblock needs authoritative metadata (ENCODE accession->assembly; network lookup or user-provided table) or a tested liftOver; do NOT guess. Until then J5 = NOT_SUBMITTED/BLOCKED (honest). Read briefs/J5_RESULT.md",
   "4 J8 full: check job 29261102 state + logs/mv2-j8-full-*.out; gate (its manifest/contract) when done",
   "5 J10 off-target: module j10_offtarget_profile.py + array 29254991 output j10_offtarget_v1 were submitted by a worker, UNREVIEWED, pre-fix: review, then rerun on reviewed code",
   "6 then J7 binding-to-action (descriptive/PU only, use evaluation_core guards; no supervised claims; wet-lab outcome data excluded), J11 report/figures/model cards, FINAL_LAUNCH_AUDIT.md by 2026-11-17T06:52:49Z (UTC + CST), expire heartbeat (atrm) at T+48h",

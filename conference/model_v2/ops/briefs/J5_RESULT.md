@@ -1,4 +1,4 @@
-J5: focused tests 31 passed, 0 skipped, 0 failed; real-data evidence DO-NOT-ADVANCE. U=assembly unverified (ingestion refuses); H=HepG2, K=K562, p=peaks, d=KD, -=no local file. Every accession below is U.
+J5: focused tests 32 passed, 0 skipped, 0 failed; real-data evidence DO-NOT-ADVANCE. U=assembly unverified (ingestion refuses); H=HepG2, K=K562, p=peaks, d=KD, -=no local file. Every accession below is U.
 FUS Hp:ENCFF106CGP,ENCFF163PLH,ENCFF336WDV Hd:ENCFF915LBL Kp:ENCFF446LST,ENCFF764SZR,ENCFF777FHS Kd:ENCFF843YXN
 HNRNPA1 Hp:ENCFF121XLA,ENCFF535MAE,ENCFF604WJZ Hd:ENCFF856DFH Kp:ENCFF174RLY,ENCFF615KJU,ENCFF955PCQ Kd:ENCFF611RFN
 HNRNPC Hp:ENCFF105AKX,ENCFF401SPQ,ENCFF738FJS Hd:ENCFF381LFG Kp:ENCFF062LWZ,ENCFF159HMF,ENCFF971ZDB Kd:ENCFF688CHF
@@ -20,6 +20,6 @@ TIA1 Hp:ENCFF055IIM,ENCFF358SGV,ENCFF640DDA Hd:ENCFF867FPB Kp:ENCFF298ZAG,ENCFF5
 TIAL1 Hp:ENCFF387ZAH,ENCFF456DAU,ENCFF473IIG Hd:ENCFF633VHL Kp:- Kd:-
 U2AF1 Hp:ENCFF021VWK,ENCFF078SCZ,ENCFF295GHA Hd:ENCFF581UUT Kp:ENCFF163SWW,ENCFF468LUS,ENCFF555DWV Kd:ENCFF215LUY
 U2AF2 Hp:ENCFF159VOF,ENCFF444TCK,ENCFF523JWI Hd:ENCFF296HEN Kp:ENCFF331AFC,ENCFF430RTZ,ENCFF454FEB Kd:ENCFF405UKX
-Checks: all 3 sbatch files pass bash -n; owned-file whitespace clean. Required feng gate: RUNNING (will replace with exact final counts).
+Checks: all 3 sbatch files pass bash -n; owned-file whitespace clean. Required feng gate: 581 passed, 5 skipped, 1 failed (293.68 s): feng/tests/test_cleanroom.py:23 flags forbidden src/ in feng/src/feng/source_auth.py; outside ownership, unchanged.
 Submit commands (NOT executed): `j5id=$(sbatch --parsable conference/model_v2/jobs/j5_index.sbatch); sbatch --dependency=afterok:"$j5id" conference/model_v2/jobs/j5_sentinel.sbatch; J5_QUERY_LIST="$HOME/orcd/scratch/feng/model_v2/j5_j6_queries.txt" sbatch --dependency=afterok:"$j5id" conference/model_v2/jobs/j5_full.sbatch`
 Limitations: 114 peak + 38 KD files, 0 verified assemblies; all 114 leading peak headers lack assembly; ENCODE lookup failed (DNS/web unavailable). KD format sampled from FUS/HepG2 ENCFF915LBL (rMATS tar); no KD assembly inferred. File SHA/count manifest awaits unsubmitted index job. Full command requires prepared ordered shard list; supply J5_METADATA for metadata, J5_GENE_BOUNDS/J5_FASTA for GC controls; KD direction requires documented sample order. Production RSS/runtime unmeasured; no J8 edits/integration, no submissions/commits.

@@ -10940,3 +10940,2001 @@ conference/model_v2/tests/test_j5_rbp_context.py:337: AssertionError
 FAILED conference/model_v2/tests/test_j5_rbp_context.py::test_missing_kd_measurement_is_explicitly_unavailable
 1 failed, 31 passed in 2.38s
 
+hook: PostToolUse
+hook: PostToolUse Completed
+apply patch
+patch: completed
+/home/dashii/smt-isef/conference/model_v2/j5_rbp_context.py
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..44e570eadcfcee8612de559cdc1b0cf51c4231bc
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+-                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
++                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed' if raw is not None else 'not_available')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
+-        sha, md5 = digests(path)
+         stat = path.stat()
++        sha, md5 = digests(path)
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc 'PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_j5_rbp_context.py -q' in /home/dashii/smt-isef
+exec
+/usr/bin/bash -lc "/home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+p=Path('conference/model_v2/ops/briefs/J5_RESULT.md')
+text=p.read_text().replace('focused tests 31 passed','focused tests 32 passed')
+text=text.replace('Required feng gate: RUNNING (will replace with exact final counts).','Required feng gate: 581 passed, 5 skipped, 1 failed (293.68 s): feng/tests/test_cleanroom.py:23 flags forbidden src/ in feng/src/feng/source_auth.py; outside ownership, unchanged.')
+p.write_text(text)
+assert len(text.splitlines())==25
+for path in [Path('conference/model_v2/j5_rbp_context.py'),Path('conference/model_v2/tests/test_j5_rbp_context.py'),p,*Path('conference/model_v2/jobs').glob('j5_*.sbatch')]:
+    assert all(s.rstrip()==s for s in path.read_text().splitlines()),path
+print('25-line report; all 6 owned/requested files have no trailing whitespace')
+PY
+bash -n conference/model_v2/jobs/j5_index.sbatch conference/model_v2/jobs/j5_sentinel.sbatch conference/model_v2/jobs/j5_full.sbatch
+rg -n '"'^class ContextIndex|''^def write_features|''^def matched_decoys|''^def _kd|''^def test_|''^Checks:|''^Submit|''^Limitations:'"' conference/model_v2/j5_rbp_context.py conference/model_v2/tests/test_j5_rbp_context.py conference/model_v2/ops/briefs/J5_RESULT.md" in /home/dashii/smt-isef
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..44e570eadcfcee8612de559cdc1b0cf51c4231bc
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+-                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
++                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed' if raw is not None else 'not_available')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
+-        sha, md5 = digests(path)
+         stat = path.stat()
++        sha, md5 = digests(path)
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+ succeeded in 1708ms:
+25-line report; all 6 owned/requested files have no trailing whitespace
+conference/model_v2/ops/briefs/J5_RESULT.md:23:Checks: all 3 sbatch files pass bash -n; owned-file whitespace clean. Required feng gate: 581 passed, 5 skipped, 1 failed (293.68 s): feng/tests/test_cleanroom.py:23 flags forbidden src/ in feng/src/feng/source_auth.py; outside ownership, unchanged.
+conference/model_v2/ops/briefs/J5_RESULT.md:24:Submit commands (NOT executed): `j5id=$(sbatch --parsable conference/model_v2/jobs/j5_index.sbatch); sbatch --dependency=afterok:"$j5id" conference/model_v2/jobs/j5_sentinel.sbatch; J5_QUERY_LIST="$HOME/orcd/scratch/feng/model_v2/j5_j6_queries.txt" sbatch --dependency=afterok:"$j5id" conference/model_v2/jobs/j5_full.sbatch`
+conference/model_v2/ops/briefs/J5_RESULT.md:25:Limitations: 114 peak + 38 KD files, 0 verified assemblies; all 114 leading peak headers lack assembly; ENCODE lookup failed (DNS/web unavailable). KD format sampled from FUS/HepG2 ENCFF915LBL (rMATS tar); no KD assembly inferred. File SHA/count manifest awaits unsubmitted index job. Full command requires prepared ordered shard list; supply J5_METADATA for metadata, J5_GENE_BOUNDS/J5_FASTA for GC controls; KD direction requires documented sample order. Production RSS/runtime unmeasured; no J8 edits/integration, no submissions/commits.
+conference/model_v2/j5_rbp_context.py:172:def _kd(path, metadata):
+conference/model_v2/j5_rbp_context.py:206:class ContextIndex:
+conference/model_v2/j5_rbp_context.py:397:def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+conference/model_v2/j5_rbp_context.py:467:def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+conference/model_v2/tests/test_j5_rbp_context.py:42:def test_verified_manifest_and_half_open_boundaries(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:60:def test_assembly_refusal_is_not_a_negative(index, tmp_path, assembly):
+conference/model_v2/tests/test_j5_rbp_context.py:70:def test_metadata_is_accession_and_checksum_bound(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:83:def test_conflicting_header_cannot_be_overridden(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:88:def test_stranded_and_unstranded_files_keep_cell_separate(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:104:def test_partial_coverage_and_no_chromosome_peak(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:114:def test_query_fence(index, updates):
+conference/model_v2/tests/test_j5_rbp_context.py:131:def test_kd_observed_evidence_and_documented_sample_order(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:146:def test_mxe_does_not_fill_intronic_hull(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:154:def test_bad_peak_file_is_atomic_and_refused(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:160:def test_gc_controls_are_same_gene_deterministic_and_not_negatives():
+conference/model_v2/tests/test_j5_rbp_context.py:173:def test_bounded_hits_have_explicit_truncation(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:180:def test_streaming_parquet_idempotence_and_corruption(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:204:def test_query_outcomes_and_forbidden_paths_are_rejected(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:213:def test_j8_footprint_aliases_and_empty_output(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:223:def test_kd_minus_one_is_valid_not_missing(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:231:def test_rtree_large_integer_boundary_exact_recheck(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:237:def test_nearest_unstranded_is_genomic_on_minus_query(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:244:def test_cli_checkpoint_index_and_sentinel(tmp_path, capsys):
+conference/model_v2/tests/test_j5_rbp_context.py:266:def test_index_external_mutation_invalidates_contract(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:275:def test_integrated_controls_keep_cells_separate(index, tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:290:def test_manifest_strand_and_header_caller(index,tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:296:def test_query_marker_required_mode(index,tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:308:def test_feature_order_independent_of_ingestion_order(tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:317:def test_reference_mutation_prevents_commit(index,tmp_path):
+conference/model_v2/tests/test_j5_rbp_context.py:331:def test_missing_kd_measurement_is_explicitly_unavailable(index,tmp_path):
+
+ succeeded in 3622ms:
+................................                                         [100%]
+32 passed in 1.80s
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc 'git status --short -- conference/model_v2/j5_rbp_context.py conference/model_v2/tests/test_j5_rbp_context.py conference/model_v2/jobs/j5_index.sbatch conference/model_v2/jobs/j5_sentinel.sbatch conference/model_v2/jobs/j5_full.sbatch conference/model_v2/ops/briefs/J5_RESULT.md; wc -l conference/model_v2/ops/briefs/J5_RESULT.md' in /home/dashii/smt-isef
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..44e570eadcfcee8612de559cdc1b0cf51c4231bc
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+-                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
++                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed' if raw is not None else 'not_available')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
+-        sha, md5 = digests(path)
+         stat = path.stat()
++        sha, md5 = digests(path)
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+ succeeded in 1814ms:
+ M conference/model_v2/j5_rbp_context.py
+ M conference/model_v2/ops/briefs/J5_RESULT.md
+25 conference/model_v2/ops/briefs/J5_RESULT.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..44e570eadcfcee8612de559cdc1b0cf51c4231bc
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+-                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
++                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed' if raw is not None else 'not_available')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
+-        sha, md5 = digests(path)
+         stat = path.stat()
++        sha, md5 = digests(path)
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+codex
+- [j5_rbp_context.py](/home/dashii/smt-isef/conference/model_v2/j5_rbp_context.py:206): provenance, interval index, separate-cell features, KD evidence, GC controls, atomic outputs.
+- [Tests](/home/dashii/smt-isef/conference/model_v2/tests/test_j5_rbp_context.py:42): **32 passed, 0 skipped, 0 failed**. Three sbatch files pass syntax checks.
+- [25-line result brief](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J5_RESULT.md:1): per-file assembly findings and exact submit commands.
+
+**DO-NOT-ADVANCE real-data evidence:** assemblies remain unverified; ENCODE lookup failed. Production manifests await index execution; GC controls require reference/gene bounds.
+
+Repository gate: **581 passed, 5 skipped, 1 failed**—[test_cleanroom.py:23](/home/dashii/smt-isef/feng/tests/test_cleanroom.py:23) flags `src/` in `source_auth.py`. Left unfixed because it is outside ownership.
+
+No submissions or commits by this session.
+diff --git a/conference/model_v2/j5_rbp_context.py b/conference/model_v2/j5_rbp_context.py
+index 7e7aef24838b3c13559f24bf4d1dc5a9b82927ce..44e570eadcfcee8612de559cdc1b0cf51c4231bc
+--- a/conference/model_v2/j5_rbp_context.py
++++ b/conference/model_v2/j5_rbp_context.py
+@@ -42,7 +42,6 @@
+ import csv
+ import gzip
+ import hashlib
+-import io
+ import json
+ import math
+ import os
+@@ -98,8 +97,8 @@
+     if row.get('assembly') != 'GRCh38' or row.get('annotation', 'GENCODE v50') != 'GENCODE v50':
+         raise ValueError('assembly/annotation fence requires GRCh38 / GENCODE v50')
+     if (row.get('strand') not in ('+', '-') or not isinstance(row.get('chrom'), str)
+-            or not row['chrom'] or not isinstance(row.get('start1'), int)
+-            or not isinstance(row.get('end1'), int) or not 1 <= row['start1'] <= row['end1']):
++            or not row['chrom'] or type(row.get('start1')) is not int
++            or type(row.get('end1')) is not int or not 1 <= row['start1'] <= row['end1']):
+         raise ValueError('invalid 1-based inclusive query')
+ 
+ 
+@@ -114,8 +113,8 @@
+     return row
+ 
+ 
+-def _number(value):
+-    if value in (None, '', 'NA', 'nan', 'NaN', '-1'): return None
++def _number(value, *, bed_missing=False):
++    if value in (None, '', 'NA', 'nan', 'NaN') or (bed_missing and value == '-1'): return None
+     result = float(value)
+     if not math.isfinite(result): raise ValueError('nonfinite measurement')
+     return result
+@@ -166,8 +165,8 @@
+                 raise ValueError('invalid BED coordinates/strand')
+             yield [(chrom, lo+1, hi, strand)], dict(
+                 name=fields[3] if len(fields)>3 else None,
+-                score=dict(value=_number(fields[4]) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4]) is not None else 'not_available'),
+-                signal=dict(value=_number(fields[6]) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6]) is not None else 'not_available'))
++                score=dict(value=_number(fields[4], bed_missing=True) if len(fields)>4 else None, field='BED_column5', evidence_class='observed' if len(fields)>4 and _number(fields[4], bed_missing=True) is not None else 'not_available'),
++                signal=dict(value=_number(fields[6], bed_missing=True) if len(fields)>6 else None, field='BED_column7_as_given', evidence_class='observed' if len(fields)>6 and _number(fields[6], bed_missing=True) is not None else 'not_available'))
+ 
+ 
+ def _kd(path, metadata):
+@@ -175,8 +174,9 @@
+     with tarfile.open(path, 'r|gz') as tar:
+         for member in tar:
+             if not member.isfile() or not member.name.endswith('.txt') or '.MATS.' not in member.name: continue
+-            with io.TextIOWrapper(tar.extractfile(member)) as text:
+-                reader = csv.DictReader(text, delimiter='\t')
++            with tar.extractfile(member) as text:
++                # TextIOWrapper calls seekable(), absent on Python 3.11's tar _Stream.
++                reader = csv.DictReader((line.decode('utf-8') for line in text), delimiter='\t')
+                 fields = set(reader.fieldnames or ())
+                 if not {'chr', 'strand', 'IncLevelDifference'} <= fields:
+                     raise ValueError('unsupported rMATS schema')
+@@ -188,43 +188,52 @@
+                     if any(not 1 <= lo <= hi or strand not in ('+', '-') for _,lo,hi,strand in blocks):
+                         raise ValueError('invalid rMATS event coordinates')
+                     raw = _number(event['IncLevelDifference'])
++                    if raw is not None and not -1 <= raw <= 1: raise ValueError('rMATS difference outside [-1,1]')
+                     roles = (metadata.get('sample1_role'), metadata.get('sample2_role'))
+                     sign = (1 if roles == ('knockdown', 'control') else -1 if roles == ('control', 'knockdown') else None) if metadata.get('sample_order_evidence') else None
+                     delta = sign*raw if sign is not None and raw is not None else None
+                     yield blocks, dict(event_id=event.get('ID'), member=member.name,
+                         event_type=Path(member.name).name.split('.')[0], raw_sample1_minus_sample2=raw,
++                        event_blocks=[dict(chrom=c,start1=a,end1=b,strand=s) for c,a,b,s in blocks],
+                         kd_minus_control=delta, magnitude=abs(delta) if delta is not None else None,
+                         direction=('increased_inclusion' if delta>0 else 'decreased_inclusion' if delta<0 else 'unchanged') if delta is not None else 'not_available',
+                         direction_evidence_class='observed' if delta is not None else 'not_available',
++                        units='inclusion_fraction',
+                         sample_order_evidence=metadata.get('sample_order_evidence'),
+-                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
++                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed' if raw is not None else 'not_available')
+ 
+ 
+ class ContextIndex:
+     """Disk-backed, one writer; the SQLite page cache is bounded to 16 MiB."""
+-    def __init__(self, path):
++    def __init__(self, path, *, readonly=False):
+         self.path = safe_path(path)
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        self.db = sqlite3.connect(self.path)
++        self.code_sha = digests(__file__)[0]
++        self._cached_contract = None
++        self._availability_cache = {}
++        self._cache_version = None
++        if not readonly: self.path.parent.mkdir(parents=True, exist_ok=True)
++        self.db = sqlite3.connect(self.path.as_uri()+'?mode=ro',uri=True) if readonly else sqlite3.connect(self.path)
+         self.db.row_factory = sqlite3.Row
+-        self.db.executescript('''
++        self.db.executescript('PRAGMA cache_size=-16384; PRAGMA temp_store=FILE;')
++        if not readonly: self.db.executescript('''
+             PRAGMA cache_size=-16384; PRAGMA temp_store=FILE; PRAGMA foreign_keys=ON;
+             CREATE TABLE IF NOT EXISTS config(version TEXT NOT NULL, code_sha TEXT NOT NULL);
+             CREATE TABLE IF NOT EXISTS files(id INTEGER PRIMARY KEY, path TEXT UNIQUE, rbp TEXT, cell TEXT, kind TEXT, manifest TEXT);
+             CREATE TABLE IF NOT EXISTS chroms(id INTEGER PRIMARY KEY, name TEXT UNIQUE);
+             CREATE TABLE IF NOT EXISTS intervals(id INTEGER PRIMARY KEY, file_id INTEGER REFERENCES files(id),
+-                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, payload TEXT);
++                group_id INT, chrom_id INT, lo INT, hi INT, strand TEXT, kind TEXT, source_key TEXT, payload TEXT);
+             CREATE INDEX IF NOT EXISTS near_lo ON intervals(group_id,chrom_id,kind,strand,lo);
+             CREATE INDEX IF NOT EXISTS near_hi ON intervals(group_id,chrom_id,kind,strand,hi);
+             CREATE VIRTUAL TABLE IF NOT EXISTS regions USING rtree(id,lo,hi,g0,g1,c0,c1);
+             CREATE TRIGGER IF NOT EXISTS remove_region AFTER DELETE ON intervals BEGIN DELETE FROM regions WHERE id=old.id; END;
+             CREATE TABLE IF NOT EXISTS genes(gene_id TEXT PRIMARY KEY, chrom TEXT, lo INT, hi INT, strand TEXT);
++            CREATE TABLE IF NOT EXISTS sources(name TEXT PRIMARY KEY, sha256 TEXT);
+         ''')
+-        code = digests(__file__)[0]
+         config = self.db.execute('select * from config').fetchone()
+         if config is None:
+-            self.db.execute('insert into config values (?,?)', (VERSION, code)); self.db.commit()
+-        elif tuple(config) != (VERSION, code):
++            if readonly: raise ValueError('missing index contract')
++            self.db.execute('insert into config values (?,?)', (VERSION, self.code_sha)); self.db.commit()
++        elif tuple(config) != (VERSION, self.code_sha):
+             self.db.close(); raise ValueError('index contract changed; use a fresh output directory')
+ 
+     def __enter__(self): return self
+@@ -233,14 +242,16 @@
+     def add_file(self, path, rbp, cell, *, kind='peaks', metadata=None):
+         if rbp not in RBPS or cell not in CELLS or kind not in ('peaks','kd'): raise ValueError('invalid assay identity')
+         path, metadata = safe_path(path), metadata or {}
+-        sha, md5 = digests(path)
+         stat = path.stat()
++        sha, md5 = digests(path)
+         accession = path.name.split('.')[0]
+         headers = _headers(path, kind)
+         assembly, source, reason = verify_assembly(accession, headers, metadata, md5)
++        callers = [value for line in headers for value in re.findall(r'(?:peak_caller|peak_calling_method)\s*[=:]\s*([^\s]+)',line)]
+         manifest = dict(path=str(path), accession=accession, rbp=rbp, cell_line=cell, kind=kind,
+                         assembly=assembly, assembly_source=source, sha256=sha, md5sum=md5,
+-                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method'),
++                        row_count=0, interval_count=0, peak_calling_method=metadata.get('peak_calling_method') or (callers[0] if len(set(callers))==1 else None),
++                        strand_counts={'+':0,'-':0,'.':0},
+                         replicate_info=metadata.get('biological_replicates'), technical_replicates=metadata.get('technical_replicates'),
+                         analysis_step_version=metadata.get('analysis_step_version'), output_type=metadata.get('output_type'),
+                         file_format_type=metadata.get('file_format_type'), metadata=metadata, headers=headers,
+@@ -248,8 +259,8 @@
+         old = self.db.execute('select id,manifest from files where path=?', (str(path),)).fetchone()
+         if old:
+             previous = json.loads(old['manifest'])
++            if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+             if previous['sha256'] == sha and previous['metadata'] == metadata and previous['headers'] == headers:
+-                if (previous['rbp'],previous['cell_line'],previous['kind']) != (rbp,cell,kind): raise ValueError('file assay identity changed')
+                 return previous
+         gid = RBPS.index(rbp)*2 + CELLS.index(cell)
+         replicates = set()
+@@ -265,14 +276,16 @@
+                 rows = _peaks(path) if kind == 'peaks' else _kd(path, metadata)
+                 for blocks, payload in rows:
+                     manifest['row_count'] += 1
++                    for _,_,_,strand in blocks: manifest['strand_counts'][strand] += 1
+                     if kind == 'peaks': replicates.update(re.findall(r'rep\d+', payload.get('name') or ''))
+                     if reason: continue
+-                    payload.update(accession=accession, file_id=fid)
++                    payload.update(accession=accession, source_row=manifest['row_count'])
++                    source_key=str(path)+'\n'+str(manifest['row_count']).zfill(12)
+                     for chrom, lo, hi, strand in blocks:
+                         self.db.execute('insert or ignore into chroms(name) values (?)', (chrom,))
+                         cid = self.db.execute('select id from chroms where name=?', (chrom,)).fetchone()[0]
+-                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,payload) values (?,?,?,?,?,?,?,?)',
+-                            (fid,gid,cid,lo,hi,strand,kind,dumps(payload))).lastrowid
++                        ident = self.db.execute('insert into intervals(file_id,group_id,chrom_id,lo,hi,strand,kind,source_key,payload) values (?,?,?,?,?,?,?,?,?)',
++                            (fid,gid,cid,lo,hi,strand,kind,source_key,dumps(payload))).lastrowid
+                         self.db.execute('insert into regions values (?,?,?,?,?,?,?)', (ident,lo,hi,gid,gid,cid,cid))
+                         manifest['interval_count'] += 1
+                 after = path.stat()
+@@ -289,23 +302,44 @@
+     def manifests(self):
+         return [json.loads(r[0]) for r in self.db.execute('select manifest from files order by path')]
+ 
++    def state(self):
++        return self.db.total_changes,self.db.execute('PRAGMA data_version').fetchone()[0]
++
++    def _invalidate(self):
++        current=self.state()
++        if current!=self._cache_version:
++            self._cached_contract=None; self._availability_cache.clear(); self._cache_version=current
++
+     def contract(self):
+-        return hashlib.sha256(dumps(dict(files=self.manifests(), genes=[tuple(r) for r in self.db.execute('select * from genes order by gene_id')])).encode()).hexdigest()
++        self._invalidate()
++        if self._cached_contract is not None: return self._cached_contract
++        digest = hashlib.sha256(dumps(self.manifests()).encode())
++        for row in self.db.execute('select * from sources order by name'):
++            digest.update(dumps(tuple(row)).encode())
++        for row in self.db.execute('select * from genes order by gene_id'):
++            digest.update(dumps(tuple(row)).encode()); digest.update(b'\n')
++        self._cached_contract=digest.hexdigest()
++        return self._cached_contract
+ 
+     def _availability(self, rbp, cell, kind):
++        self._invalidate()
++        key=(rbp,cell,kind)
++        if key in self._availability_cache: return dict(self._availability_cache[key])
+         files = [json.loads(r[0]) for r in self.db.execute('select manifest from files where rbp=? and cell=? and kind=? order by path', (rbp,cell,kind))]
+         valid = [f for f in files if f['status'] == 'indexed']
+         status = ('no_local_assay' if not files else 'unverified_or_refused' if not valid
+                   else 'partial' if len(valid) != len(files) else 'ok')
+-        return dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
++        result = dict(status=status, missing=status != 'ok', evidence_class='derived' if valid else 'not_available',
+                     files=[f['accession'] for f in files], verified_files=[f['accession'] for f in valid])
++        self._availability_cache[key]=result
++        return dict(result)
+ 
+     def _hits(self, row, gid, cid, kind, cap):
+         # RTree float32 bounds are outward-rounded: exact integer recheck is vital.
+         return self.db.execute('''select i.* from regions r join intervals i on i.id=r.id
+             where r.lo<=? and r.hi>=? and r.g0<=? and r.g1>=? and r.c0<=? and r.c1>=?
+             and i.group_id=? and i.chrom_id=? and i.kind=? and i.lo<=? and i.hi>=?
+-            and i.strand in (?,'.') order by i.id limit ?''',
++            and i.strand in (?,'.') order by i.source_key,i.lo,i.hi limit ?''',
+             (row['end1'],row['start1'],gid,gid,cid,cid,gid,cid,kind,row['end1'],row['start1'],row['strand'],cap+1)).fetchall()
+ 
+     @staticmethod
+@@ -336,10 +370,10 @@
+             for strand in (row['strand'], '.'):
+                 for column, bound, op, direction in [('lo',row['end1'],'>','asc'), ('hi',row['start1'],'<','desc')]:
+                     h = self.db.execute(f'''select * from intervals where group_id=? and chrom_id=? and kind='peaks'
+-                        and strand=? and {column}{op}? order by {column} {direction}, id limit 1''', (gid,cid,strand,bound)).fetchone()
++                        and strand=? and {column}{op}? order by {column} {direction}, source_key,lo,hi limit 1''', (gid,cid,strand,bound)).fetchone()
+                     if h: candidates.append(h)
+             if candidates:
+-                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['id']))]
++                nearest = [min(candidates, key=lambda h:(abs(self._measurement(h,row)['signed_distance']),h['source_key'],h['lo'],h['hi']))]
+         if nearest: result['nearest'] = self._measurement(nearest[0],row)
+         kd = self._availability(rbp,cell,'kd')
+         kh = self._hits(row,gid,cid,'kd',max_hits) if cid is not None else []
+@@ -357,6 +391,7 @@
+             for row in csv.DictReader(f, delimiter='\t'):
+                 row['start1'],row['end1'] = int(row['start1']),int(row['end1']); fence(row)
+                 self.db.execute('insert into genes values (?,?,?,?,?)', (row['gene_id'],row['chrom'],row['start1'],row['end1'],row['strand']))
++            self.db.execute('insert or replace into sources values (?,?)',('genes',digests(path)[0]))
+ 
+ 
+ def matched_decoys(row, fetch, *, shifts=(-1000,-500,-100,100,500,1000), gc_tolerance=0.05):
+@@ -429,20 +464,33 @@
+         if os.path.exists(temp): os.unlink(temp)
+ 
+ 
+-def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None):
++def write_features(source, out, index, *, batch_size=128, fetch=None, reference_contract=None, require_query_done=False):
+     if not 1 <= batch_size <= 4096: raise ValueError('invalid batch size')
+     if fetch is not None and reference_contract is None: raise ValueError('reference provenance required for GC controls')
++    def check_reference():
++        if reference_contract and reference_contract.get('fasta'):
++            from conference.model_v2.j6_site_universe import file_identity
++            identity=reference_contract['fasta']
++            if file_identity(safe_path(identity['path']))!=identity:
++                raise ValueError('reference changed during output')
++    check_reference()
+     source,out = safe_path(source),safe_path(out)
+     if source == out: raise ValueError('output would overwrite query')
+     before = source.stat()
+     pf = pq.ParquetFile(source)
++    if require_query_done:
++        try: marker=json.loads(source.with_suffix('.done').read_text())
++        except (OSError,ValueError) as exc: raise ValueError('query completion marker required') from exc
++        if (not isinstance(marker,dict) or type(marker.get('rows')) is not int
++                or marker['rows']!=pf.metadata.num_rows or marker.get('sha256')!=digests(source)[0]):
++            raise ValueError('query completion marker count/hash mismatch')
+     if OUTCOME_COLUMNS & {c.lower() for c in pf.schema_arrow.names}: raise ValueError('outcome columns forbidden')
+     columns = [c for c in QUERY_COLUMNS if c in pf.schema_arrow.names]
+     contract = dict(version=VERSION,code_sha256=digests(__file__)[0],query_sha256=digests(source)[0],
+                     index_sha256=index.contract(),reference=reference_contract,assembly='GRCh38',annotation='GENCODE v50',
+                     cell_pooling='none',replicate_rule='within_cell_union_presence_separate_signal',max_hits=128,
+                     decoy_shifts=[-1000,-500,-100,100,500,1000],gc_tolerance=0.05)
+-    changes = index.db.total_changes
++    changes = index.state()
+     def rows():
+         for batch in pf.iter_batches(batch_size=batch_size,columns=columns):
+             for original in batch.to_pylist():
+@@ -467,7 +515,8 @@
+                     site_id=row.get('site_id') or str(row['row_id']),assembly='GRCh38',annotation='GENCODE v50',evidence_class='derived',
+                     rbp_context=dumps(contexts),matched_controls=dumps(controls))
+         after=source.stat()
+-        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.db.total_changes != changes:
++        check_reference()
++        if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino) or index.state() != changes:
+             raise ValueError('query/index changed during output')
+     return _atomic_parquet(out,rows(),_schema(),contract,batch_size)
+ 
+@@ -493,15 +542,18 @@
+ 
+ def main(argv=None):
+     parser=argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--encode-root',type=Path,required=True)
++    parser.add_argument('--encode-root',type=Path)
++    parser.add_argument('--index-dir',type=Path,help='Reuse completed index read-only; no ingestion in this job')
+     parser.add_argument('--out',type=Path,required=True)
+     parser.add_argument('--metadata',type=Path)
+     parser.add_argument('--queries',nargs='+',type=Path)
+     parser.add_argument('--query-list',type=Path)
+     parser.add_argument('--sentinel',action='store_true')
++    parser.add_argument('--require-query-done',action='store_true')
+     parser.add_argument('--fasta',type=Path); parser.add_argument('--genes',type=Path)
+     args=parser.parse_args(argv)
+-    if bool(args.fasta)!=bool(args.genes): parser.error('--fasta and --genes are required together')
++    if bool(args.encode_root)==bool(args.index_dir): parser.error('select --encode-root or --index-dir')
++    if args.index_dir and args.metadata: parser.error('--metadata belongs to the index build')
+     if sum(map(bool,(args.queries,args.query_list,args.sentinel)))>1: parser.error('select one query source')
+     out=safe_path(args.out); out.mkdir(parents=True,exist_ok=True)
+     metadata=json.loads(safe_path(args.metadata).read_text()) if args.metadata else {}
+@@ -510,25 +562,22 @@
+     if args.fasta:
+         from conference.model_v2.j6_site_universe import FaiFastaReader, reference_identity, file_identity
+         genome=FaiFastaReader(safe_path(args.fasta))
+-        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta),genes_sha256=digests(args.genes)[0])
++        reference=reference_identity(genome) | dict(fasta=file_identity(args.fasta))
+         fetch=genome.fetch
+-    with ContextIndex(out/'context.sqlite') as index:
+-        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
+-        paths={str(safe_path(p)) for p,_,_,_ in discovered}
+-        # A removed source is missing evidence, never an old binding observation.
+-        with index.db:
+-            for old in index.db.execute('select id,path from files').fetchall():
+-                if old['path'] not in paths:
+-                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
+-        for path,rbp,cell,kind in discovered:
+-            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
+-        if args.genes: index.load_genes(args.genes)
++    indexdir=safe_path(args.index_dir) if args.index_dir else out
++    if args.index_dir and not (indexdir/'index.done').is_file(): raise ValueError('completed index required')
++    with ContextIndex(indexdir/'context.sqlite',readonly=bool(args.index_dir)) as index:
++        if args.index_dir:
++            complete=json.loads((indexdir/'index.done').read_text())
++            if (not isinstance(complete,dict) or complete.get('index_sha256')!=index.contract()
++                    or complete.get('provenance_sha256')!=digests(indexdir/'provenance.parquet')[0]):
++                raise ValueError('completed index contract mismatch')
++            if args.genes:
++                genes=index.db.execute('select sha256 from sources where name=?',('genes',)).fetchone()
++                if not genes or genes[0]!=digests(args.genes)[0]: raise ValueError('gene provenance does not match completed index')
++        else:
++            _build_index(args,index,out,metadata)
+         manifest=index.manifests()
+-        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
+-        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
+-            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
+-        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
+-        _atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
+         if args.sentinel:
+             source=out/'sentinel_queries.parquet'
+             _atomic_parquet(source,sentinel_rows(),pa.Table.from_pylist(list(sentinel_rows())).schema,dict(version=VERSION,kind='sentinel'),128)
+@@ -545,11 +594,32 @@
+             source=safe_path(source)
+             # Digest absolute path avoids equal shard basenames from different dirs.
+             name=source.stem+'-'+hashlib.sha256(str(source).encode()).hexdigest()[:12]+'.parquet'
+-            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference)
++            result=write_features(source,out/'features'/name,index,fetch=fetch,reference_contract=reference,require_query_done=args.require_query_done)
+             count+=result['rows']
+         print(dumps(dict(files=len(manifest),indexed=sum(m['status']=='indexed' for m in manifest),
+                          refused=sum(m['status']=='refused' for m in manifest),rows=count,evidence_class='derived')))
+     return 0
+ 
+ 
++def _build_index(args,index,out,metadata):
++        (out/'index.done').unlink(missing_ok=True)
++        discovered=list(inventory(args.encode_root))  # <=21*2*2 assay folders, not genomic data
++        paths={str(safe_path(p)) for p,_,_,_ in discovered}
++        # A removed source is missing evidence, never an old binding observation.
++        with index.db:
++            for old in index.db.execute('select id,path from files').fetchall():
++                if old['path'] not in paths:
++                    index.db.execute('delete from intervals where file_id=?',(old['id'],)); index.db.execute('delete from files where id=?',(old['id'],))
++        for path,rbp,cell,kind in discovered:
++            index.add_file(path,rbp,cell,kind=kind,metadata=metadata.get(path.name.split('.')[0]))
++        if args.genes: index.load_genes(args.genes)
++        manifest=index.manifests()
++        # Fixed schema keeps wholly unavailable assembly columns typed as strings.
++        ms=pa.schema([(k,pa.int64() if k in ('row_count','interval_count') else pa.string()) for k in
++            ('path','accession','rbp','cell_line','kind','assembly','assembly_source','sha256','row_count','interval_count','peak_calling_method','replicate_info','status','refusal_reason','evidence_class','provenance')])
++        records=({k:(dumps(m[k]) if k=='replicate_info' else m[k]) for k in ms.names if k!='provenance'} | dict(provenance=dumps(m)) for m in manifest)
++        result=_atomic_parquet(out/'provenance.parquet',records,ms,dict(version=VERSION,index_sha256=index.contract()),128)
++        atomic_json(out/'index.done',dict(index_sha256=index.contract(),provenance_sha256=result['sha256']))
++
++
+ if __name__=='__main__': raise SystemExit(main())
+
+hook: Stop
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+115,044
+- [j5_rbp_context.py](/home/dashii/smt-isef/conference/model_v2/j5_rbp_context.py:206): provenance, interval index, separate-cell features, KD evidence, GC controls, atomic outputs.
+- [Tests](/home/dashii/smt-isef/conference/model_v2/tests/test_j5_rbp_context.py:42): **32 passed, 0 skipped, 0 failed**. Three sbatch files pass syntax checks.
+- [25-line result brief](/home/dashii/smt-isef/conference/model_v2/ops/briefs/J5_RESULT.md:1): per-file assembly findings and exact submit commands.
+
+**DO-NOT-ADVANCE real-data evidence:** assemblies remain unverified; ENCODE lookup failed. Production manifests await index execution; GC controls require reference/gene bounds.
+
+Repository gate: **581 passed, 5 skipped, 1 failed**—[test_cleanroom.py:23](/home/dashii/smt-isef/feng/tests/test_cleanroom.py:23) flags `src/` in `source_auth.py`. Left unfixed because it is outside ownership.
+
+No submissions or commits by this session.

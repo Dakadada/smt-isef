@@ -238,7 +238,7 @@ def test_trap_duplicate_aso_under_different_ids_never_straddles():
                {plan.observation_ids[i] for i in fold.purged_idx}
         assert not ({"o000", "dup"} & ids and {"o000", "dup"} & held)
     # the duplicate is purged (not trained on) when its twin's study is held out
-    fold = next(f for f in plan.folds if f.test_group_ids == ("study:s0",))
+    fold = next(f for f in plan.folds if f.test_group_ids == ("study:S0",))
     assert [plan.observation_ids[i] for i in fold.purged_idx] == ["dup"]
 
 
@@ -317,7 +317,7 @@ def test_verify_no_leakage_detects_a_tampered_plan():
 def test_leave_study_out_holds_out_whole_studies():
     rows = independent_rows(12, n_studies=4)
     plan = ec.make_splits(rows, "leave_study_out")
-    assert [f.test_group_ids for f in plan.folds] == [(f"study:s{k}",) for k in range(4)]
+    assert [f.test_group_ids for f in plan.folds] == [(f"study:S{k}",) for k in range(4)]
     assert all(len(f.test_idx) == 3 and len(f.train_idx) == 9 for f in plan.folds)
 
 
@@ -1311,6 +1311,10 @@ def test_fix3_nonnegative_detection_limits_accepted(limit):
 
 
 _FIX4_ALIASES = [
+    ("assay_id", lambda s, i: s + "\u200b" * (i + 1), 20),
+    ("study_id", lambda s, i: s + "\u200b" * (i + 1), 20),
+    ("assay_id", lambda s, i: "\u0430ssay1", 1),
+    ("study_id", lambda s, i: "\u040510", 1),
     ("assay_id", lambda s, i: s + " " * (i + 1), 20),
     ("assay_id", lambda s, i: " ＡＳＳＡＹ１ ", 1),
     ("study_id", lambda s, i: " Ｓ１０ ", 1),
@@ -1339,10 +1343,12 @@ def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_c
     if consumer == "generic_ci":
         def statistic(indices):
             pytest.fail("aliased copies must be refused before resampling")
-        with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
+        with pytest.raises(ec.SchemaError if field.endswith("_id") else ec.UncertaintyRefused,
+                           match=field if field.endswith("_id") else "duplicate assay"):
             ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)
     else:
-        with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
+        with pytest.raises(ec.SchemaError if field.endswith("_id") else ec.MetricBlocked,
+                           match=field if field.endswith("_id") else "duplicate assay"):
             if consumer == "auroc":
                 ec.compute_metric("auroc", rows, scores)
             elif consumer == "pr_curve":
@@ -1358,6 +1364,10 @@ def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field, 
     source = row("original", chem="moe", study="S10")
     copy = {**source, field: alias(source[field], 0),
             "observation_id": "copy", "independent_unit_id": "copy_unit"}
+    if field.endswith("_id"):
+        with pytest.raises(ec.SchemaError, match=field):
+            ec.validate_table([source, copy])
+        return
     for rows in ([source, copy], ec.validate_table([source, copy])):
         table = ec.validate_table(rows)
         assert table.duplicate_assay_records == (("original", "copy"),)
@@ -1385,3 +1395,108 @@ def test_fix4_genuine_distinct_assay_replicates_still_contribute():
 def test_fix4_invalid_identity_rejected_before_hashing(field, value):
     with pytest.raises(ec.SchemaError):
         ec.validate_table([row("a", **{field: value})])
+
+
+_ID_FIELDS = ("assay_id", "study_id", "independent_unit_id", "observation_id")
+_BAD_IDS = ("", " ", "id ", " id", "i d", "id\t", "id\n", "id\r", "id\x00",
+            "id\x1f", "id\x7f", "id\u200b", "id\u200d", "id\ufeff", "id\u202e",
+            "\u0430ssay1", "\uff21ssay1", "id\u00a0", "caf\u00e9", "id/1", "id@1",
+            "a" * 129, None, 123, True)
+
+
+@pytest.mark.parametrize("field", _ID_FIELDS)
+@pytest.mark.parametrize("value", _BAD_IDS)
+def test_fix5_invalid_identifiers_rejected(field, value):
+    with pytest.raises(ec.SchemaError, match=field):
+        ec.validate_table([row("o", **{field: value})])
+
+
+@pytest.mark.parametrize("field", _ID_FIELDS)
+@pytest.mark.parametrize("value", ["AazZ09._:+-", "a" * 128])
+def test_fix5_identifier_vocabulary_preserved_exactly(field, value):
+    table = ec.validate_table([row("o", **{field: value})])
+    assert table.rows[0][field] == value
+
+
+@pytest.mark.parametrize("field", _ID_FIELDS)
+@pytest.mark.parametrize("entry", ["validate", "groups", "split", "nested", "metric", "pr",
+                                    "pu", "clusters", "ci", "metric_ci", "verify", "ablation"])
+def test_fix5_public_consumers_revalidate_forged_table_identifiers(field, entry):
+    rows = labelled(10, 10)
+    plan = ec.make_splits(rows, "leave_study_out")
+    rows[0][field] += "\u200b"
+    table = ec.ObservationTable(tuple(rows))
+    scores = [.5] * 20
+
+    def statistic(indices):
+        pytest.fail("invalid identifiers must be rejected before statistic")
+    calls = {
+        "validate": lambda: ec.validate_table(table),
+        "groups": lambda: ec.axis_groups(table),
+        "split": lambda: ec.make_splits(table, "leave_study_out"),
+        "nested": lambda: ec.make_nested_splits(table, outer_mode="leave_study_out"),
+        "metric": lambda: ec.compute_metric("auroc", table, scores),
+        "pr": lambda: ec.precision_recall_curve(table, scores),
+        "pu": lambda: ec.pu_report(table, scores),
+        "clusters": lambda: ec.effective_clusters(table),
+        "ci": lambda: ec.cluster_bootstrap_ci(table, statistic),
+        "metric_ci": lambda: ec.bootstrap_metric_ci("auroc", table, scores),
+        "verify": lambda: ec.verify_no_leakage(plan, table),
+        "ablation": lambda: ec.run_ablation(table, {}, "M0", plan),
+    }
+    with pytest.raises(ec.SchemaError, match=field):
+        calls[entry]()
+
+
+@pytest.mark.parametrize("field", _ID_FIELDS)
+@pytest.mark.parametrize("suffix", [" ", "\u200b", "\u0430"])
+@pytest.mark.parametrize("extension", ["json", "jsonl"])
+def test_fix5_read_table_rejects_invalid_identifiers(tmp_path, field, suffix, extension):
+    path = tmp_path / f"observations.{extension}"
+    record = row("o")
+    record[field] += suffix
+    path.write_text(json.dumps([record] if extension == "json" else record), encoding="utf-8")
+    with pytest.raises(ec.SchemaError, match=field):
+        ec.read_table(path)
+
+
+@pytest.mark.parametrize("field", ["assay_id", "study_id"])
+def test_fix5_case_distinct_assays_are_genuine_replicates(field):
+    rows = labelled(10, 10)
+    rows[10][field] = "AssayA"
+    rows.append({**rows[10], field: "assaya", "observation_id": "Replicate",
+                 "independent_unit_id": "ReplicateUnit"})
+    table = ec.validate_table(rows)
+    assert table.rows[10][field] == "AssayA"
+    assert table.rows[-1][field] == "assaya"
+    assert table.duplicate_assay_records == ()
+    assert len(set(ec.effective_clusters(table, merge_axes=()))) == 21
+    assert ec.compute_metric("auroc", table, [.5] * 10 + [1.] + [0.] * 9 + [1.]).value \
+        == pytest.approx(9 / 11)
+    if field == "study_id":
+        groups = ec.axis_groups(table, axes=("study",))["study"]
+        assert groups[10] == "study:AssayA"
+        assert groups[-1] == "study:assaya"
+
+
+def test_fix5_case_distinct_observation_and_unit_ids_remain_distinct():
+    rows = independent_rows(2)
+    for r, oid, unit in zip(rows, ("ObsA", "obsa"), ("UnitA", "unita")):
+        r.update(observation_id=oid, independent_unit_id=unit)
+    assert ec.validate_table(rows).ids == ("ObsA", "obsa")
+    assert len(set(ec.effective_clusters(rows, merge_axes=()))) == 2
+
+
+def test_fix5_explicit_responder_only_study_ids_are_opaque():
+    record = row("n", "verified_negative", study="StudyA")
+    with pytest.raises(ec.NegativeEvidenceError):
+        ec.validate_table([record], responder_only_studies=["StudyA"])
+    assert len(ec.validate_table([record], responder_only_studies=["studya"])) == 1
+    with pytest.raises(ec.SchemaError):
+        ec.validate_table([], responder_only_studies=["StudyA "])
+
+
+def test_fix5_permuted_reference_scores_validate_and_preserve_ids():
+    with pytest.raises(ec.SchemaError):
+        ec.permuted_reference_scores(["Obs\u200b"])
+    assert set(ec.permuted_reference_scores(["ObsA", "obsa"])) == {"ObsA", "obsa"}

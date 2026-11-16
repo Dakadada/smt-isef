@@ -2157,3 +2157,921 @@ Skip any step = lying, not verifying
 
 hook: PostToolUse
 hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "/home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+p = Path('conference/model_v2/tests/test_evaluation_core.py')
+s = p.read_text().replace('(\"study:s0\",)', '(\"study:S0\",)').replace('(f\"study:s{k}\",)', '(f\"study:S{k}\",)')
+s = s.replace('with pytest.raises(ec.UncertaintyRefused, match=\"duplicate assay\"):\\n            ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)', 'with pytest.raises(ec.SchemaError if field.endswith(\"_id\") else ec.UncertaintyRefused):\\n            ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)')
+s = s.replace('with pytest.raises(ec.MetricBlocked, match=\"duplicate assay\"):\\n            if consumer == \"auroc\":', 'with pytest.raises(ec.SchemaError if field.endswith(\"_id\") else ec.MetricBlocked):\\n            if consumer == \"auroc\":')
+s = s.replace('    for rows in ([source, copy], ec.validate_table([source, copy])):', '    if field.endswith(\"_id\"):\\n        with pytest.raises(ec.SchemaError, match=field):\\n            ec.validate_table([source, copy])\\n        return\\n    for rows in ([source, copy], ec.validate_table([source, copy])):')
+s += '''
+
+_ID_FIELDS = (\"assay_id\", \"study_id\", \"independent_unit_id\", \"observation_id\")
+_BAD_IDS = (\"\", \" \", \"id \", \" id\", \"i d\", \"id\\\\t\", \"id\\\\n\", \"id\\\\r\", \"id\\\\x00\",
+            \"id\\\\x1f\", \"id\\\\x7f\", \"id\\\\u200b\", \"id\\\\u200d\", \"id\\\\ufeff\", \"id\\\\u202e\",
+            \"\\\\u0430ssay1\", \"\\\\uff21ssay1\", \"id\\\\u00a0\", \"caf\\\\u00e9\", \"id/1\", \"id@1\",
+            \"a\" * 129, None, 123, True)
+
+
+@pytest.mark.parametrize(\"field\", _ID_FIELDS)
+@pytest.mark.parametrize(\"value\", _BAD_IDS)
+def test_fix5_invalid_identifiers_rejected(field, value):
+    with pytest.raises(ec.SchemaError, match=field):
+        ec.validate_table([row(\"o\", **{field: value})])
+
+
+@pytest.mark.parametrize(\"field\", _ID_FIELDS)
+@pytest.mark.parametrize(\"value\", [\"AazZ09._:+-\", \"a\" * 128])
+def test_fix5_identifier_vocabulary_preserved_exactly(field, value):
+    table = ec.validate_table([row(\"o\", **{field: value})])
+    assert table.rows[0][field] == value
+
+
+@pytest.mark.parametrize(\"field\", _ID_FIELDS)
+@pytest.mark.parametrize(\"entry\", [\"validate\", \"groups\", \"split\", \"nested\", \"metric\", \"pr\",
+                                    \"pu\", \"clusters\", \"ci\", \"metric_ci\", \"verify\", \"ablation\"])
+def test_fix5_public_consumers_revalidate_forged_table_identifiers(field, entry):
+    rows = labelled(10, 10)
+    plan = ec.make_splits(rows, \"leave_study_out\")
+    rows[0][field] += \"\\\\u200b\"
+    table = ec.ObservationTable(tuple(rows))
+    scores = [.5] * 20
+    def statistic(indices):
+        pytest.fail(\"invalid identifiers must be rejected before statistic\")
+    calls = {
+        \"validate\": lambda: ec.validate_table(table),
+        \"groups\": lambda: ec.axis_groups(table),
+        \"split\": lambda: ec.make_splits(table, \"leave_study_out\"),
+        \"nested\": lambda: ec.make_nested_splits(table, outer_mode=\"leave_study_out\"),
+        \"metric\": lambda: ec.compute_metric(\"auroc\", table, scores),
+        \"pr\": lambda: ec.precision_recall_curve(table, scores),
+        \"pu\": lambda: ec.pu_report(table, scores),
+        \"clusters\": lambda: ec.effective_clusters(table),
+        \"ci\": lambda: ec.cluster_bootstrap_ci(table, statistic),
+        \"metric_ci\": lambda: ec.bootstrap_metric_ci(\"auroc\", table, scores),
+        \"verify\": lambda: ec.verify_no_leakage(plan, table),
+        \"ablation\": lambda: ec.run_ablation(table, {}, \"M0\", plan),
+    }
+    with pytest.raises(ec.SchemaError, match=field):
+        calls[entry]()
+
+
+@pytest.mark.parametrize(\"field\", _ID_FIELDS)
+@pytest.mark.parametrize(\"suffix\", [\" \", \"\\\\u200b\", \"\\\\u0430\"])
+@pytest.mark.parametrize(\"extension\", [\"json\", \"jsonl\"])
+def test_fix5_read_table_rejects_invalid_identifiers(tmp_path, field, suffix, extension):
+    path = tmp_path / f\"observations.{extension}\"
+    record = row(\"o\")
+    record[field] += suffix
+    path.write_text(json.dumps([record] if extension == \"json\" else record), encoding=\"utf-8\")
+    with pytest.raises(ec.SchemaError, match=field):
+        ec.read_table(path)
+
+
+@pytest.mark.parametrize(\"field\", [\"assay_id\", \"study_id\"])
+def test_fix5_case_distinct_assays_are_genuine_replicates(field):
+    rows = labelled(10, 10)
+    rows[10][field] = \"AssayA\"
+    rows.append({**rows[10], field: \"assaya\", \"observation_id\": \"Replicate\",
+                 \"independent_unit_id\": \"ReplicateUnit\"})
+    table = ec.validate_table(rows)
+    assert table.rows[10][field] == \"AssayA\"
+    assert table.rows[-1][field] == \"assaya\"
+    assert table.duplicate_assay_records == ()
+    assert len(set(ec.effective_clusters(table, merge_axes=()))) == 21
+    assert ec.compute_metric(\"auroc\", table, [.5] * 10 + [1.] + [0.] * 9 + [1.]).value \\\\
+        == pytest.approx(9 / 11)
+    if field == \"study_id\":
+        groups = ec.axis_groups(table, axes=(\"study\",))[\"study\"]
+        assert groups[10] == \"study:AssayA\"
+        assert groups[-1] == \"study:assaya\"
+
+
+def test_fix5_case_distinct_observation_and_unit_ids_remain_distinct():
+    rows = independent_rows(2)
+    for r, oid, unit in zip(rows, (\"ObsA\", \"obsa\"), (\"UnitA\", \"unita\")):
+        r.update(observation_id=oid, independent_unit_id=unit)
+    assert ec.validate_table(rows).ids == (\"ObsA\", \"obsa\")
+    assert len(set(ec.effective_clusters(rows, merge_axes=()))) == 2
+
+
+def test_fix5_explicit_responder_only_study_ids_are_opaque():
+    record = row(\"n\", \"verified_negative\", study=\"StudyA\")
+    with pytest.raises(ec.NegativeEvidenceError):
+        ec.validate_table([record], responder_only_studies=[\"StudyA\"])
+    assert len(ec.validate_table([record], responder_only_studies=[\"studya\"])) == 1
+    with pytest.raises(ec.SchemaError):
+        ec.validate_table([], responder_only_studies=[\"StudyA \"])
+
+
+def test_fix5_permuted_reference_scores_validate_and_preserve_ids():
+    with pytest.raises(ec.SchemaError):
+        ec.permuted_reference_scores([\"Obs\\\\u200b\"])
+    assert set(ec.permuted_reference_scores([\"ObsA\", \"obsa\"])) == {\"ObsA\", \"obsa\"}
+'''
+p.write_text(s)
+PY
+PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_evaluation_core.py -q -k fix5 --tb=no" in /home/dashii/smt-isef
+ exited 1 in 3880ms:
+........FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF [ 38%]
+FFFFFFFFFFFFFFFF............FF......FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF [ 77%]
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.FF                                [100%]
+=========================== short test summary info ============================
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id -assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id -study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id -independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id -observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[ id-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[ id-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[ id-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[ id-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[i d-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[i d-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[i d-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[i d-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\t-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\t-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\t-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\t-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\n-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\n-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\n-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\n-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\r-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\r-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\r-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\r-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x00-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x00-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x00-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x00-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x1f-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x1f-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x1f-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x1f-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x7f-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x7f-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x7f-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\x7f-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200b-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200b-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200b-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200b-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200d-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200d-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200d-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u200d-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\ufeff-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\ufeff-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\ufeff-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\ufeff-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u202e-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u202e-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u202e-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\u202e-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\u0430ssay1-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\u0430ssay1-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\u0430ssay1-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\u0430ssay1-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\uff21ssay1-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\uff21ssay1-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\uff21ssay1-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[\uff21ssay1-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\xa0-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\xa0-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\xa0-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id\xa0-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[caf\xe9-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[caf\xe9-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[caf\xe9-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[caf\xe9-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id/1-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id/1-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id/1-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id/1-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id@1-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id@1-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id@1-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[id@1-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_invalid_identifiers_rejected[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_identifier_vocabulary_preserved_exactly[AazZ09._:+--assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_identifier_vocabulary_preserved_exactly[AazZ09._:+--study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[validate-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[validate-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[validate-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[validate-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[groups-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[groups-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[groups-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[groups-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[split-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[split-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[split-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[split-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[nested-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[nested-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[nested-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[nested-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pr-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pr-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pr-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pr-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pu-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pu-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pu-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[pu-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[clusters-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[clusters-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[clusters-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[clusters-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ci-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ci-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ci-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ci-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric_ci-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric_ci-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric_ci-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[metric_ci-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[verify-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[verify-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[verify-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[verify-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ablation-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ablation-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ablation-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_public_consumers_revalidate_forged_table_identifiers[ablation-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json- -assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json- -study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json- -independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json- -observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u200b-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u200b-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u200b-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u200b-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u0430-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u0430-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u0430-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[json-\u0430-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl- -assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl- -study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl- -independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl- -observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u200b-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u200b-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u200b-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u200b-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u0430-assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u0430-study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u0430-independent_unit_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_read_table_rejects_invalid_identifiers[jsonl-\u0430-observation_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_case_distinct_assays_are_genuine_replicates[assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_case_distinct_assays_are_genuine_replicates[study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_explicit_responder_only_study_ids_are_opaque
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_permuted_reference_scores_validate_and_preserve_ids
+158 failed, 27 passed, 430 deselected in 2.00s
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_evaluation_core.py -q -k 'fix5_case_distinct_assays or fix5_explicit_responder' --tb=short" in /home/dashii/smt-isef
+ exited 1 in 1909ms:
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_______ test_fix5_case_distinct_assays_are_genuine_replicates[assay_id] ________
+conference/model_v2/tests/test_evaluation_core.py:1463: in test_fix5_case_distinct_assays_are_genuine_replicates
+    assert table.rows[10][field] == "AssayA"
+E   AssertionError: assert 'assaya' == 'AssayA'
+E     
+E     - AssayA
+E     + assaya
+_______ test_fix5_case_distinct_assays_are_genuine_replicates[study_id] ________
+conference/model_v2/tests/test_evaluation_core.py:1463: in test_fix5_case_distinct_assays_are_genuine_replicates
+    assert table.rows[10][field] == "AssayA"
+E   AssertionError: assert 'assaya' == 'AssayA'
+E     
+E     - AssayA
+E     + assaya
+____________ test_fix5_explicit_responder_only_study_ids_are_opaque ____________
+conference/model_v2/tests/test_evaluation_core.py:1487: in test_fix5_explicit_responder_only_study_ids_are_opaque
+    assert len(ec.validate_table([record], responder_only_studies=["studya"])) == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+conference/model_v2/evaluation_core.py:333: in validate_table
+    raise NegativeEvidenceError(
+E   conference.model_v2.evaluation_core.NegativeEvidenceError: row 0 (n): verified_negative from a responder-only table; absence from a responder list is not a measured negative
+=========================== short test summary info ============================
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_case_distinct_assays_are_genuine_replicates[assay_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_case_distinct_assays_are_genuine_replicates[study_id]
+FAILED conference/model_v2/tests/test_evaluation_core.py::test_fix5_explicit_responder_only_study_ids_are_opaque
+3 failed, 612 deselected in 0.42s
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+The new tests reproduce both failures: invalid IDs are accepted, and `AssayA` becomes `assaya`. The same casefolding also affects caller-supplied responder-only study IDs. I’ll make those comparisons exact while retaining the existing forbidden-source checks. I’ve updated the old tests that expected ID normalization to expect rejection or preserved case.
+exec
+/usr/bin/bash -lc "/home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+p = Path('conference/model_v2/evaluation_core.py')
+s = p.read_text()
+s = s.replace('"'``check_source_not_forbidden`` refuses'"', '''Identifiers ("'``assay_id``, ``study_id``, ``independent_unit_id``, ``observation_id``)
+are opaque, CASE-SENSITIVE strings of 1..128 ASCII characters from
+``[A-Za-z0-9._:+-]``. Whitespace, control/format characters and all non-ASCII
+characters raise ``SchemaError``; IDs are never stripped, casefolded or Unicode
+normalized. Public table consumers (including ``read_table``) validate this contract.
+Sequence, chromosome and chemistry aliases remain canonicalized for assay identity.
+Callers must assign distinct assay IDs to genuine replicate assays within a study.
+
+``check_source_not_forbidden`` refuses'"''')
+s = s.replace('REQUIRED_FIELDS = (', 'IDENTIFIER_FIELDS = (\"assay_id\", \"study_id\", \"independent_unit_id\", \"observation_id\")\\n_IDENTIFIER_RE = re.compile(r\"[A-Za-z0-9._:+-]{1,128}\")\\nREQUIRED_FIELDS = (', 1)
+s = s.replace('def _canonicalize_assay_identity(', '''def _identifier(value: Any, name: str, where: str) -> str:
+    if not isinstance(value, str) or _IDENTIFIER_RE.fullmatch(value) is None:
+        raise SchemaError(
+            f\"{where}: field {name"'!r} must be a case-sensitive ASCII identifier "
+            "of 1..128 characters from [A-Za-z0-9._:+-]")
+    return value
+
+
+def _canonicalize_assay_identity('"''')
+s = s.replace('    for name in (\"assay_id\", \"study_id\"):\\n        row[name] = unicodedata.normalize(\"NFKC\", _nonempty(row, name, where)).strip().casefold()\\n        _nonempty(row, name, where)\\n', '')
+s = s.replace('    responder_only = RESPONDER_ONLY_SOURCES | frozenset(_category(s) for s in responder_only_studies)', '''    responder_only = frozenset(
+        _identifier(s, \"study_id\", \"responder_only_studies\") for s in responder_only_studies)''')
+s = s.replace('        oid = _nonempty(r, \"observation_id\", where)', '''        for name in IDENTIFIER_FIELDS:
+            _identifier(r.get(name), name, where)
+        oid = r[\"observation_id\"]''')
+s = s.replace('        for name in (\"assay_id\", \"study_id\", \"independent_unit_id\"):\\n            _nonempty(r, name, where)\\n', '')
+s = s.replace('f\"_{known}_\" in f\"_{token}_\" for known in responder_only for token in source_tokens)', 'f\"_{known}_\" in f\"_{token}_\" for known in RESPONDER_ONLY_SOURCES for token in source_tokens)')
+s = s.replace('if kind in RESPONDER_ONLY_KINDS or known_responder:', 'if kind in RESPONDER_ONLY_KINDS or r[\"study_id\"] in responder_only or known_responder:')
+s = s.replace('    rng = random.Random(_stable_seed(\"m0_permuted_reference\", seed))', '''    observation_ids = tuple(
+        _identifier(oid, \"observation_id\", \"permuted_reference_scores\") for oid in observation_ids)
+    rng = random.Random(_stable_seed(\"m0_permuted_reference\", seed))''')
+p.write_text(s)
+PY
+PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_evaluation_core.py -q" in /home/dashii/smt-isef
+ succeeded in 12896ms:
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 46%]
+........................................................................ [ 58%]
+........................................................................ [ 70%]
+........................................................................ [ 81%]
+........................................................................ [ 93%]
+.......................................                                  [100%]
+615 passed in 6.52s
+
+exec
+/usr/bin/bash -lc 'git diff --check; git diff --stat -- conference/model_v2/evaluation_core.py conference/model_v2/tests/test_evaluation_core.py; git diff -- conference/model_v2/evaluation_core.py; git diff -- conference/model_v2/tests/test_evaluation_core.py' in /home/dashii/smt-isef
+ succeeded in 1970ms:
+conference/model_v2/ops/logs/F3_fix5_sol.out:2452: trailing whitespace.
++E     
+conference/model_v2/ops/logs/F3_fix5_sol.out:2459: trailing whitespace.
++E     
+conference/model_v2/ops/logs/J5_sol.out:10969: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:10970: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:10973: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:10974: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:10990: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:10991: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11023: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11024: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11065: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11119: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11139: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11153: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11162: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11182: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11183: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11187: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11188: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11230: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11232: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11302: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11303: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11366: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11367: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11370: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11371: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11387: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11388: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11420: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11421: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11462: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11516: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11536: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11550: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11559: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11579: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11580: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11584: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11585: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11627: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11629: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11699: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11700: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11791: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11792: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11795: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11796: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11812: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11813: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11845: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11846: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11887: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11941: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11961: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11975: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:11984: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12004: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12005: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12009: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12010: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12052: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12054: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12124: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12125: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12177: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12178: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12181: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12182: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12198: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12199: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12231: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12232: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12273: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12327: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12347: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12361: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12370: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12390: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12391: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12395: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12396: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12438: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12440: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12510: trailing whitespace.
++ 
+conference/model_v2/ops/logs/J5_sol.out:12511: trailing whitespace.
++ 
+ conference/model_v2/evaluation_core.py            |  36 +++++--
+ conference/model_v2/tests/test_evaluation_core.py | 116 +++++++++++++++++++++-
+ 2 files changed, 139 insertions(+), 13 deletions(-)
+diff --git a/conference/model_v2/evaluation_core.py b/conference/model_v2/evaluation_core.py
+index 7e6ea6b..0c82976 100644
+--- a/conference/model_v2/evaluation_core.py
++++ b/conference/model_v2/evaluation_core.py
+@@ -19,6 +19,14 @@ data. Five pieces, each refusing loudly instead of degrading silently:
+    ``min_clusters``.
+ 5. ``BASELINES`` (M0..M6) and ``run_ablation`` (leave-feature-family-out interface).
+ 
++Identifiers (``assay_id``, ``study_id``, ``independent_unit_id``, ``observation_id``)
++are opaque, CASE-SENSITIVE strings of 1..128 ASCII characters from
++``[A-Za-z0-9._:+-]``. Whitespace, control/format characters and all non-ASCII
++characters raise ``SchemaError``; IDs are never stripped, casefolded or Unicode
++normalized. Public table consumers (including ``read_table``) validate this contract.
++Sequence, chromosome and chemistry aliases remain canonicalized for assay identity.
++Callers must assign distinct assay IDs to genuine replicate assays within a study.
++
+ ``check_source_not_forbidden`` refuses the July exon-7 outcome workbook, any ``psi25``
+ directory and anything under ``feng/terminal`` (SCIENTIFIC_LOCK).
+ """
+@@ -183,6 +191,8 @@ class LabelState(str, Enum):
+ LABEL_STATES = tuple(s.value for s in LabelState)
+ POSITIVE = LabelState.MEASURED_POSITIVE.value
+ NEGATIVE = LabelState.VERIFIED_NEGATIVE.value
++IDENTIFIER_FIELDS = ("assay_id", "study_id", "independent_unit_id", "observation_id")
++_IDENTIFIER_RE = re.compile(r"[A-Za-z0-9._:+-]{1,128}")
+ REQUIRED_FIELDS = ("observation_id", "label_state", "assay_id", "study_id",
+                    "independent_unit_id", "provenance")
+ RESPONDER_ONLY_KINDS = frozenset({"responder_only", "responders_only", "hits_only",
+@@ -250,15 +260,20 @@ def _nonempty(row: Mapping[str, Any], name: str, where: str) -> str:
+     return value
+ 
+ 
++def _identifier(value: Any, name: str, where: str) -> str:
++    if not isinstance(value, str) or _IDENTIFIER_RE.fullmatch(value) is None:
++        raise SchemaError(
++            f"{where}: field {name!r} must be a case-sensitive ASCII identifier "
++            "of 1..128 characters from [A-Za-z0-9._:+-]")
++    return value
++
++
+ def _canonicalize_assay_identity(row: Dict[str, Any], where: str) -> None:
+     """Canonicalize supplied identity fields once, before hashing or consumption.
+ 
+     Optional fields may be absent, but supplied values must be valid. Coordinates
+     are already canonical integers; alternate scalar types fail closed.
+     """
+-    for name in ("assay_id", "study_id"):
+-        row[name] = unicodedata.normalize("NFKC", _nonempty(row, name, where)).strip().casefold()
+-        _nonempty(row, name, where)
+     if "aso_sequence" in row:
+         row["aso_sequence"] = normalize_sequence(row["aso_sequence"])
+     if "chemistry_family" in row:
+@@ -286,7 +301,8 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) ->
+     """
+     if isinstance(rows, ObservationTable):
+         rows = rows.rows
+-    responder_only = RESPONDER_ONLY_SOURCES | frozenset(_category(s) for s in responder_only_studies)
++    responder_only = frozenset(
++        _identifier(s, "study_id", "responder_only_studies") for s in responder_only_studies)
+     out: List[Dict[str, Any]] = []
+     seen = set()
+     for index, row in enumerate(rows):
+@@ -294,7 +310,9 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) ->
+         if not isinstance(row, Mapping):
+             raise SchemaError(f"{where}: not a mapping")
+         r = dict(row)
+-        oid = _nonempty(r, "observation_id", where)
++        for name in IDENTIFIER_FIELDS:
++            _identifier(r.get(name), name, where)
++        oid = r["observation_id"]
+         where = f"row {index} ({oid})"
+         if oid in seen:
+             raise SchemaError(f"{where}: duplicate observation_id")
+@@ -303,8 +321,6 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) ->
+             raise SchemaError(f"{where}: missing label_state")
+         state = LabelState.parse(r["label_state"])
+         r["label_state"] = state.value
+-        for name in ("assay_id", "study_id", "independent_unit_id"):
+-            _nonempty(r, name, where)
+         _canonicalize_assay_identity(r, where)
+         prov = r.get("provenance")
+         if isinstance(prov, Mapping):
+@@ -328,8 +344,8 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) ->
+             sources = [r["study_id"]] + _strings(prov) + _strings(r.get("source_path"))
+             source_tokens = [_category(form) for s in sources for form in _normalized_source_forms(s)]
+             known_responder = any(
+-                f"_{known}_" in f"_{token}_" for known in responder_only for token in source_tokens)
+-            if kind in RESPONDER_ONLY_KINDS or known_responder:
++                f"_{known}_" in f"_{token}_" for known in RESPONDER_ONLY_SOURCES for token in source_tokens)
++            if kind in RESPONDER_ONLY_KINDS or r["study_id"] in responder_only or known_responder:
+                 raise NegativeEvidenceError(
+                     f"{where}: verified_negative from a responder-only table; absence "
+                     "from a responder list is not a measured negative")
+@@ -1369,6 +1385,8 @@ def baseline_feature_columns(name: str) -> Tuple[str, ...]:
+ 
+ def permuted_reference_scores(observation_ids: Sequence[str], seed: int = 0) -> Dict[str, float]:
+     """M0: seeded random scores, independent of input order."""
++    observation_ids = tuple(
++        _identifier(oid, "observation_id", "permuted_reference_scores") for oid in observation_ids)
+     rng = random.Random(_stable_seed("m0_permuted_reference", seed))
+     return {oid: rng.random() for oid in sorted(observation_ids)}
+ 
+diff --git a/conference/model_v2/tests/test_evaluation_core.py b/conference/model_v2/tests/test_evaluation_core.py
+index 5657b97..772f387 100644
+--- a/conference/model_v2/tests/test_evaluation_core.py
++++ b/conference/model_v2/tests/test_evaluation_core.py
+@@ -238,7 +238,7 @@ def test_trap_duplicate_aso_under_different_ids_never_straddles():
+                {plan.observation_ids[i] for i in fold.purged_idx}
+         assert not ({"o000", "dup"} & ids and {"o000", "dup"} & held)
+     # the duplicate is purged (not trained on) when its twin's study is held out
+-    fold = next(f for f in plan.folds if f.test_group_ids == ("study:s0",))
++    fold = next(f for f in plan.folds if f.test_group_ids == ("study:S0",))
+     assert [plan.observation_ids[i] for i in fold.purged_idx] == ["dup"]
+ 
+ 
+@@ -317,7 +317,7 @@ def test_verify_no_leakage_detects_a_tampered_plan():
+ def test_leave_study_out_holds_out_whole_studies():
+     rows = independent_rows(12, n_studies=4)
+     plan = ec.make_splits(rows, "leave_study_out")
+-    assert [f.test_group_ids for f in plan.folds] == [(f"study:s{k}",) for k in range(4)]
++    assert [f.test_group_ids for f in plan.folds] == [(f"study:S{k}",) for k in range(4)]
+     assert all(len(f.test_idx) == 3 and len(f.train_idx) == 9 for f in plan.folds)
+ 
+ 
+@@ -1339,10 +1339,10 @@ def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_c
+     if consumer == "generic_ci":
+         def statistic(indices):
+             pytest.fail("aliased copies must be refused before resampling")
+-        with pytest.raises(ec.UncertaintyRefused, match="duplicate assay"):
++        with pytest.raises(ec.SchemaError if field.endswith("_id") else ec.UncertaintyRefused):
+             ec.cluster_bootstrap_ci(rows, statistic, n_boot=20)
+     else:
+-        with pytest.raises(ec.MetricBlocked, match="duplicate assay"):
++        with pytest.raises(ec.SchemaError if field.endswith("_id") else ec.MetricBlocked):
+             if consumer == "auroc":
+                 ec.compute_metric("auroc", rows, scores)
+             elif consumer == "pr_curve":
+@@ -1358,6 +1358,10 @@ def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field,
+     source = row("original", chem="moe", study="S10")
+     copy = {**source, field: alias(source[field], 0),
+             "observation_id": "copy", "independent_unit_id": "copy_unit"}
++    if field.endswith("_id"):
++        with pytest.raises(ec.SchemaError, match=field):
++            ec.validate_table([source, copy])
++        return
+     for rows in ([source, copy], ec.validate_table([source, copy])):
+         table = ec.validate_table(rows)
+         assert table.duplicate_assay_records == (("original", "copy"),)
+@@ -1385,3 +1389,107 @@ def test_fix4_genuine_distinct_assay_replicates_still_contribute():
+ def test_fix4_invalid_identity_rejected_before_hashing(field, value):
+     with pytest.raises(ec.SchemaError):
+         ec.validate_table([row("a", **{field: value})])
++
++
++_ID_FIELDS = ("assay_id", "study_id", "independent_unit_id", "observation_id")
++_BAD_IDS = ("", " ", "id ", " id", "i d", "id\t", "id\n", "id\r", "id\x00",
++            "id\x1f", "id\x7f", "id\u200b", "id\u200d", "id\ufeff", "id\u202e",
++            "\u0430ssay1", "\uff21ssay1", "id\u00a0", "caf\u00e9", "id/1", "id@1",
++            "a" * 129, None, 123, True)
++
++
++@pytest.mark.parametrize("field", _ID_FIELDS)
++@pytest.mark.parametrize("value", _BAD_IDS)
++def test_fix5_invalid_identifiers_rejected(field, value):
++    with pytest.raises(ec.SchemaError, match=field):
++        ec.validate_table([row("o", **{field: value})])
++
++
++@pytest.mark.parametrize("field", _ID_FIELDS)
++@pytest.mark.parametrize("value", ["AazZ09._:+-", "a" * 128])
++def test_fix5_identifier_vocabulary_preserved_exactly(field, value):
++    table = ec.validate_table([row("o", **{field: value})])
++    assert table.rows[0][field] == value
++
++
++@pytest.mark.parametrize("field", _ID_FIELDS)
++@pytest.mark.parametrize("entry", ["validate", "groups", "split", "nested", "metric", "pr",
++                                    "pu", "clusters", "ci", "metric_ci", "verify", "ablation"])
++def test_fix5_public_consumers_revalidate_forged_table_identifiers(field, entry):
++    rows = labelled(10, 10)
++    plan = ec.make_splits(rows, "leave_study_out")
++    rows[0][field] += "\u200b"
++    table = ec.ObservationTable(tuple(rows))
++    scores = [.5] * 20
++    def statistic(indices):
++        pytest.fail("invalid identifiers must be rejected before statistic")
++    calls = {
++        "validate": lambda: ec.validate_table(table),
++        "groups": lambda: ec.axis_groups(table),
++        "split": lambda: ec.make_splits(table, "leave_study_out"),
++        "nested": lambda: ec.make_nested_splits(table, outer_mode="leave_study_out"),
++        "metric": lambda: ec.compute_metric("auroc", table, scores),
++        "pr": lambda: ec.precision_recall_curve(table, scores),
++        "pu": lambda: ec.pu_report(table, scores),
++        "clusters": lambda: ec.effective_clusters(table),
++        "ci": lambda: ec.cluster_bootstrap_ci(table, statistic),
++        "metric_ci": lambda: ec.bootstrap_metric_ci("auroc", table, scores),
++        "verify": lambda: ec.verify_no_leakage(plan, table),
++        "ablation": lambda: ec.run_ablation(table, {}, "M0", plan),
++    }
++    with pytest.raises(ec.SchemaError, match=field):
++        calls[entry]()
++
++
++@pytest.mark.parametrize("field", _ID_FIELDS)
++@pytest.mark.parametrize("suffix", [" ", "\u200b", "\u0430"])
++@pytest.mark.parametrize("extension", ["json", "jsonl"])
++def test_fix5_read_table_rejects_invalid_identifiers(tmp_path, field, suffix, extension):
++    path = tmp_path / f"observations.{extension}"
++    record = row("o")
++    record[field] += suffix
++    path.write_text(json.dumps([record] if extension == "json" else record), encoding="utf-8")
++    with pytest.raises(ec.SchemaError, match=field):
++        ec.read_table(path)
++
++
++@pytest.mark.parametrize("field", ["assay_id", "study_id"])
++def test_fix5_case_distinct_assays_are_genuine_replicates(field):
++    rows = labelled(10, 10)
++    rows[10][field] = "AssayA"
++    rows.append({**rows[10], field: "assaya", "observation_id": "Replicate",
++                 "independent_unit_id": "ReplicateUnit"})
++    table = ec.validate_table(rows)
++    assert table.rows[10][field] == "AssayA"
++    assert table.rows[-1][field] == "assaya"
++    assert table.duplicate_assay_records == ()
++    assert len(set(ec.effective_clusters(table, merge_axes=()))) == 21
++    assert ec.compute_metric("auroc", table, [.5] * 10 + [1.] + [0.] * 9 + [1.]).value \
++        == pytest.approx(9 / 11)
++    if field == "study_id":
++        groups = ec.axis_groups(table, axes=("study",))["study"]
++        assert groups[10] == "study:AssayA"
++        assert groups[-1] == "study:assaya"
++
++
++def test_fix5_case_distinct_observation_and_unit_ids_remain_distinct():
++    rows = independent_rows(2)
++    for r, oid, unit in zip(rows, ("ObsA", "obsa"), ("UnitA", "unita")):
++        r.update(observation_id=oid, independent_unit_id=unit)
++    assert ec.validate_table(rows).ids == ("ObsA", "obsa")
++    assert len(set(ec.effective_clusters(rows, merge_axes=()))) == 2
++
++
++def test_fix5_explicit_responder_only_study_ids_are_opaque():
++    record = row("n", "verified_negative", study="StudyA")
++    with pytest.raises(ec.NegativeEvidenceError):
++        ec.validate_table([record], responder_only_studies=["StudyA"])
++    assert len(ec.validate_table([record], responder_only_studies=["studya"])) == 1
++    with pytest.raises(ec.SchemaError):
++        ec.validate_table([], responder_only_studies=["StudyA "])
++
++
++def test_fix5_permuted_reference_scores_validate_and_preserve_ids():
++    with pytest.raises(ec.SchemaError):
++        ec.permuted_reference_scores(["Obs\u200b"])
++    assert set(ec.permuted_reference_scores(["ObsA", "obsa"])) == {"ObsA", "obsa"}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+The requested gate passes: 615 passed, 0 failed, 0 skipped. Validation now rejects invalid IDs before grouping or statistics, and case-distinct replicates remain distinct. I’m adding the exact 20-copy zero-width repro alongside the earlier alias tests for final verification.
+exec
+/usr/bin/bash -lc "/home/dashii/orcd/pool/smt-isef-env/bin/python - <<'PY'
+from pathlib import Path
+p = Path('conference/model_v2/tests/test_evaluation_core.py')
+s = p.read_text().replace('_FIX4_ALIASES = [\\n', '''_FIX4_ALIASES = [
+    (\"assay_id\", lambda s, i: s + \"\\\\u200b\" * (i + 1), 20),
+    (\"study_id\", lambda s, i: s + \"\\\\u200b\" * (i + 1), 20),
+    (\"assay_id\", lambda s, i: \"\\\\u0430ssay1\", 1),
+    (\"study_id\", lambda s, i: \"\\\\u040510\", 1),
+''')
+s = s.replace('with pytest.raises(ec.SchemaError if field.endswith(\"_id\") else ec.UncertaintyRefused):', '''with pytest.raises(ec.SchemaError if field.endswith(\"_id\") else ec.UncertaintyRefused,
+                           match=field if field.endswith(\"_id\") else \"duplicate assay\"):''')
+s = s.replace('with pytest.raises(ec.SchemaError if field.endswith(\"_id\") else ec.MetricBlocked):', '''with pytest.raises(ec.SchemaError if field.endswith(\"_id\") else ec.MetricBlocked,
+                           match=field if field.endswith(\"_id\") else \"duplicate assay\"):''')
+s = s.replace('    scores = [.5] * 20\\n    def statistic', '    scores = [.5] * 20\\n\\n    def statistic')
+p.write_text(s)
+PY
+PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1 /home/dashii/orcd/pool/smt-isef-env/bin/python -m pytest conference/model_v2/tests/test_evaluation_core.py -q" in /home/dashii/smt-isef
+hook: PostToolUse
+ succeeded in 8242ms:
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 33%]
+........................................................................ [ 45%]
+........................................................................ [ 56%]
+........................................................................ [ 67%]
+........................................................................ [ 78%]
+........................................................................ [ 90%]
+...............................................................          [100%]
+639 passed in 6.44s
+
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "rg -n '"'^Identifiers|''^def _identifier|''^def validate_table|''^def permuted_reference|''^def test_fix5|''^def test_fix4_identity|''^def test_trap_duplicate|''^def test_leave_study'"' conference/model_v2/evaluation_core.py conference/model_v2/tests/test_evaluation_core.py; git diff --check -- conference/model_v2/evaluation_core.py conference/model_v2/tests/test_evaluation_core.py; git status --short" in /home/dashii/smt-isef
+ succeeded in 2695ms:
+conference/model_v2/evaluation_core.py:22:Identifiers (``assay_id``, ``study_id``, ``independent_unit_id``, ``observation_id``)
+conference/model_v2/evaluation_core.py:263:def _identifier(value: Any, name: str, where: str) -> str:
+conference/model_v2/evaluation_core.py:295:def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> ObservationTable:
+conference/model_v2/evaluation_core.py:1386:def permuted_reference_scores(observation_ids: Sequence[str], seed: int = 0) -> Dict[str, float]:
+conference/model_v2/tests/test_evaluation_core.py:229:def test_trap_duplicate_aso_under_different_ids_never_straddles():
+conference/model_v2/tests/test_evaluation_core.py:317:def test_leave_study_out_holds_out_whole_studies():
+conference/model_v2/tests/test_evaluation_core.py:1332:def test_fix4_identity_alias_copies_cannot_reweight_statistics(field, alias, n_copies, consumer):
+conference/model_v2/tests/test_evaluation_core.py:1363:def test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters(field, alias, n_copies):
+conference/model_v2/tests/test_evaluation_core.py:1409:def test_fix5_invalid_identifiers_rejected(field, value):
+conference/model_v2/tests/test_evaluation_core.py:1416:def test_fix5_identifier_vocabulary_preserved_exactly(field, value):
+conference/model_v2/tests/test_evaluation_core.py:1424:def test_fix5_public_consumers_revalidate_forged_table_identifiers(field, entry):
+conference/model_v2/tests/test_evaluation_core.py:1454:def test_fix5_read_table_rejects_invalid_identifiers(tmp_path, field, suffix, extension):
+conference/model_v2/tests/test_evaluation_core.py:1464:def test_fix5_case_distinct_assays_are_genuine_replicates(field):
+conference/model_v2/tests/test_evaluation_core.py:1482:def test_fix5_case_distinct_observation_and_unit_ids_remain_distinct():
+conference/model_v2/tests/test_evaluation_core.py:1490:def test_fix5_explicit_responder_only_study_ids_are_opaque():
+conference/model_v2/tests/test_evaluation_core.py:1499:def test_fix5_permuted_reference_scores_validate_and_preserve_ids():
+ M conference/model_v2/evaluation_core.py
+ M conference/model_v2/j5_rbp_context.py
+ M conference/model_v2/ops/briefs/J5_RESULT.md
+ M conference/model_v2/ops/logs/F3_fix5_sol.out
+ M conference/model_v2/ops/logs/J5_sol.out
+ M conference/model_v2/tests/test_evaluation_core.py
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/usr/bin/bash -lc "cat > conference/model_v2/ops/briefs/F3_FIX5_RESULT.md <<'EOF'
+# F3-FIX5 — fixed; targeted gate PASS
+- "'`conference/model_v2/evaluation_core.py:22,263`: documented/enforced opaque case-sensitive ASCII `[A-Za-z0-9._:+-]{1,128}` for all four IDs; no ID normalization.
+- `conference/model_v2/evaluation_core.py:295,1386`: table entry points/read_table revalidate IDs; explicit responder-only study IDs compare exactly; M0 ID inputs validate too. Existing forbidden/known-source guards retained.
+- `conference/model_v2/tests/test_evaluation_core.py:1332,1409`: trailing-space, 20-copy zero-width, Cyrillic/fullwidth, controls, length/type, JSON/JSONL, forged public-table and case-distinct replicate regressions; earlier sequence/chrom/chemistry/annotation guards retained.
+- Updated old normalization tests: `test_fix4_identity_alias_copies_cannot_reweight_statistics`, `test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters`: invalid ID aliases now SchemaError.
+- Updated old casefold expectations: `test_trap_duplicate_aso_under_different_ids_never_straddles`, `test_leave_study_out_holds_out_whole_studies`: study groups preserve uppercase S.
+- Exact requested pytest command: 639 passed, 0 failed, 0 skipped (6.44 s); owned-file diff whitespace check clean. New regressions first reproduced 158 failures before implementation.
+- Unfixed: none in scope. Compatibility: legacy invalid IDs now reject; callers must supply consistent case and distinct replicate assay IDs. Full feng suite not run (task-specific gate overrides standing default).
+- Only owned source/test files plus this requested report edited; concurrent unrelated changes left untouched. No commits, submissions, or sealed data.
+EOF
+wc -l conference/model_v2/ops/briefs/F3_FIX5_RESULT.md
+cat conference/model_v2/ops/briefs/F3_FIX5_RESULT.md' in /home/dashii/smt-isef
+ succeeded in 1576ms:
+9 conference/model_v2/ops/briefs/F3_FIX5_RESULT.md
+# F3-FIX5 — fixed; targeted gate PASS
+- `conference/model_v2/evaluation_core.py:22,263`: documented/enforced opaque case-sensitive ASCII `[A-Za-z0-9._:+-]{1,128}` for all four IDs; no ID normalization.
+- `conference/model_v2/evaluation_core.py:295,1386`: table entry points/read_table revalidate IDs; explicit responder-only study IDs compare exactly; M0 ID inputs validate too. Existing forbidden/known-source guards retained.
+- `conference/model_v2/tests/test_evaluation_core.py:1332,1409`: trailing-space, 20-copy zero-width, Cyrillic/fullwidth, controls, length/type, JSON/JSONL, forged public-table and case-distinct replicate regressions; earlier sequence/chrom/chemistry/annotation guards retained.
+- Updated old normalization tests: `test_fix4_identity_alias_copies_cannot_reweight_statistics`, `test_fix4_identity_aliases_agree_in_validation_grouping_and_clusters`: invalid ID aliases now SchemaError.
+- Updated old casefold expectations: `test_trap_duplicate_aso_under_different_ids_never_straddles`, `test_leave_study_out_holds_out_whole_studies`: study groups preserve uppercase S.
+- Exact requested pytest command: 639 passed, 0 failed, 0 skipped (6.44 s); owned-file diff whitespace check clean. New regressions first reproduced 158 failures before implementation.
+- Unfixed: none in scope. Compatibility: legacy invalid IDs now reject; callers must supply consistent case and distinct replicate assay IDs. Full feng suite not run (task-specific gate overrides standing default).
+- Only owned source/test files plus this requested report edited; concurrent unrelated changes left untouched. No commits, submissions, or sealed data.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+Fixed strict ASCII, case-sensitive ID validation; added regressions and updated four tests encoding old normalization.
+
+Requested gate: **639 passed, 0 failed, 0 skipped**. Nothing unfixed in scope. Legacy invalid IDs now reject.
+
+[9-line result report](/home/dashii/smt-isef/conference/model_v2/ops/briefs/F3_FIX5_RESULT.md). No commits, submissions, or sealed data accessed.
+hook: Stop
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+55,509
+Fixed strict ASCII, case-sensitive ID validation; added regressions and updated four tests encoding old normalization.
+
+Requested gate: **639 passed, 0 failed, 0 skipped**. Nothing unfixed in scope. Legacy invalid IDs now reject.
+
+[9-line result report](/home/dashii/smt-isef/conference/model_v2/ops/briefs/F3_FIX5_RESULT.md). No commits, submissions, or sealed data accessed.

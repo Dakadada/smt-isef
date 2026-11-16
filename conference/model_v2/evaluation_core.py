@@ -19,6 +19,14 @@ data. Five pieces, each refusing loudly instead of degrading silently:
    ``min_clusters``.
 5. ``BASELINES`` (M0..M6) and ``run_ablation`` (leave-feature-family-out interface).
 
+Identifiers (``assay_id``, ``study_id``, ``independent_unit_id``, ``observation_id``)
+are opaque, CASE-SENSITIVE strings of 1..128 ASCII characters from
+``[A-Za-z0-9._:+-]``. Whitespace, control/format characters and all non-ASCII
+characters raise ``SchemaError``; IDs are never stripped, casefolded or Unicode
+normalized. Public table consumers (including ``read_table``) validate this contract.
+Sequence, chromosome and chemistry aliases remain canonicalized for assay identity.
+Callers must assign distinct assay IDs to genuine replicate assays within a study.
+
 ``check_source_not_forbidden`` refuses the July exon-7 outcome workbook, any ``psi25``
 directory and anything under ``feng/terminal`` (SCIENTIFIC_LOCK).
 """
@@ -183,6 +191,8 @@ class LabelState(str, Enum):
 LABEL_STATES = tuple(s.value for s in LabelState)
 POSITIVE = LabelState.MEASURED_POSITIVE.value
 NEGATIVE = LabelState.VERIFIED_NEGATIVE.value
+IDENTIFIER_FIELDS = ("assay_id", "study_id", "independent_unit_id", "observation_id")
+_IDENTIFIER_RE = re.compile(r"[A-Za-z0-9._:+-]{1,128}")
 REQUIRED_FIELDS = ("observation_id", "label_state", "assay_id", "study_id",
                    "independent_unit_id", "provenance")
 RESPONDER_ONLY_KINDS = frozenset({"responder_only", "responders_only", "hits_only",
@@ -250,15 +260,20 @@ def _nonempty(row: Mapping[str, Any], name: str, where: str) -> str:
     return value
 
 
+def _identifier(value: Any, name: str, where: str) -> str:
+    if not isinstance(value, str) or _IDENTIFIER_RE.fullmatch(value) is None:
+        raise SchemaError(
+            f"{where}: field {name!r} must be a case-sensitive ASCII identifier "
+            "of 1..128 characters from [A-Za-z0-9._:+-]")
+    return value
+
+
 def _canonicalize_assay_identity(row: Dict[str, Any], where: str) -> None:
     """Canonicalize supplied identity fields once, before hashing or consumption.
 
     Optional fields may be absent, but supplied values must be valid. Coordinates
     are already canonical integers; alternate scalar types fail closed.
     """
-    for name in ("assay_id", "study_id"):
-        row[name] = unicodedata.normalize("NFKC", _nonempty(row, name, where)).strip().casefold()
-        _nonempty(row, name, where)
     if "aso_sequence" in row:
         row["aso_sequence"] = normalize_sequence(row["aso_sequence"])
     if "chemistry_family" in row:
@@ -286,7 +301,8 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> 
     """
     if isinstance(rows, ObservationTable):
         rows = rows.rows
-    responder_only = RESPONDER_ONLY_SOURCES | frozenset(_category(s) for s in responder_only_studies)
+    responder_only = frozenset(
+        _identifier(s, "study_id", "responder_only_studies") for s in responder_only_studies)
     out: List[Dict[str, Any]] = []
     seen = set()
     for index, row in enumerate(rows):
@@ -294,7 +310,9 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> 
         if not isinstance(row, Mapping):
             raise SchemaError(f"{where}: not a mapping")
         r = dict(row)
-        oid = _nonempty(r, "observation_id", where)
+        for name in IDENTIFIER_FIELDS:
+            _identifier(r.get(name), name, where)
+        oid = r["observation_id"]
         where = f"row {index} ({oid})"
         if oid in seen:
             raise SchemaError(f"{where}: duplicate observation_id")
@@ -303,8 +321,6 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> 
             raise SchemaError(f"{where}: missing label_state")
         state = LabelState.parse(r["label_state"])
         r["label_state"] = state.value
-        for name in ("assay_id", "study_id", "independent_unit_id"):
-            _nonempty(r, name, where)
         _canonicalize_assay_identity(r, where)
         prov = r.get("provenance")
         if isinstance(prov, Mapping):
@@ -328,8 +344,8 @@ def validate_table(rows: Any, *, responder_only_studies: Sequence[str] = ()) -> 
             sources = [r["study_id"]] + _strings(prov) + _strings(r.get("source_path"))
             source_tokens = [_category(form) for s in sources for form in _normalized_source_forms(s)]
             known_responder = any(
-                f"_{known}_" in f"_{token}_" for known in responder_only for token in source_tokens)
-            if kind in RESPONDER_ONLY_KINDS or known_responder:
+                f"_{known}_" in f"_{token}_" for known in RESPONDER_ONLY_SOURCES for token in source_tokens)
+            if kind in RESPONDER_ONLY_KINDS or r["study_id"] in responder_only or known_responder:
                 raise NegativeEvidenceError(
                     f"{where}: verified_negative from a responder-only table; absence "
                     "from a responder list is not a measured negative")
@@ -1369,6 +1385,8 @@ def baseline_feature_columns(name: str) -> Tuple[str, ...]:
 
 def permuted_reference_scores(observation_ids: Sequence[str], seed: int = 0) -> Dict[str, float]:
     """M0: seeded random scores, independent of input order."""
+    observation_ids = tuple(
+        _identifier(oid, "observation_id", "permuted_reference_scores") for oid in observation_ids)
     rng = random.Random(_stable_seed("m0_permuted_reference", seed))
     return {oid: rng.random() for oid in sorted(observation_ids)}
 

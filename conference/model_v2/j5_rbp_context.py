@@ -200,7 +200,7 @@ def _kd(path, metadata):
                         direction_evidence_class='observed' if delta is not None else 'not_available',
                         units='inclusion_fraction',
                         sample_order_evidence=metadata.get('sample_order_evidence'),
-                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed')
+                        evidence_class='knockdown_not_steric_block', measurement_evidence_class='observed' if raw is not None else 'not_available')
 
 
 class ContextIndex:
