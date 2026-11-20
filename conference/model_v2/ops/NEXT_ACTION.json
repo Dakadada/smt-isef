@@ -1,9 +1,9 @@
 {
- "ts": "2026-11-16T03:30Z",
+ "ts": "2026-11-16T08:10Z",
  "T0": "2026-11-15T06:52:49Z",
  "T_plus": "~19.8h of 48h; campaign window ends 2026-11-17T06:52:49Z",
  "state": "USER-APPROVED STOP/CLEAR. User will say 'hi' after /clear -> resume from 'resume_steps'. Re-arm 59-min alarm first; restart heartbeat (./ops/heartbeat.sh) if atq empty.",
- "running_slurm": "J8 full genome join 29261102 RUNNING (started ~02:40Z; est 4-13h; out ~/orcd/scratch/feng/model_v2/j8_genome_v2; requeue-safe)",
+ "running_slurm": "J8 full 29261102; J5 v4 chain 29292355-59",
  "running_workers": "Codex terra F3_rereview4 (-> briefs/F3_REREVIEW4_RESULT.md)",
  "completed_gate_passed": [
   "F1 (38 tests)",
@@ -28,14 +28,17 @@
  "model_routing": "Fable & Opus5.5 refuse [bio] on J4/J6/J8J10 (not retried; user-directed reroutes to astra/opus-5 done). claude -p --model claude-opus-5 works (prompt via stdin). codex: gpt-6-astra, gpt-6.1-sol, gpt-6.1-terra via CLI (MCP down). Claude 5h window ~80% at 23:40Z (reset ~01:40Z); GPT limit hit once, reset 23:24Z.",
  "heartbeat": "at-chain on login009 every 55 min via ops/heartbeat.sh (restart: ./ops/heartbeat.sh); dies if at queue empties",
  "scratch": "quota cache stale (905.7/1024GB at 21:17 EST); user says space exists; old dirs ~/orcd/scratch/{smt-rna,hf_cache,...} NOT mine, undeleted",
- "running_workers_at_clear": "none (all Codex workers finished)",
+ "running_workers_at_clear": "Codex J5_review (sol) -> J5_REVIEW_RESULT.md",
  "resume_steps": [
   "1 re-arm alarm; check ls briefs for J5_RESULT.md and F3_FIX5_RESULT.md; ps for codex",
-  "2 F3: fix5 DONE+verified 639 tests pass (ids opaque ASCII case-sensitive). Needs ONE final light terra re-review (briefs/F3_rereview4.md pattern -> F3_REREVIEW5_RESULT.md); F3 not used for supervised results (no verified negatives)",
-  "3 J5: J5 tests now 32 passed (verified 03:30Z). REAL DATA BLOCKED: all ENCODE peak/KD files (21 RBPs, HepG2+K562; PCBP2 has no K562) have UNVERIFIED assembly (bare ENCFF*.bed.gz, no header) so ingestion correctly refuses. Unblock needs authoritative metadata (ENCODE accession->assembly; network lookup or user-provided table) or a tested liftOver; do NOT guess. Until then J5 = NOT_SUBMITTED/BLOCKED (honest). Read briefs/J5_RESULT.md",
+  "2 F3: DONE. fix5 + final re-review ADVANCE (639 tests; 1 LOW docstring item fixed). F3 is green. Still only usable with honest caller-supplied ids.",
+  "3 J5: v4 chain SUBMITTED (sentinel 29292355 -> index 29292356 -> profile 29292357 -> FULL 29292358 8h/32G afterok -> gate 29292359). Final terra review DONE: all fixed, no cancel; open item = real v4 profile (full job self-checks it and refuses if allocation < 1.5x projection; if it fails, read profile json and resubmit full with larger SBATCH_TIMELIMIT/SBATCH_MEM_PER_NODE). After full+gate: check ~/orcd/scratch/feng/model_v2/j5_j6_v4 gate report. Lookup pinned sha c8d996e1...40929 (+sidecar j5_encode_lookup.tsv.json).",
   "4 J8 full: check job 29261102 state + logs/mv2-j8-full-*.out; gate (its manifest/contract) when done",
-  "5 J10 off-target: module j10_offtarget_profile.py + array 29254991 output j10_offtarget_v1 were submitted by a worker, UNREVIEWED, pre-fix: review, then rerun on reviewed code",
+  "5 J10 off-target: DONE/GREEN. v2 merged: 11,002,701 rows profiled, 256 shards, completeness passed, 0 duplicates (out j10_offtarget_v2). v1 stale - ignore.",
   "6 then J7 binding-to-action (descriptive/PU only, use evaluation_core guards; no supervised claims; wet-lab outcome data excluded), J11 report/figures/model cards, FINAL_LAUNCH_AUDIT.md by 2026-11-17T06:52:49Z (UTC + CST), expire heartbeat (atrm) at T+48h",
   "7 commit local only; no push"
- ]
+ ],
+ "user_directives": "User asleep; keep progressing unattended. AVOID gpt-6-astra (use sol/terra). Claude near limit (87% @ 2026-11-16T05:51:32Z) -> Claude only for short shell checks; model work via Codex. Don't clear/stop on your own; do not push. NO ASTRA until ~2026-11-16T09:46:14Z (Codex 5h reset); sol/terra only before then.",
+ "note_j7": "J7 jobs (array 29303726, merge 29303727, j10_submit_after_j7 29303729) were submitted by ANOTHER actor at 10:28Z; this orchestrator did not author them. Do not modify; review their briefs/FIX_J7_J9_J10_RESULT.md before relying on J7 results; ask user who owns J7.",
+ "WARNING": "another session also writes conference/model_v2 (see USAGE_LEDGER 2026-11-16); avoid git add -A; coordinate numbering (their J5=RBP, J8=join, J10=robustness vs mine J7 geometry, J10 off-target)"
 }

@@ -27,6 +27,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import fcntl
+import tempfile
 import json
 import math
 import os
@@ -55,8 +57,8 @@ from conference.model_v2.trans_intervention import (  # noqa: E402
     reverse_complement,
 )
 
-DATASET_ID = "j9_smn2_v1"
-DATASET_VERSION = "1.0.0"
+DATASET_ID = "j9_smn2_v2"
+DATASET_VERSION = "2.0.0"
 
 REFERENCE_LOCUS_ID = "SMN2_exon7"
 ALTERNATE_LOCUS_IDS = ("SMN1_exon7",)
@@ -92,6 +94,10 @@ ATLAS_SENTINEL_DIR = "~/orcd/scratch/feng/model_v2/j4_sentinel_v2"
 ATLAS_FULL_DIR = "~/orcd/scratch/feng/model_v2/j4_atlas_v1"
 DEFAULT_OUT_DIR = "~/orcd/scratch/feng/model_v2/" + DATASET_ID
 ATLAS_EVIDENCE_LABEL = "sequence_ablation_proxy"
+ATLAS_TISSUES = (0, 2, 4, 6)
+# Fixed by ISS-N1 donor geometry, independent of any observed model delta.
+# Legacy evaluation columns select this endpoint; no acceptor fallback/pooling.
+M5_PRIMARY_ENDPOINT = 'donor'
 
 # --------------------------------------------------------------------------- statistical status
 VERIFIED_NEGATIVES_AVAILABLE = False
@@ -198,12 +204,11 @@ def _allowed_roots() -> Tuple[Path, ...]:
     home = Path(os.path.expanduser("~")).resolve()
     scratch = home / "orcd" / "scratch" / "feng"
     roots = [
-        REPO_ROOT / "conference" / "model_v2",
-        REPO_ROOT / "conference" / "aso_pipeline" / "sequences.py",
         scratch / "gencode" / "v50",
         scratch / "model_v2" / "j4_sentinel_v2",
         scratch / "model_v2" / "j4_atlas_v1",
         scratch / "model_v2" / DATASET_ID,
+        scratch / "model_v2" / "j9_smn2_v3",
     ]
     out = []
     for root in roots:
@@ -214,19 +219,32 @@ def _allowed_roots() -> Tuple[Path, ...]:
     return tuple(out)
 
 
-def check_source_allowed(path: Any) -> Path:
-    """Positive allowlist on every path J9 may touch.
+def _allowed_files() -> Tuple[Path, ...]:
+    base = REPO_ROOT / 'conference' / 'model_v2'
+    return (Path(__file__).absolute(), base / 'trans_intervention.py',
+            base / 'j3_scoring.py', base / 'jobs' / 'j3_vienna.py',
+            base / 'SCIENTIFIC_LOCK.md',
+            REPO_ROOT / 'conference' / 'aso_pipeline' / 'sequences.py')
 
-    Anything that is not the model_v2 tree, the locked ASO sequence module, the
-    pinned GENCODE reference, a J4 atlas directory, or this dataset's own output
-    directory is refused. Lab outcome products are not in the allowlist, so no
-    code path in this module can reach one.
-    """
+
+def _reject_excluded_path(path: Path) -> None:
+    # Lexical guard runs before resolve/stat/open, including in allowed roots.
+    if any(part.lower().split('.', 1)[0] in ('wetlab', 'outcome', 'outcomes') or
+           part.lower().startswith('wetlab_') for part in path.parts):
+        raise ForbiddenSourceError(f'excluded source: {path}')
+
+
+def check_source_allowed(path: Any) -> Path:
+    """Exact implementation files plus dedicated reference/atlas/output roots."""
     candidate = Path(os.path.expanduser(str(path)))
+    _reject_excluded_path(candidate)
     try:
         resolved = candidate.resolve()
     except OSError:
         resolved = candidate.absolute()
+    _reject_excluded_path(resolved)
+    if resolved in _allowed_files():
+        return resolved
     for root in _allowed_roots():
         if resolved == root or root in resolved.parents:
             return resolved
@@ -243,7 +261,7 @@ def _digest(value: Any) -> str:
 
 
 def _sha256(path: Any) -> str:
-    check_source_allowed(path)
+    path = check_source_allowed(path)
     digest = hashlib.sha256()
     with open(path, "rb") as handle:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
@@ -676,6 +694,17 @@ def m4_rows(
 
 
 # ------------------------------------------------------------------ M5 (J4 atlas)
+def _validate_atlas_provenance(provenance: Mapping[str, Any]) -> None:
+    if (provenance.get('model_evidence') is not True or
+            provenance.get('model') != 'Pangolin-1.0.2-splice-probability-four-tissue-three-replicate' or
+            provenance.get('output_channels') != [1, 4, 7, 10]):
+        raise AtlasCoverageError('J4 genuine model provenance required')
+    for name in ('model_sha256', 'weights_sha256', 'source_sha256'):
+        value = provenance.get(name, '')
+        if not isinstance(value, str) or len(value) != 64 or any(c not in '0123456789abcdef' for c in value):
+            raise AtlasCoverageError(f'invalid J4 {name}')
+
+
 def atlas_inputs(atlas_dir: Any) -> List[Dict[str, Any]]:
     """Committed J4 ablation shards only: ``.done`` marker sha256 must match."""
     directory = check_source_allowed(atlas_dir)
@@ -686,7 +715,15 @@ def atlas_inputs(atlas_dir: Any) -> List[Dict[str, Any]]:
     identities: List[Dict[str, Any]] = []
     for done in sorted(directory.glob("*.done")):
         try:
+            done = check_source_allowed(done)
             marker = json.loads(done.read_text())
+            integrity = marker.pop('integrity_sha256', None)
+            provenance = marker['provenance']
+            _validate_atlas_provenance(provenance)
+            if (integrity != _digest(marker) or marker['run_id'] != _digest(marker['plan']) or
+                    marker['plan']['version'] != 1 or marker['plan']['provenance'] != provenance or
+                    marker['status'] not in ('complete', 'complete_with_failures')):
+                raise AtlasCoverageError('J4 marker integrity/plan mismatch')
             entry = marker["ablation"]
             path = check_source_allowed(entry["path"])
         except (OSError, ValueError, KeyError, TypeError) as exc:
@@ -698,9 +735,18 @@ def atlas_inputs(atlas_dir: Any) -> List[Dict[str, Any]]:
         if sha != entry.get("sha256"):
             raise AtlasCoverageError(f"J4 shard checksum mismatch: {path}")
         rows = pq.read_metadata(path).num_rows
-        if rows != entry.get("rows"):
+        if rows != entry.get("rows") or rows != marker['expected_rows']:
             raise AtlasCoverageError(f"J4 shard row-count mismatch: {path}")
-        identities.append({"marker": str(done), "path": str(path), "sha256": sha, "rows": rows})
+        from conference.model_v2.gpu_perturbation_atlas import row_schema
+        schema = pq.read_schema(path)
+        try:
+            if (not schema.equals(row_schema(provenance), check_metadata=False) or
+                    json.loads((schema.metadata or {})[b'provenance']) != provenance):
+                raise AtlasCoverageError('J4 schema/provenance mismatch')
+        except (KeyError, ValueError, TypeError) as exc:
+            raise AtlasCoverageError('J4 schema/provenance missing') from exc
+        identities.append({"marker": str(done), "path": str(path), "sha256": sha, "rows": rows,
+                           'run_id': marker['run_id'], 'provenance': provenance})
     if not identities:
         raise AtlasCoverageError(f"no committed J4 shard in {directory}")
     return identities
@@ -712,13 +758,16 @@ def read_atlas(atlas_dir: Any) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any
 
     rows: List[Dict[str, Any]] = []
     for identity in identities:
-        rows.extend(pq.read_table(identity["path"]).to_pylist())
+        rows.extend(dict(row, _j4_run_id=identity['run_id'])
+                    for row in pq.read_table(identity["path"]).to_pylist())
+        if _sha256(identity['path']) != identity['sha256']:
+            raise AtlasCoverageError('J4 shard changed during read')
     return rows, identities
 
 
 def m5_rows(
     aso: Mapping[str, Any], placement: Any, atlas: Sequence[Mapping[str, Any]],
-    *, atlas_source: str,
+    *, atlas_source: str, atlas_inputs: Sequence[Mapping[str, Any]] = (),
 ) -> List[Dict[str, Any]]:
     """Raw N-ablation model deltas, read ONLY where the atlas covers the footprint."""
     common = dict(aso=aso, baseline="M5", source=atlas_source,
@@ -730,7 +779,6 @@ def m5_rows(
     hits = [
         row for row in atlas
         if row.get("locus") == REFERENCE_LOCUS_ID
-        and row.get("status") == "ok"
         and int(row.get("footprint_start", -1)) == int(placement.start)
         and int(row.get("footprint_end", -1)) == int(placement.end)
         and int(row.get("length", -1)) == int(aso["length"])
@@ -744,28 +792,55 @@ def m5_rows(
                     f"{placement.start}-{placement.end} length={aso['length']}; "
                     "rerun with the full j4_atlas_v1 coverage"),
             **base)]
-    ok = dict(base, evidence_class="proxy", status="ok",
-              reason="raw Pangolin N-mask model delta; not delta-PSI")
+    verified = set()
+    for identity in atlas_inputs:
+        _validate_atlas_provenance(identity['provenance'])
+        verified.add(identity['run_id'])
+    endpoints: Dict[str, Dict[int, Mapping[str, Any]]] = {}
+    for hit in hits:
+        kind, tissue = hit.get('site_kind'), hit.get('tissue')
+        expected_position = {'donor': placement.geometry.donor_last_exonic_base,
+                             'acceptor': placement.geometry.acceptor_first_exonic_base}.get(kind)
+        if (hit.get('chrom') != placement.chrom or hit.get('strand') != placement.strand or
+                expected_position is None or hit.get('site_position') != expected_position or
+                type(tissue) is not int or tissue not in ATLAS_TISSUES):
+            raise AtlasCoverageError('J4 endpoint/placement identity mismatch')
+        channels = endpoints.setdefault(kind, {})
+        if tissue in channels:
+            raise AtlasCoverageError('duplicate J4 endpoint/tissue key (including overlapping windows)')
+        channels[tissue] = hit
     rows: List[Dict[str, Any]] = []
-    deltas: List[float] = []
-    for hit in sorted(hits, key=lambda r: int(r["tissue"])):
-        tissue = int(hit["tissue"])
-        delta = float(hit["raw_model_delta"])
-        deltas.append(delta)
-        rows.append(_row(feature_name=f"m5_raw_model_delta_tissue{tissue}", value_double=delta, **ok))
-        rows.append(_row(feature_name=f"m5_reference_score_tissue{tissue}",
-                         value_double=float(hit["reference_score"]), **ok))
-        rows.append(_row(feature_name=f"m5_masked_score_tissue{tissue}",
-                         value_double=float(hit["masked_score"]), **ok))
-    rows.append(_row(feature_name="m5_raw_model_delta_mean",
-                     value_double=sum(deltas) / len(deltas), **ok))
-    rows.append(_row(feature_name="m5_raw_model_delta_max", value_double=max(deltas), **ok))
-    rows.append(_row(feature_name="m5_n_tissue_channels", value_int=len(deltas), **ok))
-    rows.append(_row(feature_name="m5_site_kind",
-                     value_string=str(hits[0].get("site_kind", "")), **ok))
-    rows.append(_row(feature_name="m5_interpretation",
-                     value_string="N-ablation cis-feature sensitivity; not occupancy or delta PSI",
-                     **dict(ok, evidence_class="model_assumption")))
+    for kind, channels in sorted(endpoints.items()):
+        prefix = f'm5_{kind}_'
+        genuine = (set(channels) == set(ATLAS_TISSUES) and all(
+            hit.get('_j4_run_id') in verified and hit.get('model_evidence') is True and
+            hit.get('evidence_category') == 'proxy' and
+            hit.get('evidence_class') == ATLAS_EVIDENCE_LABEL and hit.get('status') == 'ok'
+            for hit in channels.values()))
+        if not genuine:
+            rows.append(_row(feature_name=prefix+'sequence_ablation_proxy',
+                evidence_class='not_available', status='not_available',
+                reason='complete genuine J4 provenance and all four tissue channels required', **base))
+            continue
+        ok = dict(base, evidence_class='proxy', status='ok',
+                  reason='raw Pangolin N-mask model delta; not delta-PSI; endpoint-specific')
+        deltas = []
+        for tissue, hit in sorted(channels.items()):
+            values = [hit.get(k) for k in ('raw_model_delta','reference_score','masked_score')]
+            if (any(type(v) not in (int,float) or not math.isfinite(v) for v in values) or
+                    not 0 <= values[1] <= 1 or not 0 <= values[2] <= 1 or
+                    not math.isclose(values[0], values[2]-values[1], abs_tol=1e-7)):
+                raise AtlasCoverageError('invalid J4 scores/delta')
+            deltas.append(values[0])
+            for name, value in zip(('raw_model_delta','reference_score','masked_score'), values):
+                rows.append(_row(feature_name=f'{prefix}{name}_tissue{tissue}', value_double=value, **ok))
+        rows.append(_row(feature_name=prefix+'raw_model_delta_mean', value_double=sum(deltas)/4, **ok))
+        rows.append(_row(feature_name=prefix+'raw_model_delta_max', value_double=max(deltas), **ok))
+        rows.append(_row(feature_name=prefix+'n_tissue_channels', value_int=4, **ok))
+        if kind == M5_PRIMARY_ENDPOINT:
+            primary = dict(ok, reason=ok['reason']+'; prespecified primary endpoint=donor')
+            rows.append(_row(feature_name="m5_raw_model_delta_mean", value_double=sum(deltas)/4, **primary))
+            rows.append(_row(feature_name="m5_raw_model_delta_max", value_double=max(deltas), **primary))
     return rows
 
 
@@ -812,6 +887,23 @@ def mismatch_sensitivity_rows(
 
 
 # --------------------------------------------------------------------------- assembly
+def reference_identity(genome: Any) -> Dict[str, Any]:
+    """Bounded indexed-FASTA identity, rechecked around the complete build."""
+    if genome is None:
+        return {'status': 'missing'}
+    if hasattr(genome, 'path'):
+        path = check_source_allowed(genome.path)
+        index = check_source_allowed(genome.fai_path)
+        stat = path.stat()
+        return dict(path=str(path), size=stat.st_size, mtime_ns=stat.st_mtime_ns,
+                    fai_sha256=_sha256(index))
+    if hasattr(genome, '_seqs'):
+        return {'synthetic_sha256': _digest(genome._seqs)}
+    if hasattr(genome, 'reference_identity'):
+        return {'synthetic_sha256': _digest(genome.reference_identity())}
+    raise ValueError('reference must expose indexed FASTA or explicit synthetic identity')
+
+
 def _excluded_rows(aso: Mapping[str, Any], record: Mapping[str, Any]) -> List[Dict[str, Any]]:
     """One explicit not_available row per baseline, plus optional hypothesis rows."""
     aso_id = str(aso["aso_id"])
@@ -847,6 +939,10 @@ def build_features(
     cache_path: Any = None, registry: Optional[Mapping[str, Any]] = None,
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """Assemble the long-format feature table plus its provenance block."""
+    check_source_allowed(atlas_dir)
+    if cache_path is not None:
+        check_source_allowed(cache_path)
+    reference = reference_identity(genome)
     registry = aso_registry() if registry is None else registry
     placements = place_asos(genome, registry)
     order = m0_random_order(RANKED_ASO_IDS)
@@ -893,7 +989,8 @@ def build_features(
                     variant_id=variant_id,
                     variant={"flank": flank, "plfold_window": window, "plfold_span": span}))
             rows.extend(m4_rows(aso, placement, placement_status=record["status"]))
-            rows.extend(m5_rows(aso, placement, atlas, atlas_source=atlas_source))
+            rows.extend(m5_rows(aso, placement, atlas, atlas_source=atlas_source,
+                                atlas_inputs=atlas_identities))
             for name in sorted(record["alternates"]):
                 alternate = record["alternates"][name]
                 rows.append(_row(
@@ -916,14 +1013,21 @@ def build_features(
             reason=scrambles["reason"], source="j9:sequences.py",
             evidence_label="not_available"))
 
+    if reference_identity(genome) != reference:
+        raise ValueError('reference identity changed during build')
     provenance = {
         "atlas_dir": str(Path(os.path.expanduser(str(atlas_dir)))),
         "atlas_status": atlas_note,
         "atlas_inputs": atlas_identities,
         "atlas_rows_read": len(atlas),
+        "m5_endpoint_policy": {
+            "separate_endpoints": True, "primary_endpoint": M5_PRIMARY_ENDPOINT,
+            "legacy_columns": "donor only, no fallback; complete tissues 0,2,4,6 required",
+        },
         "backend_kind": _backend_kind(backend),
         "backend_identity": dict(getattr(backend, "identity", {})),
         "genome_available": genome is not None,
+        "reference": reference,
         "scorer_params": {
             variant_id: {k: v for k, v in scorers[variant_id].params.items() if k != "backend"}
             for variant_id, *_ in VIENNA_ALTERNATIVES
@@ -966,6 +1070,10 @@ RANK_DIRECTIONS: Dict[str, str] = {
     "m4_abs_donor_dist_5p_from_last_exonic": "asc",
     "m4_abs_acceptor_dist_3p_from_first_exonic": "asc",
     "m4_target_span_nt": "desc",
+    "m5_donor_raw_model_delta_mean": "desc",
+    "m5_donor_raw_model_delta_max": "desc",
+    "m5_acceptor_raw_model_delta_mean": "desc",
+    "m5_acceptor_raw_model_delta_max": "desc",
     "m5_raw_model_delta_mean": "desc",
     "m5_raw_model_delta_max": "desc",
 }
@@ -1027,13 +1135,26 @@ def build_ranks(features: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
     for row in ranks:
         by_aso.setdefault((row["baseline"], row["feature_name"], row["aso_id"]), []).append(row["rank"])
     for (baseline, feature_name, aso_id), observed in sorted(by_aso.items()):
+        expected_variants = ({v for v, *_ in VIENNA_ALTERNATIVES} if baseline in ('M2','M3')
+            else {f'mm{m}' for m in MAX_MISMATCH_ALTERNATIVES}
+            if feature_name in ('m1_n_sites_in_locus_window','m1_n_exact_sites_in_locus_window')
+            else {'default'})
+        memberships = {variant: [item[0] for item in items]
+                       for (b,f,variant),items in groups.items()
+                       if (b,f) == (baseline,feature_name)}
+        complete = (set(memberships) == expected_variants and all(
+            len(members) == len(RANKED_ASO_IDS) and set(members) == set(RANKED_ASO_IDS)
+            for members in memberships.values()))
         ranks.append(_rank_row(
             section="stability", baseline=baseline, feature_name=feature_name,
             variant_id="all", aso_id=aso_id, direction=RANK_DIRECTIONS[feature_name],
-            min_rank=min(observed), max_rank=max(observed),
-            rank_range=max(observed) - min(observed), n_variants=len(observed),
-            stable=bool(max(observed) == min(observed)), evidence_class="derived",
-            status="ok", reason="rank spread across prespecified alternatives"))
+            min_rank=min(observed) if complete else None, max_rank=max(observed) if complete else None,
+            rank_range=max(observed) - min(observed) if complete else None, n_variants=len(observed),
+            stable=bool(max(observed) == min(observed)) if complete else None,
+            evidence_class="derived" if complete else 'not_available',
+            status="ok" if complete else 'not_available',
+            reason="rank spread across prespecified alternatives" if complete else
+                   'incomplete prespecified alternatives or incomparable ASO membership'))
     ranks.sort(key=lambda r: (r["section"], r["baseline"], r["feature_name"],
                               r["variant_id"], r["aso_id"]))
     return ranks
@@ -1092,6 +1213,9 @@ Descriptive feature tables for the ISS-N1 ASOs {ranked}. **Not a trained,
 fitted or validated predictor.** Nothing here was selected against an outcome.
 
 ## Files
+Read with `read_dataset(out_dir)` to pin one generation and verify manifest hashes.
+`.current` is atomically switched after staging; retained `.generations` protect
+concurrent readers. Separate opens of top-level aliases are not a snapshot.
 - `features.parquet` - long format, one row per (ASO, baseline, feature, alternative).
   Every row carries `evidence_class` ({classes}) plus an `evidence_label`,
   `status` and `reason`. Values are never present without a label.
@@ -1140,7 +1264,7 @@ J3 context flank equal to the window W so M2 and M3 both move with it) and
 """
 
 
-def write_dataset(
+def _stage_dataset(
     out_dir: Any, features: Sequence[Mapping[str, Any]], ranks: Sequence[Mapping[str, Any]],
     provenance: Mapping[str, Any], *, command: str = "",
 ) -> Dict[str, Any]:
@@ -1190,7 +1314,6 @@ def write_dataset(
         "reproduce_command": command,
         "note": "deterministic by construction: no timestamp is recorded in this manifest",
     }
-    (directory / "manifest.json").write_text(_json(manifest) + "\n", encoding="utf-8")
 
     scrambles = provenance.get("scramble_controls", {})
     (directory / "README.md").write_text(README_TEMPLATE.format(
@@ -1209,7 +1332,78 @@ def write_dataset(
         genome_available=provenance.get("genome_available", False),
         command=command or "see conference/model_v2/jobs/j9_smn2.sbatch",
     ), encoding="utf-8")
+    # Manifest is the last staged file, after payload verification.
+    for output in outputs:
+        _verify_output(directory / output["name"], output)
+    (directory / "manifest.json").write_text(_json(manifest) + "\n", encoding="utf-8")
     return manifest
+
+
+def _verify_output(path, output):
+    import pyarrow.parquet as pq
+    if (path.stat().st_size != output["bytes"] or _sha256(path) != output["sha256"]
+            or pq.read_metadata(path).num_rows != output["rows"]):
+        raise ValueError("dataset output hash/integrity mismatch")
+
+
+def read_dataset(out_dir):
+    """Pin one immutable generation and verify hashes before returning tables.
+
+    Consumers must use this reader (or resolve .current once and verify the
+    manifest). Separate top-level alias opens are not a snapshot. Published
+    generations are retained for concurrent readers.
+    """
+    import pyarrow.parquet as pq
+    root = check_source_allowed(out_dir)
+    directory = check_source_allowed(root / ".current")
+    manifest = json.loads((directory / "manifest.json").read_text())
+    if {o["name"] for o in manifest["outputs"]} != {"features.parquet", "ranks.parquet"} or len(manifest["outputs"]) != 2:
+        raise ValueError("invalid dataset outputs")
+    tables = {}
+    for output in manifest["outputs"]:
+        path = directory / output["name"]
+        _verify_output(path, output)
+        tables[path.stem] = pq.read_table(path)
+    return dict(manifest=manifest, **tables)
+
+
+def write_dataset(out_dir, features, ranks, provenance, *, command=""):
+    """Stage and verify a generation, then atomically publish its manifest/data."""
+    root = check_source_allowed(out_dir)
+    root.mkdir(parents=True, exist_ok=True)
+    names = ("features.parquet", "ranks.parquet", "README.md", "manifest.json")
+    with (root / ".publish.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        for name in names:
+            alias = root / name
+            if (alias.exists() or alias.is_symlink()) and (
+                    not alias.is_symlink() or os.readlink(alias) != ".current/" + name):
+                raise ValueError("legacy dataset requires a fresh output root")
+        generations = root / ".generations"
+        generations.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=generations, prefix="stage-") as tmp:
+            stage = Path(tmp)
+            manifest = _stage_dataset(stage, features, ranks, provenance, command=command)
+            generation = generations / _sha256(stage / "manifest.json")
+            for name in names:
+                with (stage / name).open("rb") as handle:
+                    os.fsync(handle.fileno())
+            if generation.exists():
+                for output in manifest["outputs"]:
+                    _verify_output(generation / output["name"], output)
+                if (generation / "manifest.json").read_bytes() != (stage / "manifest.json").read_bytes():
+                    raise ValueError("generation manifest mismatch")
+            else:
+                os.rename(stage, generation)
+            for name in names:
+                alias = root / name
+                if not alias.is_symlink():
+                    alias.symlink_to(".current/" + name)
+            pointer = root / ".current.next"
+            pointer.unlink(missing_ok=True)
+            pointer.symlink_to(generation.relative_to(root))
+            os.replace(pointer, root / ".current")
+        return manifest
 
 
 def build(
@@ -1217,6 +1411,9 @@ def build(
     genome: Any = None, backend: Any = None, cache_path: Any = None,
     command: str = "",
 ) -> Dict[str, Any]:
+    check_source_allowed(out_dir)
+    check_source_allowed(atlas_dir)
+    check_source_allowed(cache_path if cache_path is not None else out_dir)
     owns_backend = backend is None
     backend = StubBackend() if owns_backend else backend
     try:
@@ -1234,14 +1431,18 @@ def build(
 def _open_genome(path: Optional[str], enabled: bool) -> Any:
     if not enabled:
         return None
+    path = check_source_allowed(path or DEFAULT_FASTA)
+    check_source_allowed(str(path) + '.fai')
     try:
-        return FaiFastaReader(check_source_allowed(path or DEFAULT_FASTA))
-    except (GenomeAccessError, ForbiddenSourceError) as exc:
+        return FaiFastaReader(path)
+    except GenomeAccessError as exc:
         print(f"reference unavailable: {exc}", file=sys.stderr)
         return None
 
 
 def _cmd_build(args: argparse.Namespace) -> int:
+    for path in (args.out_dir, args.atlas_dir, args.cache or args.out_dir):
+        check_source_allowed(path)
     genome = _open_genome(args.fasta, not args.no_genome)
     backend: Any
     if args.stub_backend:

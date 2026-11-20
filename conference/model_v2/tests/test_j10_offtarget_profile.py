@@ -87,6 +87,53 @@ def write_source(path, rows, index, count):
         shard_index=index, shard_count=count, params=dict(window=120, span=60, flank=80)))
 
 
+@pytest.mark.parametrize('reader', ['load', 'merge'])
+def test_reader_keeps_committed_generation_during_replacement(tmp_path, monkeypatch, reader):
+    """A writer scheduled after hashing must not replace the payload before reading."""
+    import fcntl
+    import json
+
+    m = module()
+    src, out = tmp_path / 'src', tmp_path / 'out'
+    src.mkdir()
+    write_source(src / 'j3_shard0000_of0001.parquet', [row()], 0, 1)
+    original = m.partial(src, out, 0, shard_count=1)
+    base = out / 'j10_partial0000'
+    identity = json.loads(base.with_suffix('.done').read_text())['identity']
+    replacement = dict(original, counts=m.summarize([row(accessibility_p_unpaired=0)])['counts'])
+    replacement_identity = dict(identity, source=dict(identity['source'], inputs_sha256='generation-B'))
+    read_metadata = pq.read_metadata
+
+    def replace_between_hash_and_payload(path, *args, **kwargs):
+        if Path(path) == base.with_suffix('.parquet'):
+            with base.with_suffix('.lock').open('a') as lock:
+                try:
+                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    pass  # The reader holds the writer's lock: replacement must wait.
+                else:
+                    m.commit(base, replacement, replacement_identity)
+        return read_metadata(path, *args, **kwargs)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(pq, 'read_metadata', replace_between_hash_and_payload)
+        if reader == 'load':
+            result, marker = m.load(base, identity)
+            assert marker['identity'] == identity
+        else:
+            result = m.merge(out, shard_count=1, expected_rows=1)
+            marker = json.loads((out / 'j10_profile.done').read_text())
+            assert marker['identity']['partial_markers'][0]['identity'] == identity
+        assert totals(result)['accessibility_pass'] == 1
+
+    # Replacement can commit once the reader has released its snapshot lock.
+    with m.locked(base):
+        m.commit(base, replacement, replacement_identity)
+    assert totals(m.load(base, replacement_identity)[0])['accessibility_pass'] == 0
+    with pytest.raises(ValueError, match='incompatible partial identity'):
+        m.load(base, identity)
+
+
 def test_stage_merge_single_pass_recovery_and_completeness(tmp_path):
     m = module()
     src, out = tmp_path / 'src', tmp_path / 'out'

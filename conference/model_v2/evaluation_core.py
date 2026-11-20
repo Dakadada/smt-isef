@@ -25,7 +25,10 @@ are opaque, CASE-SENSITIVE strings of 1..128 ASCII characters from
 characters raise ``SchemaError``; IDs are never stripped, casefolded or Unicode
 normalized. Public table consumers (including ``read_table``) validate this contract.
 Sequence, chromosome and chemistry aliases remain canonicalized for assay identity.
-Callers must assign distinct assay IDs to genuine replicate assays within a study.
+Callers must assign distinct assay IDs to genuine replicate assays within a study, and
+MUST keep the SAME assay ID on every copy of one assay record (copies relabelled with new
+IDs cannot be detected and would reweight metrics). Provenance and ID honesty are
+validated upstream, not by this module.
 
 ``check_source_not_forbidden`` refuses the July exon-7 outcome workbook, any ``psi25``
 directory and anything under ``feng/terminal`` (SCIENTIFIC_LOCK).

@@ -16,4 +16,5 @@ set -euo pipefail
 cd /home/dashii/smt-isef
 export PYTHONPATH=feng/src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ARROW_NUM_THREADS=1
 exec /usr/bin/time -v /home/dashii/orcd/pool/smt-isef-env/bin/python -m conference.model_v2.j10_offtarget_profile partial \
-  --shard-index "${SLURM_ARRAY_TASK_ID}" --shard-count 256
+  --shard-index "${SLURM_ARRAY_TASK_ID}" --shard-count 256 \
+  --output-dir ~/orcd/scratch/feng/model_v2/j10_offtarget_v2

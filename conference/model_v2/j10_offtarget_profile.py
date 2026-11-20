@@ -211,6 +211,16 @@ def commit(base, payload, identity):
 
 
 def load(base, identity=None):
+    """Read one committed generation under the same lock used by partial writers."""
+    try:
+        with locked(base):
+            return _load_locked(base, identity)
+    except OSError as exc:
+        raise ValueError(f'invalid partial {base}: {exc}') from exc
+
+
+def _load_locked(base, identity=None):
+    """Caller must hold locked(base) across marker, hash, and payload reads."""
     try:
         marker = json.loads(base.with_suffix('.done').read_text())
         if identity is not None and marker['identity'] != identity:
@@ -253,7 +263,7 @@ def partial(input_dir, output_dir, index, *, shard_count=256):
         source = source_identity(path, index, shard_count)
         identity = dict(config=config(), source=source)
         try:
-            return load(base, identity)[0]
+            return _load_locked(base, identity)[0]
         except ValueError:
             pass
         base.with_suffix('.done').unlink(missing_ok=True)
@@ -274,6 +284,10 @@ def partial(input_dir, output_dir, index, *, shard_count=256):
 
 
 def merge(output_dir, *, shard_count=256, expected_rows=11002701):
+    if type(shard_count) is not int or shard_count <= 0:
+        raise ValueError('shard_count must be a positive integer')
+    if type(expected_rows) is not int or expected_rows < 0:
+        raise ValueError('expected_rows must be a nonnegative integer')
     out = Path(output_dir).expanduser()
     base = out / 'j10_profile'
     with locked(base):
@@ -324,11 +338,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('stage', choices=('partial', 'merge'))
     parser.add_argument('--input-dir', default='~/orcd/scratch/feng/model_v2/j3_genome_v1')
-    parser.add_argument('--output-dir', default='~/orcd/scratch/feng/model_v2/j10_offtarget_v1')
+    parser.add_argument('--output-dir', default='~/orcd/scratch/feng/model_v2/j10_offtarget_v2')
     parser.add_argument('--shard-index', type=int, default=0)
     parser.add_argument('--shard-count', type=int, default=256)
     parser.add_argument('--expected-rows', type=int, default=11002701)
     args = parser.parse_args()
+    if args.shard_count != 256:
+        parser.error('production CLI requires exactly 256 shards; synthetic counts use the Python API')
+    if args.expected_rows < 0:
+        parser.error('expected rows must be nonnegative')
     if args.stage == 'partial':
         result = partial(args.input_dir, args.output_dir, args.shard_index, shard_count=args.shard_count)
     else:

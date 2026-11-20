@@ -62,6 +62,9 @@ class SparseGenome:
         self.filler = filler
         self.patches = tuple(sorted(patches))  # (start_1based, sequence)
 
+    def reference_identity(self):
+        return dict(length=self.contig_length, filler=self.filler, patches=self.patches)
+
     def length(self, chrom: str) -> str:
         if chrom != "chr5":
             raise ti.GenomeAccessError(f"unknown contig {chrom!r}")
@@ -99,6 +102,15 @@ def _patches():
     ]
 
 
+@pytest.fixture(scope="module", autouse=True)
+def synthetic_sources(tmp_path_factory):
+    original = j9._allowed_roots
+    root = tmp_path_factory.mktemp('j9_sources')
+    j9._allowed_roots = lambda: original() + (root,)
+    yield root
+    j9._allowed_roots = original
+
+
 @pytest.fixture(scope="module")
 def genome():
     return SparseGenome(SMN1.search_end + 1000, _patches())
@@ -110,13 +122,17 @@ def registry():
 
 
 @pytest.fixture(scope="module")
-def built(genome, registry, tmp_path_factory):
-    out = tmp_path_factory.mktemp("j9") / "j9_smn2_v1"
+def built(genome, registry, tmp_path_factory, synthetic_sources):
+    out = synthetic_sources / "j9_smn2_v2"
+    from conference.model_v2.tests.test_j7_j9_j10_regressions import committed_atlas, atlas_rows
+    atlas_dir = out.parent / 'atlas'
+    placement = j9.place_asos(genome, registry)['F18']['placement']
+    committed_atlas(atlas_dir, atlas_rows(placement))
     backend = j9.StubBackend()
     try:
         features, provenance = j9.build_features(
             genome=genome, backend=backend,
-            atlas_dir=j9.ATLAS_SENTINEL_DIR, cache_path=out, registry=registry)
+            atlas_dir=atlas_dir, cache_path=out, registry=registry)
     finally:
         backend.close()
     ranks = j9.build_ranks(features)
@@ -378,7 +394,7 @@ def test_m5_reads_the_atlas_only_where_it_covers_the_footprint(built):
 def test_m5_delta_is_labelled_raw_model_delta_not_dpsi(built):
     rows = [r for r in built["features"]
             if r["baseline"] == "M5" and r["status"] == "ok"
-            and r["feature_name"].startswith("m5_raw_model_delta")]
+            and "raw_model_delta" in r["feature_name"]]
     if not rows:
         pytest.skip("J4 atlas unavailable in this environment")
     assert all("not delta-PSI" in r["reason"] for r in rows)
@@ -411,10 +427,12 @@ def test_m2_assumption_row_is_carried_verbatim(built):
     assert all(r["value_string"] == j3_assumption() for r in rows)
 
 
-def test_null_backend_marks_m2_m3_not_available_and_points_at_the_sbatch(registry, tmp_path, genome):
+def test_null_backend_marks_m2_m3_not_available_and_points_at_the_sbatch(registry, tmp_path, genome, monkeypatch):
+    original = j9._allowed_roots
+    monkeypatch.setattr(j9, "_allowed_roots", lambda: original() + (tmp_path,))
     backend = j9.NullBackend()
     features, provenance = j9.build_features(
-        genome=genome, backend=backend, atlas_dir=j9.ATLAS_SENTINEL_DIR,
+        genome=genome, backend=backend, atlas_dir=tmp_path / "missing_atlas",
         cache_path=tmp_path, registry=registry)
     assert provenance["backend_kind"] == "unavailable"
     rows = [r for r in features if r["baseline"] in ("M2", "M3")
@@ -428,11 +446,13 @@ def test_null_backend_marks_m2_m3_not_available_and_points_at_the_sbatch(registr
     assert [r for r in ranks if r["baseline"] in ("M0", "M1", "M4")]
 
 
-def test_missing_reference_degrades_instead_of_guessing(registry, tmp_path):
+def test_missing_reference_degrades_instead_of_guessing(registry, tmp_path, monkeypatch):
+    original = j9._allowed_roots
+    monkeypatch.setattr(j9, "_allowed_roots", lambda: original() + (tmp_path,))
     backend = j9.StubBackend()
     try:
         features, provenance = j9.build_features(
-            genome=None, backend=backend, atlas_dir=j9.ATLAS_SENTINEL_DIR,
+            genome=None, backend=backend, atlas_dir=tmp_path / "missing_atlas",
             cache_path=tmp_path, registry=registry)
     finally:
         backend.close()
@@ -472,8 +492,11 @@ def test_rank_stability_section_spans_the_prespecified_alternatives(built):
     assert stability
     for row in stability:
         assert row["variant_id"] == "all"
-        assert row["rank_range"] == row["max_rank"] - row["min_rank"]
-        assert row["stable"] == (row["rank_range"] == 0)
+        if row['status'] == 'not_available':
+            assert row['stable'] is None and row['rank_range'] is None
+        else:
+            assert row["rank_range"] == row["max_rank"] - row["min_rank"]
+            assert row["stable"] == (row["rank_range"] == 0)
         assert row["n_variants"] >= 1
     mismatch = [r for r in stability if r["feature_name"] == "m1_n_sites_in_locus_window"]
     assert mismatch and all(r["n_variants"] == len(j9.MAX_MISMATCH_ALTERNATIVES)
@@ -535,7 +558,7 @@ def test_write_dataset_emits_all_four_artifacts(written):
 
 def test_manifest_records_hashes_sources_and_git_commit(written):
     manifest = json.loads((written["dir"] / "manifest.json").read_text())
-    assert manifest["dataset_id"] == "j9_smn2_v1"
+    assert manifest["dataset_id"] == "j9_smn2_v2"
     assert manifest["statistical_status"] == j9.STATISTICAL_STATUS
     assert set(manifest["excluded_asos"]) == {"3UP8"}
     assert manifest["ranked_aso_ids"] == list(j9.RANKED_ASO_IDS)
@@ -569,7 +592,7 @@ def test_parquet_carries_the_statistical_status_in_its_metadata(written):
     for name in ("features.parquet", "ranks.parquet"):
         schema = pq.read_schema(written["dir"] / name)
         metadata = schema.metadata or {}
-        assert metadata[b"dataset_id"] == b"j9_smn2_v1"
+        assert metadata[b"dataset_id"] == b"j9_smn2_v2"
         assert b"no verified negatives" in metadata[b"supervision"]
         status = json.loads(metadata[b"statistical_status"])
         assert status["verified_negatives"] is False

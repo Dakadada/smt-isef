@@ -52,3 +52,26 @@
 {"ts":"2026-11-16T02:37:22Z","event":"dispatch","task":"F3_rereview4","worker":"codex gpt-6.1-terra medium"}
 {"ts":"2026-11-16T02:40:39Z","event":"dispatch","task":"J5","worker":"codex gpt-6.1-sol high","note":"user: finish everything up to J7 before /clear"}
 {"ts":"2026-11-16T03:03:15Z","event":"dispatch","task":"F3_fix5","worker":"codex gpt-6.1-sol medium","note":"rereview4 DO-NOT-ADVANCE 2 MED; structural fix: ASCII opaque case-sensitive ids"}
+{"ts":"2026-11-16T03:33:04Z","event":"dispatch","task":"J10off_review","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-16T03:33:04Z","event":"dispatch","task":"F3_rereview5","worker":"codex gpt-6.1-terra medium"}
+{"ts":"2026-11-16T03:34:12Z","event":"dispatch","task":"J7","worker":"codex gpt-6.1-sol medium"}
+{"ts":"2026-11-16T03:34:33Z","event":"dispatch","task":"J5_lift","worker":"codex gpt-6.1-sol high","note":"ENCODE lookup: all 152 files hg19"}
+{"ts":"2026-11-16T03:36:39Z","task":"F3","event":"ADVANCE (rereview5), docstring caller-responsibility added by orchestrator"}
+{"ts":"2026-11-16T03:39:32Z","event":"dispatch","task":"J10off_fix","worker":"codex gpt-6.1-sol medium","note":"review: 1 MED race; output v1 usable after rerun; new dir v2"}
+{"ts":"2026-11-16T03:48:52Z","event":"dispatch","task":"J5_review","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-16T03:59:07Z","event":"dispatch","task":"J5_fix","worker":"codex gpt-6-astra high","note":"J5 review DO-NOT-ADVANCE 2H 2M"}
+{"ts":"2026-11-16T04:30:52Z","obs":"Codex usage limit hit again at ~04:2xZ; J5_fix Astra worker cut mid-task (partial edits in j5_rbp_context.py); resets 11:41 PM EST = 04:41Z; re-dispatch after"}
+{"ts":"2026-11-16T04:43:56Z","event":"dispatch","task":"J5_fix (continuation)","worker":"codex gpt-6-astra high"}
+{"ts":"2026-11-16T05:06:02Z","event":"dispatch","task":"J5_rereview","worker":"codex gpt-6.1-terra medium"}
+{"ts":"2026-11-16T05:29:22Z","event":"dispatch","task":"J5_fix2","worker":"codex gpt-6.1-sol medium","note":"rereview DO-NOT-ADVANCE: identity spoof + benchmark config"}
+{"ts":"2026-11-16T05:51:32Z","obs":"user sleeping, keep progressing. Claude 87% used, 1h19m left. Codex 59% left, 3h54m to reset. USER SAYS AVOID ASTRA (use gpt-6.1-sol / gpt-6.1-terra only)"}
+{"ts":"2026-11-16T05:52:14Z","obs":"NO ASTRA until Codex 5h reset ~2026-11-16T09:46:14Z (user). Sol/terra OK."}
+{"ts":"2026-11-16T06:32:06Z","event":"dispatch","task":"J11","worker":"codex gpt-6.1-sol medium"}
+{"ts":"2026-11-16T07:30:26Z","event":"redispatch","task":"J11","worker":"codex gpt-6.1-sol medium","note":"first attempt launched with cwd=ops, workspace not writable; relaunched from repo root"}
+{"ts":"2026-11-16T07:40:27Z","event":"dispatch","task":"J5_rereview2","worker":"codex gpt-6.1-terra medium"}
+{"ts":"2026-11-16T07:50:06Z","event":"dispatch","task":"J5_fix3","worker":"codex gpt-6.1-sol medium","note":"rereview2 DO-NOT-ADVANCE; lookup sha same because deterministic data (orchestrator reran strict lookup post-fix2)"}
+{"ts":"2026-11-16T08:01:41Z","event":"dispatch","task":"J5_rereview3","worker":"codex gpt-6.1-terra medium"}
+{"ts":"2026-11-16T08:30:04Z","event":"dispatch","task":"REVIEW_J7_J9_J10","worker":"codex gpt-6.1-sol high"}
+{"ts":"2026-11-16T09:29:02Z","event":"dispatch","task":"FIX_J7_J9_J10","worker":"codex gpt-6.1-sol high","note":"review: all three DO-NOT-ADVANCE (4H 4M); J9 allowlist included data/wetlab (path check only; workbook never opened)"}
+{"ts":"2026-11-16T10:47:17Z","obs":"UNEXPECTED: J7 array 29303726 (256), j7_merge 29303727, j10_submit 29303729 submitted 2026-11-16T05:28 EST (10:28Z) by an actor other than this orchestrator (no dispatch from this session; files jobs/j7_*.sbatch, j10_submit_after_j7.sbatch, FIX_J7_J9_J10_RESULT.md exist). Likely another session/user. NOT touched."}
+{"ts":"2026-11-16T11:27:26Z","WARNING":"CONCURRENT WRITER: commits bf08e3e 9bbfdbf 0b78aa3 ddeced1 46dff06 (18:23Z-22:09Z) and Slurm jobs mv2-j5-full/j5-gate (29292358/9, submitted 03:01Z) were NOT made by this orchestrator session; another session is editing conference/model_v2 (J5 RBP, J8 join, J10 robustness, F3 fixes). Uncommitted evaluation_core.py edits not mine. Do not git add -A; commit only owned files."}

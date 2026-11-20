@@ -16,7 +16,7 @@ export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export ARROW_NUM_THREADS=1
 
-OUT_DIR="${J9_OUT_DIR:-$HOME/orcd/scratch/feng/model_v2/j9_smn2_v1}"
+OUT_DIR="${J9_OUT_DIR:-$HOME/orcd/scratch/feng/model_v2/j9_smn2_v2}"
 ATLAS_DIR="${J9_ATLAS_DIR:-$HOME/orcd/scratch/feng/model_v2/j4_sentinel_v2}"
 
 mkdir -p "$OUT_DIR"

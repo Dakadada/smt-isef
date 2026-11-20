@@ -1,0 +1,153 @@
+kind	rbp	cell	file	accession	assembly	file_format	format_type	output_type	status	dataset	md5	file_size	target_label	biosample_term_name	identity_status	lookup	error
+eclip_peaks	FUS	HepG2	ENCFF106CGP.bed.gz	ENCFF106CGP	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR464OSH/	7ad2af4ba04e57e0d509d9b474bd974c	2357056	FUS	HepG2	verified	ok	
+eclip_peaks	FUS	HepG2	ENCFF163PLH.bed.gz	ENCFF163PLH	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR464OSH/	54fb155c8de3c744c0eeb71a8868ae2b	2651159	FUS	HepG2	verified	ok	
+eclip_peaks	FUS	HepG2	ENCFF336WDV.bed.gz	ENCFF336WDV	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR464OSH/	9c25f7912bfa7cb89e6a897bf3187616	17093	FUS	HepG2	verified	ok	
+eclip_peaks	FUS	K562	ENCFF446LST.bed.gz	ENCFF446LST	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR069EVH/	921e644e37d317ab49f279037ab67117	2198877	FUS	K562	verified	ok	
+eclip_peaks	FUS	K562	ENCFF764SZR.bed.gz	ENCFF764SZR	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR069EVH/	a9d18ceaa11661e1968b7e5429c8cb04	2431127	FUS	K562	verified	ok	
+eclip_peaks	FUS	K562	ENCFF777FHS.bed.gz	ENCFF777FHS	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR069EVH/	b012a3dd495797ca17017a2386bb9fb4	98568	FUS	K562	verified	ok	
+eclip_peaks	HNRNPA1	HepG2	ENCFF121XLA.bed.gz	ENCFF121XLA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR769UEW/	55475d71b28aa6c5b7fded3ac189d87f	2579	HNRNPA1	HepG2	verified	ok	
+eclip_peaks	HNRNPA1	HepG2	ENCFF535MAE.bed.gz	ENCFF535MAE	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR769UEW/	2a22e88da50cdb054bc871d929e48c12	3109684	HNRNPA1	HepG2	verified	ok	
+eclip_peaks	HNRNPA1	HepG2	ENCFF604WJZ.bed.gz	ENCFF604WJZ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR769UEW/	feff74ab6f54dc1e76ca70ff999a21cb	5493192	HNRNPA1	HepG2	verified	ok	
+eclip_peaks	HNRNPA1	K562	ENCFF174RLY.bed.gz	ENCFF174RLY	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR154HRN/	07c1e1aad45ea3114599d918fd3c8500	1320476	HNRNPA1	K562	verified	ok	
+eclip_peaks	HNRNPA1	K562	ENCFF615KJU.bed.gz	ENCFF615KJU	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR154HRN/	8fe679fc042c22fbe3210dd164c1a1ee	3326928	HNRNPA1	K562	verified	ok	
+eclip_peaks	HNRNPA1	K562	ENCFF955PCQ.bed.gz	ENCFF955PCQ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR154HRN/	dbe95961ae301761bc1151578a45a2ea	4055	HNRNPA1	K562	verified	ok	
+eclip_peaks	HNRNPC	HepG2	ENCFF105AKX.bed.gz	ENCFF105AKX	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR550DVK/	6e2692439862eb8530d2df03968411e1	69060	HNRNPC	HepG2	verified	ok	
+eclip_peaks	HNRNPC	HepG2	ENCFF401SPQ.bed.gz	ENCFF401SPQ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR550DVK/	cf7288d79ebfc35de56092ffc196ad6c	6741616	HNRNPC	HepG2	verified	ok	
+eclip_peaks	HNRNPC	HepG2	ENCFF738FJS.bed.gz	ENCFF738FJS	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR550DVK/	d3d2176d38f0f08f7dfb9e95705ec759	5130420	HNRNPC	HepG2	verified	ok	
+eclip_peaks	HNRNPC	K562	ENCFF062LWZ.bed.gz	ENCFF062LWZ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR249ROI/	c4c0709bc886894cf7a369d305ea9ab3	1728073	HNRNPC	K562	verified	ok	
+eclip_peaks	HNRNPC	K562	ENCFF159HMF.bed.gz	ENCFF159HMF	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR249ROI/	407b1980333dcfced9cf0242603eda2f	13705	HNRNPC	K562	verified	ok	
+eclip_peaks	HNRNPC	K562	ENCFF971ZDB.bed.gz	ENCFF971ZDB	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR249ROI/	e0567116757c1e30f755fbc74300fb3b	2018619	HNRNPC	K562	verified	ok	
+eclip_peaks	HNRNPL	HepG2	ENCFF415HDB.bed.gz	ENCFF415HDB	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR724RDN/	54aa2cc70749c15cbb9efae9d31ee409	3163315	HNRNPL	HepG2	verified	ok	
+eclip_peaks	HNRNPL	HepG2	ENCFF581SSQ.bed.gz	ENCFF581SSQ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR724RDN/	5d28785a4728313966792dcf6f2e63e4	4526885	HNRNPL	HepG2	verified	ok	
+eclip_peaks	HNRNPL	HepG2	ENCFF890KEE.bed.gz	ENCFF890KEE	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR724RDN/	0565a393d5a765a4e88a80b6cf6df35e	217363	HNRNPL	HepG2	verified	ok	
+eclip_peaks	HNRNPL	K562	ENCFF296JHG.bed.gz	ENCFF296JHG	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR795CAI/	206e7fb803c7491461592bf7536bf641	136623	HNRNPL	K562	verified	ok	
+eclip_peaks	HNRNPL	K562	ENCFF782DAY.bed.gz	ENCFF782DAY	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR795CAI/	68b1be5975d51d9917c86a10e9650d77	4081974	HNRNPL	K562	verified	ok	
+eclip_peaks	HNRNPL	K562	ENCFF796KSB.bed.gz	ENCFF796KSB	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR795CAI/	b24eaa5e1755260e8345a39feaa462ef	3527169	HNRNPL	K562	verified	ok	
+eclip_peaks	HNRNPM	HepG2	ENCFF040JSC.bed.gz	ENCFF040JSC	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR267UCX/	482081f0854c8022339c28a714089dd3	2531756	HNRNPM	HepG2	verified	ok	
+eclip_peaks	HNRNPM	HepG2	ENCFF542FRX.bed.gz	ENCFF542FRX	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR267UCX/	8b49aec437fec16266a050d5aaf080f7	1799813	HNRNPM	HepG2	verified	ok	
+eclip_peaks	HNRNPM	HepG2	ENCFF878JOG.bed.gz	ENCFF878JOG	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR267UCX/	84b28dd472daa55bf506b71aef055492	274378	HNRNPM	HepG2	verified	ok	
+eclip_peaks	HNRNPM	K562	ENCFF016LSY.bed.gz	ENCFF016LSY	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR412NOW/	2e2f24d859af412c899611889c35598e	1553727	HNRNPM	K562	verified	ok	
+eclip_peaks	HNRNPM	K562	ENCFF342PGS.bed.gz	ENCFF342PGS	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR412NOW/	0afb36746f7a54c54dadf49078a17ee6	137173	HNRNPM	K562	verified	ok	
+eclip_peaks	HNRNPM	K562	ENCFF462KTW.bed.gz	ENCFF462KTW	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR412NOW/	36ed49d615488faa6a757d6918b421e2	1602363	HNRNPM	K562	verified	ok	
+eclip_peaks	HNRNPU	HepG2	ENCFF024FCB.bed.gz	ENCFF024FCB	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR240MVJ/	d705961337e0dd7d457e3ff1f9289276	2961788	HNRNPU	HepG2	verified	ok	
+eclip_peaks	HNRNPU	HepG2	ENCFF587FNW.bed.gz	ENCFF587FNW	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR240MVJ/	67ed84cee46e689ca249dbba126918f5	2923726	HNRNPU	HepG2	verified	ok	
+eclip_peaks	HNRNPU	HepG2	ENCFF854NXI.bed.gz	ENCFF854NXI	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR240MVJ/	a0e1a105fde961cc5dfe2ec9be33c2f6	6826	HNRNPU	HepG2	verified	ok	
+eclip_peaks	HNRNPU	K562	ENCFF014BXV.bed.gz	ENCFF014BXV	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR520BZQ/	a7e8a34b227e87738b9a930598cf58f7	4618595	HNRNPU	K562	verified	ok	
+eclip_peaks	HNRNPU	K562	ENCFF844VZT.bed.gz	ENCFF844VZT	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR520BZQ/	e2328e5d695a2fe48db8b6950092dac8	5047	HNRNPU	K562	verified	ok	
+eclip_peaks	HNRNPU	K562	ENCFF960NDY.bed.gz	ENCFF960NDY	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR520BZQ/	f8c62193a5de09c65b5f0b00c4f2aba8	6032436	HNRNPU	K562	verified	ok	
+eclip_peaks	KHSRP	HepG2	ENCFF509GWT.bed.gz	ENCFF509GWT	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR366DGX/	10ed4f810161021b09a14777d2844dc0	2981930	KHSRP	HepG2	verified	ok	
+eclip_peaks	KHSRP	HepG2	ENCFF553APP.bed.gz	ENCFF553APP	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR366DGX/	830388962431d33242dc6d9b27b320a5	109382	KHSRP	HepG2	verified	ok	
+eclip_peaks	KHSRP	HepG2	ENCFF891IAC.bed.gz	ENCFF891IAC	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR366DGX/	4089f787aff6454559c085b5e7d8de6b	3174110	KHSRP	HepG2	verified	ok	
+eclip_peaks	KHSRP	K562	ENCFF498QZQ.bed.gz	ENCFF498QZQ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR438GZQ/	4a8e7518cc94974be09bf05b09453c0d	4759421	KHSRP	K562	verified	ok	
+eclip_peaks	KHSRP	K562	ENCFF531NDZ.bed.gz	ENCFF531NDZ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR438GZQ/	359057e74cfb6df17c398ffdefe438ea	4896258	KHSRP	K562	verified	ok	
+eclip_peaks	KHSRP	K562	ENCFF871BYW.bed.gz	ENCFF871BYW	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR438GZQ/	31034fc082ca9416cf7d8b92f2c441f6	513911	KHSRP	K562	verified	ok	
+eclip_peaks	PCBP1	HepG2	ENCFF108TOJ.bed.gz	ENCFF108TOJ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR256CHX/	93af35568bcb652f5d28b0b73ad1f8a2	22553	PCBP1	HepG2	verified	ok	
+eclip_peaks	PCBP1	HepG2	ENCFF252BJN.bed.gz	ENCFF252BJN	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR256CHX/	0dd571cb2fa0e414a08fe3d91e9a45ad	279916	PCBP1	HepG2	verified	ok	
+eclip_peaks	PCBP1	HepG2	ENCFF940CJE.bed.gz	ENCFF940CJE	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR256CHX/	96cc0aa4f3880c4cfc2ff5fef4c79683	453193	PCBP1	HepG2	verified	ok	
+eclip_peaks	PCBP1	K562	ENCFF022GSN.bed.gz	ENCFF022GSN	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR922WJV/	a44d802f1ef0662c290c0def64ac2771	414225	PCBP1	K562	verified	ok	
+eclip_peaks	PCBP1	K562	ENCFF381ZBA.bed.gz	ENCFF381ZBA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR922WJV/	da75943d15d8d5dbb63841bcb51381d6	477007	PCBP1	K562	verified	ok	
+eclip_peaks	PCBP1	K562	ENCFF431FMQ.bed.gz	ENCFF431FMQ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR922WJV/	525628875b2673ee8dbe47c7908779f9	49963	PCBP1	K562	verified	ok	
+eclip_peaks	PCBP2	HepG2	ENCFF074AQN.bed.gz	ENCFF074AQN	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR339FUY/	ec20b911cdc48cc2aee94db7f49c0877	1824776	PCBP2	HepG2	verified	ok	
+eclip_peaks	PCBP2	HepG2	ENCFF322DXB.bed.gz	ENCFF322DXB	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR339FUY/	e44e691672c40d4d2abb7a7500474c21	1466577	PCBP2	HepG2	verified	ok	
+eclip_peaks	PCBP2	HepG2	ENCFF560CDL.bed.gz	ENCFF560CDL	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR339FUY/	31e5bb2b1fab3b8452f04684af685607	207815	PCBP2	HepG2	verified	ok	
+eclip_peaks	PTBP1	HepG2	ENCFF154BAE.bed.gz	ENCFF154BAE	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR384KAN/	cd61f350503a901eb42b838569ce83ce	1883412	PTBP1	HepG2	verified	ok	
+eclip_peaks	PTBP1	HepG2	ENCFF170SCU.bed.gz	ENCFF170SCU	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR384KAN/	8e6181c16d84b2137e10e4b2cb328bdb	187562	PTBP1	HepG2	verified	ok	
+eclip_peaks	PTBP1	HepG2	ENCFF471GJE.bed.gz	ENCFF471GJE	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR384KAN/	4c1d2d70231409f6f69828609e3bf82a	2713899	PTBP1	HepG2	verified	ok	
+eclip_peaks	PTBP1	K562	ENCFF200AWX.bed.gz	ENCFF200AWX	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR981WKN/	48f4d6408ef0950fe54e47965f8b872f	1490141	PTBP1	K562	verified	ok	
+eclip_peaks	PTBP1	K562	ENCFF262NXW.bed.gz	ENCFF262NXW	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR981WKN/	2da4bf866daf21193d166147004d66dc	1012464	PTBP1	K562	verified	ok	
+eclip_peaks	PTBP1	K562	ENCFF924CZR.bed.gz	ENCFF924CZR	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR981WKN/	c304c4ab54fedce3a9c33647f41c173e	158965	PTBP1	K562	verified	ok	
+eclip_peaks	RBFOX2	HepG2	ENCFF154DRN.bed.gz	ENCFF154DRN	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR987FTF/	4994876614098b011dc5a9b8012b6031	169978	RBFOX2	HepG2	verified	ok	
+eclip_peaks	RBFOX2	HepG2	ENCFF639MYI.bed.gz	ENCFF639MYI	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR987FTF/	a1b5f9808ef5e879d8d81ff1d44fa3b1	1850003	RBFOX2	HepG2	verified	ok	
+eclip_peaks	RBFOX2	HepG2	ENCFF664WCU.bed.gz	ENCFF664WCU	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR987FTF/	58a04cb563942d73e4446818fba5758a	1741862	RBFOX2	HepG2	verified	ok	
+eclip_peaks	RBFOX2	K562	ENCFF076RDA.bed.gz	ENCFF076RDA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR756CKJ/	8584b7863eb8de5833c46db8bbd9dee2	3428312	RBFOX2	K562	verified	ok	
+eclip_peaks	RBFOX2	K562	ENCFF582WWR.bed.gz	ENCFF582WWR	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR756CKJ/	c99e9a29c0457cbf7dba0f0a3b9f791b	80758	RBFOX2	K562	verified	ok	
+eclip_peaks	RBFOX2	K562	ENCFF994PFX.bed.gz	ENCFF994PFX	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR756CKJ/	dcbc6f535c7e86491d1c3965181245a0	2349359	RBFOX2	K562	verified	ok	
+eclip_peaks	RBM22	HepG2	ENCFF353XWS.bed.gz	ENCFF353XWS	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR456JJQ/	b9a3408682070bc18c064ae2ab26ed95	2538079	RBM22	HepG2	verified	ok	
+eclip_peaks	RBM22	HepG2	ENCFF933AGU.bed.gz	ENCFF933AGU	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR456JJQ/	eeb02874bac6c95ba4fd99053581c928	40420	RBM22	HepG2	verified	ok	
+eclip_peaks	RBM22	HepG2	ENCFF990UNN.bed.gz	ENCFF990UNN	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR456JJQ/	6b1ea38f9962a27e032e1b24f9c8c621	1376742	RBM22	HepG2	verified	ok	
+eclip_peaks	RBM22	K562	ENCFF020UVE.bed.gz	ENCFF020UVE	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR295OKT/	94d8676ed7f910010b21db0c7b571b85	507805	RBM22	K562	verified	ok	
+eclip_peaks	RBM22	K562	ENCFF039FGP.bed.gz	ENCFF039FGP	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR295OKT/	3f9ec4b07dd7fc8888bf3f7c54548150	21194	RBM22	K562	verified	ok	
+eclip_peaks	RBM22	K562	ENCFF074GNZ.bed.gz	ENCFF074GNZ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR295OKT/	af5da18d03597513aa7366a1f3a4b2fc	437484	RBM22	K562	verified	ok	
+eclip_peaks	SF3B4	HepG2	ENCFF097FBP.bed.gz	ENCFF097FBP	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR279UJF/	31a0d3561c7d95673fcd5e92eda75ba1	128053	SF3B4	HepG2	verified	ok	
+eclip_peaks	SF3B4	HepG2	ENCFF363PGR.bed.gz	ENCFF363PGR	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR279UJF/	f6f3f0af56da25fb31e8bef451ef983b	920181	SF3B4	HepG2	verified	ok	
+eclip_peaks	SF3B4	HepG2	ENCFF581RVY.bed.gz	ENCFF581RVY	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR279UJF/	212d15626a53abd20db2f238feac8745	911672	SF3B4	HepG2	verified	ok	
+eclip_peaks	SF3B4	K562	ENCFF013ZHF.bed.gz	ENCFF013ZHF	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR267OLV/	d86889480d55b2a06af5c3c55ab7d884	1339023	SF3B4	K562	verified	ok	
+eclip_peaks	SF3B4	K562	ENCFF187VMX.bed.gz	ENCFF187VMX	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR267OLV/	a6eef7a044e4f3f5b0399ae4f3ef104c	234785	SF3B4	K562	verified	ok	
+eclip_peaks	SF3B4	K562	ENCFF658CBT.bed.gz	ENCFF658CBT	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR267OLV/	c171737e50dafa4f87e00f160c522bdc	1332347	SF3B4	K562	verified	ok	
+eclip_peaks	SRSF1	HepG2	ENCFF179SCM.bed.gz	ENCFF179SCM	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR989VIY/	4a8e5cdfb6571541e37b342f755ac0fe	2241962	SRSF1	HepG2	verified	ok	
+eclip_peaks	SRSF1	HepG2	ENCFF184TBM.bed.gz	ENCFF184TBM	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR989VIY/	e68b7c55d9e0f3f6b0b7c63c670e865a	2030634	SRSF1	HepG2	verified	ok	
+eclip_peaks	SRSF1	HepG2	ENCFF530MIN.bed.gz	ENCFF530MIN	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR989VIY/	0329537be24aa0856e816a6790951e19	41115	SRSF1	HepG2	verified	ok	
+eclip_peaks	SRSF1	K562	ENCFF287KWV.bed.gz	ENCFF287KWV	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR432XUP/	c099028919a5f16c6ceee568f6bfa8e2	1985413	SRSF1	K562	verified	ok	
+eclip_peaks	SRSF1	K562	ENCFF609IXO.bed.gz	ENCFF609IXO	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR432XUP/	de7e419e927e28f0c78fb627ad46080a	1375186	SRSF1	K562	verified	ok	
+eclip_peaks	SRSF1	K562	ENCFF788UFQ.bed.gz	ENCFF788UFQ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR432XUP/	e4adadf642f745845d1deac0379c38b5	47065	SRSF1	K562	verified	ok	
+eclip_peaks	SRSF7	HepG2	ENCFF774EDY.bed.gz	ENCFF774EDY	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR513NDD/	bca198a0975feba82cb4a8bb954e3a25	1046900	SRSF7	HepG2	verified	ok	
+eclip_peaks	SRSF7	HepG2	ENCFF865AZP.bed.gz	ENCFF865AZP	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR513NDD/	9ee9b0b2881f4b51fd700ddf95922e25	10097	SRSF7	HepG2	verified	ok	
+eclip_peaks	SRSF7	HepG2	ENCFF913UPA.bed.gz	ENCFF913UPA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR513NDD/	6449aac8ccbea4dc2f43040baff2e6cd	620674	SRSF7	HepG2	verified	ok	
+eclip_peaks	SRSF7	K562	ENCFF090BZK.bed.gz	ENCFF090BZK	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR468FSW/	bfb65f9a8cf7e0f5ac08d35300507612	862432	SRSF7	K562	verified	ok	
+eclip_peaks	SRSF7	K562	ENCFF449ZHX.bed.gz	ENCFF449ZHX	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR468FSW/	cec07bad496ef992e901aa5d61285edf	11703	SRSF7	K562	verified	ok	
+eclip_peaks	SRSF7	K562	ENCFF939AMV.bed.gz	ENCFF939AMV	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR468FSW/	6968bae0c17257de7594bce8f7b23273	1045371	SRSF7	K562	verified	ok	
+eclip_peaks	SRSF9	HepG2	ENCFF075NSB.bed.gz	ENCFF075NSB	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR773KRC/	f445a38dd214221329d525763f9b14fd	15152	SRSF9	HepG2	verified	ok	
+eclip_peaks	SRSF9	HepG2	ENCFF125UVA.bed.gz	ENCFF125UVA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR773KRC/	986223d5c2e40e4de2b0f29966b0de53	1136574	SRSF9	HepG2	verified	ok	
+eclip_peaks	SRSF9	HepG2	ENCFF409GPI.bed.gz	ENCFF409GPI	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR773KRC/	8d24d6c5e9c42bd9570f8f6f1aad6756	1508904	SRSF9	HepG2	verified	ok	
+eclip_peaks	TARDBP	K562	ENCFF259NLI.bed.gz	ENCFF259NLI	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR584TCR/	1abe1f5a7c33d907d719212035258ee9	148788	TARDBP	K562	verified	ok	
+eclip_peaks	TARDBP	K562	ENCFF333KPU.bed.gz	ENCFF333KPU	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR584TCR/	3667dba581bc36645a36f04e5a15809a	1292689	TARDBP	K562	verified	ok	
+eclip_peaks	TARDBP	K562	ENCFF697CMV.bed.gz	ENCFF697CMV	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR584TCR/	e9d63d144a5741fd225e4ca987d10452	961318	TARDBP	K562	verified	ok	
+eclip_peaks	TIA1	HepG2	ENCFF055IIM.bed.gz	ENCFF055IIM	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR623VEQ/	5330b20fdadfa0089607af705a9bc301	1849310	TIA1	HepG2	verified	ok	
+eclip_peaks	TIA1	HepG2	ENCFF358SGV.bed.gz	ENCFF358SGV	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR623VEQ/	44f847be4512ad1440719fa24a131254	2485388	TIA1	HepG2	verified	ok	
+eclip_peaks	TIA1	HepG2	ENCFF640DDA.bed.gz	ENCFF640DDA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR623VEQ/	f3fbc3777dd238ca8badb0f43d7d55ab	40484	TIA1	HepG2	verified	ok	
+eclip_peaks	TIA1	K562	ENCFF298ZAG.bed.gz	ENCFF298ZAG	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR057DWB/	2b00f18feb9d2b1d49230b0e5aa66c80	130302	TIA1	K562	verified	ok	
+eclip_peaks	TIA1	K562	ENCFF509PKA.bed.gz	ENCFF509PKA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR057DWB/	2e04a78d96a759a792e17a01d0e92f7b	3354538	TIA1	K562	verified	ok	
+eclip_peaks	TIA1	K562	ENCFF673MNH.bed.gz	ENCFF673MNH	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR057DWB/	2619d7c94b7580d9182628d3a200dbe1	3776388	TIA1	K562	verified	ok	
+eclip_peaks	TIAL1	HepG2	ENCFF387ZAH.bed.gz	ENCFF387ZAH	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR322HHA/	a40cd3d7439be5713083485c8d66b762	54685	TIAL1	HepG2	verified	ok	
+eclip_peaks	TIAL1	HepG2	ENCFF456DAU.bed.gz	ENCFF456DAU	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR322HHA/	877439b7591e279a58c5c5f2749bc0d0	1270932	TIAL1	HepG2	verified	ok	
+eclip_peaks	TIAL1	HepG2	ENCFF473IIG.bed.gz	ENCFF473IIG	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR322HHA/	193e509ed4b6747fc869f603fcde0404	1025835	TIAL1	HepG2	verified	ok	
+eclip_peaks	U2AF1	HepG2	ENCFF021VWK.bed.gz	ENCFF021VWK	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR328LLU/	e780a0ed20e62871255c1c10488c3f3f	24460	U2AF1	HepG2	verified	ok	
+eclip_peaks	U2AF1	HepG2	ENCFF078SCZ.bed.gz	ENCFF078SCZ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR328LLU/	284fb5e33ff24e8d9c130cb743fbf6a8	2384872	U2AF1	HepG2	verified	ok	
+eclip_peaks	U2AF1	HepG2	ENCFF295GHA.bed.gz	ENCFF295GHA	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR328LLU/	83591c19b493c56804be05462f73a191	2929488	U2AF1	HepG2	verified	ok	
+eclip_peaks	U2AF1	K562	ENCFF163SWW.bed.gz	ENCFF163SWW	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR862QCH/	997879909bb2dadf0a378f14c484e0e6	27963	U2AF1	K562	verified	ok	
+eclip_peaks	U2AF1	K562	ENCFF468LUS.bed.gz	ENCFF468LUS	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR862QCH/	281eaf56dec7a4c4f48fb9c6c3390994	886673	U2AF1	K562	verified	ok	
+eclip_peaks	U2AF1	K562	ENCFF555DWV.bed.gz	ENCFF555DWV	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR862QCH/	4965fd470d834bd221168f703a27b71f	1249076	U2AF1	K562	verified	ok	
+eclip_peaks	U2AF2	HepG2	ENCFF159VOF.bed.gz	ENCFF159VOF	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR202BFN/	8b5f1f6e483af6ff96505d6af686c414	227616	U2AF2	HepG2	verified	ok	
+eclip_peaks	U2AF2	HepG2	ENCFF444TCK.bed.gz	ENCFF444TCK	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR202BFN/	1bc27cd04d6f40ec47e02aed29f3d78b	3025512	U2AF2	HepG2	verified	ok	
+eclip_peaks	U2AF2	HepG2	ENCFF523JWI.bed.gz	ENCFF523JWI	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR202BFN/	987708c413e21e2485cbe246161da05c	2210381	U2AF2	HepG2	verified	ok	
+eclip_peaks	U2AF2	K562	ENCFF331AFC.bed.gz	ENCFF331AFC	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR893RAV/	68537d6f1a1a013a620057cb77a6d98b	88503	U2AF2	K562	verified	ok	
+eclip_peaks	U2AF2	K562	ENCFF430RTZ.bed.gz	ENCFF430RTZ	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR893RAV/	2a046c8115eda68a75567fc875974204	1911451	U2AF2	K562	verified	ok	
+eclip_peaks	U2AF2	K562	ENCFF454FEB.bed.gz	ENCFF454FEB	hg19	bed	narrowPeak	peaks	released	/experiments/ENCSR893RAV/	3ea58126b087b366a3e119ac61fdccd3	2645881	U2AF2	K562	verified	ok	
+kd_splicing	FUS	HepG2	ENCFF915LBL.tar.gz	ENCFF915LBL	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR927JXU/	b6e10d6aba179c232497f375f1cc29c6	3341145	FUS	HepG2	verified	ok	
+kd_splicing	FUS	K562	ENCFF843YXN.tar.gz	ENCFF843YXN	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR325OOM/	15aadc7dce75ba76be95c63e6330ed6d	3035959	FUS	K562	verified	ok	
+kd_splicing	HNRNPA1	HepG2	ENCFF856DFH.tar.gz	ENCFF856DFH	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR182DAW/	f197b423cbef52362030f68e0f8f9a34	3021691	HNRNPA1	HepG2	verified	ok	
+kd_splicing	HNRNPA1	K562	ENCFF611RFN.tar.gz	ENCFF611RFN	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR048BWH/	2d6c384dac503d0a06b6834196eea857	4067416	HNRNPA1	K562	verified	ok	
+kd_splicing	HNRNPC	HepG2	ENCFF381LFG.tar.gz	ENCFF381LFG	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR052IYH/	87644d58078f279f50157a4918d155c5	3499145	HNRNPC	HepG2	verified	ok	
+kd_splicing	HNRNPC	K562	ENCFF688CHF.tar.gz	ENCFF688CHF	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR634KBO/	089f24155eb18275e9def8d6d5f75ed8	4248512	HNRNPC	K562	verified	ok	
+kd_splicing	HNRNPL	HepG2	ENCFF584VSS.tar.gz	ENCFF584VSS	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR155BMF/	594f599d86f1a1fc8859ddcb5f7a1e94	3618708	HNRNPL	HepG2	verified	ok	
+kd_splicing	HNRNPL	K562	ENCFF080JPG.tar.gz	ENCFF080JPG	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR563YIS/	5f42190aa02604a82464641b89372584	4522949	HNRNPL	K562	verified	ok	
+kd_splicing	HNRNPM	HepG2	ENCFF163VQG.tar.gz	ENCFF163VQG	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR995JMS/	c72f6d1a56f656b3a25c6d0c46a2cc34	3293821	HNRNPM	HepG2	verified	ok	
+kd_splicing	HNRNPM	K562	ENCFF964BTU.tar.gz	ENCFF964BTU	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR746NIM/	541f9116271edf0bf640fff695e9dd54	3567872	HNRNPM	K562	verified	ok	
+kd_splicing	HNRNPU	HepG2	ENCFF066JDA.tar.gz	ENCFF066JDA	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR308IKH/	399e211fe76017c98da4f16ba1d7b57a	3264268	HNRNPU	HepG2	verified	ok	
+kd_splicing	HNRNPU	K562	ENCFF249YOJ.tar.gz	ENCFF249YOJ	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR047IUS/	677a723be214a8b9e89127312764d43f	4469042	HNRNPU	K562	verified	ok	
+kd_splicing	KHSRP	HepG2	ENCFF281VIP.tar.gz	ENCFF281VIP	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR850CKU/	c7218e5d6b1cad3c618f6c13c8589865	3531341	KHSRP	HepG2	verified	ok	
+kd_splicing	KHSRP	K562	ENCFF153MZG.tar.gz	ENCFF153MZG	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR561CBC/	cc59cf08420e5844a97c140f0fa67f4f	3643861	KHSRP	K562	verified	ok	
+kd_splicing	PCBP1	HepG2	ENCFF333WDT.tar.gz	ENCFF333WDT	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR635FRH/	4d00e9d5006197cef60e57eabc599d1f	3556190	PCBP1	HepG2	verified	ok	
+kd_splicing	PCBP1	K562	ENCFF392QVK.tar.gz	ENCFF392QVK	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR545AIK/	7b11013a958cb8c593ca5862b65cee1f	3701504	PCBP1	K562	verified	ok	
+kd_splicing	PCBP2	HepG2	ENCFF287SPW.tar.gz	ENCFF287SPW	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR028ITN/	2d01a865b09d878748ab73e652ba34f1	3341736	PCBP2	HepG2	verified	ok	
+kd_splicing	PTBP1	HepG2	ENCFF044JDS.tar.gz	ENCFF044JDS	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR064DXG/	5ce7bf9d99bfbc4aaefa3573f9bd7a34	3482967	PTBP1	HepG2	verified	ok	
+kd_splicing	PTBP1	K562	ENCFF061DFK.tar.gz	ENCFF061DFK	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR527IVX/	34b145a87b1b8cf19863b0e3331e71d6	4024894	PTBP1	K562	verified	ok	
+kd_splicing	RBFOX2	HepG2	ENCFF143AWC.tar.gz	ENCFF143AWC	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR767LLP/	b7812ec21ea06855abfa0f4182a0dccb	2907835	RBFOX2	HepG2	verified	ok	
+kd_splicing	RBFOX2	K562	ENCFF393YWY.tar.gz	ENCFF393YWY	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR336DFS/	6570def86c9c6170040a5ab45527cc7a	3057988	RBFOX2	K562	verified	ok	
+kd_splicing	RBM22	HepG2	ENCFF823OOV.tar.gz	ENCFF823OOV	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR330KHN/	2603342412efabaded2e07a5241a03cf	4185058	RBM22	HepG2	verified	ok	
+kd_splicing	RBM22	K562	ENCFF708ABO.tar.gz	ENCFF708ABO	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR947OIM/	fcb671cf405b21d9c7f8923497e9f34f	4157796	RBM22	K562	verified	ok	
+kd_splicing	SF3B4	HepG2	ENCFF544DWA.tar.gz	ENCFF544DWA	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR148MQK/	889effaedf7ed05aceeda7b1a900a469	4053079	SF3B4	HepG2	verified	ok	
+kd_splicing	SF3B4	K562	ENCFF588UKB.tar.gz	ENCFF588UKB	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR081XRA/	d51af5413d401b36f8814ee2db6c42e5	4126314	SF3B4	K562	verified	ok	
+kd_splicing	SRSF1	HepG2	ENCFF866RIG.tar.gz	ENCFF866RIG	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR094KBY/	21285acf25054338f8ad8b5f3eb639e1	3958488	SRSF1	HepG2	verified	ok	
+kd_splicing	SRSF1	K562	ENCFF902NRJ.tar.gz	ENCFF902NRJ	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR066VOO/	9bd9619e73dd9670d1985a1efda7b096	3955700	SRSF1	K562	verified	ok	
+kd_splicing	SRSF7	HepG2	ENCFF706GMO.tar.gz	ENCFF706GMO	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR845MNM/	5a249ebb9870d24321b79ea5e3b8692a	3771475	SRSF7	HepG2	verified	ok	
+kd_splicing	SRSF7	K562	ENCFF297BXR.tar.gz	ENCFF297BXR	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR139LOF/	1e6e90a11b2730216eb67a3766f4aca2	4212406	SRSF7	K562	verified	ok	
+kd_splicing	SRSF9	HepG2	ENCFF054JNS.tar.gz	ENCFF054JNS	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR597XHH/	c26c71c53c36e3c70dd0c4e2044ae354	3303142	SRSF9	HepG2	verified	ok	
+kd_splicing	TARDBP	K562	ENCFF552MOW.tar.gz	ENCFF552MOW	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR134JRE/	7bc60674d6f6e39a7c683691e884d44d	4478049	TARDBP	K562	verified	ok	
+kd_splicing	TIA1	HepG2	ENCFF867FPB.tar.gz	ENCFF867FPB	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR057GCF/	88c7c06b34234bfa7859e1cf69776cd6	3256817	TIA1	HepG2	verified	ok	
+kd_splicing	TIA1	K562	ENCFF379TOR.tar.gz	ENCFF379TOR	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR694LKY/	9846dd8b22095b1c126c3ba17be98c71	3704563	TIA1	K562	verified	ok	
+kd_splicing	TIAL1	HepG2	ENCFF633VHL.tar.gz	ENCFF633VHL	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR450VQO/	90c8578323efb651908b407cb51dc13d	3241636	TIAL1	HepG2	verified	ok	
+kd_splicing	U2AF1	HepG2	ENCFF581UUT.tar.gz	ENCFF581UUT	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR372UWV/	b20809a2c38b1a9780f9bdfdd2bcbc1f	5062801	U2AF1	HepG2	verified	ok	
+kd_splicing	U2AF1	K562	ENCFF215LUY.tar.gz	ENCFF215LUY	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR342EDG/	8c8b378b28d45c40d5ce633d425c5057	3449824	U2AF1	K562	verified	ok	
+kd_splicing	U2AF2	HepG2	ENCFF296HEN.tar.gz	ENCFF296HEN	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR426UUG/	bc42f2a826ed2a0a813a818118c42f5f	3943119	U2AF2	HepG2	verified	ok	
+kd_splicing	U2AF2	K562	ENCFF405UKX.tar.gz	ENCFF405UKX	hg19	tar	None	differential splicing quantifications	released	/experiments/ENCSR904CJQ/	b09afe3be1794c397a4423a4f33bc51f	3758388	U2AF2	K562	verified	ok	
